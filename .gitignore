@@ -16,7 +16,7 @@ build/
 
 # IntelliJ IDEA / Android Studio "Ignores"
 *.iml
-/.idea/
+/.idea/*
 
 # IntelliJ IDEA / Android Studio "Ignore Exceptions"
 # - See, https://tips.seebrock3r.me/e28c24fc07aa
