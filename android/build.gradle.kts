@@ -5,6 +5,7 @@ plugins {
 }
 
 android {
+	namespace = "com.myapplication"
 	compileSdk = 32
 
 	defaultConfig {

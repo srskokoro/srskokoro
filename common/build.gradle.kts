@@ -28,6 +28,7 @@ kotlin {
 }
 
 android {
+	namespace = "com.myapplication.common"
 	compileSdk = 32
 
 	defaultConfig {
