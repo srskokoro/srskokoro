@@ -19,6 +19,17 @@ android {
 		sourceCompatibility = JavaVersion.VERSION_11
 		targetCompatibility = JavaVersion.VERSION_11
 	}
+
+	packagingOptions {
+		resources {
+			excludes += "/META-INF/{AL2.0,LGPL2.1}"
+		}
+	}
+	buildTypes {
+		getByName("release") {
+			isMinifyEnabled = false
+		}
+	}
 }
 
 dependencies {
