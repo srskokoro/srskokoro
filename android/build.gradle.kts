@@ -23,5 +23,4 @@ android {
 
 dependencies {
 	implementation(project(":common"))
-	implementation("androidx.activity:activity-compose:1.5.0")
 }
