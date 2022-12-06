@@ -19,7 +19,7 @@ end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
 max_line_length = 120
-ij_visual_guides = 80,120
+ij_visual_guides = 80, 120
 
 # Auto-formatting
 ij_formatter_tags_enabled = true
@@ -68,7 +68,7 @@ ij_smart_tabs = false
 # End of line
 trim_trailing_whitespace = false
 max_line_length = 80
-ij_visual_guides = 80,120
+ij_visual_guides = 80, 120
 
 # ---===--- ---===--- ---===---
 # Java
