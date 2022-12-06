@@ -16,6 +16,8 @@ build/
 
 # IntelliJ IDEA / Android Studio "Ignores"
 *.iml
+# NOTE: Cannot re-include a file via `!` (see below) if the parent directory
+# itself is ignored. The workaround is to use `<dir>/*` instead as follows:
 /.idea/*
 
 # IntelliJ IDEA / Android Studio "Ignore Exceptions"
