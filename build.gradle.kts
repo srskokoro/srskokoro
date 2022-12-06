@@ -9,5 +9,5 @@ plugins {
 	kotlin("android") version libs.versions.kotlin apply false
 	id("com.android.application") version libs.versions.android apply false
 	id("com.android.library") version libs.versions.android apply false
-	id("org.jetbrains.compose") version libs.versions.compose apply false
+	id("org.jetbrains.compose") version libs.versions.compose.mpp apply false
 }

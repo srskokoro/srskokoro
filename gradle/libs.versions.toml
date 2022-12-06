@@ -1,4 +1,4 @@
 [versions]
 kotlin = "1.7.20"
 android = "7.3.1"
-compose = "1.2.1"
+compose-mpp = "1.2.1"
