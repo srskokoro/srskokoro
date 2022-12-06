@@ -1,0 +1,91 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# Top-most EditorConfig file
+root = true
+
+# ---===--- ---===--- ---===---
+# Defaults
+[*]
+charset = utf-8
+
+# Tabs and indents
+indent_style = tab
+indent_size = tab
+tab_width = 4
+ij_continuation_indent_size = 8
+ij_smart_tabs = true
+
+# End of line
+end_of_line = lf
+insert_final_newline = false
+#trim_trailing_whitespace = false
+max_line_length = 120
+ij_visual_guides = 80
+
+# Auto-formatting
+ij_formatter_tags_enabled = true
+ij_formatter_off_tag = @formatter:off
+ij_formatter_on_tag = @formatter:on
+
+# ---===--- ---===--- ---===---
+# EditorConfig files
+[.editorconfig]
+
+# ---===--- ---===--- ---===---
+# Properties
+[*.properties]
+
+# ---===--- ---===--- ---===---
+# TOML
+[{*.toml,Cargo.lock,Cargo.toml.orig,Gopkg.lock,Pipfile,poetry.lock}]
+
+# ---===--- ---===--- ---===---
+# YAML
+[{*.yaml,*.yml}]
+
+# Tabs and indents
+indent_size = 2
+indent_style = space
+
+# ---===--- ---===--- ---===---
+# XML
+[{*.ant,*.fxml,*.jhm,*.jnlp,*.jrxml,*.jspx,*.pom,*.rng,*.tagx,*.tld,*.wsdl,*.xml,*.xsd,*.xsl,*.xslt,*.xul}]
+
+# ---===--- ---===--- ---===---
+# HTML
+[{*.htm,*.html,*.sht,*.shtm,*.shtml}]
+
+# ---===--- ---===--- ---===---
+# JSON
+[{*.har,*.json}]
+
+# ---===--- ---===--- ---===---
+# Markdown
+[{*.markdown,*.md}]
+
+# Tabs and indents
+ij_smart_tabs = false
+
+# ---===--- ---===--- ---===---
+# Java
+[*.java]
+
+# ---===--- ---===--- ---===---
+# Groovy
+[{*.gant,*.groovy,*.gy,*.gradle}]
+
+# ---===--- ---===--- ---===---
+# Kotlin
+[{*.kt,*.kts}]
+
+# ---===--- ---===--- ---===---
+# Shell Scripts
+[{*.bash,*.sh,*.zsh}]
+
+# ---===--- ---===--- ---===---
+# CMake
+[{*.cmake,CMakeLists.txt}]
+
+# ---===--- ---===--- ---===---
+# C/C++
+[{*.c,*.c++,*.cc,*.cp,*.cpp,*.cu,*.cuh,*.cxx,*.h,*.h++,*.hh,*.hp,*.hpp,*.hxx,*.i,*.icc,*.ii,*.inl,*.ino,*.ipp,*.m,*.mm,*.pch,*.tcc,*.tpp}]
