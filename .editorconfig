@@ -17,10 +17,10 @@ ij_smart_tabs = true
 
 # End of line
 end_of_line = lf
-insert_final_newline = false
-#trim_trailing_whitespace = false
+insert_final_newline = true
+trim_trailing_whitespace = true
 max_line_length = 120
-ij_visual_guides = 80
+ij_visual_guides = 80,120
 
 # Auto-formatting
 ij_formatter_tags_enabled = true
@@ -65,6 +65,11 @@ indent_style = space
 
 # Tabs and indents
 ij_smart_tabs = false
+
+# End of line
+trim_trailing_whitespace = false
+max_line_length = 80
+ij_visual_guides = 80,120
 
 # ---===--- ---===--- ---===---
 # Java
