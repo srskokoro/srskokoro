@@ -4,7 +4,16 @@ plugins {
 	id("org.jetbrains.compose")
 }
 
+val javaVer: JavaVersion by rootProject.extra
+val javaToolchainConfig: Action<JavaToolchainSpec> by rootProject.extra
+
+java {
+	toolchain(javaToolchainConfig)
+}
+
 kotlin {
+	jvmToolchain(javaToolchainConfig)
+
 	android()
 	jvm("desktop")
 
@@ -36,8 +45,10 @@ android {
 	}
 
 	compileOptions {
-		sourceCompatibility = JavaVersion.VERSION_17
-		targetCompatibility = JavaVersion.VERSION_17
+		javaVer.let {
+			sourceCompatibility = it
+			targetCompatibility = it
+		}
 	}
 
 	sourceSets {

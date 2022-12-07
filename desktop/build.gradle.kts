@@ -5,8 +5,23 @@ plugins {
 	id("org.jetbrains.compose")
 }
 
+val kotlinOptJvmTarget: String by rootProject.extra
+val javaToolchainConfig: Action<JavaToolchainSpec> by rootProject.extra
+val javaToolchainHome = javaToolchains.launcherFor(javaToolchainConfig)
+	.map { it.metadata.installationPath.asFile.absolutePath }
+
+java {
+	toolchain(javaToolchainConfig)
+}
+
 kotlin {
+	jvmToolchain(javaToolchainConfig)
+
 	jvm {
+		compilations.all {
+			// TODO Remove eventually -- See, https://github.com/JetBrains/compose-jb/issues/2511
+			kotlinOptions.jvmTarget = kotlinOptJvmTarget
+		}
 		withJava()
 	}
 	sourceSets {
@@ -22,6 +37,8 @@ kotlin {
 compose.desktop {
 	application {
 		mainClass = "MainKt"
+		// TODO Remove eventually -- See, https://github.com/JetBrains/compose-jb/pull/2515
+		javaHome = javaToolchainHome.get()
 
 		nativeDistributions {
 			targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
