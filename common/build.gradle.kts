@@ -12,7 +12,12 @@ val javaToolchainConfig: Action<JavaToolchainSpec> by rootProject.extra
 kotlin {
 	jvmToolchain(javaToolchainConfig)
 
-	android()
+	android {
+		compilations.all {
+			// See, https://stackoverflow.com/a/67024907
+			kotlinOptions.jvmTarget = kotlinOptJvmTarget
+		}
+	}
 	jvm("desktop") {
 		compilations.all {
 			// TODO Remove eventually -- See, https://github.com/JetBrains/compose-jb/issues/2511

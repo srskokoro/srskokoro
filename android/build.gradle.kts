@@ -4,6 +4,7 @@ plugins {
 	id("org.jetbrains.compose")
 }
 
+val kotlinOptJvmTarget: String by rootProject.extra
 val javaVer: JavaVersion by rootProject.extra
 val javaToolchainConfig: Action<JavaToolchainSpec> by rootProject.extra
 
@@ -22,6 +23,9 @@ android {
 		versionName = "1.0"
 	}
 
+	kotlinOptions {
+		jvmTarget = kotlinOptJvmTarget
+	}
 	compileOptions {
 		javaVer.let {
 			sourceCompatibility = it
