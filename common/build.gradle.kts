@@ -5,6 +5,7 @@ plugins {
 	id("org.jetbrains.compose")
 }
 
+val kotlinOptJvmTarget: String by rootProject.extra
 val javaVer: JavaVersion by rootProject.extra
 val javaToolchainConfig: Action<JavaToolchainSpec> by rootProject.extra
 
@@ -13,6 +14,10 @@ kotlin {
 
 	android()
 	jvm("desktop") {
+		compilations.all {
+			// TODO Remove eventually -- See, https://github.com/JetBrains/compose-jb/issues/2511
+			kotlinOptions.jvmTarget = kotlinOptJvmTarget
+		}
 		testRuns["test"].executionTask.configure {
 			useJUnitPlatform()
 		}
