@@ -10,10 +10,6 @@ val javaToolchainConfig: Action<JavaToolchainSpec> by rootProject.extra
 val javaToolchainHome = javaToolchains.launcherFor(javaToolchainConfig)
 	.map { it.metadata.installationPath.asFile.absolutePath }
 
-java {
-	toolchain(javaToolchainConfig)
-}
-
 kotlin {
 	jvmToolchain(javaToolchainConfig)
 

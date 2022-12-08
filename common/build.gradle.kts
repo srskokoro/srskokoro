@@ -7,10 +7,6 @@ plugins {
 val javaVer: JavaVersion by rootProject.extra
 val javaToolchainConfig: Action<JavaToolchainSpec> by rootProject.extra
 
-java {
-	toolchain(javaToolchainConfig)
-}
-
 kotlin {
 	jvmToolchain(javaToolchainConfig)
 
