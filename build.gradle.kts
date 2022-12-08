@@ -10,6 +10,7 @@ plugins {
 	id("com.android.application") version libs.versions.android apply false
 	id("com.android.library") version libs.versions.android apply false
 	id("org.jetbrains.compose") version libs.versions.compose.mpp apply false
+	id("io.kotest.multiplatform") version libs.versions.kotest apply false
 }
 
 @Suppress("UNUSED_VARIABLE")

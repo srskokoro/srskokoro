@@ -19,7 +19,26 @@ kotlin {
 			kotlinOptions.jvmTarget = kotlinOptJvmTarget
 		}
 		withJava()
+		testRuns["test"].executionTask.configure {
+			useJUnitPlatform()
+		}
 	}
+
+	// TEST source sets ONLY
+	sourceSets {
+		named("commonTest") {
+			dependencies {
+				implementation(libs.bundles.test.common)
+			}
+		}
+		named("jvmTest") {
+			dependencies {
+				implementation(libs.kotest.runner.junit5)
+			}
+		}
+	}
+
+	// MAIN source sets
 	sourceSets {
 		named("jvmMain") {
 			dependencies {

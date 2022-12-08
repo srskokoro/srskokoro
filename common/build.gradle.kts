@@ -1,6 +1,7 @@
 plugins {
 	id("com.android.library")
 	kotlin("multiplatform")
+	id("io.kotest.multiplatform")
 	id("org.jetbrains.compose")
 }
 
@@ -11,8 +12,28 @@ kotlin {
 	jvmToolchain(javaToolchainConfig)
 
 	android()
-	jvm("desktop")
+	jvm("desktop") {
+		testRuns["test"].executionTask.configure {
+			useJUnitPlatform()
+		}
+	}
 
+	// TEST source sets ONLY
+	sourceSets {
+		named("commonTest") {
+			dependencies {
+				implementation(libs.kotest.framework.engine)
+				implementation(libs.bundles.test.common)
+			}
+		}
+		named("desktopTest") {
+			dependencies {
+				implementation(libs.kotest.runner.junit5)
+			}
+		}
+	}
+
+	// MAIN source sets
 	sourceSets {
 		named("commonMain") {
 			dependencies {
