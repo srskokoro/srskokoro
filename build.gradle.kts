@@ -1,5 +1,5 @@
 // TODO: Remove once fixed, https://github.com/gradle/gradle/issues/22797
-@file:Suppress("DSL_SCOPE_VIOLATION")
+@file:Suppress("DSL_SCOPE_VIOLATION", "UnstableApiUsage")
 
 plugins {
 	// This is necessary to avoid the plugins to be loaded multiple times in
