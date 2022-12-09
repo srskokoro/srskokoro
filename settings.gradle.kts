@@ -1,17 +1,17 @@
 pluginManagement {
 	repositories {
-		gradlePluginPortal()
-		maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-		google()
 		mavenCentral()
+		gradlePluginPortal()
+		google()
+		maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 	}
 }
 
 dependencyResolutionManagement {
 	repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 	repositories {
-		google()
 		mavenCentral()
+		google()
 		maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 	}
 }
