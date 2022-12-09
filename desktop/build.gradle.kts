@@ -32,8 +32,28 @@ compose.desktop {
 
 		nativeDistributions {
 			targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-			packageName = "KotlinMultiplatformComposeDesktopApplication"
+
+			packageName = "SRS Kokoro"
 			packageVersion = "1.0.0"
+
+			description = "$packageName Desktop App"
+			vendor = "SRS Kokoro Project"
+			copyright = "Copyright (C) 2022 $vendor"
+
+			linux {
+				menuGroup = packageName
+				shortcut = true
+			}
+			macOS {
+				dockName = packageName
+				bundleID = "$group.app"
+			}
+			windows {
+				menuGroup = packageName
+				upgradeUuid = "BAF69324-95CC-4FC4-B156-267ACA640116"
+				dirChooser = true
+				shortcut = true
+			}
 		}
 	}
 }
