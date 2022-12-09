@@ -16,8 +16,7 @@ plugins {
 	id("build-support") apply false
 }
 
-@Suppress("UNUSED_VARIABLE")
-run {
+@Suppress("UNUSED_VARIABLE") run {
 	val javaVerInt by extra(libs.versions.java.get().toInt())
 
 	val javaVer by extra(JavaVersion.toVersion(javaVerInt))
