@@ -1,7 +1,7 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
-	kotlin("multiplatform")
+	kotlin("jvm")
 	id("org.jetbrains.compose")
 }
 
@@ -13,39 +13,16 @@ val javaToolchainHome = javaToolchains.launcherFor(javaToolchainConfig)
 kotlin {
 	jvmToolchain(javaToolchainConfig)
 
-	jvm {
+	target {
 		compilations.all {
 			// TODO Remove eventually -- See, https://github.com/JetBrains/compose-jb/issues/2511
 			kotlinOptions.jvmTarget = kotlinOptJvmTarget
 		}
-		withJava()
-		testRuns["test"].executionTask.configure {
-			useJUnitPlatform()
-		}
 	}
-
-	// TEST source sets ONLY
-	sourceSets {
-		named("commonTest") {
-			dependencies {
-				implementation(libs.bundles.test.common)
-			}
-		}
-		named("jvmTest") {
-			dependencies {
-				implementation(libs.kotest.runner.junit5)
-			}
-		}
-	}
-
-	// MAIN source sets
-	sourceSets {
-		named("jvmMain") {
-			dependencies {
-				implementation(compose.desktop.currentOs)
-				implementation(project(":common"))
-			}
-		}
+}
+tasks {
+	test {
+		useJUnitPlatform()
 	}
 }
 
@@ -61,4 +38,16 @@ compose.desktop {
 			packageVersion = "1.0.0"
 		}
 	}
+}
+
+// TEST dependencies ONLY
+dependencies {
+	testImplementation(libs.kotest.runner.junit5)
+	testImplementation(libs.bundles.test.common)
+}
+
+// MAIN dependencies
+dependencies {
+	implementation(compose.desktop.currentOs)
+	implementation(project(":common"))
 }
