@@ -28,20 +28,7 @@ kotlin {
 		}
 	}
 
-	// TEST source sets ONLY
 	sourceSets {
-		named("commonTest") {
-			dependencies {
-				implementation(libs.kotest.framework.engine)
-				implementation(libs.bundles.test.common)
-			}
-		}
-		named("desktopTest") {
-			dependencies {
-				implementation(libs.kotest.runner.junit5)
-			}
-		}
-
 		// Remove log pollution until Android support in KMP improves
 		// - See, https://discuss.kotlinlang.org/t/21448
 		setOf(
@@ -51,24 +38,6 @@ kotlin {
 			"androidTestFixturesRelease",
 		).also { excl ->
 			removeAll { it.name in excl }
-		}
-	}
-
-	// MAIN source sets
-	sourceSets {
-		named("commonMain") {
-			dependencies {
-				api(compose.runtime)
-				api(compose.foundation)
-				api(compose.material)
-				// Needed only for preview.
-				implementation(compose.preview)
-			}
-		}
-		named("androidMain") {
-			dependencies {
-				api("androidx.core:core-ktx:1.9.0")
-			}
 		}
 	}
 }
@@ -95,4 +64,44 @@ android {
 			res.srcDirs("src/androidMain/res")
 		}
 	}
+}
+
+val localKotlin = kotlin
+val localCompose = localKotlin.compose
+
+fun sourceSet(name: String) = localKotlin.sourceSets.named(name)
+
+@Suppress("unused")
+inline val org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler.compose
+	get() = localCompose
+
+infix fun NamedDomainObjectProvider<org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet>.dependencies(
+	configure: org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler.() -> Unit
+) = configure { dependencies(configure) }
+
+// --=--
+// TEST dependencies ONLY
+
+sourceSet("commonTest") dependencies {
+	implementation(libs.kotest.framework.engine)
+	implementation(libs.bundles.test.common)
+}
+
+sourceSet("desktopTest") dependencies {
+	implementation(libs.kotest.runner.junit5)
+}
+
+// --=--
+// MAIN dependencies
+
+sourceSet("commonMain") dependencies {
+	api(compose.runtime)
+	api(compose.foundation)
+	api(compose.material)
+	// Needed only for preview.
+	implementation(compose.preview)
+}
+
+sourceSet("androidMain") dependencies {
+	api("androidx.core:core-ktx:1.9.0")
 }
