@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+
 plugins {
 	id("com.android.library")
 	kotlin("multiplatform")
@@ -72,11 +75,11 @@ val localCompose = localKotlin.compose
 fun sourceSet(name: String) = localKotlin.sourceSets.named(name)
 
 @Suppress("unused")
-inline val org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler.compose
+inline val KotlinDependencyHandler.compose
 	get() = localCompose
 
-infix fun NamedDomainObjectProvider<org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet>.dependencies(
-	configure: org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler.() -> Unit
+infix fun NamedDomainObjectProvider<KotlinSourceSet>.dependencies(
+	configure: KotlinDependencyHandler.() -> Unit
 ) = configure { dependencies(configure) }
 
 // --=--
