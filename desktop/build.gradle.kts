@@ -20,10 +20,8 @@ kotlin {
 		}
 	}
 }
-tasks {
-	test {
-		useJUnitPlatform()
-	}
+tasks.test {
+	useJUnitPlatform()
 }
 
 compose.desktop {
