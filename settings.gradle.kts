@@ -16,4 +16,5 @@ dependencyResolutionManagement {
 	}
 }
 
+rootProject.name = "srskokoro"
 include(":common", ":android", ":desktop")

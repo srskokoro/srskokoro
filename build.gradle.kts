@@ -31,3 +31,7 @@ run {
 		else javaVerInt.toString()
 	)
 }
+
+allprojects {
+	group = "srs.kokoro"
+}
