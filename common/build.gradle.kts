@@ -6,6 +6,7 @@ plugins {
 	kotlin("multiplatform")
 	id("io.kotest.multiplatform")
 	id("org.jetbrains.compose")
+	id("build-support")
 }
 
 val kotlinOptJvmTarget: String by rootProject.extra

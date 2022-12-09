@@ -2,6 +2,7 @@ plugins {
 	id("com.android.application")
 	kotlin("android")
 	id("org.jetbrains.compose")
+	id("build-support")
 }
 
 val kotlinOptJvmTarget: String by rootProject.extra

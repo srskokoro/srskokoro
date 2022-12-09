@@ -17,4 +17,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "srskokoro"
+
+includeBuild("build-support")
 include(":common", ":android", ":desktop")
