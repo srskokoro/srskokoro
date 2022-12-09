@@ -41,6 +41,17 @@ kotlin {
 				implementation(libs.kotest.runner.junit5)
 			}
 		}
+
+		// Remove log pollution until Android support in KMP improves
+		// - See, https://discuss.kotlinlang.org/t/21448
+		setOf(
+			"androidAndroidTestRelease",
+			"androidTestFixtures",
+			"androidTestFixturesDebug",
+			"androidTestFixturesRelease",
+		).also { excl ->
+			removeAll { it.name in excl }
+		}
 	}
 
 	// MAIN source sets
