@@ -46,7 +46,7 @@ kotlin {
 }
 
 android {
-	namespace = "com.myapplication.common"
+	namespace = "$group.common"
 	compileSdk = 33
 
 	defaultConfig {
