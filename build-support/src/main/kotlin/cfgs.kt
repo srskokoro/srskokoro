@@ -1,0 +1,3 @@
+@Suppress("ClassName")
+object cfgs {
+}
