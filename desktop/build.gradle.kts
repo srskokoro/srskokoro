@@ -38,6 +38,7 @@ compose.desktop {
 			description = "$packageName Desktop App"
 			vendor = "SRS Kokoro Project & N.N."
 			copyright = "Copyright (C) 2022 $vendor"
+			licenseFile.set(rootProject.file("LICENSE.txt", PathValidation.FILE).absoluteFile)
 
 			linux {
 				menuGroup = packageName
