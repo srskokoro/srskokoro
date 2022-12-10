@@ -36,7 +36,7 @@ compose.desktop {
 			packageVersion = "1.0.0"
 
 			description = "$packageName Desktop App"
-			vendor = "SRS Kokoro Project"
+			vendor = "SRS Kokoro Project & N.N."
 			copyright = "Copyright (C) 2022 $vendor"
 
 			linux {
