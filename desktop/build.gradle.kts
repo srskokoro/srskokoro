@@ -6,18 +6,16 @@ plugins {
 	id("build-support")
 }
 
-val kotlinOptJvmTarget: String by rootProject.extra
-val javaToolchainConfig: Action<JavaToolchainSpec> by rootProject.extra
-val javaToolchainHome = javaToolchains.launcherFor(javaToolchainConfig)
+val javaToolchainHome = javaToolchains.launcherFor(cfgs.jvm.toolchainConfig)
 	.map { it.metadata.installationPath.asFile.absolutePath }
 
 kotlin {
-	jvmToolchain(javaToolchainConfig)
+	jvmToolchain(cfgs.jvm.toolchainConfig)
 
 	target {
 		compilations.all {
 			// TODO Remove eventually -- See, https://github.com/JetBrains/compose-jb/issues/2511
-			kotlinOptions.jvmTarget = kotlinOptJvmTarget
+			kotlinOptions.jvmTarget = cfgs.jvm.kotlinOptTarget
 		}
 	}
 }

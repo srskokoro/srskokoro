@@ -16,24 +16,6 @@ plugins {
 	id("build-support") apply false
 }
 
-@Suppress("UNUSED_VARIABLE") run {
-	val javaVerInt by extra(libs.versions.java.get().toInt())
-
-	val javaVer by extra(JavaVersion.toVersion(javaVerInt))
-	val javaLangVer by extra(JavaLanguageVersion.of(javaVerInt))
-
-	val javaVendor by extra(JvmVendorSpec.ADOPTIUM)
-	val javaToolchainConfig by extra(Action<JavaToolchainSpec> {
-		languageVersion.set(javaLangVer)
-		vendor.set(javaVendor)
-	})
-
-	val kotlinOptJvmTarget by extra(
-		if (javaVerInt <= 8) "1.$javaVerInt"
-		else javaVerInt.toString()
-	)
-}
-
 allprojects {
 	group = "srs.kokoro"
 }

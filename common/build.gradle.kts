@@ -9,23 +9,19 @@ plugins {
 	id("build-support")
 }
 
-val kotlinOptJvmTarget: String by rootProject.extra
-val javaVer: JavaVersion by rootProject.extra
-val javaToolchainConfig: Action<JavaToolchainSpec> by rootProject.extra
-
 kotlin {
-	jvmToolchain(javaToolchainConfig)
+	jvmToolchain(cfgs.jvm.toolchainConfig)
 
 	android {
 		compilations.all {
 			// See, https://stackoverflow.com/a/67024907
-			kotlinOptions.jvmTarget = kotlinOptJvmTarget
+			kotlinOptions.jvmTarget = cfgs.jvm.kotlinOptTarget
 		}
 	}
 	jvm("desktop") {
 		compilations.all {
 			// TODO Remove eventually -- See, https://github.com/JetBrains/compose-jb/issues/2511
-			kotlinOptions.jvmTarget = kotlinOptJvmTarget
+			kotlinOptions.jvmTarget = cfgs.jvm.kotlinOptTarget
 		}
 		testRuns["test"].executionTask.configure {
 			useJUnitPlatform()
@@ -56,7 +52,7 @@ android {
 	}
 
 	compileOptions {
-		javaVer.let {
+		cfgs.jvm.verObj.let {
 			sourceCompatibility = it
 			targetCompatibility = it
 		}

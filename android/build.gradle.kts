@@ -5,12 +5,8 @@ plugins {
 	id("build-support")
 }
 
-val kotlinOptJvmTarget: String by rootProject.extra
-val javaVer: JavaVersion by rootProject.extra
-val javaToolchainConfig: Action<JavaToolchainSpec> by rootProject.extra
-
 kotlin {
-	jvmToolchain(javaToolchainConfig)
+	jvmToolchain(cfgs.jvm.toolchainConfig)
 }
 
 android {
@@ -25,10 +21,10 @@ android {
 	}
 
 	kotlinOptions {
-		jvmTarget = kotlinOptJvmTarget
+		jvmTarget = cfgs.jvm.kotlinOptTarget
 	}
 	compileOptions {
-		javaVer.let {
+		cfgs.jvm.verObj.let {
 			sourceCompatibility = it
 			targetCompatibility = it
 		}
