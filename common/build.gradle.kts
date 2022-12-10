@@ -28,16 +28,19 @@ kotlin {
 		}
 	}
 
+	@Suppress("UNUSED_VARIABLE") // --
 	sourceSets {
 		// Remove log pollution until Android support in KMP improves
 		// - See, https://discuss.kotlinlang.org/t/21448
-		setOf(
-			"androidAndroidTestRelease",
-			"androidTestFixtures",
-			"androidTestFixturesDebug",
-			"androidTestFixturesRelease",
-		).also { excl ->
-			removeAll { it.name in excl }
+		run {
+			val androidTestFixtures by getting
+
+			val androidTestFixturesDebug by getting { dependsOn(androidTestFixtures) }
+			val androidAndroidTestDebug by getting { dependsOn(androidTestFixturesDebug) }
+
+			val androidTestFixturesRelease by getting { dependsOn(androidTestFixtures) }
+			val androidAndroidTestRelease by getting { dependsOn(androidTestFixturesRelease) }
+			val androidTestRelease by getting { dependsOn(androidAndroidTestRelease) }
 		}
 	}
 }
