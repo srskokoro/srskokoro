@@ -6,6 +6,9 @@ plugins {
 	id("build-support")
 }
 
+val appResDirName = "res"
+val appResDir = file(appResDirName)
+
 val javaToolchainHome = javaToolchains.launcherFor(cfgs.jvm.toolchainConfig)
 	.map { it.metadata.installationPath.asFile.absolutePath }
 
@@ -30,6 +33,7 @@ compose.desktop {
 		javaHome = javaToolchainHome.get()
 
 		nativeDistributions {
+			appResourcesRootDir.set(appResDir)
 			targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
 
 			packageName = "SRS Kokoro"
