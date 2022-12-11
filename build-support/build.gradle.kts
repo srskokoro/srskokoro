@@ -7,10 +7,6 @@ repositories {
 	mavenCentral()
 }
 
-dependencies {
-	compileOnly(kotlin("gradle-plugin", "1.7.10"))
-}
-
 gradlePlugin {
 	plugins {
 		create("build-support") {
@@ -18,4 +14,8 @@ gradlePlugin {
 			implementationClass = "BuildSupport"
 		}
 	}
+}
+
+dependencies {
+	compileOnly(kotlin("gradle-plugin", "1.7.10"))
 }
