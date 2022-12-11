@@ -8,8 +8,8 @@ repositories {
 }
 
 dependencies {
-	add("compileOnly", kotlin("gradle-plugin"))
-	add("compileOnly", kotlin("gradle-plugin-api"))
+	compileOnly(kotlin("gradle-plugin"))
+	compileOnly(kotlin("gradle-plugin-api"))
 }
 
 gradlePlugin {
