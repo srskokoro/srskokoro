@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-	compileOnly(kotlin("gradle-plugin"))
+	compileOnly(kotlin("gradle-plugin", "1.7.10"))
 }
 
 gradlePlugin {
