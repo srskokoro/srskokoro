@@ -3,11 +3,29 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
 	kotlin("jvm")
 	id("org.jetbrains.compose")
+	id("jcef-bundler")
 	id("build-support")
 }
 
 val appResDirName = "res"
 val appResDir = file(appResDirName)
+
+jcef {
+	val outputDirRoot by lazy {
+		File(buildDir, "generated/$installTaskName")
+	}
+	tasks.register<Delete>("cleanJcef") {
+		group = "jcef"
+		delete(outputDirRoot)
+	}
+	installTask {
+		outputDir(File(outputDirRoot, "$appResDirName/common/jcef"))
+		doFirst { delete(outputDirRoot) }
+	}
+	dependsOnInstallTask<Sync>("prepareAppResources") {
+		from(outputDir.dir(".."))
+	}
+}
 
 val javaToolchainHome = javaToolchains.launcherFor(cfgs.jvm.toolchainConfig)
 	.map { it.metadata.installationPath.asFile.absolutePath }
@@ -29,6 +47,7 @@ tasks.test {
 compose.desktop {
 	application {
 		mainClass = "MainKt"
+		jvmArgs += jcef.recommendedJvmArgs
 		// TODO Remove eventually -- See, https://github.com/JetBrains/compose-jb/pull/2515
 		javaHome = javaToolchainHome.get()
 
@@ -72,4 +91,5 @@ dependencies {
 dependencies {
 	implementation(compose.desktop.currentOs)
 	implementation(project(":common"))
+	implementation(jcef.dependency)
 }

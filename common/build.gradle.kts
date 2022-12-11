@@ -6,6 +6,7 @@ plugins {
 	kotlin("multiplatform")
 	id("io.kotest.multiplatform")
 	id("org.jetbrains.compose")
+	id("jcef-bundler")
 	id("build-support")
 }
 
@@ -103,6 +104,10 @@ sourceSet("commonMain") dependencies {
 	api(compose.material)
 	// Needed only for preview.
 	implementation(compose.preview)
+}
+
+sourceSet("desktopMain") dependencies {
+	implementation(jcef.dependency)
 }
 
 sourceSet("androidMain") dependencies {
