@@ -81,14 +81,9 @@ compose.desktop {
 	}
 }
 
-// TEST dependencies ONLY
 dependencies {
 	testImplementation(libs.kotest.runner.junit5)
 	testImplementation(libs.bundles.test.common)
-}
-
-// MAIN dependencies
-dependencies {
 	implementation(compose.desktop.currentOs)
 	implementation(project(":common"))
 	implementation(jcef.dependency)

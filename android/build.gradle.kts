@@ -47,14 +47,9 @@ android {
 	}
 }
 
-// TEST dependencies ONLY
 dependencies {
 	testImplementation(libs.kotest.runner.junit5)
 	testImplementation(libs.bundles.test.common)
-}
-
-// MAIN dependencies
-dependencies {
 	implementation(project(":common"))
 	implementation("androidx.activity:activity-compose:1.6.1")
 }

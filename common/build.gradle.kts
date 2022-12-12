@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-
 plugins {
 	id("com.android.library")
 	kotlin("multiplatform")
@@ -70,46 +67,18 @@ android {
 	}
 }
 
-val localKotlin = kotlin
-val localCompose = localKotlin.compose
+@Suppress("UnstableApiUsage")
+dependencies {
+	"desktopTestImplementation"(libs.kotest.runner.junit5)
+	commonTestImplementation(libs.kotest.framework.engine)
+	commonTestImplementation(libs.bundles.test.common)
 
-fun sourceSet(name: String) = localKotlin.sourceSets.named(name)
-
-@Suppress("unused")
-inline val KotlinDependencyHandler.compose
-	get() = localCompose
-
-infix fun NamedDomainObjectProvider<KotlinSourceSet>.dependencies(
-	configure: KotlinDependencyHandler.() -> Unit
-) = configure { dependencies(configure) }
-
-// --=--
-// TEST dependencies ONLY
-
-sourceSet("commonTest") dependencies {
-	implementation(libs.kotest.framework.engine)
-	implementation(libs.bundles.test.common)
-}
-
-sourceSet("desktopTest") dependencies {
-	implementation(libs.kotest.runner.junit5)
-}
-
-// --=--
-// MAIN dependencies
-
-sourceSet("commonMain") dependencies {
-	api(compose.runtime)
-	api(compose.foundation)
-	api(compose.material)
+	commonMainApi(compose.runtime)
+	commonMainApi(compose.foundation)
+	commonMainApi(compose.material)
 	// Needed only for preview.
-	implementation(compose.preview)
-}
+	commonMainImplementation(compose.preview)
 
-sourceSet("desktopMain") dependencies {
-	implementation(jcef.dependency)
-}
-
-sourceSet("androidMain") dependencies {
-	api("androidx.core:core-ktx:1.9.0")
+	"desktopMainImplementation"(jcef.dependency)
+	"androidMainApi"("androidx.core:core-ktx:1.9.0")
 }
