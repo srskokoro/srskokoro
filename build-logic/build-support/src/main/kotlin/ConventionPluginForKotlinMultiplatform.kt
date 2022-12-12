@@ -2,11 +2,11 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionContainer
 
-class BuildSupportForKotlinMultiplatform : Plugin<Project> {
+class ConventionPluginForKotlinMultiplatform : Plugin<Project> {
 
 	override fun apply(project: Project) {
 		val plugins = project.plugins
-		plugins.apply("build-support")
+		plugins.apply("convention")
 
 		// Make sure kotlin multiplatform plugin is applied first; throws otherwise.
 		plugins.getPlugin("org.jetbrains.kotlin.multiplatform")

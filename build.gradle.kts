@@ -13,7 +13,7 @@ plugins {
 	id("io.kotest.multiplatform") version libs.versions.kotest apply false
 
 	// Prefer always last
-	id("build-support") apply false
+	id("convention") apply false
 }
 
 allprojects {

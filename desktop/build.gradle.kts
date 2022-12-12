@@ -4,7 +4,7 @@ plugins {
 	kotlin("jvm")
 	id("org.jetbrains.compose")
 	id("jcef-bundler")
-	id("build-support")
+	id("convention")
 }
 
 val appResDirName = "res"

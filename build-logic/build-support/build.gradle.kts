@@ -9,13 +9,13 @@ repositories {
 
 gradlePlugin {
 	plugins {
-		create("build-support") {
-			id = "build-support"
-			implementationClass = "BuildSupport"
+		create("convention") {
+			id = "convention"
+			implementationClass = "ConventionPlugin"
 		}
-		create("build-support--kotlin-multiplatform") {
-			id = "build-support--kotlin-multiplatform"
-			implementationClass = "BuildSupportForKotlinMultiplatform"
+		create("convention--kotlin-multiplatform") {
+			id = "convention--kotlin-multiplatform"
+			implementationClass = "ConventionPluginForKotlinMultiplatform"
 		}
 	}
 }

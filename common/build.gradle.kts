@@ -4,7 +4,7 @@ plugins {
 	id("io.kotest.multiplatform")
 	id("org.jetbrains.compose")
 	id("jcef-bundler")
-	id("build-support--kotlin-multiplatform")
+	id("convention--kotlin-multiplatform")
 }
 
 kotlin {
