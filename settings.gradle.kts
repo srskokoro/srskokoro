@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 pluginManagement {
+	includeBuild("build-logic")
 	repositories {
 		mavenCentral()
 		gradlePluginPortal()
@@ -19,9 +20,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "srskokoro"
-
-includeBuild("build-support")
-includeBuild("jcef-bundler")
 
 include(":common")
 include(":android")
