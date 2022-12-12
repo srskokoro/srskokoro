@@ -6,6 +6,8 @@ import me.friwi.jcefmaven.impl.util.macos.UnquarantineUtil
 import org.cef.CefApp
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
@@ -14,41 +16,53 @@ import javax.inject.Inject
 
 abstract class JcefInstallTask @Inject constructor(private val jcef: JcefExtension) : DefaultTask() {
 	init {
-		group = "jcef"
+		group = jcef.taskGroup
 		description = "Installs native binaries provided by JCEF Maven."
 	}
 
 	val outputDir @OutputDirectory get() = jcef.outputDir
-	fun outputDir(path: Any) = jcef.outputDir(path)
-	fun outputDir(pathProvider: () -> Any) = jcef.outputDir(pathProvider)
+	val installDirRel @Input get() = jcef.installDirRel
+	val installDir @Internal get() = jcef.installDir
 
 	@TaskAction
 	fun run() {
-		project.installJcef(outputDir.asFile.get(), jcef.platform)
+		val outputDirFile = outputDir.get().asFile
+		val outputDirPath = outputDirFile.path
+
+		val installDirFile = installDir.get().asFile
+		val installDirPath = installDirFile.path
+
+		check(installDirPath.startsWith(outputDirPath) && outputDirPath.length.let {
+			it == installDirPath.length || installDirPath[it] == File.separatorChar
+		}) { "The install directory should be a subdirectory of the output directory." }
+
+		project.run {
+			delete(outputDirFile)
+			installJcef(installDirFile, jcef.platform)
+		}
 	}
 }
 
 private const val installLock = "install.lock"
 
-private fun Project.installJcef(outputDir: File, platform: EnumPlatform) {
-	delete(outputDir)
+private fun Project.installJcef(installDir: File, platform: EnumPlatform) {
 	copy {
 		from(tarTree(JavaClassResource(CefApp::class.java, jcefBuildRes)))
-		into(outputDir)
+		into(installDir)
 	}.run {
 		check(didWork) { "Unexpected: nothing copied." }
 	}
 	if (platform.os.isMacOSX) {
 		// Remove quarantine on macOS
 		// TODO Not sure if this is actually needed. Perhaps quarantine is never set. Need a Mac to confirm.
-		UnquarantineUtil.unquarantine(outputDir)
+		UnquarantineUtil.unquarantine(installDir)
 	}
 	// Marks installation as complete -- note: JCEF Maven expects this.
-	if (!File(outputDir, installLock).createNewFile()) {
+	if (!File(installDir, installLock).createNewFile()) {
 		throw IOException("Could not create `$installLock` to complete installation")
 	}
 	// Verifies that the installed version is correct
-	requireInstallInfo(outputDir)?.let {
+	requireInstallInfo(installDir)?.let {
 		error(
 			"""
 			Invalid installation. Please ensure proper configuration.
@@ -59,13 +73,13 @@ private fun Project.installJcef(outputDir: File, platform: EnumPlatform) {
 	}
 }
 
-private fun Project.requireInstallInfo(outputDir: File): CefBuildInfo? {
+private fun Project.requireInstallInfo(installDir: File): CefBuildInfo? {
 	fun getRequired() = CefBuildInfo.fromClasspath()
 	run {
-		if (!File(outputDir, installLock).exists()) {
+		if (!File(installDir, installLock).exists()) {
 			return@run
 		}
-		val installInfo = File(outputDir, "build_meta.json")
+		val installInfo = File(installDir, "build_meta.json")
 		if (!installInfo.exists()) {
 			return@run
 		}

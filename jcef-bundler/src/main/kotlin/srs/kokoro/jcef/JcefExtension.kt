@@ -6,10 +6,13 @@ import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.property
 import org.gradle.kotlin.dsl.register
-import java.io.File
+import java.util.*
 
 abstract class JcefExtension(private val project: Project) : ExtensionAware {
+	private val objectFactory = project.objects
+
 	val dependency = jcefMavenDep
 
 	val platform = jcefBuildPlatform
@@ -21,15 +24,13 @@ abstract class JcefExtension(private val project: Project) : ExtensionAware {
 		) else emptyList()
 	}
 
-	abstract val outputDir: DirectoryProperty
-	fun outputDir(path: Any) = outputDir.set(project.file(path))
-	fun outputDir(pathProvider: () -> Any): DirectoryProperty {
-		var file: File? = null
-		return outputDir.fileProvider(project.provider {
-			file ?: project.file(pathProvider()).also { file = it }
-		})
-	}
+	val outputDir: DirectoryProperty = objectFactory.directoryProperty().convention(
+		project.layout.buildDirectory.dir("generated/$installTaskName")
+	)
+	val installDirRel = objectFactory.property<String>().convention(".")
+	val installDir = outputDir.dir(installDirRel)
 
+	val taskGroup get() = "jcef"
 	val installTaskName get() = "installJcef"
 
 	private var _installTask: TaskProvider<out JcefInstallTask>? = null

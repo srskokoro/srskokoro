@@ -11,19 +11,9 @@ val appResDirName = "res"
 val appResDir = file(appResDirName)
 
 jcef {
-	val outputDirRoot by lazy {
-		File(buildDir, "generated/$installTaskName")
-	}
-	tasks.register<Delete>("cleanJcef") {
-		group = "jcef"
-		delete(outputDirRoot)
-	}
-	installTask {
-		outputDir(File(outputDirRoot, "$appResDirName/common/jcef"))
-		doFirst { delete(outputDirRoot) }
-	}
+	installDirRel.set("$appResDirName/common/jcef")
 	dependsOnInstallTask<Sync>("prepareAppResources") {
-		from(outputDir.dir(".."))
+		from(this@jcef.outputDir)
 	}
 }
 
