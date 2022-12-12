@@ -13,6 +13,10 @@ gradlePlugin {
 			id = "build-support"
 			implementationClass = "BuildSupport"
 		}
+		create("build-support--kotlin-multiplatform") {
+			id = "build-support--kotlin-multiplatform"
+			implementationClass = "BuildSupportForKotlinMultiplatform"
+		}
 	}
 }
 

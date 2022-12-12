@@ -4,7 +4,7 @@ plugins {
 	id("io.kotest.multiplatform")
 	id("org.jetbrains.compose")
 	id("jcef-bundler")
-	id("build-support")
+	id("build-support--kotlin-multiplatform")
 }
 
 kotlin {
@@ -69,7 +69,7 @@ android {
 
 @Suppress("UnstableApiUsage")
 dependencies {
-	"desktopTestImplementation"(libs.kotest.runner.junit5)
+	desktopTestImplementation(libs.kotest.runner.junit5)
 	commonTestImplementation(libs.kotest.framework.engine)
 	commonTestImplementation(libs.bundles.test.common)
 
@@ -79,6 +79,6 @@ dependencies {
 	// Needed only for preview.
 	commonMainImplementation(compose.preview)
 
-	"desktopMainImplementation"(jcef.dependency)
-	"androidMainApi"("androidx.core:core-ktx:1.9.0")
+	desktopMainImplementation(jcef.dependency)
+	androidMainApi("androidx.core:core-ktx:1.9.0")
 }
