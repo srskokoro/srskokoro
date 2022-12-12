@@ -1,4 +1,4 @@
 rootProject.name = "build-logic"
 
-include(":build-support")
+include(":convention")
 include(":jcef-bundler")
