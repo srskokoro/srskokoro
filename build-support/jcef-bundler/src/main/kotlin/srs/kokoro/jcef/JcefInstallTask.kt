@@ -18,6 +18,10 @@ abstract class JcefInstallTask @Inject constructor(private val jcef: JcefExtensi
 	init {
 		group = jcef.taskGroup
 		description = "Installs native binaries provided by JCEF Maven."
+
+		// TODO Make task compatible with configuration cache
+		@Suppress("LeakingThis")
+		notCompatibleWithConfigurationCache("TODO")
 	}
 
 	val outputDir @OutputDirectory get() = jcef.outputDir
