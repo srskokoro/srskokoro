@@ -3,19 +3,22 @@ package srs.kokoro.jcef
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.TaskProvider
-import org.gradle.kotlin.dsl.property
+import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.register
 import java.util.*
+import javax.inject.Inject
 
-abstract class JcefExtension(private val project: Project) : ExtensionAware {
-	private val objectFactory = project.objects
+abstract class JcefExtension private constructor(
+	private val project: Project,
+	internal val config: JcefConfig,
+) : JcefConfig by config, ExtensionAware {
+	@Suppress("unused")
+	@Inject
+	constructor(project: Project) : this(project, project.objects.newInstance(JcefConfigImpl::class))
 
 	val dependency = jcefMavenDep
-
-	val platform = jcefBuildPlatform
 	val recommendedJvmArgs by lazy(LazyThreadSafetyMode.PUBLICATION) {
 		if (platform.os.isMacOSX) listOf(
 			"--add-opens", "java.desktop/sun.awt=ALL-UNNAMED",
@@ -23,15 +26,6 @@ abstract class JcefExtension(private val project: Project) : ExtensionAware {
 			"--add-opens", "java.desktop/sun.lwawt.macosx=ALL-UNNAMED",
 		) else emptyList()
 	}
-
-	val outputDir: DirectoryProperty = objectFactory.directoryProperty().convention(
-		project.layout.buildDirectory.dir("generated/$installTaskName")
-	)
-	val installDirRel = objectFactory.property<String>().convention(".")
-	val installDir = outputDir.dir(installDirRel)
-
-	val taskGroup get() = "jcef"
-	val installTaskName get() = "installJcef"
 
 	private var _installTask: TaskProvider<out JcefInstallTask>? = null
 	val installTask

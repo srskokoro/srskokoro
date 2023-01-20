@@ -5,28 +5,31 @@ import me.friwi.jcefmaven.EnumPlatform
 import me.friwi.jcefmaven.impl.util.macos.UnquarantineUtil
 import org.cef.CefApp
 import org.gradle.api.DefaultTask
-import org.gradle.api.Project
-import org.gradle.api.tasks.Input
+import org.gradle.api.file.ArchiveOperations
+import org.gradle.api.file.Directory
+import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 
-abstract class JcefInstallTask @Inject constructor(private val jcef: JcefExtension) : DefaultTask() {
-	init {
-		group = jcef.taskGroup
-		description = "Installs native binaries provided by JCEF Maven."
+abstract class JcefInstallTask @Inject constructor(jcef: JcefExtension) : DefaultTask() {
+	@get:Nested internal val config: JcefConfig = jcef.config
 
-		// TODO Make task compatible with configuration cache
-		@Suppress("LeakingThis")
-		notCompatibleWithConfigurationCache("TODO")
+	init {
+		group = config.taskGroup
+		description = "Installs native binaries provided by JCEF Maven."
 	}
 
-	val outputDir @OutputDirectory get() = jcef.outputDir
-	val installDirRel @Input get() = jcef.installDirRel
-	val installDir @Internal get() = jcef.installDir
+	val outputDir: Provider<Directory> @Internal get() = config.outputDir
+	val installDirRel: Provider<String> @Internal get() = config.installDirRel
+	val installDir: Provider<Directory> @Internal get() = config.installDir
+
+	@get:Inject internal abstract val fsOps: FileSystemOperations
+	@get:Inject internal abstract val archiveOps: ArchiveOperations
 
 	@TaskAction
 	fun run() {
@@ -40,18 +43,16 @@ abstract class JcefInstallTask @Inject constructor(private val jcef: JcefExtensi
 			it == installDirPath.length || installDirPath[it] == File.separatorChar
 		}) { "The install directory should be a subdirectory of the output directory." }
 
-		project.run {
-			delete(outputDirFile)
-			installJcef(installDirFile, jcef.platform)
-		}
+		fsOps.delete { delete(outputDirFile) }
+		installJcef(installDirFile, config.platform)
 	}
 }
 
 private const val installLock = "install.lock"
 
-private fun Project.installJcef(installDir: File, platform: EnumPlatform) {
-	copy {
-		from(tarTree(JavaClassResource(CefApp::class.java, jcefBuildRes)))
+private fun JcefInstallTask.installJcef(installDir: File, platform: EnumPlatform) {
+	fsOps.copy {
+		from(archiveOps.tarTree(JavaClassResource(CefApp::class.java, jcefBuildRes)))
 		into(installDir)
 	}.run {
 		check(didWork) { "Unexpected: nothing copied." }
@@ -77,7 +78,7 @@ private fun Project.installJcef(installDir: File, platform: EnumPlatform) {
 	}
 }
 
-private fun Project.requireInstallInfo(installDir: File): CefBuildInfo? {
+private fun JcefInstallTask.requireInstallInfo(installDir: File): CefBuildInfo? {
 	fun getRequired() = CefBuildInfo.fromClasspath()
 	run {
 		if (!File(installDir, installLock).exists()) {
