@@ -25,22 +25,6 @@ kotlin {
 			useJUnitPlatform()
 		}
 	}
-
-	@Suppress("UNUSED_VARIABLE") // --
-	sourceSets {
-		// Remove log pollution until Android support in KMP improves
-		// - See, https://discuss.kotlinlang.org/t/21448
-		run {
-			val androidTestFixtures by getting
-
-			val androidTestFixturesDebug by getting { dependsOn(androidTestFixtures) }
-			val androidAndroidTestDebug by getting { dependsOn(androidTestFixturesDebug) }
-
-			val androidTestFixturesRelease by getting { dependsOn(androidTestFixtures) }
-			val androidAndroidTestRelease by getting { dependsOn(androidTestFixturesRelease) }
-			val androidTestRelease by getting { dependsOn(androidAndroidTestRelease) }
-		}
-	}
 }
 
 android {
@@ -56,13 +40,6 @@ android {
 		cfgs.jvm.verObj.let {
 			sourceCompatibility = it
 			targetCompatibility = it
-		}
-	}
-
-	sourceSets {
-		named("main") {
-			manifest.srcFile("src/androidMain/AndroidManifest.xml")
-			res.srcDirs("src/androidMain/res")
 		}
 	}
 }
