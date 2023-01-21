@@ -18,7 +18,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 abstract class JcefInstallTask @Inject constructor(jcef: JcefExtension) : DefaultTask() {
-	@get:Internal internal val config: JcefConfig = jcef.config
+	private val config: JcefConfig = jcef.config
 
 	init {
 		group = config.taskGroup
