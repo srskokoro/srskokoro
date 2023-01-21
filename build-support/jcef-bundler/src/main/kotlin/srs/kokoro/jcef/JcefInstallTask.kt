@@ -63,8 +63,10 @@ private fun JcefInstallTask.installJcef(installDir: File, platform: EnumPlatform
 		UnquarantineUtil.unquarantine(installDir)
 	}
 	// Marks installation as complete -- note: JCEF Maven expects this.
-	if (!File(installDir, installLock).createNewFile()) {
-		throw IOException("Could not create `$installLock` to complete installation")
+	File(installDir, installLock).also {
+		it.delete()
+		if (!it.createNewFile())
+			throw IOException("Could not create `$installLock` to complete installation")
 	}
 	// Verifies that the installed version is correct
 	requireInstallInfo(installDir)?.let {
