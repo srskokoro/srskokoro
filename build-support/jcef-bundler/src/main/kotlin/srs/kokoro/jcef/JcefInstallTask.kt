@@ -9,23 +9,24 @@ import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.Directory
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 
 abstract class JcefInstallTask @Inject constructor(jcef: JcefExtension) : DefaultTask() {
-	@get:Nested internal val config: JcefConfig = jcef.config
+	@get:Internal internal val config: JcefConfig = jcef.config
 
 	init {
 		group = config.taskGroup
 		description = "Installs native binaries provided by JCEF Maven."
 	}
 
-	val outputDir: Provider<Directory> @Internal get() = config.outputDir
-	val installDirRel: Provider<String> @Internal get() = config.installDirRel
+	val outputDir: Provider<Directory> @OutputDirectory get() = config.outputDir
+	val installDirRel: Provider<String> @Input get() = config.installDirRel
 	val installDir: Provider<Directory> @Internal get() = config.installDir
 
 	@get:Inject internal abstract val fsOps: FileSystemOperations

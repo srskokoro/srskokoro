@@ -28,18 +28,15 @@ internal abstract class JcefConfigImpl @Inject constructor(
 	objectFactory: ObjectFactory,
 	projectLayout: ProjectLayout,
 ) : JcefConfig {
-	@get:Internal final override val taskGroup get() = "jcef"
-	@get:Internal final override val installTaskName get() = "installJcef"
-	@get:Internal final override val platform get() = jcefBuildPlatform
+	final override val taskGroup get() = "jcef"
+	final override val installTaskName get() = "installJcef"
+	final override val platform get() = jcefBuildPlatform
 
-	@get:OutputDirectory
 	final override val outputDir: DirectoryProperty = objectFactory.directoryProperty().convention(
 		projectLayout.buildDirectory.dir("generated/$installTaskName")
 	)
 
-	@get:Input
 	final override val installDirRel = objectFactory.property<String>().convention(".")
 
-	@get:Internal
 	final override val installDir = outputDir.dir(installDirRel)
 }
