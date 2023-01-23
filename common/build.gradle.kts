@@ -21,6 +21,8 @@ kotlin {
 			// TODO Remove eventually -- See, https://github.com/JetBrains/compose-jb/issues/2511
 			kotlinOptions.jvmTarget = cfgs.jvm.kotlinOptTarget
 		}
+		// TODO Uncomment eventually to allow `.java` sources -- https://youtrack.jetbrains.com/issue/KT-30878
+		//withJava()
 		testRuns["test"].executionTask.configure {
 			useJUnitPlatform()
 		}
