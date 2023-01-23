@@ -11,6 +11,7 @@ kotlin {
 	jvmToolchain(cfgs.jvm.toolchainConfig)
 
 	android()
+
 	jvm("desktop") {
 		// TODO Uncomment eventually to allow `.java` sources -- https://youtrack.jetbrains.com/issue/KT-30878
 		//withJava()

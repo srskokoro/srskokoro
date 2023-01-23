@@ -23,6 +23,7 @@ val javaToolchainHome = javaToolchains.launcherFor(cfgs.jvm.toolchainConfig)
 kotlin {
 	jvmToolchain(cfgs.jvm.toolchainConfig)
 }
+
 tasks.test {
 	useJUnitPlatform()
 }
