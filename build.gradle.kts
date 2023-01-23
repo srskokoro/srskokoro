@@ -2,8 +2,8 @@
 @file:Suppress("DSL_SCOPE_VIOLATION", "UnstableApiUsage")
 
 plugins {
-	// This is necessary to avoid the plugins to be loaded multiple times in
-	// each subproject's classloader
+	// Necessary to avoid the plugins to be loaded multiple times in each
+	// subproject's classloader. See also, https://youtrack.jetbrains.com/issue/KT-46200
 	kotlin("jvm") version libs.versions.kotlin apply false
 	kotlin("multiplatform") version libs.versions.kotlin apply false
 	kotlin("android") version libs.versions.kotlin apply false
