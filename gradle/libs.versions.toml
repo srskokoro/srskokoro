@@ -1,6 +1,5 @@
 [versions]
 kotlin = "1.8.0"
-# TODO Update AGP to 7.4 or higher, to fix, https://issuetracker.google.com/issues/194113162
 android = "7.4.0" #-- Android Gradle Plugin (AGP)
 compose-mpp = "1.3.0-rc05"
 kotest = "5.5.4"
