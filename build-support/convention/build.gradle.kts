@@ -19,7 +19,3 @@ gradlePlugin {
 		}
 	}
 }
-
-dependencies {
-	compileOnly(kotlin("gradle-plugin", "1.7.10"))
-}

@@ -21,10 +21,6 @@ gradlePlugin {
 	}
 }
 
-dependencies {
-	compileOnly(kotlin("gradle-plugin", "1.7.10"))
-}
-
 buildscript {
 	dependencies {
 		classpath(project.extra["jcef.maven.dep"] as String)
