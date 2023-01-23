@@ -18,9 +18,4 @@ abstract class cfgs_jvm internal constructor() {
 		languageVersion.set(langVer)
 		vendor.set(this@cfgs_jvm.vendor)
 	}
-
-	val kotlinOptTarget = verInt.let {
-		if (it <= 8) "1.$it"
-		else it.toString()
-	}
 }
