@@ -10,17 +10,8 @@ plugins {
 kotlin {
 	jvmToolchain(cfgs.jvm.toolchainConfig)
 
-	android {
-		compilations.all {
-			// See, https://stackoverflow.com/a/67024907
-			kotlinOptions.jvmTarget = cfgs.jvm.kotlinOptTarget
-		}
-	}
+	android()
 	jvm("desktop") {
-		compilations.all {
-			// TODO Remove eventually -- See, https://github.com/JetBrains/compose-jb/issues/2511
-			kotlinOptions.jvmTarget = cfgs.jvm.kotlinOptTarget
-		}
 		// TODO Uncomment eventually to allow `.java` sources -- https://youtrack.jetbrains.com/issue/KT-30878
 		//withJava()
 		testRuns["test"].executionTask.configure {
@@ -38,6 +29,7 @@ android {
 	}
 
 	compileOptions {
+		// TODO Remove eventually -- See, https://issuetracker.google.com/issues/260059413
 		cfgs.jvm.verObj.let {
 			sourceCompatibility = it
 			targetCompatibility = it

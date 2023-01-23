@@ -20,10 +20,8 @@ android {
 		versionName = "1.0"
 	}
 
-	kotlinOptions {
-		jvmTarget = cfgs.jvm.kotlinOptTarget
-	}
 	compileOptions {
+		// TODO Remove eventually -- See, https://issuetracker.google.com/issues/260059413
 		cfgs.jvm.verObj.let {
 			sourceCompatibility = it
 			targetCompatibility = it

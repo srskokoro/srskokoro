@@ -22,13 +22,6 @@ val javaToolchainHome = javaToolchains.launcherFor(cfgs.jvm.toolchainConfig)
 
 kotlin {
 	jvmToolchain(cfgs.jvm.toolchainConfig)
-
-	target {
-		compilations.all {
-			// TODO Remove eventually -- See, https://github.com/JetBrains/compose-jb/issues/2511
-			kotlinOptions.jvmTarget = cfgs.jvm.kotlinOptTarget
-		}
-	}
 }
 tasks.test {
 	useJUnitPlatform()
@@ -38,7 +31,7 @@ compose.desktop {
 	application {
 		mainClass = "MainKt"
 		jvmArgs += jcef.recommendedJvmArgs
-		// TODO Remove eventually -- See, https://github.com/JetBrains/compose-jb/pull/2515
+		// TODO Remove eventually. See also, https://github.com/JetBrains/compose-jb/pull/2515
 		javaHome = javaToolchainHome.get()
 
 		nativeDistributions {
