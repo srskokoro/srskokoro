@@ -29,7 +29,7 @@ build/
 !/.idea/codeStyles/
 !/.idea/encodings.xml
 !/.idea/copyright/
-!/.idea/compiler.xml
+#!/.idea/compiler.xml
 !/.idea/runConfigurations/
 
 # Keystore files
