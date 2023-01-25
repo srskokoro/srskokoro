@@ -8,10 +8,6 @@ plugins {
 	id("convention.settings")
 }
 
-dependencyResolutionManagement {
-	repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-}
-
 rootProject.name = "srskokoro"
 
 include(":common")
