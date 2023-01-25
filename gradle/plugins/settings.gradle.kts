@@ -6,6 +6,3 @@ pluginManagement {
 plugins {
 	id("convention.settings")
 }
-
-include(":convention")
-include(":jcef-bundler")

@@ -9,7 +9,3 @@ plugins {
 }
 
 rootProject.name = "srskokoro"
-
-include(":common")
-include(":android")
-include(":desktop")
