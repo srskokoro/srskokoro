@@ -2,12 +2,14 @@
 
 pluginManagement {
 	// Include our own custom plugins
-	if (File(rootDir, "gradle/plugins").exists()) {
-		includeBuild("gradle/plugins")
-	}
-	// If not the main build, it might be located next to the current build
-	if (File(rootDir, "../plugins").exists()) {
-		includeBuild("../plugins")
+	"gradle/plugins".let { dir ->
+		for (parent in arrayOf("", "../", "../../")) {
+			val target = "$parent$dir"
+			if (File(rootDir, "$target/settings.gradle.kts").exists()) {
+				includeBuild(target)
+				break
+			}
+		}
 	}
 }
 
