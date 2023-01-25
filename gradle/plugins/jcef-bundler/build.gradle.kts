@@ -8,10 +8,6 @@ plugins {
 
 group = "srs.kokoro.jcef" // Used by `com.github.gmazzo.buildconfig`
 
-repositories {
-	mavenCentral()
-}
-
 buildscript {
 	dependencies {
 		classpath(project.extra["jcef.maven.dep"] as String)
