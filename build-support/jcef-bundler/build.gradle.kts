@@ -14,7 +14,7 @@ repositories {
 
 gradlePlugin {
 	plugins {
-		create("jcef-bundler") {
+		register("jcef-bundler") {
 			id = "jcef-bundler"
 			implementationClass = "$group.JcefBundlerPlugin"
 		}

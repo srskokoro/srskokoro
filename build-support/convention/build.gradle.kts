@@ -9,11 +9,11 @@ repositories {
 
 gradlePlugin {
 	plugins {
-		create("convention") {
+		register("convention") {
 			id = "convention"
 			implementationClass = "ConventionPlugin"
 		}
-		create("convention--kotlin-multiplatform") {
+		register("convention--kotlin-multiplatform") {
 			id = "convention--kotlin-multiplatform"
 			implementationClass = "ConventionPluginForKotlinMultiplatform"
 		}
