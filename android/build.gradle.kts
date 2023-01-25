@@ -1,8 +1,6 @@
 plugins {
-	id("com.android.application")
-	kotlin("android")
+	id("convention.kotlin-android.app")
 	id("org.jetbrains.compose")
-	id("convention")
 }
 
 kotlin {

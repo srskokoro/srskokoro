@@ -1,10 +1,9 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
-	kotlin("jvm")
+	id("convention.kotlin-jvm")
 	id("org.jetbrains.compose")
 	id("jcef-bundler")
-	id("convention")
 }
 
 val appResDirName = "res"

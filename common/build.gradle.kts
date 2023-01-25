@@ -1,10 +1,8 @@
 plugins {
-	id("com.android.library")
-	kotlin("multiplatform")
+	id("convention.kotlin-multiplatform.lib")
 	id("io.kotest.multiplatform")
 	id("org.jetbrains.compose")
 	id("jcef-bundler")
-	id("convention--kotlin-multiplatform")
 }
 
 kotlin {

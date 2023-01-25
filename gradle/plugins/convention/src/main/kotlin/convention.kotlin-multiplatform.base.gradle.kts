@@ -1,9 +1,7 @@
 plugins {
-	id("convention")
+	id("convention.base")
+	kotlin("multiplatform")
 }
-
-// Make sure kotlin multiplatform plugin is applied first; throws otherwise.
-plugins.getPlugin("org.jetbrains.kotlin.multiplatform")
 
 // Adds extensions to conveniently set dependencies at the top level. See,
 // - https://kotlinlang.org/docs/multiplatform-add-dependencies.html
