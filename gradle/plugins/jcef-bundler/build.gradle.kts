@@ -39,12 +39,12 @@ run {
 	}
 
 	buildConfig {
+		packageName("$group")
+
 		useKotlinOutput {
 			internalVisibility = true
 			topLevelConstants = true
 		}
-
-		packageName("$group")
 
 		buildConfigField("String", "jcefBuildTagProp", "\"$jcefBuildTagProp\"")
 		buildConfigField("String", "jcefBuildTag", "\"$jcefBuildTag\"")
