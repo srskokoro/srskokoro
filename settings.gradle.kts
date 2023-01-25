@@ -1,7 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 pluginManagement {
-	includeBuild("build-support")
+	includeBuild("gradle/plugins")
 	repositories {
 		google()
 		mavenCentral()
