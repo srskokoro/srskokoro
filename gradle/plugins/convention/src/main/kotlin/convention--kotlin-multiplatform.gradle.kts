@@ -1,5 +1,3 @@
-import org.gradle.api.plugins.ExtensionContainer
-
 plugins {
 	id("convention")
 }
@@ -19,18 +17,19 @@ dependencies.extensions.let { exts ->
 	val knownSourceSetNames = setOf(
 		"android", "desktop", "jvm"
 	)
+
+	fun ExtensionContainer.addKnownSourceSetName(name: String) {
+		fun ExtensionContainer.addKnownSourceSetName2(name: String) {
+			"${name}Api".let { add(it, it) }
+			"${name}CompileOnly".let { add(it, it) }
+			"${name}Implementation".let { add(it, it) }
+			"${name}RuntimeOnly".let { add(it, it) }
+		}
+
+		addKnownSourceSetName2("${name}Main")
+		addKnownSourceSetName2("${name}Test")
+	}
+
 	for (name in knownSourceSetNames)
 		exts.addKnownSourceSetName(name)
-}
-
-fun ExtensionContainer.addKnownSourceSetName(name: String) {
-	addKnownSourceSetName2("${name}Main")
-	addKnownSourceSetName2("${name}Test")
-}
-
-fun ExtensionContainer.addKnownSourceSetName2(name: String) {
-	"${name}Api".let { add(it, it) }
-	"${name}CompileOnly".let { add(it, it) }
-	"${name}Implementation".let { add(it, it) }
-	"${name}RuntimeOnly".let { add(it, it) }
 }
