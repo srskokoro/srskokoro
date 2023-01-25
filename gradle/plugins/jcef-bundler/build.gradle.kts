@@ -1,11 +1,11 @@
 import me.friwi.jcefmaven.EnumPlatform
 
-group = "srs.kokoro.jcef"
-
 plugins {
 	`kotlin-dsl`
 	id("com.github.gmazzo.buildconfig") version "3.1.0"
 }
+
+group = "srs.kokoro.jcef"
 
 repositories {
 	mavenCentral()
