@@ -11,15 +11,6 @@ repositories {
 	mavenCentral()
 }
 
-gradlePlugin {
-	plugins {
-		register("jcef-bundler") {
-			id = "jcef-bundler"
-			implementationClass = "$group.JcefBundlerPlugin"
-		}
-	}
-}
-
 buildscript {
 	dependencies {
 		classpath(project.extra["jcef.maven.dep"] as String)
