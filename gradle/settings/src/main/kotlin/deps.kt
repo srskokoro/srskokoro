@@ -4,7 +4,10 @@ import java.util.concurrent.atomic.AtomicBoolean
 @Suppress("ClassName")
 object deps {
 	val plugins: Map<String, String> get() = deps_versions.plugins
+	val pluginGroups: Map<String, String> get() = deps_versions.pluginGroups
+
 	val modules: Map<Pair<String, String>, String> get() = deps_versions.modules
+	val moduleGroups: Map<String, String> get() = deps_versions.moduleGroups
 
 	private val initCalled = AtomicBoolean(false)
 	internal fun init() {
