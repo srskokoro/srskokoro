@@ -6,3 +6,7 @@ pluginManagement {
 plugins {
 	id("convention.settings")
 }
+
+dependencyResolutionManagement {
+	repositories.gradlePluginPortal()
+}
