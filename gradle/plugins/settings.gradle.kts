@@ -9,4 +9,5 @@ plugins {
 
 dependencyResolutionManagement {
 	repositories.gradlePluginPortal()
+	includeBuild("../settings")
 }
