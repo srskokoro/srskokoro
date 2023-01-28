@@ -1,3 +1,5 @@
+import convention.deps.internal.*
+
 @Suppress("ClassName")
 abstract class deps_bundles internal constructor() : deps_bundles_base() {
 

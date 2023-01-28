@@ -1,3 +1,5 @@
+package convention.deps.internal
+
 @Suppress("ClassName", "MemberVisibilityCanBePrivate")
 internal class deps_bundle_spec internal constructor() {
 	val modulesMap = mutableMapOf<String, String>()

@@ -1,3 +1,5 @@
+package convention.deps.internal
+
 @Suppress("ClassName")
 class deps_bundle internal constructor(spec: deps_bundle_spec) {
 	val modules: Set<String> = spec.modulesSeq.toSet()

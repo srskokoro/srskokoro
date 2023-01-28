@@ -1,3 +1,5 @@
+package convention.deps.internal
+
 @Suppress("ClassName")
 internal object deps_versions {
 	val plugins = mutableMapOf<String, String>()

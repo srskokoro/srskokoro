@@ -1,3 +1,5 @@
+import convention.deps.internal.*
+
 internal fun deps_versions.init() {
 	val kotlin = "1.8.0"
 	val android = "7.4.0" // Android Gradle Plugin (AGP)

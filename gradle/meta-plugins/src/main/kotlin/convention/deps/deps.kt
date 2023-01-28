@@ -1,3 +1,7 @@
+@file:Suppress("PackageDirectoryMismatch")
+
+import convention.deps.internal.deps_versions
+
 @Suppress("ClassName")
 object deps {
 	object bundles : deps_bundles()
