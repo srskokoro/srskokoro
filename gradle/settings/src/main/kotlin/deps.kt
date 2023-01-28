@@ -17,6 +17,6 @@ object deps {
 			return // Already called before
 		}
 		deps_versions.init()
-		VarHandle.fullFence()
+		VarHandle.releaseFence()
 	}
 }
