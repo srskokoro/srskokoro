@@ -3,6 +3,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 @Suppress("ClassName")
 object deps {
+	object bundles : deps_bundles()
+
 	val plugins: Map<String, String> get() = deps_versions.plugins
 	val pluginGroups: Map<String, String> get() = deps_versions.pluginGroups
 
