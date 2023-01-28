@@ -1,6 +1,6 @@
 @Suppress("ClassName")
-class deps_bundle internal constructor(from: deps_bundle_spec) {
-	val modules: Set<String> = from.modulesSeq.toSet()
+class deps_bundle internal constructor(spec: deps_bundle_spec) {
+	val modules: Set<String> = spec.modulesSeq.toSet()
 
 	inline fun modules(action: (String) -> Unit) = modules.forEach(action)
 
