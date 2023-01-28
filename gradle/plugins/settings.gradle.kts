@@ -1,7 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 pluginManagement {
-	includeBuild("../settings")
+	includeBuild("../meta-plugins")
 }
 plugins {
 	id("convention.settings")
@@ -9,5 +9,5 @@ plugins {
 
 dependencyResolutionManagement {
 	repositories.gradlePluginPortal()
-	includeBuild("../settings")
+	includeBuild("../meta-plugins")
 }
