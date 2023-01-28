@@ -77,8 +77,10 @@ compose.desktop {
 }
 
 dependencies {
-	testImplementation(libs.kotest.runner.junit5)
-	testImplementation(libs.bundles.test.common)
+	testImplementation("io.kotest:kotest-runner-junit5")
+	deps.bundles.testCommon {
+		testImplementation(it)
+	}
 	implementation(compose.desktop.currentOs)
 	implementation(project(":common"))
 	implementation(jcef.dependency)

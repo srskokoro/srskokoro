@@ -44,8 +44,10 @@ android {
 }
 
 dependencies {
-	testImplementation(libs.kotest.runner.junit5)
-	testImplementation(libs.bundles.test.common)
+	testImplementation("io.kotest:kotest-runner-junit5")
+	deps.bundles.testCommon {
+		testImplementation(it)
+	}
 	implementation(project(":common"))
 	implementation("androidx.activity:activity-compose:1.6.1")
 }

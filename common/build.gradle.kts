@@ -38,9 +38,11 @@ android {
 
 @Suppress("UnstableApiUsage")
 dependencies {
-	desktopTestImplementation(libs.kotest.runner.junit5)
-	commonTestImplementation(libs.kotest.framework.engine)
-	commonTestImplementation(libs.bundles.test.common)
+	desktopTestImplementation("io.kotest:kotest-runner-junit5")
+	commonTestImplementation("io.kotest:kotest-framework-engine")
+	deps.bundles.testCommon {
+		commonTestImplementation(it)
+	}
 
 	commonMainApi(compose.runtime)
 	commonMainApi(compose.foundation)
