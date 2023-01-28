@@ -10,8 +10,8 @@ internal object deps_versions {
 		plugins[id] = version
 	}
 
-	fun pluginGroup(group: String, version: String) {
-		pluginGroups[group] = version
+	fun pluginGroup(idNs: String, version: String) {
+		pluginGroups[idNs] = version
 	}
 
 	fun module(moduleNotation: String, version: String) {
