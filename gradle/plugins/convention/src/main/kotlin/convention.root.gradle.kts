@@ -1,3 +1,3 @@
 plugins {
-	id("convention.deps-hook.root")
+	id("convention.deps.hook.root")
 }
