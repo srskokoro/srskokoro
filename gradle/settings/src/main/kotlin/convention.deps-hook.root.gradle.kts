@@ -1,4 +1,3 @@
-deps.init()
 allprojects {
 	configurations.all {
 		resolutionStrategy.eachDependency {

@@ -1,6 +1,3 @@
-import java.lang.invoke.VarHandle
-import java.util.concurrent.atomic.AtomicBoolean
-
 @Suppress("ClassName")
 object deps {
 	object bundles : deps_bundles()
@@ -11,12 +8,7 @@ object deps {
 	val modules: Map<Pair<String, String>, String> get() = deps_versions.modules
 	val moduleGroups: Map<String, String> get() = deps_versions.moduleGroups
 
-	private val initCalled = AtomicBoolean(false)
-	internal fun init() {
-		if (initCalled.compareAndExchange(false, true)) {
-			return // Already called before
-		}
+	init {
 		deps_versions.init()
-		VarHandle.releaseFence()
 	}
 }

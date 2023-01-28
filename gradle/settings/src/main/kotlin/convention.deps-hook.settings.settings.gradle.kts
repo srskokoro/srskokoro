@@ -1,5 +1,4 @@
 pluginManagement {
-	deps.init()
 	resolutionStrategy.eachPlugin {
 		requested.run {
 			if (version.isNullOrEmpty()) {
