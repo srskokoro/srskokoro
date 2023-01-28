@@ -3,3 +3,5 @@
 dependencyResolutionManagement {
 	repositories.gradlePluginPortal()
 }
+
+include("deps-plugins", "settings-plugins")
