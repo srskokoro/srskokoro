@@ -1,38 +1,51 @@
 package convention.deps.internal
 
+import convention.deps.internal.util.indexOfModuleGroupDelimiter
+
 @Suppress("ClassName", "MemberVisibilityCanBePrivate")
 internal class deps_bundle_spec internal constructor() {
-	val modulesMap = mutableMapOf<String, String>()
-	val modulesSeq = modulesMap.asSequence().map { (module, version) ->
-		if (version.isEmpty()) module else "$module:$version"
+	val modules = mutableMapOf<Pair<String, String>, String>()
+	val modulesSeq = modules.asSequence().map { (moduleNotation, version) ->
+		val (group, name) = moduleNotation
+		if (version.isEmpty()) "$group:$name"
+		else "$group:$name:$version"
 	}
 }
 
 internal fun deps_bundle_spec.module(dependencyNotation: String) {
-	val groupDelimiterIdx = dependencyNotation.indexOf(':')
-	require(groupDelimiterIdx >= 0) {
-		"Supplied `String` module notation \"$dependencyNotation\" is invalid. " +
-			"Example notations: \"org.gradle:gradle-core:2.2\", \"org.mockito:mockito-core:1.9.5:javadoc\""
-	}
-
+	val groupDelimiterIdx = indexOfModuleGroupDelimiter(isDependencyNotation = true, dependencyNotation)
 	val nameDelimiterIdx = dependencyNotation.indexOf(':', groupDelimiterIdx + 1)
 
-	val moduleNotation: String
+	val group = dependencyNotation.substring(0, groupDelimiterIdx)
+	val name: String
 	val version: String
 
 	if (nameDelimiterIdx < 0) {
-		moduleNotation = dependencyNotation
+		name = dependencyNotation.substring(groupDelimiterIdx + 1)
 		version = ""
 	} else {
-		moduleNotation = dependencyNotation.substring(0, nameDelimiterIdx)
+		name = dependencyNotation.substring(groupDelimiterIdx + 1, nameDelimiterIdx)
 		version = dependencyNotation.substring(nameDelimiterIdx + 1)
 	}
 
-	return module(moduleNotation, version)
+	return module(
+		group = group,
+		name = name,
+		version = version,
+	)
 }
 
 internal fun deps_bundle_spec.module(moduleNotation: String, version: String) {
-	modulesMap[moduleNotation] = version
+	val groupDelimiterIdx = indexOfModuleGroupDelimiter(isDependencyNotation = false, moduleNotation)
+	return module(
+		group = moduleNotation.substring(0, groupDelimiterIdx),
+		name = moduleNotation.substring(groupDelimiterIdx + 1),
+		version = version,
+	)
 }
 
-internal fun deps_bundle_spec.module(group: String, name: String, version: String) = module("$group:$name", version)
+internal fun deps_bundle_spec.module(moduleNotation: Pair<String, String>, version: String) {
+	modules[moduleNotation] = version
+}
+
+internal fun deps_bundle_spec.module(group: String, name: String, version: String) = module(group to name, version)

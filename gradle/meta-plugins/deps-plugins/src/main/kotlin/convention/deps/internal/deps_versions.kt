@@ -1,5 +1,7 @@
 package convention.deps.internal
 
+import convention.deps.internal.util.indexOfModuleGroupDelimiter
+
 @Suppress("ClassName")
 internal object deps_versions {
 	val plugins = mutableMapOf<String, String>()
@@ -18,12 +20,7 @@ internal fun deps_versions.pluginGroup(idNs: String, version: String) {
 }
 
 internal fun deps_versions.module(moduleNotation: String, version: String) {
-	val groupDelimiterIdx = moduleNotation.indexOf(':')
-	require(groupDelimiterIdx >= 0) {
-		"Supplied `String` module notation \"$moduleNotation\" is invalid. " +
-			"Example notations: \"org.gradle:gradle-core\", \"org.mockito:mockito-core\""
-	}
-
+	val groupDelimiterIdx = indexOfModuleGroupDelimiter(isDependencyNotation = false, moduleNotation)
 	return module(
 		group = moduleNotation.substring(0, groupDelimiterIdx),
 		name = moduleNotation.substring(groupDelimiterIdx + 1),
