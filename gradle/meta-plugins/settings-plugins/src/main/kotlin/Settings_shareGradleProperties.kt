@@ -6,15 +6,16 @@ import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
 
 /**
- * Generates a 'gradle.properties' file for the specified project path and fills
- * it with the same entries defined by the build's 'gradle.properties' file
- * (located in the build's root directory).
+ * Generates a 'gradle.properties' file for the specified project directory and
+ * fills it with the same entries as those in the build's 'gradle.properties'
+ * file (located in the build's root directory).
  *
- * @param projectPath the project path (relative to the build's root directory).
+ * @param projectDir the project directory path (relative to the build's root
+ * directory).
  */
-fun Settings.shareGradleProperties(projectPath: String) {
+fun Settings.shareGradleProperties(projectDir: String) {
 	val propSrc = File(rootDir, "gradle.properties")
-	val propDst = File(rootDir, "$projectPath/gradle.properties")
+	val propDst = File(rootDir, "$projectDir/gradle.properties")
 
 	if (propDst.exists()) {
 		Files.readAttributes(propDst.toPath(), BasicFileAttributes::class.java).let { propDstAttr ->
