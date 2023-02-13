@@ -34,19 +34,9 @@ pluginManagement {
 					}
 
 					if (propDst.lastModified() > propSrcLastMod + APPROX_UNTOUCHED_MILLIS) {
-						assert(APPROX_UNTOUCHED_MILLIS > 1000)
-						propDst.setLastModified(propSrcLastMod + 1000)
-					}
-
-					// Make sure that the destination's last modification time
-					// is always greater than that of the source file, even if
-					// the OS rounds it -- https://stackoverflow.com/a/11547476
-					run {
-						var t = propSrcLastMod
-						while (propDst.lastModified() <= propSrcLastMod) {
-							t += 1000
-							propDst.setLastModified(t)
-						}
+						// NOTE: The OS may round the last modification time to
+						// the nearest supported value -- https://stackoverflow.com/a/11547476
+						propDst.setLastModified(propSrcLastMod + APPROX_UNTOUCHED_MILLIS / 2)
 					}
 				}
 			}
