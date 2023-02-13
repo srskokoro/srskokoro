@@ -23,6 +23,10 @@ pluginManagement {
 						.let { it <= propSrcLastMod || it > propSrcLastMod + APPROX_UNTOUCHED_MILLIS }
 				) {
 					val prop = Properties()
+					// NOTE: `gradle.properties` files are supposed to be
+					// encoded in ISO-8859-1 (also known as Latin-1).
+					// - See, https://github.com/gradle/gradle/issues/13741#issuecomment-658177619
+					// - See also, https://en.wikipedia.org/wiki/.properties
 					propSrc.inputStream().use {
 						prop.load(it)
 					}
