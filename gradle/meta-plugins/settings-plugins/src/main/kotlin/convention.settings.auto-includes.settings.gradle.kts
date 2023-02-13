@@ -10,7 +10,7 @@ pluginManagement {
 	"gradle/plugins".let { pluginsDir ->
 		for (parent in arrayOf("", "../", "../../")) {
 			val target = "$parent$pluginsDir"
-			if (!File(rootDir, "$target/settings.gradle.kts").exists()) continue
+			if (File(rootDir, "$target/settings.gradle.kts").exists().not()) continue
 
 			// If we're the main build, share its root 'gradle.properties'
 			if (parent == "") run gradlePropsShareOp@{
