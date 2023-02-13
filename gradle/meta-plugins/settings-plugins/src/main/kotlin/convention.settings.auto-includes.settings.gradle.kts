@@ -16,7 +16,8 @@ pluginManagement {
 				val propDst = File(rootDir, "$target/gradle.properties")
 
 				val propSrcLastMod = propSrc.lastModified()
-				val APPROX_UNTOUCHED_MILLIS = 10_000
+				val APPROX_UNTOUCHED_MILLIS_HALVED = 5_000
+				val APPROX_UNTOUCHED_MILLIS = 2 * APPROX_UNTOUCHED_MILLIS_HALVED
 
 				if (propDst.lastModified()
 						.let { it <= propSrcLastMod || it > propSrcLastMod + APPROX_UNTOUCHED_MILLIS }
@@ -36,7 +37,7 @@ pluginManagement {
 					if (propDst.lastModified() > propSrcLastMod + APPROX_UNTOUCHED_MILLIS) {
 						// NOTE: The OS may round the last modification time to
 						// the nearest supported value -- https://stackoverflow.com/a/11547476
-						propDst.setLastModified(propSrcLastMod + APPROX_UNTOUCHED_MILLIS / 2)
+						propDst.setLastModified(propSrcLastMod + APPROX_UNTOUCHED_MILLIS_HALVED)
 					}
 				}
 			}
