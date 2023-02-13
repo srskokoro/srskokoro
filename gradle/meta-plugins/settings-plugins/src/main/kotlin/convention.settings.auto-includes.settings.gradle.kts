@@ -14,18 +14,21 @@ pluginManagement {
 				// Share the main build's `gradle.properties`
 				val propSrc = File(rootDir, "gradle.properties")
 				val propDst = File(rootDir, "$target/gradle.properties")
+
 				val propSrcLastMod = propSrc.lastModified()
 				if (propSrcLastMod >= propDst.lastModified()) {
 					val prop = Properties()
 					propSrc.inputStream().use {
 						prop.load(it)
 					}
+
 					if (propDst.exists() && !propDst.delete()) throw FileAlreadyExistsException(
 						file = propDst, reason = "Failed to delete the destination file."
 					)
 					propDst.outputStream().use {
 						prop.store(it, "Auto-generated. DO NOT MODIFY.")
 					}
+
 					if (propSrcLastMod >= propDst.lastModified())
 						propDst.setLastModified(propSrcLastMod + 1)
 				}
