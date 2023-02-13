@@ -16,7 +16,11 @@ pluginManagement {
 				val propDst = File(rootDir, "$target/gradle.properties")
 
 				val propSrcLastMod = propSrc.lastModified()
-				if (propSrcLastMod >= propDst.lastModified()) {
+				val APPROX_UNTOUCHED_MILLIS = 10_000
+
+				if (propDst.lastModified()
+						.let { it <= propSrcLastMod || it > propSrcLastMod + APPROX_UNTOUCHED_MILLIS }
+				) {
 					val prop = Properties()
 					propSrc.inputStream().use {
 						prop.load(it)
@@ -29,8 +33,21 @@ pluginManagement {
 						prop.store(it, "Auto-generated. DO NOT MODIFY.")
 					}
 
-					if (propSrcLastMod >= propDst.lastModified())
-						propDst.setLastModified(propSrcLastMod + 1)
+					if (propDst.lastModified() > propSrcLastMod + APPROX_UNTOUCHED_MILLIS) {
+						assert(APPROX_UNTOUCHED_MILLIS > 1000)
+						propDst.setLastModified(propSrcLastMod + 1000)
+					}
+
+					// Make sure that the destination's last modification time
+					// is always greater than that of the source file, even if
+					// the OS rounds it -- https://stackoverflow.com/a/11547476
+					run {
+						var t = propSrcLastMod
+						while (propDst.lastModified() <= propSrcLastMod) {
+							t += 1000
+							propDst.setLastModified(t)
+						}
+					}
 				}
 			}
 
