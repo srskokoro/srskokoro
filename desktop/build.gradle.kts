@@ -17,7 +17,7 @@ jcef {
 }
 
 kotlin {
-	jvmToolchain(cfgs.jvm.toolchainConfig)
+	jvmToolchain(deps.jvm.toolchainConfig)
 }
 
 tasks.test {

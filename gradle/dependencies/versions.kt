@@ -1,4 +1,5 @@
 import convention.deps.internal.*
+import org.gradle.jvm.toolchain.JvmVendorSpec
 
 internal fun deps_versions.init() {
 	val kotlin = "1.8.0"
@@ -6,6 +7,11 @@ internal fun deps_versions.init() {
 	val compose_mpp = "1.3.0-rc05"
 	val kotest = "5.5.4"
 	val kotlinx_coroutines = "1.6.4"
+
+	jvm {
+		ver = 17
+		vendor = @Suppress("UnstableApiUsage") JvmVendorSpec.ADOPTIUM
+	}
 
 	"org.jetbrains.kotlin".let {
 		pluginGroup(it, kotlin)

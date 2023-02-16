@@ -4,11 +4,17 @@ import convention.deps.internal.util.indexOfModuleGroupDelimiter
 
 @Suppress("ClassName")
 internal object deps_versions {
+	val jvm = deps_jvm_spec()
+
 	val plugins = mutableMapOf<String, String>()
 	val pluginGroups = mutableMapOf<String, String>()
 
 	val modules = mutableMapOf<Pair<String, String>, String>()
 	val moduleGroups = mutableMapOf<String, String>()
+}
+
+internal inline fun deps_versions.jvm(config: deps_jvm_spec.() -> Unit) {
+	jvm.config()
 }
 
 internal fun deps_versions.plugin(id: String, version: String) {

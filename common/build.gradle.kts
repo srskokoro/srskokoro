@@ -6,7 +6,7 @@ plugins {
 }
 
 kotlin {
-	jvmToolchain(cfgs.jvm.toolchainConfig)
+	jvmToolchain(deps.jvm.toolchainConfig)
 
 	android()
 
@@ -29,7 +29,7 @@ android {
 
 	compileOptions {
 		// TODO Remove eventually -- See, https://issuetracker.google.com/issues/260059413
-		cfgs.jvm.verObj.let {
+		deps.jvm.verObj.let {
 			sourceCompatibility = it
 			targetCompatibility = it
 		}
