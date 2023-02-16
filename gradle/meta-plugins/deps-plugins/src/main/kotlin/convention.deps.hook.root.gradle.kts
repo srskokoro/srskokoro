@@ -1,10 +1,18 @@
 allprojects {
 	configurations.all {
-		resolutionStrategy.eachDependency {
-			requested.run {
-				if (version.isNullOrEmpty()) {
-					(deps.modules[group to name] ?: deps.moduleGroups[group])?.let {
-						useVersion(it)
+		dependencies.withType<ExternalDependency> {
+			version {
+				if (requiredVersion.isEmpty() && strictVersion.isEmpty()) {
+					(deps.modules[group to name] ?: deps.moduleGroups[group])?.let { v ->
+						val rejectedVersionsBackup = rejectedVersions
+							.takeUnless { it.isEmpty() }
+							?.toTypedArray()
+
+						require(v) // NOTE: Clears `rejectedVersions`
+
+						rejectedVersionsBackup?.let {
+							reject(*it)
+						}
 					}
 				}
 			}
