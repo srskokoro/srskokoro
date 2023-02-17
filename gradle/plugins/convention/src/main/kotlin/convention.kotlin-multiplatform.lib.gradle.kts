@@ -1,18 +1,6 @@
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
-
 plugins {
 	id("com.android.library")
 	id("convention.kotlin-multiplatform.base")
-}
-
-kotlin {
-	jvmToolchain(deps.jvm.toolchainConfig)
-
-	targets.withType<KotlinJvmTarget> {
-		testRuns["test"].executionTask.configure {
-			useJUnitPlatform()
-		}
-	}
 }
 
 android {

@@ -1,6 +1,18 @@
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+
 plugins {
 	id("convention.base")
 	kotlin("multiplatform")
+}
+
+kotlin {
+	jvmToolchain(deps.jvm.toolchainConfig)
+
+	targets.withType<KotlinJvmTarget> {
+		testRuns["test"].executionTask.configure {
+			useJUnitPlatform()
+		}
+	}
 }
 
 // Adds extensions to conveniently set dependencies at the top level. See,
