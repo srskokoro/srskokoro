@@ -7,4 +7,10 @@ plugins {
 
 android {
 	configureConvention()
+
+	testOptions {
+		unitTests.all {
+			it.useJUnitPlatform()
+		}
+	}
 }
