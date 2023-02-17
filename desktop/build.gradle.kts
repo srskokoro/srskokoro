@@ -16,14 +16,6 @@ jcef {
 	}
 }
 
-kotlin {
-	jvmToolchain(deps.jvm.toolchainConfig)
-}
-
-tasks.test {
-	useJUnitPlatform()
-}
-
 compose.desktop {
 	application {
 		mainClass = "MainKt"
