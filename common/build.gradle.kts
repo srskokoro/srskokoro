@@ -23,7 +23,7 @@ android {
 
 @Suppress("UnstableApiUsage")
 dependencies {
-	deps.bundles.testCommon {
+	deps.bundles.testExtras {
 		commonTestImplementation(it)
 	}
 

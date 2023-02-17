@@ -22,7 +22,7 @@ android {
 }
 
 dependencies {
-	deps.bundles.testCommon {
+	deps.bundles.testExtras {
 		testImplementation(it)
 	}
 	implementation(project(":common"))

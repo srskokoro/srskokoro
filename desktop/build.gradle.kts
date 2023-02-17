@@ -69,7 +69,7 @@ compose.desktop {
 }
 
 dependencies {
-	deps.bundles.testCommon {
+	deps.bundles.testExtras {
 		testImplementation(it)
 	}
 	implementation(compose.desktop.currentOs)
