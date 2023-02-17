@@ -1,3 +1,4 @@
+import convention.configureConvention
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 plugins {
@@ -6,7 +7,7 @@ plugins {
 }
 
 kotlin {
-	jvmToolchain(deps.jvm.toolchainConfig)
+	configureConvention()
 
 	targets.withType<KotlinJvmTarget> {
 		testRuns["test"].executionTask.configure {
