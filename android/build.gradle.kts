@@ -3,10 +3,6 @@ plugins {
 	id("org.jetbrains.compose")
 }
 
-kotlin {
-	jvmToolchain(deps.jvm.toolchainConfig)
-}
-
 android {
 	namespace = "$group.app"
 	compileSdk = 33
@@ -18,24 +14,6 @@ android {
 		versionName = "1.0"
 	}
 
-	compileOptions {
-		// TODO Remove eventually -- See, https://issuetracker.google.com/issues/260059413
-		deps.jvm.verObj.let {
-			sourceCompatibility = it
-			targetCompatibility = it
-		}
-	}
-	testOptions {
-		unitTests.all {
-			it.useJUnitPlatform()
-		}
-	}
-
-	packagingOptions {
-		resources {
-			excludes += "/META-INF/{AL2.0,LGPL2.1}"
-		}
-	}
 	buildTypes {
 		getByName("release") {
 			isMinifyEnabled = false
