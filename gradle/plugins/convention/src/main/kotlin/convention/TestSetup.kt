@@ -2,6 +2,6 @@ package convention
 
 import org.gradle.api.tasks.testing.Test
 
-fun Test.setUpTestTask() {
+internal fun Test.setUpTestTask() {
 	useJUnitPlatform()
 }
