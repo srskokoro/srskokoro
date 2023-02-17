@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 plugins {
 	id("convention.base")
 	kotlin("multiplatform")
+	id("io.kotest.multiplatform")
 }
 
 kotlin {

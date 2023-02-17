@@ -1,6 +1,5 @@
 plugins {
 	id("convention.kotlin-multiplatform.lib")
-	id("io.kotest.multiplatform")
 	id("org.jetbrains.compose")
 	id("jcef-bundler")
 }
@@ -24,8 +23,6 @@ android {
 
 @Suppress("UnstableApiUsage")
 dependencies {
-	desktopTestImplementation("io.kotest:kotest-runner-junit5")
-	commonTestImplementation("io.kotest:kotest-framework-engine")
 	deps.bundles.testCommon {
 		commonTestImplementation(it)
 	}

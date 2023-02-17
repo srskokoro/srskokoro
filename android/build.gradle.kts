@@ -22,7 +22,6 @@ android {
 }
 
 dependencies {
-	testImplementation("io.kotest:kotest-runner-junit5")
 	deps.bundles.testCommon {
 		testImplementation(it)
 	}

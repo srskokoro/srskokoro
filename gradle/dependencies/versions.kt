@@ -22,6 +22,7 @@ internal fun deps_versions.init() {
 
 	val kotest = "5.5.4"
 	plugin("io.kotest.multiplatform", kotest)
+	module("io.kotest:kotest-framework-multiplatform-plugin-gradle", kotest)
 	module("io.kotest:kotest-runner-junit5", kotest)
 	module("io.kotest:kotest-framework-engine", kotest)
 	module("io.kotest:kotest-assertions-core", kotest)
