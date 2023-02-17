@@ -1,4 +1,5 @@
 import convention.configureConvention
+import convention.configureTestTask
 
 plugins {
 	id("convention.base")
@@ -15,7 +16,7 @@ android {
 
 	testOptions {
 		unitTests.all {
-			it.useJUnitPlatform()
+			it.configureTestTask()
 		}
 	}
 

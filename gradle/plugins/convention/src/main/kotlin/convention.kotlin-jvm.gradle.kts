@@ -1,4 +1,5 @@
 import convention.configureConvention
+import convention.configureTestTask
 
 plugins {
 	id("convention.base")
@@ -10,5 +11,5 @@ kotlin {
 }
 
 tasks.test {
-	useJUnitPlatform()
+	configureTestTask()
 }

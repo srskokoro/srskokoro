@@ -1,4 +1,5 @@
 import convention.configureConvention
+import convention.configureTestTask
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 plugins {
@@ -11,7 +12,7 @@ kotlin {
 
 	targets.withType<KotlinJvmTarget> {
 		testRuns["test"].executionTask.configure {
-			useJUnitPlatform()
+			configureTestTask()
 		}
 	}
 }
