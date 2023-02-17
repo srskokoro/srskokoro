@@ -1,5 +1,5 @@
-import convention.configureConvention
-import convention.configureTestTask
+import convention.setUpConvention
+import convention.setUpTestTask
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 plugins {
@@ -8,11 +8,11 @@ plugins {
 }
 
 kotlin {
-	configureConvention()
+	setUpConvention()
 
 	targets.withType<KotlinJvmTarget> {
 		testRuns["test"].executionTask.configure {
-			configureTestTask()
+			setUpTestTask()
 		}
 	}
 }

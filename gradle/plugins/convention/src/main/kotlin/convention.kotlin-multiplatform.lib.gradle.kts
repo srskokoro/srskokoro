@@ -1,4 +1,4 @@
-import convention.configureConvention
+import convention.setUpConvention
 
 plugins {
 	id("com.android.library")
@@ -6,5 +6,5 @@ plugins {
 }
 
 android {
-	configureConvention()
+	setUpConvention()
 }

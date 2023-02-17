@@ -1,5 +1,5 @@
-import convention.configureConvention
-import convention.configureTestTask
+import convention.setUpConvention
+import convention.setUpTestTask
 
 plugins {
 	id("convention.base")
@@ -7,9 +7,9 @@ plugins {
 }
 
 kotlin {
-	configureConvention()
+	setUpConvention()
 }
 
 tasks.test {
-	configureTestTask()
+	setUpTestTask()
 }

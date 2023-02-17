@@ -1,4 +1,4 @@
-import convention.configureConvention
+import convention.setUpConvention
 
 plugins {
 	id("convention.base")
@@ -7,11 +7,11 @@ plugins {
 }
 
 kotlin {
-	configureConvention()
+	setUpConvention()
 }
 
 android {
-	configureConvention()
+	setUpConvention()
 
 	packagingOptions {
 		resources {
