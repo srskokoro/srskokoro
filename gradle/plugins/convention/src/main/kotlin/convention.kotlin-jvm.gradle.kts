@@ -1,7 +1,6 @@
 import convention.setUp
 import convention.setUpTestCommonDeps
 import convention.setUpTestFrameworkDeps_jvm
-import convention.setUpTestTask
 
 plugins {
 	id("convention.base")
@@ -13,7 +12,7 @@ kotlin {
 }
 
 tasks.test {
-	setUpTestTask()
+	setUp(this)
 }
 
 dependencies {

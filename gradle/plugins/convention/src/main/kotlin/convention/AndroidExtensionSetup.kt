@@ -14,7 +14,7 @@ internal fun setUp(extension: CommonExtension<*, *, *, *>): Unit = with(extensio
 
 	testOptions {
 		unitTests.all {
-			it.setUpTestTask()
+			setUp(it)
 		}
 	}
 }
