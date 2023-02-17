@@ -11,4 +11,10 @@ fun CommonExtension<*, *, *, *>.configureConvention() {
 			targetCompatibility = it
 		}
 	}
+
+	testOptions {
+		unitTests.all {
+			it.configureTestTask()
+		}
+	}
 }

@@ -1,5 +1,4 @@
 import convention.configureConvention
-import convention.configureTestTask
 
 plugins {
 	id("convention.base")
@@ -13,12 +12,6 @@ kotlin {
 
 android {
 	configureConvention()
-
-	testOptions {
-		unitTests.all {
-			it.configureTestTask()
-		}
-	}
 
 	packagingOptions {
 		resources {
