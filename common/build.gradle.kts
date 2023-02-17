@@ -6,16 +6,10 @@ plugins {
 }
 
 kotlin {
-	jvmToolchain(deps.jvm.toolchainConfig)
-
 	android()
-
 	jvm("desktop") {
 		// TODO Uncomment eventually to allow `.java` sources -- https://youtrack.jetbrains.com/issue/KT-30878
 		//withJava()
-		testRuns["test"].executionTask.configure {
-			useJUnitPlatform()
-		}
 	}
 }
 
@@ -25,14 +19,6 @@ android {
 
 	defaultConfig {
 		minSdk = 21
-	}
-
-	compileOptions {
-		// TODO Remove eventually -- See, https://issuetracker.google.com/issues/260059413
-		deps.jvm.verObj.let {
-			sourceCompatibility = it
-			targetCompatibility = it
-		}
 	}
 }
 
