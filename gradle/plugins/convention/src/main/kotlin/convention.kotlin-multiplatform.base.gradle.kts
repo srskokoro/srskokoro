@@ -1,5 +1,4 @@
-import convention.setUpConvention
-import convention.setUpTestTask
+import convention.*
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 plugins {
@@ -13,6 +12,21 @@ kotlin {
 	targets.withType<KotlinJvmTarget> {
 		testRuns["test"].executionTask.configure {
 			setUpTestTask()
+		}
+		sourceSets["${name}Test"].dependencies {
+			setUpTestFrameworkDeps_jvm {
+				implementation(it)
+			}
+		}
+	}
+	sourceSets.commonTest {
+		dependencies {
+			setUpTestFrameworkDeps_kmp_common {
+				implementation(it)
+			}
+			setUpTestCommonDeps {
+				implementation(it)
+			}
 		}
 	}
 }

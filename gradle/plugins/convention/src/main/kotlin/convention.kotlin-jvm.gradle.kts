@@ -1,4 +1,6 @@
 import convention.setUpConvention
+import convention.setUpTestCommonDeps
+import convention.setUpTestFrameworkDeps_jvm
 import convention.setUpTestTask
 
 plugins {
@@ -12,4 +14,13 @@ kotlin {
 
 tasks.test {
 	setUpTestTask()
+}
+
+dependencies {
+	setUpTestFrameworkDeps_jvm {
+		testImplementation(it)
+	}
+	setUpTestCommonDeps {
+		testImplementation(it)
+	}
 }
