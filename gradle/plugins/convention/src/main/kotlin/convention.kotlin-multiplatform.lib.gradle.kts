@@ -1,4 +1,4 @@
-import convention.setUpConvention
+import convention.setUp
 import convention.setUpTestFrameworkDeps_android
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 
@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-	setUpConvention()
+	setUp(this)
 }
 
 kotlin {

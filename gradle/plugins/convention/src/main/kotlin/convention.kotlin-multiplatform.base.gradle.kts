@@ -8,7 +8,7 @@ plugins {
 }
 
 kotlin {
-	setUpConvention()
+	setUp(this)
 
 	targets.withType<KotlinJvmTarget> {
 		testRuns["test"].executionTask.configure {

@@ -1,4 +1,4 @@
-import convention.setUpConvention
+import convention.setUp
 import convention.setUpTestCommonDeps
 import convention.setUpTestFrameworkDeps_android
 
@@ -9,11 +9,11 @@ plugins {
 }
 
 kotlin {
-	setUpConvention()
+	setUp(this)
 }
 
 android {
-	setUpConvention()
+	setUp(this)
 
 	packagingOptions {
 		resources {
