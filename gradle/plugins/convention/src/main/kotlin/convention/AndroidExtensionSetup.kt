@@ -1,9 +1,9 @@
 package convention
 
-import com.android.build.api.dsl.CommonExtension
+import convention.internal.AndroidExtension
 import deps
 
-internal fun setUp(extension: CommonExtension<*, *, *, *>): Unit = with(extension) {
+internal fun setUp(extension: AndroidExtension): Unit = with(extension) {
 	compileOptions {
 		// TODO Remove eventually -- See, https://issuetracker.google.com/issues/260059413
 		deps.jvm.verObj.let {
