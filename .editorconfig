@@ -16,7 +16,7 @@ ij_smart_tabs = true
 
 # End of line
 end_of_line = lf
-insert_final_newline = true
+#insert_final_newline = true
 trim_trailing_whitespace = true
 max_line_length = 120
 ij_visual_guides = 80, 120
@@ -33,6 +33,9 @@ ij_formatter_on_tag = @formatter:on
 # ---===--- ---===--- ---===---
 # Properties
 [*.properties]
+
+# End of line
+insert_final_newline = true
 
 # ---===--- ---===--- ---===---
 # TOML
@@ -66,6 +69,7 @@ indent_style = space
 ij_smart_tabs = false
 
 # End of line
+insert_final_newline = true
 trim_trailing_whitespace = false
 max_line_length = 80
 ij_visual_guides = 80, 120
@@ -74,13 +78,22 @@ ij_visual_guides = 80, 120
 # Java
 [*.java]
 
+# End of line
+insert_final_newline = true
+
 # ---===--- ---===--- ---===---
 # Groovy
 [{*.gant,*.groovy,*.gy,*.gradle}]
 
+# End of line
+insert_final_newline = true
+
 # ---===--- ---===--- ---===---
 # Kotlin
 [{*.kt,*.kts}]
+
+# End of line
+insert_final_newline = true
 
 # ---===--- ---===--- ---===---
 # Shell Scripts
