@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 
 plugins {
 	id("com.android.library")
-	id("convention.kotlin-multiplatform.base")
+	id("convention.kotlin.multiplatform.base")
 }
 
 android {

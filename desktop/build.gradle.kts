@@ -1,7 +1,7 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
-	id("convention.kotlin-jvm")
+	id("convention.kotlin.jvm")
 	id("org.jetbrains.compose")
 	id("jcef-bundler")
 }

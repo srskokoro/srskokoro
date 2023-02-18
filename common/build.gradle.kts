@@ -1,5 +1,5 @@
 plugins {
-	id("convention.kotlin-multiplatform.lib")
+	id("convention.kotlin.multiplatform.lib")
 	id("org.jetbrains.compose")
 	id("jcef-bundler")
 }
