@@ -1,7 +1,4 @@
-import convention.setUp
-import convention.setUpTestCommonDeps
-import convention.setUpTestFrameworkDeps_jvm
-import convention.setUpTestFrameworkDeps_kmp_common
+import convention.*
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 plugins {

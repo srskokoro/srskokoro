@@ -1,6 +1,4 @@
-import convention.setUp
-import convention.setUpTestCommonDeps
-import convention.setUpTestFrameworkDeps_android
+import convention.*
 
 plugins {
 	id("convention.base")

@@ -1,5 +1,4 @@
-import convention.setUp
-import convention.setUpTestFrameworkDeps_android
+import convention.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 
 plugins {
