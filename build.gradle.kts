@@ -4,8 +4,8 @@
 plugins {
 	id("convention.root")
 
-	// Necessary to avoid the plugins to be loaded multiple times in each
-	// subproject's classloader. See also, https://youtrack.jetbrains.com/issue/KT-46200
+	// Avoid the plugins to be loaded multiple times in each subproject's
+	// classloader. See also, https://youtrack.jetbrains.com/issue/KT-46200
 	kotlin("jvm") apply false
 	kotlin("multiplatform") apply false
 	kotlin("android") apply false
