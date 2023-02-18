@@ -1,4 +1,6 @@
 import convention.*
+import convention.internal.withAndroid
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 plugins {
@@ -7,9 +9,20 @@ plugins {
 	id("io.kotest.multiplatform")
 }
 
+withAndroid {
+	setUp(this)
+}
+
 kotlin {
 	setUp(this)
 
+	targets.withType<KotlinAndroidTarget> {
+		(sourceSets.findByName("${name}UnitTest") ?: sourceSets["${name}Test"]).dependencies {
+			setUpTestFrameworkDeps_android {
+				implementation(it)
+			}
+		}
+	}
 	targets.withType<KotlinJvmTarget> {
 		testRuns["test"].executionTask.configure {
 			setUp(this)
