@@ -20,7 +20,9 @@ kotlin {
 	val sourceSets = this.sourceSets
 
 	targets.withType<KotlinAndroidTarget> {
-		(sourceSets.findByName("${name}UnitTest") ?: sourceSets["${name}Test"]).dependencies {
+		with(sourceSets) {
+			findByName("${name}UnitTest") ?: get("${name}Test")
+		}.dependencies {
 			setUpTestFrameworkDeps_android {
 				implementation(it)
 			}
