@@ -23,6 +23,7 @@ kotlin {
 			}
 		}
 	}
+
 	targets.withType<KotlinJvmTarget> {
 		testRuns["test"].executionTask.configure {
 			setUp(this)
@@ -33,6 +34,7 @@ kotlin {
 			}
 		}
 	}
+
 	sourceSets.commonTest {
 		dependencies {
 			setUpTestFrameworkDeps_kmp_common {
