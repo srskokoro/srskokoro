@@ -19,23 +19,6 @@ compose.desktop {
 	application {
 		mainClass = "MainKt"
 		jvmArgs += jcef.recommendedJvmArgs
-		// TODO Remove eventually. See also, https://github.com/JetBrains/compose-jb/pull/2515
-		afterEvaluate {
-			if (javaHome == System.getProperty("java.home")) {
-				// Workaround as it seems that configuring the JVM toolchain
-				// doesn't automatically set the `javaHome` here.
-				@Suppress("UsePropertyAccessSyntax")
-				val launcher = javaToolchains.launcherFor(java.toolchain).getOrNull()
-				if (launcher != null) {
-					javaHome = launcher.metadata.installationPath.asFile.absolutePath
-				} else {
-					logger.warn("Warning: JVM toolchain was not configured.")
-				}
-			} else {
-				logger.quiet("Custom `javaHome` set for `compose.desktop.application`:")
-				logger.quiet("  $javaHome")
-			}
-		}
 
 		nativeDistributions {
 			appResourcesRootDir.set(appResDir)
