@@ -1,12 +1,11 @@
 package convention
 
+import convention.internal.DependencyConsumer
 import org.gradle.api.tasks.testing.Test
 
 internal fun setUp(task: Test): Unit = with(task) {
 	useJUnitPlatform()
 }
-
-private typealias DependencyConsumer = (dependencyNotation: String) -> Unit
 
 internal fun setUpTestFrameworkDeps_android(consume: DependencyConsumer) {
 	consume("io.kotest:kotest-runner-junit5")

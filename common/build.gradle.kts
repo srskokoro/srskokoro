@@ -1,6 +1,5 @@
 plugins {
-	id("convention.kotlin.mpp.lib")
-	id("org.jetbrains.compose")
+	id("convention.compose.mpp.lib")
 	id("jcef-bundler")
 }
 
@@ -26,12 +25,6 @@ dependencies {
 	deps.bundles.testExtras {
 		commonTestImplementation(it)
 	}
-
-	commonMainApi(compose.runtime)
-	commonMainApi(compose.foundation)
-	commonMainApi(compose.material)
-	// Needed only for preview.
-	commonMainImplementation(compose.preview)
 
 	desktopMainImplementation(jcef.dependency)
 	androidMainApi("androidx.core:core-ktx:1.9.0")

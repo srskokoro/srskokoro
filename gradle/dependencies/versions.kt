@@ -19,6 +19,7 @@ internal fun deps_versions.init() {
 
 	val compose_mpp = "1.3.0-rc05"
 	plugin("org.jetbrains.compose", compose_mpp)
+	module("org.jetbrains.compose:compose-gradle-plugin", compose_mpp)
 
 	val kotest = "5.5.4"
 	plugin("io.kotest.multiplatform", kotest)

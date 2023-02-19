@@ -1,8 +1,7 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
-	id("convention.kotlin.jvm")
-	id("org.jetbrains.compose")
+	id("convention.compose.jvm.app")
 	id("jcef-bundler")
 }
 
@@ -72,7 +71,6 @@ dependencies {
 	deps.bundles.testExtras {
 		testImplementation(it)
 	}
-	implementation(compose.desktop.currentOs)
 	implementation(project(":common"))
 	implementation(jcef.dependency)
 }
