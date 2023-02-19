@@ -9,7 +9,7 @@ internal fun DependencyHandler.setUpComposeDeps(consume: DependencyConsumer) {
 	consume(compose.material)
 }
 
-/** Needed only for preview. */
+/** Needed only for JB compose `@Preview` annotation. */
 internal fun DependencyHandler.setUpComposePreviewDeps(consume: DependencyConsumer) {
 	consume(compose.preview)
 }
