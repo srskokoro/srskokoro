@@ -4,9 +4,18 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.withType
 
+/**
+ * @see AndroidAppExtension
+ * @see AndroidLibExtension
+ */
 internal typealias AndroidExtension = com.android.build.api.dsl.CommonExtension<*, *, *, *>
+
+/** @see AndroidExtension */
 internal typealias AndroidAppExtension = com.android.build.api.dsl.ApplicationExtension
+
+/** @see AndroidExtension */
 internal typealias AndroidLibExtension = com.android.build.api.dsl.LibraryExtension
+
 
 internal inline fun Project.ifAndroidProject(crossinline block: () -> Unit) {
 	plugins.withType<com.android.build.gradle.BasePlugin> {
