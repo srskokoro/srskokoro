@@ -8,19 +8,19 @@ internal fun setUp(task: Test): Unit = with(task) {
 
 private typealias DependencyConsumer = (dependencyNotation: String) -> Unit
 
-internal fun setUpTestFrameworkDeps_android(consumer: DependencyConsumer) {
-	consumer("io.kotest:kotest-runner-junit5")
+internal fun setUpTestFrameworkDeps_android(consume: DependencyConsumer) {
+	consume("io.kotest:kotest-runner-junit5")
 }
 
-internal fun setUpTestFrameworkDeps_jvm(consumer: DependencyConsumer) {
-	consumer("io.kotest:kotest-runner-junit5")
+internal fun setUpTestFrameworkDeps_jvm(consume: DependencyConsumer) {
+	consume("io.kotest:kotest-runner-junit5")
 }
 
-internal fun setUpTestFrameworkDeps_kmp_common(consumer: DependencyConsumer) {
-	consumer("io.kotest:kotest-framework-engine")
+internal fun setUpTestFrameworkDeps_kmp_common(consume: DependencyConsumer) {
+	consume("io.kotest:kotest-framework-engine")
 }
 
-internal fun setUpTestCommonDeps(consumer: DependencyConsumer) {
-	consumer("org.jetbrains.kotlin:kotlin-test")
-	consumer("io.kotest:kotest-assertions-core")
+internal fun setUpTestCommonDeps(consume: DependencyConsumer) {
+	consume("org.jetbrains.kotlin:kotlin-test")
+	consume("io.kotest:kotest-assertions-core")
 }
