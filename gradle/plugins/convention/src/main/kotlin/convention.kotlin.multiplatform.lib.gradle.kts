@@ -1,4 +1,4 @@
 plugins {
 	id("com.android.library")
-	id("convention.kotlin.multiplatform.base")
+	id("convention.kotlin.multiplatform")
 }
