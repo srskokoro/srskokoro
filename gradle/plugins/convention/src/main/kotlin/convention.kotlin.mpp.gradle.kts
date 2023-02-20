@@ -18,11 +18,11 @@ internal val localKotlin = kotlin.apply {
 }
 
 // Cache as it seems costly to obtain each time
-internal val sourceSets = localKotlin.sourceSets
-internal val targets = localKotlin.targets
+internal val kotlinSourceSets = localKotlin.sourceSets
+internal val kotlinTargets = localKotlin.targets
 
-targets.withType<KotlinAndroidTarget> {
-	with(sourceSets) {
+kotlinTargets.withType<KotlinAndroidTarget> {
+	with(kotlinSourceSets) {
 		findByName("${name}UnitTest") ?: get("${name}Test")
 	}.dependencies {
 		setUpTestFrameworkDeps_android {
@@ -30,17 +30,17 @@ targets.withType<KotlinAndroidTarget> {
 		}
 	}
 }
-targets.withType<KotlinJvmTarget> {
+kotlinTargets.withType<KotlinJvmTarget> {
 	testRuns["test"].executionTask.configure {
 		setUp(this)
 	}
-	sourceSets["${name}Test"].dependencies {
+	kotlinSourceSets["${name}Test"].dependencies {
 		setUpTestFrameworkDeps_jvm {
 			implementation(it)
 		}
 	}
 }
-sourceSets.commonTest {
+kotlinSourceSets.commonTest {
 	dependencies {
 		setUpTestFrameworkDeps_kmp_common {
 			implementation(it)
