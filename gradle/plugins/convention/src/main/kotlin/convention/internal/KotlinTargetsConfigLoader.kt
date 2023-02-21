@@ -50,6 +50,9 @@ internal class KotlinTargetsConfigLoader(
 	private fun doParse(configFileContents: String, kotlin: KotlinMultiplatformExtension) {
 		val kotlinExtensions = (kotlin as ExtensionAware).extensions
 
+		// Will throw if our assumption (that it's an extension) is incorrect.
+		val sourceSets = getKotlinSourceSets(kotlinExtensions)
+
 		val targets = kotlin.targets
 		val targetsExtension = (targets as ExtensionAware).extensions
 
@@ -62,9 +65,6 @@ internal class KotlinTargetsConfigLoader(
 		// existing, simply remove it. It's likely that it's already implemented
 		// for us, and if so, we shouldn't need to do anything further.
 		kotlinExtensions.add<NamedDomainObjectCollection<KotlinTarget>>("targets", targets)
-
-		// It's more efficient to get it this way. Also throws if our assumptions are incorrect.
-		val sourceSets = getKotlinSourceSets(kotlinExtensions)
 
 		var mode = MODE_TOP_LEVEL
 		configFileContents.lineSequence().forEachIndexed pass@{ ln, raw ->
