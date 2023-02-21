@@ -6,7 +6,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
-internal fun setUp(extension: KotlinProjectExtension): Unit = with(extension) {
+internal fun setUp(kotlin: KotlinProjectExtension): Unit = with(kotlin) {
 	jvmToolchain(deps.jvm.toolchainConfig)
 }
 
