@@ -1,0 +1,6 @@
+targets:
+- android
+- jvm:desktop
+
+customSourceSets:
+# None (for now)

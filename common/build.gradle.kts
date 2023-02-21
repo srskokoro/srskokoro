@@ -4,8 +4,15 @@ plugins {
 }
 
 kotlin {
-	android()
-	jvm("desktop") {
+	/**
+	 * See 'build.targets.txt' to declare build targets, then use
+	 * `targets.<targetName>` here to configure them further.
+	 *
+	 * See also [convention.setUpTargetsViaConfig] in the convention plugin.
+	 */
+	@Suppress("UNUSED_VARIABLE") val eat_comment: Nothing
+
+	targets.desktop {
 		// TODO Uncomment eventually to allow `.java` sources -- https://youtrack.jetbrains.com/issue/KT-30878
 		//withJava()
 	}
