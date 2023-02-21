@@ -55,7 +55,6 @@ internal class KotlinTargetsConfigLoader(
 
 		val targets = kotlin.targets
 		val targetsExtension = (targets as ExtensionAware).extensions
-
 		// The following makes sure that the accessors for extensions added to
 		// `targets` are generated. See also, "Understanding when type-safe
 		// model accessors are available | Gradle Kotlin DSL Primer | 7.5.1" --
