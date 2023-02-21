@@ -18,9 +18,6 @@ internal val localKotlin = kotlin.apply {
 	setUpTargetsViaConfig(this)
 }
 
-// Cache as it seems costly to obtain each time
-internal val kotlinSourceSets = localKotlin.sourceSets
-
 localKotlin.targets.apply {
 	// Nothing
 }.onType(KotlinAndroidTarget::class) {
