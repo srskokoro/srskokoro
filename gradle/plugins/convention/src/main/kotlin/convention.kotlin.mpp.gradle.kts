@@ -24,9 +24,7 @@ internal val kotlinSourceSets = localKotlin.sourceSets
 localKotlin.targets.apply {
 	// Nothing
 }.onType(KotlinAndroidTarget::class) {
-	kotlinSourceSets.let {
-		it.findByName("${name}UnitTest") ?: it["${name}Test"]
-	}.dependencies {
+	unitTestSourceSet.dependencies {
 		setUpTestFrameworkDeps_android {
 			implementation(it)
 		}
@@ -35,7 +33,7 @@ localKotlin.targets.apply {
 	testRuns["test"].executionTask.configure {
 		setUp(this)
 	}
-	kotlinSourceSets["${name}Test"].dependencies {
+	testSourceSet.dependencies {
 		setUpTestFrameworkDeps_jvm {
 			implementation(it)
 		}

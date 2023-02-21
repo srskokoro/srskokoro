@@ -1,15 +1,14 @@
 package convention.internal
 
 import convention.*
+import convention.internal.util.*
 import org.gradle.api.NamedDomainObjectCollection
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.kotlin.dsl.add
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import java.lang.reflect.InvocationTargetException
 
@@ -65,8 +64,7 @@ internal class KotlinTargetsConfigLoader(
 		kotlinExtensions.add<NamedDomainObjectCollection<KotlinTarget>>("targets", targets)
 
 		// It's more efficient to get it this way. Also throws if our assumptions are incorrect.
-		@Suppress("UNCHECKED_CAST") val sourceSets =
-			kotlinExtensions.getByName("sourceSets") as NamedDomainObjectContainer<KotlinSourceSet>
+		val sourceSets = getKotlinSourceSets(kotlinExtensions)
 
 		var mode = MODE_TOP_LEVEL
 		configFileContents.lineSequence().forEachIndexed pass@{ ln, raw ->
