@@ -7,7 +7,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 internal fun getSourceSets(kotlin: KotlinProjectExtension): NamedDomainObjectContainer<KotlinSourceSet> {
-	// It's more efficient to get it this way. Also throws if our assumption (that it's an extension) is incorrect.
+	// It's more efficient to get it this way, since `kotlin.sourceSets`
+	// allocates a new object every time (as of Kotlin Gradle Plugin 1.8.0)
+	// - Also throws if our assumption (that it's an extension) is incorrect.
 	return getKotlinSourceSets((kotlin as ExtensionAware).extensions)
 }
 
