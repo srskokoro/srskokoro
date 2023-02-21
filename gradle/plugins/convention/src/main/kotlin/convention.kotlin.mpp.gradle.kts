@@ -1,4 +1,5 @@
 import convention.*
+import convention.util.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
@@ -19,9 +20,10 @@ internal val localKotlin = kotlin.apply {
 
 // Cache as it seems costly to obtain each time
 internal val kotlinSourceSets = localKotlin.sourceSets
-internal val kotlinTargets = localKotlin.targets
 
-kotlinTargets.withType<KotlinAndroidTarget> {
+localKotlin.targets.apply {
+	// Nothing
+}.onType(KotlinAndroidTarget::class) {
 	with(kotlinSourceSets) {
 		findByName("${name}UnitTest") ?: get("${name}Test")
 	}.dependencies {
@@ -29,8 +31,7 @@ kotlinTargets.withType<KotlinAndroidTarget> {
 			implementation(it)
 		}
 	}
-}
-kotlinTargets.withType<KotlinJvmTarget> {
+}.onType(KotlinJvmTarget::class) {
 	testRuns["test"].executionTask.configure {
 		setUp(this)
 	}
