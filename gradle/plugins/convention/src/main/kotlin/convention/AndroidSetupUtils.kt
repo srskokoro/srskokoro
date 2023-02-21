@@ -1,4 +1,4 @@
-package convention.internal
+package convention
 
 import org.gradle.api.Action
 import org.gradle.api.Project

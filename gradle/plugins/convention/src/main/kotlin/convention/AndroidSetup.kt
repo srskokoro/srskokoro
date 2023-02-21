@@ -1,6 +1,5 @@
 package convention
 
-import convention.internal.AndroidExtension
 import deps
 
 internal fun setUp(extension: AndroidExtension): Unit = with(extension) {
