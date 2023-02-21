@@ -24,8 +24,8 @@ internal val kotlinSourceSets = localKotlin.sourceSets
 localKotlin.targets.apply {
 	// Nothing
 }.onType(KotlinAndroidTarget::class) {
-	with(kotlinSourceSets) {
-		findByName("${name}UnitTest") ?: get("${name}Test")
+	kotlinSourceSets.let {
+		it.findByName("${name}UnitTest") ?: it["${name}Test"]
 	}.dependencies {
 		setUpTestFrameworkDeps_android {
 			implementation(it)
