@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-	setUpComposeDeps {
+	setUpComposeDeps(compose) {
 		implementation(it)
 	}
 	implementation(compose.desktop.currentOs)
