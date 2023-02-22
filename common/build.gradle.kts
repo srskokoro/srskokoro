@@ -35,4 +35,10 @@ dependencies {
 
 	desktopMainImplementation(jcef.dependency)
 	androidMainApi("androidx.core:core-ktx:1.9.0")
+
+	// Needed only for JB compose `@Preview` annotation
+	compose.preview.let {
+		androidMainApi(it)
+		desktopMainApi(it)
+	}
 }

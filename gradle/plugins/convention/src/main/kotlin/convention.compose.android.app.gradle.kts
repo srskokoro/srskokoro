@@ -9,8 +9,4 @@ dependencies {
 	setUpComposeDeps {
 		implementation(it)
 	}
-	setUpComposePreviewDeps {
-		// Needed only for preview
-		implementation(it)
-	}
 }
