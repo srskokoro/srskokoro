@@ -36,13 +36,14 @@ localKotlin.targets.apply {
 		}
 	}
 }
-kotlinSourceSets.commonTest {
-	dependencies {
-		setUpTestFrameworkDeps_kmp_common {
-			implementation(it)
-		}
-		setUpTestCommonDeps {
-			implementation(it)
-		}
+dependencies {
+	fun implementation(dep: String) = run {
+		commonTestImplementation(dep)
+	}
+	setUpTestFrameworkDeps_kmp_common {
+		implementation(it)
+	}
+	setUpTestCommonDeps {
+		implementation(it)
 	}
 }
