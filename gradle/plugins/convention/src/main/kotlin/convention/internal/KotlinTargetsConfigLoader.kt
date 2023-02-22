@@ -61,8 +61,8 @@ internal class KotlinTargetsConfigLoader(
 		// https://docs.gradle.org/7.5.1/userguide/kotlin_dsl.html#kotdsl:accessor_applicability
 		//
 		// NOTE: If one day, this caused an exception due to "targets" already
-		// existing, simply remove it. It's likely that it's already implemented
-		// for us, and if so, we shouldn't need to do anything further.
+		// existing, simply remove the following. It's likely that it's already
+		// implemented for us, and if so, we shouldn't need to do anything.
 		kotlinExtensions.add<NamedDomainObjectCollection<KotlinTarget>>("targets", targets)
 
 		var mode = MODE_TOP_LEVEL
