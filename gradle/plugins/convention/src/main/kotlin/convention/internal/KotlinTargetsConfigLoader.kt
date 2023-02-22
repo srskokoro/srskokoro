@@ -66,7 +66,7 @@ internal class KotlinTargetsConfigLoader(
 		kotlinExtensions.add<NamedDomainObjectCollection<KotlinTarget>>("targets", targets)
 
 		var mode = MODE_TOP_LEVEL
-		configFileContents.lineSequence().forEachIndexed pass@{ ln, raw ->
+		configFileContents.lineSequence().forEachIndexed pass@{ i, raw ->
 			if (raw.isEmpty()) return@pass
 			if (raw[0] == '#') return@pass
 			val cur = raw.trimEnd()
@@ -95,9 +95,9 @@ internal class KotlinTargetsConfigLoader(
 						}
 					}
 				}
-				errorUnexpectedLine(ln, raw)
+				errorUnexpectedLine(i, raw)
 			} catch (ex: Exception) {
-				errorUnexpectedLine(ln, raw, ex)
+				errorUnexpectedLine(i, raw, ex)
 			}
 		}
 	}
@@ -107,10 +107,10 @@ internal class KotlinTargetsConfigLoader(
 	private fun getErrorMessageWithConfigFileInfo(message: String) =
 		"$message${System.lineSeparator()}- Config file: $configFile"
 
-	private fun errorUnexpectedLine(lineNum: Int, lineValue: String, cause: Throwable? = null): Nothing {
+	private fun errorUnexpectedLine(lineIndex: Int, lineValue: String, cause: Throwable? = null): Nothing {
 		throw IllegalStateException(
 			getErrorMessageWithConfigFileInfo(
-				"Unexpected at line $lineNum: $lineValue"
+				"Unexpected at line ${lineIndex + 1}: $lineValue"
 			), cause
 		)
 	}
