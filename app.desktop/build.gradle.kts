@@ -9,7 +9,7 @@ val appResDirName = "res"
 val appResDir = file(appResDirName)
 
 jcef {
-	installDirRel.set("$appResDirName/common/jcef")
+	installDirRel.set("jcef")
 	dependsOnInstallTask<Sync>("prepareAppResources") {
 		from(this@jcef.outputDir)
 	}
