@@ -1,4 +1,12 @@
 plugins {
+	/*
+	 * NOTE: While we could have a single "compose multiplatform" project,
+	 * without the multiplatform project being a library, we might face some
+	 * issues that we would rather not deal with.
+	 * - See, for example, https://github.com/JetBrains/compose-jb/issues/2345
+	 * - Nonetheless, should doing so make things more maintainable, dealing
+	 * with any issues introduced might be worth it.
+	 */
 	id("convention.compose.mpp.lib")
 	id("jcef-bundler")
 }
