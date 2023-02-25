@@ -12,6 +12,12 @@ dependencies {
 	implementation(compose.desktop.currentOs)
 }
 
+compose.desktop.application {
+	nativeDistributions {
+		appResourcesRootDir.set(file("res"))
+	}
+}
+
 // TODO Remove eventually. See also, https://github.com/JetBrains/compose-jb/pull/2515
 // Workaround as it seems that configuring the JVM toolchain doesn't
 // automatically set `compose.desktop.application.javaHome` still.

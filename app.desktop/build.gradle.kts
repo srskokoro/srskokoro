@@ -5,9 +5,6 @@ plugins {
 	id("jcef-bundler")
 }
 
-val appResDirName = "res"
-val appResDir = file(appResDirName)
-
 jcef {
 	installDirRel.set("jcef")
 	dependsOnInstallTask<Sync>("prepareAppResources") {
@@ -20,7 +17,6 @@ compose.desktop.application {
 	jvmArgs += jcef.recommendedJvmArgs
 
 	nativeDistributions {
-		appResourcesRootDir.set(appResDir)
 		targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
 
 		packageName = "SRS Kokoro"
