@@ -24,6 +24,6 @@ dependencies {
 	deps.bundles.testExtras {
 		testImplementation(it)
 	}
-	implementation(project(":common"))
+	implementation(project(":app"))
 	implementation("androidx.activity:activity-compose:1.6.1")
 }

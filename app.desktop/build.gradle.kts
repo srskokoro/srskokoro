@@ -52,6 +52,6 @@ dependencies {
 	deps.bundles.testExtras {
 		testImplementation(it)
 	}
-	implementation(project(":common"))
+	implementation(project(":app"))
 	implementation(jcef.dependency)
 }
