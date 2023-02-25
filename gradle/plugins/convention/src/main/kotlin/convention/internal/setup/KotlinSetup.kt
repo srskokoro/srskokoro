@@ -11,11 +11,13 @@ internal fun Project.setUp(kotlin: KotlinProjectExtension): Unit = with(kotlin) 
 	jvmToolchain(deps.jvm.toolchainConfig)
 }
 
-private fun Project.setUpProject(kotlin: KotlinProjectExtension) {
-	kotlinSourceSets = getSourceSets(kotlin)
-}
-
 internal fun Project.setUpTargetsViaConfig(kotlin: KotlinMultiplatformExtension) {
 	val config = layout.projectDirectory.file("build.targets.txt")
 	KotlinTargetsConfigLoader(providers, config).loadInto(kotlin)
+}
+
+// --
+
+private fun Project.setUpProject(kotlin: KotlinProjectExtension) {
+	kotlinSourceSets = getSourceSets(kotlin)
 }
