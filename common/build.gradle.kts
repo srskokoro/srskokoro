@@ -9,7 +9,7 @@ kotlin {
 	 * `targets.<targetName>` here to configure them further.
 	 *
 	 * See also [convention.internal.setup.setUpTargetsViaConfig] in the
-	 * convention plugin.
+	 * convention plugins.
 	 */
 	@Suppress("UNUSED_VARIABLE") val eat_comment: Nothing
 
