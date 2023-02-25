@@ -1,4 +1,4 @@
-import convention.*
+import convention.internal.setup.*
 import convention.util.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget

@@ -1,4 +1,4 @@
-package convention
+package convention.internal.setup
 
 import convention.internal.DependencyConsumer
 import org.gradle.api.tasks.testing.Test

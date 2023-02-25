@@ -1,4 +1,4 @@
-import convention.*
+import convention.internal.setup.*
 
 plugins {
 	id("convention.kotlin.mpp.lib")

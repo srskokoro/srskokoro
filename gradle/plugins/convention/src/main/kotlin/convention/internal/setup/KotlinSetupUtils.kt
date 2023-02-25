@@ -1,4 +1,4 @@
-package convention
+package convention.internal.setup
 
 import convention.internal.util.*
 import org.gradle.api.NamedDomainObjectContainer
