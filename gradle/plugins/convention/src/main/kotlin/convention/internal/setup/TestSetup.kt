@@ -1,6 +1,6 @@
 package convention.internal.setup
 
-import convention.internal.DependencyConsumer
+import convention.internal.util.*
 import org.gradle.api.tasks.testing.Test
 
 internal fun setUp(task: Test): Unit = with(task) {

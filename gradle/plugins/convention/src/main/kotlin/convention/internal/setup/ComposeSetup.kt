@@ -1,6 +1,6 @@
 package convention.internal.setup
 
-import convention.internal.DependencyConsumer
+import convention.internal.util.*
 import org.jetbrains.compose.ComposePlugin
 
 internal fun setUpComposeDeps(compose: ComposePlugin.Dependencies, consume: DependencyConsumer) {
