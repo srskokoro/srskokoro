@@ -21,6 +21,6 @@ pluginManagement {
 rootDir.let { rootDir ->
 	rootDir.list()?.asSequence()?.filter {
 		File(rootDir, "$it/build.gradle.kts").exists() &&
-			!File(rootDir, "$it/settings.gradle.kts").exists()
+		!File(rootDir, "$it/settings.gradle.kts").exists()
 	}?.forEach { include(it) }
 }
