@@ -17,7 +17,7 @@ pluginManagement {
 }
 
 // Include all subfolders that contain a 'build.gradle.kts' as subprojects (but
-// exclude those that contain a 'settings.gradle.kts').
+// exclude those that look like included builds).
 rootDir.let { rootDir ->
 	rootDir.list()?.asSequence()?.filter {
 		File(rootDir, "$it/build.gradle.kts").exists() &&
