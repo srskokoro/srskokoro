@@ -1,7 +1,7 @@
 package convention.internal
 
 import convention.*
-import convention.internal.util.*
+import convention.internal.setup.*
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.ExtensionAware

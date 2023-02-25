@@ -1,7 +1,6 @@
 package convention.internal.setup
 
 import convention.internal.KotlinTargetsConfigLoader
-import convention.internal.util.*
 import deps
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
