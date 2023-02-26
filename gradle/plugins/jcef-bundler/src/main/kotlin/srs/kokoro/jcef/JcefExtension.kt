@@ -4,7 +4,6 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.register
 import java.util.*
@@ -27,11 +26,7 @@ abstract class JcefExtension private constructor(
 		) else emptyList()
 	}
 
-	private var _installTask: TaskProvider<out JcefInstallTask>? = null
-	val installTask
-		get() = _installTask ?: project.tasks.register<JcefInstallTask>(
-			name = installTaskName, this
-		).also { _installTask = it }
+	val installTask = project.tasks.register<JcefInstallTask>(name = installTaskName, this)
 
 	fun installTask(configure: Action<in JcefInstallTask>) = installTask.also { it.configure(configure) }
 
