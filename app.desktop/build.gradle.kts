@@ -6,9 +6,10 @@ plugins {
 }
 
 jcef {
-	installDirRel.set("jcef")
 	dependsOnInstallTask<Sync>("prepareAppResources") {
-		from(tasks.installJcef)
+		from(tasks.installJcef) {
+			into("jcef")
+		}
 	}
 }
 
