@@ -18,7 +18,7 @@ internal inline fun KotlinTarget.mainSourceSet(
 	configure: KotlinSourceSet.() -> Unit
 ) = configure(mainSourceSet)
 
-internal inline fun DomainObjectCollection<out KotlinTarget>.mainSourceSet(
+internal inline fun DomainObjectCollection<out KotlinTarget>.mainSourceSets(
 	crossinline configure: KotlinSourceSet.() -> Unit
 ) = all { configure(mainSourceSet) }
 
@@ -30,7 +30,7 @@ internal inline fun KotlinTargetWithTests<*, *>.testSourceSet(
 	configure: KotlinSourceSet.() -> Unit
 ) = configure(testSourceSet)
 
-internal inline fun DomainObjectCollection<out KotlinTargetWithTests<*, *>>.testSourceSet(
+internal inline fun DomainObjectCollection<out KotlinTargetWithTests<*, *>>.testSourceSets(
 	crossinline configure: KotlinSourceSet.() -> Unit
 ) = all { configure(testSourceSet) }
 
@@ -45,6 +45,6 @@ internal inline fun KotlinAndroidTarget.unitTestSourceSet(
 	configure: KotlinSourceSet.() -> Unit
 ) = configure(unitTestSourceSet)
 
-internal inline fun DomainObjectCollection<out KotlinAndroidTarget>.unitTestSourceSet(
+internal inline fun DomainObjectCollection<out KotlinAndroidTarget>.unitTestSourceSets(
 	crossinline configure: KotlinSourceSet.() -> Unit
 ) = all { configure(unitTestSourceSet) }
