@@ -5,8 +5,8 @@ plugins {
 	id("jcef-bundler")
 }
 
-jcef {
-	dependsOnInstallTask<Sync>("prepareAppResources") {
+afterEvaluate {
+	tasks.named<Sync>("prepareAppResources") {
 		from(tasks.installJcef) {
 			into("jcef")
 		}
