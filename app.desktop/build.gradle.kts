@@ -7,9 +7,8 @@ plugins {
 
 jcef {
 	installDirRel.set("jcef")
-	val installTask = installTask
 	dependsOnInstallTask<Sync>("prepareAppResources") {
-		from(installTask)
+		from(tasks.installJcef)
 	}
 }
 
