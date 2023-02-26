@@ -9,8 +9,6 @@ import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.Directory
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
@@ -26,8 +24,6 @@ abstract class JcefInstallTask @Inject constructor(jcef: JcefExtension) : Defaul
 	}
 
 	val outputDir: Provider<Directory> @OutputDirectory get() = config.outputDir
-	val installDirRel: Provider<String> @Input get() = config.installDirRel
-	val installDir: Provider<Directory> @Internal get() = config.installDir
 
 	@get:Inject internal abstract val fsOps: FileSystemOperations
 	@get:Inject internal abstract val archiveOps: ArchiveOperations
@@ -35,17 +31,8 @@ abstract class JcefInstallTask @Inject constructor(jcef: JcefExtension) : Defaul
 	@TaskAction
 	fun run() {
 		val outputDirFile = outputDir.get().asFile
-		val outputDirPath = outputDirFile.path
-
-		val installDirFile = installDir.get().asFile
-		val installDirPath = installDirFile.path
-
-		check(installDirPath.startsWith(outputDirPath) && outputDirPath.length.let {
-			it == installDirPath.length || installDirPath[it] == File.separatorChar
-		}) { "The install directory should be a subdirectory of the output directory." }
-
 		fsOps.delete { delete(outputDirFile) }
-		installJcef(installDirFile, config.platform)
+		installJcef(outputDirFile, config.platform)
 	}
 }
 
