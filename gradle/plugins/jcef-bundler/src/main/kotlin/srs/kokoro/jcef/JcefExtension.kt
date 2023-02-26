@@ -38,7 +38,7 @@ abstract class JcefExtension private constructor(
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun dependsOnInstallTask(taskName: String) = dependsOnInstallTask(taskName, Task::class.java)
 
-	inline fun <reified T : Task> dependsOnInstallTask(taskName: String, noinline configuration: T.() -> Unit) =
+	inline fun <reified T : Task> dependsOnInstallTask(taskName: String, noinline configuration: T.() -> Unit = {}) =
 		dependsOnInstallTask(taskName, T::class.java, configuration)
 
 	fun <T : Task> dependsOnInstallTask(taskName: String, type: Class<T>, configuration: T.() -> Unit = {}) {
