@@ -7,9 +7,7 @@ plugins {
 
 afterEvaluate {
 	tasks.named<Sync>("prepareAppResources") {
-		from(tasks.installJcef) {
-			into("jcef")
-		}
+		from(tasks.installJcef) { into("jcef") }
 	}
 }
 
