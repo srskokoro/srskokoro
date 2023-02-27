@@ -1,29 +1,31 @@
 package srs.kokoro.jcef
 
 import me.friwi.jcefmaven.CefBuildInfo
-import me.friwi.jcefmaven.EnumPlatform
 import me.friwi.jcefmaven.impl.util.macos.UnquarantineUtil
 import org.cef.CefApp
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ArchiveOperations
-import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 
-abstract class JcefInstallTask @Inject constructor(jcef: JcefExtension) : DefaultTask() {
-	private val config: JcefConfig = jcef.config
+abstract class JcefInstallTask @Inject constructor() : DefaultTask() {
 
 	init {
-		group = config.taskGroup
+		group = JcefExtension.DEFAULT_TASK_GROUP
 		description = "Installs native binaries provided by JCEF Maven."
 	}
 
-	val outputDir: Provider<Directory> @OutputDirectory get() = config.outputDir
+	val platform @Internal get() = jcefBuildPlatform
+
+	@get:OutputDirectory
+	val outputDir: DirectoryProperty = project.objects.directoryProperty()
+		.convention(project.layout.buildDirectory.dir("generated/$name"))
 
 	@get:Inject internal abstract val fsOps: FileSystemOperations
 	@get:Inject internal abstract val archiveOps: ArchiveOperations
@@ -32,13 +34,13 @@ abstract class JcefInstallTask @Inject constructor(jcef: JcefExtension) : Defaul
 	fun run() {
 		val outputDirFile = outputDir.get().asFile
 		fsOps.delete { delete(outputDirFile) }
-		installJcef(outputDirFile, config.platform)
+		installJcef(outputDirFile)
 	}
 }
 
 private const val installLock = "install.lock"
 
-private fun JcefInstallTask.installJcef(installDir: File, platform: EnumPlatform) {
+private fun JcefInstallTask.installJcef(installDir: File) {
 	fsOps.copy {
 		from(archiveOps.tarTree(JavaClassResource(CefApp::class.java, jcefBuildRes)))
 		into(installDir)
@@ -84,7 +86,7 @@ private fun JcefInstallTask.requireInstallInfo(installDir: File): CefBuildInfo? 
 			logger.warn("Error while parsing installation info from output.", e)
 			return@run
 		}
-		if (installed.platform != EnumPlatform.getCurrentPlatform().identifier) {
+		if (installed.platform != platform.identifier) {
 			return@run
 		}
 		return getRequired().takeIf { it.releaseTag != installed.releaseTag }
