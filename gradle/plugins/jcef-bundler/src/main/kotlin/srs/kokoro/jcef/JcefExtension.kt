@@ -12,9 +12,9 @@ abstract class JcefExtension @Inject constructor(
 	private val project: Project,
 ) : ExtensionAware {
 
-	companion object {
-		internal const val DEFAULT_TASK_GROUP = "jcef"
-		internal const val DEFAULT_INSTALL_TASK_NAME = "installJcef"
+	internal companion object {
+		const val DEFAULT_TASK_GROUP = "jcef"
+		const val DEFAULT_INSTALL_TASK_NAME = "installJcef"
 	}
 
 	val platform get() = jcefBuildPlatform
