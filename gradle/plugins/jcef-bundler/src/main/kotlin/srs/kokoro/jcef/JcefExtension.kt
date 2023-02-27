@@ -35,15 +35,20 @@ abstract class JcefExtension @Inject constructor(
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun dependsOnInstallTask(taskName: String) = dependsOnInstallTask(taskName, Task::class.java)
 
-	inline fun <reified T : Task> dependsOnInstallTask(taskName: String, noinline configuration: T.() -> Unit = {}) =
-		dependsOnInstallTask(taskName, T::class.java, configuration)
+	inline fun <reified T : Task> dependsOnInstallTask(
+		taskName: String, noinline configuration: T.(JcefInstallTask) -> Unit = {}
+	) = dependsOnInstallTask(taskName, T::class.java, configuration)
 
-	fun <T : Task> dependsOnInstallTask(taskName: String, type: Class<T>, configuration: T.() -> Unit = {}) {
+	fun <T : Task> dependsOnInstallTask(
+		taskName: String, type: Class<T>, configuration: T.(JcefInstallTask) -> Unit = {}
+	) {
 		val installTask = installTask
 		project.afterEvaluate {
 			tasks.named(taskName, type) {
-				dependsOn(installTask)
-				configuration()
+				installTask.get().let {
+					dependsOn(it)
+					configuration(it)
+				}
 			}
 		}
 	}
