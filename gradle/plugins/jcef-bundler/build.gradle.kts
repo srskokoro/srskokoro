@@ -15,8 +15,16 @@ buildscript {
 }
 
 run {
+	val jcefBuildJcefCommitProp = "jcef.build.jcef-commit"
+	val jcefBuildJcefCommit = extra[jcefBuildJcefCommitProp] as String
+
+	val jcefBuildCefVersionProp = "jcef.build.cef-version"
+	val jcefBuildCefVersion = extra[jcefBuildCefVersionProp] as String
+
 	val jcefBuildTagProp = "jcef.build.tag"
-	val jcefBuildTag = extra[jcefBuildTagProp] as String
+	val jcefBuildTag = (extra[jcefBuildTagProp] as String)
+		.replace("{jcef-commit}", jcefBuildJcefCommit)
+		.replace("{cef-version}", jcefBuildCefVersion)
 
 	val jcefBuildPlatform = EnumPlatform.getCurrentPlatform()
 	val jcefBuildPlatformId = jcefBuildPlatform.identifier
@@ -41,6 +49,12 @@ run {
 			internalVisibility = true
 			topLevelConstants = true
 		}
+
+		val pluginGradlePropsRootRelPath = gradle.parent!!.rootProject.relativePath(file("gradle.properties"))
+		buildConfigField("String", "pluginGradlePropsRootRelPath", "\"\"\"$pluginGradlePropsRootRelPath\"\"\"")
+
+		buildConfigField("String", "jcefBuildJcefCommitProp", "\"$jcefBuildJcefCommitProp\"")
+		buildConfigField("String", "jcefBuildCefVersionProp", "\"$jcefBuildCefVersionProp\"")
 
 		buildConfigField("String", "jcefBuildTagProp", "\"$jcefBuildTagProp\"")
 		buildConfigField("String", "jcefBuildTag", "\"$jcefBuildTag\"")

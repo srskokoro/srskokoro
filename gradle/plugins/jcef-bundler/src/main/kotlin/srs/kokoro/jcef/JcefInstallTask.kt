@@ -65,6 +65,12 @@ private fun JcefInstallTask.installJcef(installDir: File) {
 			Invalid installation. Please ensure proper configuration.
 			[Required gradle prop]: $jcefBuildTagProp=${it.releaseTag}
 			 [Current gradle prop]: $jcefBuildTagProp=$jcefBuildTag
+
+			Ideally, set instead the following gradle properties accordingly:
+			  $jcefBuildJcefCommitProp
+			  $jcefBuildCefVersionProp
+
+			Preferably in, ${project.rootProject.file(pluginGradlePropsRootRelPath)}
 			""".trimIndent()
 		)
 	}
