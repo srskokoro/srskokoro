@@ -6,7 +6,7 @@ import org.gradle.api.Task
 import org.gradle.kotlin.dsl.register
 import javax.inject.Inject
 
-abstract class JcefBundlerExtension @Inject constructor(
+abstract class JcefBundlerExtension @Inject internal constructor(
 	private val project: Project,
 ) : JcefDependencyExtension() {
 
