@@ -1,3 +1,3 @@
-import srs.kokoro.jcef.JcefExtension
+import srs.kokoro.jcef.JcefBundlerExtension
 
-extensions.create<JcefExtension>("jcef")
+extensions.create<JcefBundlerExtension>("jcef")

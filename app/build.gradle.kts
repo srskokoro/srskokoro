@@ -8,7 +8,7 @@ plugins {
 	 * with any issues introduced might be worth it.
 	 */
 	id("convention.compose.mpp.lib")
-	id("jcef-bundler")
+	id("jcef-bundler-dependency")
 }
 
 kotlin {
