@@ -1,4 +1,5 @@
 pluginManagement {
+	// Provide version for each plugin that has no version
 	resolutionStrategy.eachPlugin {
 		requested.run {
 			if (version.isNullOrEmpty()) {

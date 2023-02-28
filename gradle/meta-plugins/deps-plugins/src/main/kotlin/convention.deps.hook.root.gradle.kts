@@ -1,5 +1,6 @@
 allprojects {
 	configurations.all {
+		// Provide version for each "direct" dependency that has no version
 		dependencies.withType<ExternalDependency> {
 			version {
 				if (requiredVersion.isEmpty() && strictVersion.isEmpty()) {
