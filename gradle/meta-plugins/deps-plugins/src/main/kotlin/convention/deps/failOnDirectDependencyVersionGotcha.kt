@@ -36,9 +36,8 @@ fun Configuration.failOnDirectDependencyVersionGotcha(gradle: Gradle?, excludeAl
 	val excludeFilter: (ModuleIdentifier) -> Boolean = if (!excludeAlreadyDeclared) {
 		({ false })
 	} else {
-		val alreadyDeclared: Set<Pair<String, String>> = allDependencies.asSequence()
-			.mapNotNull { it.group?.let { g -> g to it.name } }
-			.toSet()
+		val alreadyDeclared: Set<Pair<String, String>> = allDependencies
+			.mapNotNullTo(mutableSetOf()) { it.group?.let { g -> g to it.name } }
 
 		({ it.group to it.name in alreadyDeclared })
 	}
