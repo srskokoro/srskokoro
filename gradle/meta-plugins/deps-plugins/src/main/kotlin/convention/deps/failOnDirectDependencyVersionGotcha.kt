@@ -37,7 +37,7 @@ fun Configuration.failOnDirectDependencyVersionGotcha(gradle: Gradle?, excludeAl
 		({ false })
 	} else {
 		val alreadyDeclared: Set<Pair<String, String>> = allDependencies
-			.mapNotNullTo(mutableSetOf()) { it.group?.let { g -> g to it.name } }
+			.mapNotNullTo(mutableSetOf()) { dep -> dep.group?.let { it to dep.name } }
 
 		({ it.group to it.name in alreadyDeclared })
 	}
