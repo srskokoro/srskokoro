@@ -104,13 +104,18 @@ internal class KotlinTargetsConfigLoader(
 
 	// --
 
-	private fun getErrorMessageWithConfigFileInfo(message: String) =
-		"$message${System.lineSeparator()}- Config file: $configFile"
+	private fun getErrorMessageWithConfigFileInfo(message: String, cause: Throwable?) = buildString {
+		appendLine(message)
+		appendLine("- Config file: $configFile")
+		if (cause != null)
+			appendLine("- Exception: $cause")
+	}
 
 	private fun errorUnexpectedLine(lineIndex: Int, lineValue: String, cause: Throwable? = null): Nothing {
 		throw IllegalStateException(
 			getErrorMessageWithConfigFileInfo(
-				"Unexpected at line ${lineIndex + 1}: $lineValue"
+				"Unexpected at line ${lineIndex + 1}: $lineValue",
+				cause
 			), cause
 		)
 	}
@@ -118,7 +123,8 @@ internal class KotlinTargetsConfigLoader(
 	private fun errorUnknownKotlinTarget(preset: String, cause: Throwable? = null): Nothing {
 		throw IllegalStateException(
 			getErrorMessageWithConfigFileInfo(
-				"Unknown kotlin target: $preset"
+				"Unknown kotlin target: $preset",
+				cause
 			), cause
 		)
 	}
