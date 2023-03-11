@@ -36,3 +36,11 @@ compose.desktop.application.let { app ->
 		}
 	}
 }
+
+afterEvaluate {
+	tasks.test {
+		val sync = tasks.named<Sync>("prepareAppResources").get()
+		systemProperty("compose.application.resources.dir", sync.destinationDir)
+		dependsOn(sync)
+	}
+}
