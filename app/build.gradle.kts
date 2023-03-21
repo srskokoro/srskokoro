@@ -7,7 +7,7 @@ plugins {
 	 * - Nonetheless, should doing so make things more maintainable, dealing
 	 * with any issues introduced might be worth it.
 	 */
-	id("convention.compose.mpp.lib")
+	id("convention.kotlin.mpp.lib")
 	id("jcef-bundler-dependency")
 }
 
@@ -44,10 +44,4 @@ dependencies {
 
 	desktopMainImplementation(jcef.dependency)
 	androidMainApi("androidx.core:core-ktx:1.9.0")
-
-	// Needed only for JB compose `@Preview` annotation
-	compose.preview.let {
-		androidMainApi(it)
-		desktopMainApi(it)
-	}
 }

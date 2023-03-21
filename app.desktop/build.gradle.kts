@@ -1,46 +1,10 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-
 plugins {
-	id("convention.compose.jvm.app")
+	id("convention.kotlin.jvm.app")
 	id("jcef-bundler")
 }
 
-afterEvaluate {
-	tasks.named<Sync>("prepareAppResources") {
-		from(tasks.installJcef) { into("jcef") }
-	}
-}
-
-compose.desktop.application {
-	mainClass = "MainKt"
-	jvmArgs += jcef.recommendedJvmArgs
-
-	nativeDistributions {
-		targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-
-		packageName = "SRS Kokoro"
-		packageVersion = "1.0.0"
-
-		description = "$packageName Desktop App"
-		vendor = "SRS Kokoro Project & N.N."
-		copyright = "Copyright (C) 2022 $vendor"
-		licenseFile.set(rootProject.file("LICENSE.txt", PathValidation.FILE).absoluteFile)
-
-		linux {
-			menuGroup = packageName
-			shortcut = true
-		}
-		macOS {
-			dockName = packageName
-			bundleID = "$group.app"
-		}
-		windows {
-			menuGroup = packageName
-			upgradeUuid = "BAF69324-95CC-4FC4-B156-267ACA640116"
-			dirChooser = true
-			shortcut = true
-		}
-	}
+application {
+	mainClass.set("MainKt")
 }
 
 dependencies {

@@ -1,5 +1,5 @@
 plugins {
-	id("convention.compose.android.app")
+	id("convention.kotlin.android.app")
 }
 
 android {
@@ -25,5 +25,4 @@ dependencies {
 		testImplementation(it)
 	}
 	implementation(project(":app"))
-	implementation("androidx.activity:activity-compose:1.6.1")
 }
