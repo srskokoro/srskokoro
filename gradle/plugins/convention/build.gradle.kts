@@ -3,8 +3,10 @@ plugins {
 	kotlin("jvm") // See, https://stackoverflow.com/a/72724249
 }
 
-kotlin.sourceSets.main {
-	kotlin.srcDir(File(rootDir, "../conventions"))
+kotlin {
+	sourceSets.main {
+		kotlin.srcDir(File(rootDir, "../conventions"))
+	}
 }
 
 // Workaround for https://github.com/gradle/gradle/issues/21052
