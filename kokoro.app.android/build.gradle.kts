@@ -25,4 +25,5 @@ dependencies {
 		testImplementation(it)
 	}
 	implementation(project(":kokoro.app"))
+	implementation("androidx.activity:activity-ktx:1.6.1")
 }
