@@ -27,6 +27,12 @@ internal class deps_jvm_spec {
 			}
 		}.also { _toolchainConfig = it }
 
+	private fun invalidate() {
+		_toolchainConfig = null // Cause re-init
+	}
+
+	// --
+
 	private lateinit var _verLang: JavaLanguageVersion
 	val verLang get() = _verLang
 
@@ -44,7 +50,7 @@ internal class deps_jvm_spec {
 			_ver = value
 			_verObj = verObj
 			_verLang = verLang
-			_toolchainConfig = null // Cause re-init
+			invalidate()
 		}
 
 	private var _vendor: JvmVendorSpec? = null
@@ -52,7 +58,7 @@ internal class deps_jvm_spec {
 		get() = _vendor
 		internal set(value) {
 			_vendor = value
-			_toolchainConfig = null // Cause re-init
+			invalidate()
 		}
 
 	private var _implementation: JvmImplementation? = null
@@ -60,6 +66,6 @@ internal class deps_jvm_spec {
 		get() = _implementation
 		internal set(value) {
 			_implementation = value
-			_toolchainConfig = null // Cause re-init
+			invalidate()
 		}
 }
