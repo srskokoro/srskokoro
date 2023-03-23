@@ -4,6 +4,7 @@ import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainSpec
+import org.gradle.jvm.toolchain.JvmImplementation
 import org.gradle.jvm.toolchain.JvmVendorSpec
 
 @Suppress("ClassName")
@@ -17,10 +18,12 @@ internal class deps_jvm_spec {
 			// updates would not cause the captured values to change.
 			val languageVersionValue = verLang
 			val vendorValue = vendor
+			val implementationValue = _implementation
 
 			Action<JavaToolchainSpec> {
 				languageVersion.set(languageVersionValue)
 				vendor.set(vendorValue)
+				implementation.set(implementationValue)
 			}
 		}.also { _toolchainConfig = it }
 
@@ -49,6 +52,14 @@ internal class deps_jvm_spec {
 		get() = _vendor
 		internal set(value) {
 			_vendor = value
+			_toolchainConfig = null // Cause re-init
+		}
+
+	private var _implementation: JvmImplementation? = null
+	var implementation
+		get() = _implementation
+		internal set(value) {
+			_implementation = value
 			_toolchainConfig = null // Cause re-init
 		}
 }

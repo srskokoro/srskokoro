@@ -14,4 +14,6 @@ abstract class deps_jvm internal constructor() {
 	val ver get() = jvm.ver
 
 	val vendor get() = jvm.vendor
+
+	val implementation get() = jvm.implementation
 }
