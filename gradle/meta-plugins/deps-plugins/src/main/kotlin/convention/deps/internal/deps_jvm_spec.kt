@@ -13,7 +13,8 @@ internal class deps_jvm_spec {
 	val toolchainConfig: Action<JavaToolchainSpec>
 		get() = _toolchainConfig ?: run {
 			// NOTE: Fetch needed values in advance, to cause them to throw if
-			// not yet initialized.
+			// not yet initialized. Also caches current values, so that later
+			// updates would not cause the captured values to change.
 			val languageVersionValue = verLang
 			val vendorValue = vendor
 
