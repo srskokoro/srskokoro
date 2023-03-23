@@ -64,6 +64,7 @@ fun Configuration.failOnDirectDependencyVersionGotcha(
 	val _failOnDirectDependencyVersionGotcha_isEnabled =
 		"failOnDirectDependencyVersionGotcha_isEnabled"
 
+	// Check if the extra property has ever been set (to any value) before.
 	val alreadySetUpBefore = extra.has(_failOnDirectDependencyVersionGotcha_isEnabled)
 
 	// Non-null `gradle` instance to enable. Null to disable.
