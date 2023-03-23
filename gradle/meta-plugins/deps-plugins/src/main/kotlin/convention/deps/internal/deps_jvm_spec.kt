@@ -44,7 +44,7 @@ internal class deps_jvm_spec {
 			_toolchainConfig = null // Cause re-init
 		}
 
-	private lateinit var _vendor: JvmVendorSpec
+	private var _vendor: JvmVendorSpec? = null
 	var vendor
 		get() = _vendor
 		internal set(value) {
