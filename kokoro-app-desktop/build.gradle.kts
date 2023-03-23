@@ -11,6 +11,6 @@ dependencies {
 	deps.bundles.testExtras {
 		testImplementation(it)
 	}
-	implementation(project(":app"))
+	implementation(project(":kokoro-app"))
 	implementation(jcef.dependency)
 }
