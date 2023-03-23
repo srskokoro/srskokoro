@@ -14,3 +14,7 @@ plugins {
 	id("org.jetbrains.compose") apply false
 	id("io.kotest.multiplatform") apply false
 }
+
+allprojects {
+	group = "srs.kokoro"
+}
