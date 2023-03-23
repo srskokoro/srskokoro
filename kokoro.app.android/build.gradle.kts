@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-	namespace = extra["srs.kokoro.app.ns"] as String
+	namespace = extra["srs.kokoro.app.target.ns"] as String
 	compileSdk = 33
 
 	defaultConfig {
@@ -26,5 +26,4 @@ dependencies {
 		testImplementation(it)
 	}
 	implementation(project(":kokoro.app"))
-	implementation("androidx.activity:activity-ktx:1.6.1")
 }

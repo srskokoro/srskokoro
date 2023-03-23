@@ -28,7 +28,7 @@ kotlin {
 }
 
 android {
-	namespace = extra["srs.kokoro.app.core.ns"] as String
+	namespace = extra["srs.kokoro.app.ns"] as String
 	compileSdk = 33
 
 	defaultConfig {
@@ -44,4 +44,5 @@ dependencies {
 
 	desktopMainImplementation(jcef.dependency)
 	androidMainApi("androidx.core:core-ktx:1.9.0")
+	androidMainApi("androidx.activity:activity-ktx:1.6.1")
 }
