@@ -24,5 +24,5 @@ dependencies {
 	deps.bundles.testExtras {
 		testImplementation(it)
 	}
-	implementation(project(":kokoro-app"))
+	implementation(project(":kokoro.app"))
 }
