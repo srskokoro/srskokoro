@@ -6,7 +6,7 @@ plugins {
 	id("com.github.gmazzo.buildconfig") version "3.1.0"
 }
 
-group = "srs.kokoro.jcef" // Used by `com.github.gmazzo.buildconfig`
+group = "kokoro.jcef" // Used by `com.github.gmazzo.buildconfig`
 
 buildscript {
 	dependencies {

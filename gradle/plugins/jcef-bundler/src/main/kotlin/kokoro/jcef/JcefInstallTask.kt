@@ -1,4 +1,4 @@
-package srs.kokoro.jcef
+package kokoro.jcef
 
 import me.friwi.jcefmaven.CefBuildInfo
 import me.friwi.jcefmaven.impl.util.macos.UnquarantineUtil

@@ -28,7 +28,7 @@ kotlin {
 }
 
 android {
-	namespace = "$group.common"
+	namespace = extra["srs.kokoro.app.core.ns"] as String
 	compileSdk = 33
 
 	defaultConfig {

@@ -1,4 +1,4 @@
-package srs.kokoro.jcef
+package kokoro.jcef
 
 import org.gradle.api.Action
 import org.gradle.api.Project

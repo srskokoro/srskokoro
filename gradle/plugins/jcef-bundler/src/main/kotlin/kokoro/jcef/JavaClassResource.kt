@@ -1,4 +1,4 @@
-package srs.kokoro.jcef
+package kokoro.jcef
 
 import org.gradle.api.resources.MissingResourceException
 import org.gradle.api.resources.ReadableResource

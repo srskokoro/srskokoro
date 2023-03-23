@@ -1,4 +1,4 @@
-package srs.kokoro.jcef
+package kokoro.jcef
 
 abstract class JcefDependencyExtension internal constructor() : JcefExtension() {
 	val platform get() = jcefBuildPlatform

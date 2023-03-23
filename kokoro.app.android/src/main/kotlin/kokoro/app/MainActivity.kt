@@ -1,4 +1,4 @@
-package srs.kokoro.app
+package kokoro.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

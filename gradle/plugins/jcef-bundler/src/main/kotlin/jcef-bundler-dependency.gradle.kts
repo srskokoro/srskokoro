@@ -1,3 +1,3 @@
-import srs.kokoro.jcef.JcefDependencyExtension
+import kokoro.jcef.JcefDependencyExtension
 
 extensions.create<JcefDependencyExtension>("jcef")
