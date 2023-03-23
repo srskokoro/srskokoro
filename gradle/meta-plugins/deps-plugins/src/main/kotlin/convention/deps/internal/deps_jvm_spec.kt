@@ -8,10 +8,10 @@ import org.gradle.jvm.toolchain.JvmImplementation
 import org.gradle.jvm.toolchain.JvmVendorSpec
 
 @Suppress("ClassName")
-internal class deps_jvm_spec {
+internal class deps_jvm_spec : deps_jvm {
 
 	private var _toolchainConfig: Action<JavaToolchainSpec>? = null
-	val toolchainConfig: Action<JavaToolchainSpec>
+	override val toolchainConfig: Action<JavaToolchainSpec>
 		get() = _toolchainConfig ?: run {
 			// NOTE: Fetch needed values in advance, to cause them to throw if
 			// not yet initialized. Also caches current values, so that later
@@ -34,13 +34,13 @@ internal class deps_jvm_spec {
 	// --
 
 	private lateinit var _verLang: JavaLanguageVersion
-	val verLang get() = _verLang
+	override val verLang get() = _verLang
 
 	private lateinit var _verObj: JavaVersion
-	val verObj get() = _verObj
+	override val verObj get() = _verObj
 
 	private var _ver = 0
-	var ver
+	override var ver
 		get() = _ver
 		internal set(value) {
 			// NOTE: Assign first to local variables as the following methods
@@ -54,7 +54,7 @@ internal class deps_jvm_spec {
 		}
 
 	private var _vendor: JvmVendorSpec? = null
-	var vendor
+	override var vendor
 		get() = _vendor
 		internal set(value) {
 			_vendor = value
@@ -62,7 +62,7 @@ internal class deps_jvm_spec {
 		}
 
 	private var _implementation: JvmImplementation? = null
-	var implementation
+	override var implementation
 		get() = _implementation
 		internal set(value) {
 			_implementation = value

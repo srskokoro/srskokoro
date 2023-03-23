@@ -1,19 +1,24 @@
 package convention.deps.internal
 
-import convention.deps.internal.deps_versions.jvm
+import org.gradle.api.Action
+import org.gradle.api.JavaVersion
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.jvm.toolchain.JavaToolchainSpec
+import org.gradle.jvm.toolchain.JvmImplementation
+import org.gradle.jvm.toolchain.JvmVendorSpec
 
-@Suppress("ClassName", "MemberVisibilityCanBePrivate")
-abstract class deps_jvm internal constructor() {
+@Suppress("ClassName")
+interface deps_jvm {
 
-	val toolchainConfig get() = jvm.toolchainConfig
+	val toolchainConfig: Action<JavaToolchainSpec>
 
-	val verLang get() = jvm.verLang
+	val verLang: JavaLanguageVersion
 
-	val verObj get() = jvm.verObj
+	val verObj: JavaVersion
 
-	val ver get() = jvm.ver
+	val ver: Int
 
-	val vendor get() = jvm.vendor
+	val vendor: JvmVendorSpec?
 
-	val implementation get() = jvm.implementation
+	val implementation: JvmImplementation?
 }
