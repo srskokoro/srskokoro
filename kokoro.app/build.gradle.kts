@@ -36,7 +36,6 @@ android {
 	}
 }
 
-@Suppress("UnstableApiUsage")
 dependencies {
 	deps.bundles.testExtras {
 		commonTestImplementation(it)
