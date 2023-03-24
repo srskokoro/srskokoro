@@ -7,7 +7,7 @@ import kotlin.io.path.createDirectories
 @Suppress("NewApi")
 actual object App {
 
-	private const val APP_DATA_DIR_NAME = "srskokoro"
+	private const val APP_DATA_DIR_NAME = "SRSKokoroApp"
 	private val platformDirs = AppDirsFactory.getInstance()
 
 	private lateinit var _localRoot: File
