@@ -10,9 +10,25 @@ actual object App {
 	private const val appDataDirName = "srskokoro"
 	private val platformDirs = AppDirsFactory.getInstance()
 
-	private var _localDir: File? = null
-	@JvmStatic actual val localDir: File
-		get() = _localDir ?: File(platformDirs.getUserDataDir(appDataDirName, null, null, /* roaming = */ false))
-			.also { it.toPath().createDirectories() }
-			.also { _localDir = it }
+	private lateinit var _localRoot: File
+	private var _localData: File? = null
+
+	@JvmStatic
+	actual val localRoot: File
+		get() {
+			localData // Force init (see below)
+			return _localRoot
+		}
+
+	@JvmStatic
+	actual val localData: File
+		get() = _localData ?: File(
+			platformDirs.getUserDataDir(appDataDirName, null, null, /* roaming = */ false),
+			APP_DATA_SCHEMA_VERSION_DIR_NAME
+		).also {
+			it.toPath().createDirectories()
+			@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+			_localRoot = it.parentFile
+			_localData = it
+		}
 }
