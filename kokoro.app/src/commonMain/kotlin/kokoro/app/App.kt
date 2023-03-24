@@ -5,6 +5,4 @@ import java.io.File
 expect object App {
 
 	@JvmStatic val localDir: File
-
-	@JvmStatic val roamingDir: File
 }

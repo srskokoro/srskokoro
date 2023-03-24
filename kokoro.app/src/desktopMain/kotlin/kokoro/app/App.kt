@@ -15,12 +15,4 @@ actual object App {
 		get() = _localDir ?: File(platformDirs.getUserDataDir(appDataDirName, null, null, /* roaming = */ false))
 			.also { it.toPath().createDirectories() }
 			.also { _localDir = it }
-
-	private var _roamingDir: File? = null
-	@JvmStatic actual val roamingDir: File
-		get() = _roamingDir ?: run {
-			File(platformDirs.getUserDataDir(appDataDirName, null, null, /* roaming = */ true)).takeUnless { it.canonicalPath == localDir.canonicalPath }
-			?: File(platformDirs.getUserDataDir("$appDataDirName-roaming", null, null, /* roaming = */ false))
-		}.also { it.toPath().createDirectories() }
-			.also { _roamingDir = it }
 }
