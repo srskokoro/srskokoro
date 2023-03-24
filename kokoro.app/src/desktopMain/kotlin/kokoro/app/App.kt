@@ -7,7 +7,7 @@ import kotlin.io.path.createDirectories
 @Suppress("NewApi")
 actual object App {
 
-	private const val appDataDirName = "srskokoro"
+	private const val APP_DATA_DIR_NAME = "srskokoro"
 	private val platformDirs = AppDirsFactory.getInstance()
 
 	private lateinit var _localRoot: File
@@ -23,7 +23,7 @@ actual object App {
 	@JvmStatic
 	actual val localData: File
 		get() = _localData ?: File(
-			platformDirs.getUserDataDir(appDataDirName, null, null, /* roaming = */ false),
+			platformDirs.getUserDataDir(APP_DATA_DIR_NAME, null, null, /* roaming = */ false),
 			APP_DATA_SCHEMA_VERSION_DIR_NAME
 		).also {
 			it.toPath().createDirectories()
