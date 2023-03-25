@@ -18,7 +18,7 @@ actual object App {
 			context.noBackupFilesDir, // Assumed thread-safe
 			APP_DATA_SCHEMA_VERSION_DIR_NAME
 		).also {
-			it.mkdir()
+			it.mkdir() // TODO Fail fast!
 			_localData = it
 		}
 }
