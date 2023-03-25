@@ -26,11 +26,6 @@ kotlin {
 
 android {
 	namespace = extra["srs.kokoro.internal.ns"] as String
-	compileSdk = 33
-
-	defaultConfig {
-		minSdk = 21
-	}
 }
 
 dependencies {
