@@ -14,6 +14,11 @@ kotlin {
 	 */
 	@Suppress("UNUSED_VARIABLE") val eat_comment: Nothing
 
+	targets.desktop {
+		// TODO Uncomment eventually to allow `.java` sources -- https://youtrack.jetbrains.com/issue/KT-30878
+		//withJava()
+	}
+
 	sourceSets {
 		val commonSs = obtain(commonMain, commonTest)
 		val jvmCommonSs = obtain(jvmCommonMain, jvmCommonTest)
