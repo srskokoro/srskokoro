@@ -41,6 +41,8 @@ dependencies {
 		commonTestImplementation(it)
 	}
 
+	commonMainImplementation(project(":kokoro.lib.internal"))
+
 	desktopMainImplementation(jcef.dependency)
 	androidMainApi("androidx.core:core-ktx:1.9.0")
 	androidMainApi("androidx.activity:activity-ktx:1.6.1")

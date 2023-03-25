@@ -5,6 +5,10 @@ import org.gradle.api.NamedDomainObjectProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
+infix fun List<KotlinSourceSet>.dependsOn(others: List<KotlinSourceSet>) {
+	forEachIndexed { i, it -> it.dependsOn(others[i]) }
+}
+
 fun NamedDomainObjectProvider<out KotlinSourceSet>.dependencies(
 	configure: KotlinDependencyHandler.() -> Unit
 ) {

@@ -1,0 +1,7 @@
+targets:
+- android
+- jvm:desktop
+
+customSourceSets:
+- jvmCommonMain
+- jvmCommonTest
