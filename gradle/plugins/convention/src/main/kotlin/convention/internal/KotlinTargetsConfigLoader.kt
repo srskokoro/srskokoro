@@ -54,7 +54,7 @@ internal class KotlinTargetsConfigLoader(
 		val sourceSets = getKotlinSourceSets(kotlinExtensions)
 
 		val targets = kotlin.targets
-		val targetsExtension = (targets as ExtensionAware).extensions
+		val targetsExtensions = (targets as ExtensionAware).extensions
 		// The following makes sure that the accessors for extensions added to
 		// `targets` are generated. See also, "Understanding when type-safe
 		// model accessors are available | Gradle Kotlin DSL Primer | 7.5.1" --
@@ -86,7 +86,7 @@ internal class KotlinTargetsConfigLoader(
 					val entry = cur.substring(LIST_START_LEN)
 					when (mode) {
 						MODE_TARGETS -> {
-							kotlin.loadTarget(entry, targetsExtension)
+							kotlin.loadTarget(entry, targetsExtensions)
 							return@pass
 						}
 						MODE_SOURCE_SETS -> {
@@ -129,7 +129,7 @@ internal class KotlinTargetsConfigLoader(
 		)
 	}
 
-	private fun KotlinMultiplatformExtension.loadTarget(entry: String, targetsExtension: ExtensionContainer) {
+	private fun KotlinMultiplatformExtension.loadTarget(entry: String, targetsExtensions: ExtensionContainer) {
 		val preset: String
 		val name: String
 
@@ -145,13 +145,13 @@ internal class KotlinTargetsConfigLoader(
 
 		when (preset) {
 			/* */"android" ->
-			add(::android, name, targetsExtension)
+			add(::android, name, targetsExtensions)
 
 			/* */"jvm" ->
-			add(::jvm, name, targetsExtension)
+			add(::jvm, name, targetsExtensions)
 
 			/* */"js" ->
-			add(::js, name, targetsExtension)
+			add(::js, name, targetsExtensions)
 
 			// TODO Add more as necessary to avoid resolving things via reflection
 
@@ -178,7 +178,7 @@ internal class KotlinTargetsConfigLoader(
 					@Suppress("UNCHECKED_CAST")
 					targetType as Class<Any> // Hack!
 				}.let {
-					targetsExtension.add(it, name, target)
+					targetsExtensions.add(it, name, target)
 				}
 
 				println("Kotlin target preset resolved via reflection: $preset")
@@ -189,6 +189,6 @@ internal class KotlinTargetsConfigLoader(
 
 	private inline fun <reified T : KotlinTarget> add(
 		targetProducer: (name: String) -> T, name: String,
-		targetsExtension: ExtensionContainer,
-	): Unit = targetsExtension.add<T>(name, targetProducer(name))
+		targetsExtensions: ExtensionContainer,
+	): Unit = targetsExtensions.add<T>(name, targetProducer(name))
 }
