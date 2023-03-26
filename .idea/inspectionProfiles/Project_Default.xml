@@ -1,6 +1,9 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="Project Default" />
+    <inspection_tool class="ClassName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="namePattern" value="[_A-Z][_A-Za-z\d]*" />
+    </inspection_tool>
     <inspection_tool class="EditorConfigEmptySection" enabled="true" level="INFORMATION" enabled_by_default="true" />
     <inspection_tool class="EditorConfigNoMatchingFiles" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="FunctionName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
