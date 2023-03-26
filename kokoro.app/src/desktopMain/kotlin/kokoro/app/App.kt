@@ -16,7 +16,7 @@ actual object App {
 	actual val localData: File
 		get() = _localData ?: File(
 			platformDirs.getUserDataDir(APP_DATA_DIR_NAME, null, null, /* roaming = */ false),
-			APP_DATA_SCHEMA_VERSION_DIR_NAME
+			APP_DATA_SCHEMA_VERSION_NAME
 		).also {
 			it.toPath().createDirectories()
 			_localData = it

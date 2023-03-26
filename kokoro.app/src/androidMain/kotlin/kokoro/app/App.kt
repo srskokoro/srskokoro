@@ -16,7 +16,7 @@ actual object App {
 	actual val localData: File
 		get() = _localData ?: File(
 			context.noBackupFilesDir, // Assumed thread-safe
-			APP_DATA_SCHEMA_VERSION_DIR_NAME
+			APP_DATA_SCHEMA_VERSION_NAME
 		).also {
 			it.mkdir() // TODO Fail fast!
 			_localData = it
