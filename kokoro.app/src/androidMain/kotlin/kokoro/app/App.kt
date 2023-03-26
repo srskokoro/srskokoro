@@ -10,15 +10,15 @@ actual object App {
 
 	// --
 
-	private var _cacheData: File? = null
+	private var _cacheMain: File? = null
 
 	@JvmStatic
-	actual val cacheData: File
-		get() = _cacheData ?: File(
+	actual val cacheMain: File
+		get() = _cacheMain ?: File(
 			context.cacheDir, // Assumed thread-safe
 			APP_CACHE_SCHEMA_VERSION_NAME
 		).also {
 			it.mkdir() // TODO Fail fast!
-			_cacheData = it
+			_cacheMain = it
 		}
 }

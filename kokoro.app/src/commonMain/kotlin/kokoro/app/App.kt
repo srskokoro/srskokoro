@@ -13,5 +13,5 @@ expect object App {
 	 * usually go under this directory. This directory is always a subdirectory
 	 * of the cache directory root.
 	 */
-	@JvmStatic val cacheData: File
+	@JvmStatic val cacheMain: File
 }
