@@ -1,6 +1,6 @@
-package convention.internal.util
+package conv.internal.util
 
-import convention.internal.setup.*
+import conv.internal.setup.*
 import org.gradle.api.DomainObjectCollection
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget

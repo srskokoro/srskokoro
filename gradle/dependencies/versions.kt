@@ -1,4 +1,4 @@
-import convention.deps.internal.*
+import conv.deps.internal.*
 import org.gradle.jvm.toolchain.JvmVendorSpec
 
 internal fun deps_versions.init() {

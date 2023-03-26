@@ -1,4 +1,4 @@
-package convention.deps.internal
+package conv.deps.internal
 
 @Suppress("ClassName")
 class deps_bundle internal constructor(spec: deps_bundle_spec) {

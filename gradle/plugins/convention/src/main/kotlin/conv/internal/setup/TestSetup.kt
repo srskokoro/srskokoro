@@ -1,6 +1,6 @@
-package convention.internal.setup
+package conv.internal.setup
 
-import convention.internal.util.*
+import conv.internal.util.*
 import org.gradle.api.tasks.testing.Test
 
 internal fun setUp(task: Test): Unit = with(task) {

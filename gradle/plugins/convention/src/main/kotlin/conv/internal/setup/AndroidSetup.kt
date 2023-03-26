@@ -1,4 +1,4 @@
-package convention.internal.setup
+package conv.internal.setup
 
 import com.android.build.api.dsl.ApplicationBaseFlavor
 import deps

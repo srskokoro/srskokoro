@@ -7,8 +7,8 @@ kotlin {
 	 * See 'build.targets.txt' to declare build targets, then use
 	 * `targets.<targetName>` here to configure them further.
 	 *
-	 * See also [convention.internal.setup.setUpTargetsViaConfig] in the
-	 * convention plugins.
+	 * See also [conv.internal.setup.setUpTargetsViaConfig] in the convention
+	 * plugins.
 	 */
 	@Suppress("UNUSED_VARIABLE") val eat_comment: Nothing
 

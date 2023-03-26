@@ -1,4 +1,4 @@
-package convention.util
+package conv.util
 
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.plugins.ExtensionAware

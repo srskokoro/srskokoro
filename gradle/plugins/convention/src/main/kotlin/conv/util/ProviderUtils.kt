@@ -1,4 +1,4 @@
-package convention.util
+package conv.util
 
 import org.gradle.api.provider.Provider
 

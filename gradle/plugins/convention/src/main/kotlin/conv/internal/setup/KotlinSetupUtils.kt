@@ -1,6 +1,6 @@
-package convention.internal.setup
+package conv.internal.setup
 
-import convention.internal.util.*
+import conv.internal.util.*
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware

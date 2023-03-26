@@ -1,4 +1,4 @@
-import convention.attributes.*
+import conv.attributes.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 

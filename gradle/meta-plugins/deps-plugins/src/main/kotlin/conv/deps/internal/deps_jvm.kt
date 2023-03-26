@@ -1,4 +1,4 @@
-package convention.deps.internal
+package conv.deps.internal
 
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion

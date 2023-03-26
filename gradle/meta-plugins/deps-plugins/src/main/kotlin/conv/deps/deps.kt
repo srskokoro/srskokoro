@@ -1,7 +1,7 @@
 @file:Suppress("PackageDirectoryMismatch")
 
-import convention.deps.internal.deps_jvm
-import convention.deps.internal.deps_versions
+import conv.deps.internal.deps_jvm
+import conv.deps.internal.deps_versions
 
 @Suppress("ClassName")
 object deps {

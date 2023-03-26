@@ -1,4 +1,4 @@
-import convention.internal.setup.*
+import conv.internal.setup.*
 
 plugins {
 	id("conv.base")

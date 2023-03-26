@@ -1,4 +1,4 @@
-package convention.attributes
+package conv.attributes
 
 import org.gradle.api.attributes.Attribute
 

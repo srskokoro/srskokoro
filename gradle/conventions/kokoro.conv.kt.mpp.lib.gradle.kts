@@ -1,4 +1,4 @@
-import convention.util.*
+import conv.util.*
 
 plugins {
 	id("conv.kt.mpp.lib")

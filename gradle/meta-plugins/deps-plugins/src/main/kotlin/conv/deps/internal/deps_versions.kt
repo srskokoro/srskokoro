@@ -1,6 +1,6 @@
-package convention.deps.internal
+package conv.deps.internal
 
-import convention.deps.internal.util.indexOfModuleGroupDelimiter
+import conv.deps.internal.util.indexOfModuleGroupDelimiter
 
 @Suppress("ClassName")
 internal object deps_versions {

@@ -1,4 +1,4 @@
-package convention.deps.internal.util
+package conv.deps.internal.util
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun indexOfModuleGroupDelimiter(isDependencyNotation: Boolean, notation: String): Int {
