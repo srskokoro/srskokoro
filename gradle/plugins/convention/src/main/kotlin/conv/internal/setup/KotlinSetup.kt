@@ -15,7 +15,7 @@ internal fun Project.setUp(kotlin: KotlinProjectExtension): Unit = with(kotlin) 
 	jvmToolchain(deps.jvm.toolchainConfig)
 }
 
-internal fun Project.setUpTargetsViaConfig(kotlin: KotlinMultiplatformExtension) {
+internal fun Project.setUpTargetsExtensions(kotlin: KotlinMultiplatformExtension) {
 	// The following makes sure that the type-safe accessors for extensions
 	// added to `targets` are generated. See also, "Understanding when type-safe
 	// model accessors are available | Gradle Kotlin DSL Primer | 7.5.1" --

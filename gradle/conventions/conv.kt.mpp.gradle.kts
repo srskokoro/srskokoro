@@ -16,7 +16,7 @@ withAndroid {
 
 internal val localKotlin = kotlin.apply {
 	setUp(this)
-	setUpTargetsViaConfig(this)
+	setUpTargetsExtensions(this)
 }
 
 localKotlin.targets.apply {
