@@ -16,7 +16,7 @@ actual object App {
 	actual val cacheMain: File
 		get() = _cacheMain ?: File(
 			platformDirs.getUserDataDir(APP_CACHE_DIR_ROOT_NAME, null, null, /* roaming = */ false),
-			APP_CACHE_SCHEMA_VERSION_NAME
+			APP_CACHE_SCHEMA_VERSION_NAME,
 		).also {
 			it.toPath().createDirectories()
 			_cacheMain = it

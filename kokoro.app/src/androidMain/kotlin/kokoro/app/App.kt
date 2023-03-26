@@ -16,7 +16,7 @@ actual object App {
 	actual val cacheMain: File
 		get() = _cacheMain ?: File(
 			context.cacheDir, // Assumed thread-safe
-			APP_CACHE_SCHEMA_VERSION_NAME
+			APP_CACHE_SCHEMA_VERSION_NAME,
 		).also {
 			it.mkdir() // TODO Fail fast!
 			_cacheMain = it
