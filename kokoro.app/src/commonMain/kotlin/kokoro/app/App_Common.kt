@@ -1,7 +1,6 @@
 package kokoro.app
 
 import okio.FileSystem
-import okio.IOException
 import okio.Path
 import kotlin.jvm.JvmStatic
 
@@ -13,7 +12,9 @@ internal object App_Common {
 			fs.apply {
 				createDirectories(it)
 				if (metadataOrNull(it)?.isDirectory != true) {
-					throw IOException("failed to create directory: $it")
+					// Let the following throw its own exception (so that we
+					// don't have to throw our own customized one).
+					createDirectory(it, mustCreate = true)
 				}
 			}
 		}
