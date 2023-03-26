@@ -18,7 +18,13 @@ actual object App {
 			context.cacheDir, // Assumed thread-safe
 			APP_CACHE_SCHEMA_VERSION_NAME,
 		).also {
-			it.mkdir() // TODO Fail fast!
+			if (!it.mkdir() && !it.isDirectory) {
+				if (it.exists()) {
+					throw FileAlreadyExistsException(it)
+				} else {
+					throw AccessDeniedException(it)
+				}
+			}
 			_cacheMain = it
 		}
 }
