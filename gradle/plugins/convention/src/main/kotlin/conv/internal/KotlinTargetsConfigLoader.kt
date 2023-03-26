@@ -2,12 +2,9 @@ package conv.internal
 
 import conv.internal.setup.*
 import conv.util.*
-import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.file.RegularFile
-import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.provider.ProviderFactory
-import org.gradle.kotlin.dsl.add
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import java.lang.reflect.InvocationTargetException
@@ -48,22 +45,8 @@ internal class KotlinTargetsConfigLoader(
 	}
 
 	private fun doParse(configFileContents: String, kotlin: KotlinMultiplatformExtension) {
-		val kotlinExtensions = (kotlin as ExtensionAware).extensions
-
-		// Will throw if our assumption (that it's an extension) is incorrect.
-		val sourceSets = getKotlinSourceSets(kotlinExtensions)
-
-		val targets = kotlin.targets
-		val targetsExtensions = targets.extensions
-		// The following makes sure that the accessors for extensions added to
-		// `targets` are generated. See also, "Understanding when type-safe
-		// model accessors are available | Gradle Kotlin DSL Primer | 7.5.1" --
-		// https://docs.gradle.org/7.5.1/userguide/kotlin_dsl.html#kotdsl:accessor_applicability
-		//
-		// NOTE: If one day, this caused an exception due to "targets" already
-		// existing, simply remove the following. It's likely that it's already
-		// implemented for us, and if so, we shouldn't need to do anything.
-		kotlinExtensions.add<NamedDomainObjectCollection<KotlinTarget>>("targets", targets)
+		val targetsExtensions = kotlin.targets.extensions
+		val sourceSets = getSourceSets(kotlin)
 
 		var mode = MODE_TOP_LEVEL
 		configFileContents.lineSequence().forEachIndexed pass@{ i, raw ->
