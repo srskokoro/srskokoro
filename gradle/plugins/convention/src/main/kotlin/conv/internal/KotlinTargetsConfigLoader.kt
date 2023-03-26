@@ -21,7 +21,7 @@ internal class KotlinTargetsConfigLoader(
 		private const val MODE_SOURCE_SETS = 2
 
 		private const val LIST_START = "- "
-		private const val LIST_START_LEN = "- ".length
+		private const val LIST_START_LEN = LIST_START.length
 	}
 
 	fun loadInto(kotlin: KotlinMultiplatformExtension) {
