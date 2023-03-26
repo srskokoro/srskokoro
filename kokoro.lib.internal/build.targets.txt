@@ -1,7 +1,5 @@
 targets:
-- android
-- jvm:desktop
+# None (for now)
 
 customSourceSets:
-- jvmCommonMain
-- jvmCommonTest
+# None (for now)
