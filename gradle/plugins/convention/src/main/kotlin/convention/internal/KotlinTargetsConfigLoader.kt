@@ -1,7 +1,7 @@
 package convention.internal
 
-import convention.*
 import convention.internal.setup.*
+import convention.util.*
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.ExtensionAware
@@ -54,7 +54,7 @@ internal class KotlinTargetsConfigLoader(
 		val sourceSets = getKotlinSourceSets(kotlinExtensions)
 
 		val targets = kotlin.targets
-		val targetsExtensions = (targets as ExtensionAware).extensions
+		val targetsExtensions = targets.extensions
 		// The following makes sure that the accessors for extensions added to
 		// `targets` are generated. See also, "Understanding when type-safe
 		// model accessors are available | Gradle Kotlin DSL Primer | 7.5.1" --
@@ -145,13 +145,13 @@ internal class KotlinTargetsConfigLoader(
 
 		when (preset) {
 			/* */"android" ->
-			add(::android, name, targetsExtensions)
+			/*  */android(name) asExtensionIn targetsExtensions
 
 			/* */"jvm" ->
-			add(::jvm, name, targetsExtensions)
+			/*  */jvm(name) asExtensionIn targetsExtensions
 
 			/* */"js" ->
-			add(::js, name, targetsExtensions)
+			/*  */js(name) asExtensionIn targetsExtensions
 
 			// TODO Add more as necessary to avoid resolving things via reflection
 
@@ -172,13 +172,13 @@ internal class KotlinTargetsConfigLoader(
 					targetMethod.invoke(this, name)
 				} catch (ex: InvocationTargetException) {
 					throw ex.targetException
-				}
+				} as KotlinTarget
 
 				run {
 					@Suppress("UNCHECKED_CAST")
 					targetType as Class<Any> // Hack!
 				}.let {
-					targetsExtensions.add(it, name, target)
+					targetsExtensions.add(it, target.name, target)
 				}
 
 				println("Kotlin target preset resolved via reflection: $preset")
@@ -186,9 +186,4 @@ internal class KotlinTargetsConfigLoader(
 			}
 		}
 	}
-
-	private inline fun <reified T : KotlinTarget> add(
-		targetProducer: (name: String) -> T, name: String,
-		targetsExtensions: ExtensionContainer,
-	): Unit = targetsExtensions.add<T>(name, targetProducer(name))
 }
