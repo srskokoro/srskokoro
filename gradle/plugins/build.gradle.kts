@@ -3,5 +3,5 @@ plugins {
 	// subproject's classloader -- https://youtrack.jetbrains.com/issue/KT-46200
 	`kotlin-dsl` apply false
 
-	id("convention.deps.hook.root")
+	id("conv.deps.hook.root")
 }

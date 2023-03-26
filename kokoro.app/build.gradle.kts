@@ -7,7 +7,7 @@ plugins {
 	 * - Nonetheless, should doing so make things more maintainable, dealing
 	 * with any issues introduced might be worth it.
 	 */
-	id("kokoro.convention.kotlin.mpp.lib")
+	id("kokoro.conv.kt.mpp.lib")
 	id("jcef-bundler-dependency")
 }
 

@@ -4,7 +4,7 @@ pluginManagement {
 	includeBuild("../meta-plugins")
 }
 plugins {
-	id("convention.settings")
+	id("conv.settings")
 }
 
 dependencyResolutionManagement {

@@ -1,5 +1,5 @@
 plugins {
-	id("convention.kotlin.android.app")
+	id("conv.kt.android.app")
 }
 
 android {

@@ -1,7 +1,7 @@
 import convention.util.*
 
 plugins {
-	id("convention.kotlin.mpp.lib")
+	id("conv.kt.mpp.lib")
 }
 
 kotlin {

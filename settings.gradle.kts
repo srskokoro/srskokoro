@@ -4,7 +4,7 @@ pluginManagement {
 	includeBuild("gradle/meta-plugins")
 }
 plugins {
-	id("convention.settings")
+	id("conv.settings")
 }
 
 rootProject.name = "srskokoro"

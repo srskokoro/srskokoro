@@ -1,5 +1,5 @@
 plugins {
-	id("kokoro.convention.kotlin.mpp.lib")
+	id("kokoro.conv.kt.mpp.lib")
 }
 
 kotlin {

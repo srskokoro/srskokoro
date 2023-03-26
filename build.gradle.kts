@@ -2,7 +2,7 @@
 @file:Suppress("DSL_SCOPE_VIOLATION", "UnstableApiUsage")
 
 plugins {
-	id("convention.root")
+	id("conv.root")
 
 	// Avoid the plugins to be loaded multiple times in each subproject's
 	// classloader. See also, https://youtrack.jetbrains.com/issue/KT-46200

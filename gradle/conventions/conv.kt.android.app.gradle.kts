@@ -1,7 +1,7 @@
 import convention.internal.setup.*
 
 plugins {
-	id("convention.base")
+	id("conv.base")
 	id("com.android.application")
 	kotlin("android")
 }
