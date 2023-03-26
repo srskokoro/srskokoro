@@ -34,6 +34,8 @@ dependencies {
 	androidMainApi("androidx.core:core-ktx:1.9.0")
 	androidMainApi("androidx.activity:activity-ktx:1.6.1")
 
+	commonMainImplementation("com.squareup.okio:okio:3.3.0")
+
 	// https://github.com/harawata/appdirs
 	desktopMainImplementation("net.harawata:appdirs:1.2.1")
 }

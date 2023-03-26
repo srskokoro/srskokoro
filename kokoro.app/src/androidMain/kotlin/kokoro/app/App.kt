@@ -1,7 +1,9 @@
 package kokoro.app
 
 import android.app.Application
-import java.io.File
+import kokoro.app.App_Common.ensureCacheMain
+import okio.FileSystem
+import okio.Path.Companion.toOkioPath
 
 actual object App {
 
@@ -10,21 +12,13 @@ actual object App {
 
 	// --
 
-	private var _cacheMain: File? = null
-
-	@JvmStatic
-	actual val cacheMain: File
-		get() = _cacheMain ?: File(
-			context.cacheDir, // Assumed thread-safe
-			APP_CACHE_SCHEMA_VERSION_NAME,
-		).also {
-			if (!it.mkdir() && !it.isDirectory) {
-				if (it.exists()) {
-					throw FileAlreadyExistsException(it)
-				} else {
-					throw AccessDeniedException(it)
-				}
-			}
-			_cacheMain = it
-		}
+	/**
+	 * The primary directory for storing cache data. All cache data should
+	 * usually go under this directory. This directory is always a subdirectory
+	 * of the cache directory root.
+	 */
+	@JvmField actual val cacheMain = ensureCacheMain(
+		context.cacheDir // Assumed thread-safe
+			.toOkioPath(), FileSystem.SYSTEM
+	)
 }

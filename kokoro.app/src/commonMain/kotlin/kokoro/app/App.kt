@@ -1,6 +1,6 @@
 package kokoro.app
 
-import java.io.File
+import okio.Path
 
 const val APP_CACHE_SCHEMA_VERSION = 0
 
@@ -13,5 +13,6 @@ expect object App {
 	 * usually go under this directory. This directory is always a subdirectory
 	 * of the cache directory root.
 	 */
-	@JvmStatic val cacheMain: File
+	val cacheMain: Path
 }
+
