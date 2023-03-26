@@ -1,5 +1,7 @@
 targets:
 # None (for now)
+#- <target>[:<name>]
 
 customSourceSets:
 # None (for now)
+#- <name>

@@ -2,12 +2,15 @@ package conv.internal
 
 import conv.internal.setup.*
 import conv.util.*
+import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import java.io.IOException
 import java.lang.reflect.InvocationTargetException
+import java.nio.file.Files
 
 internal class KotlinTargetsConfigLoader(
 	private val providers: ProviderFactory,
@@ -20,28 +23,43 @@ internal class KotlinTargetsConfigLoader(
 		private const val MODE_TARGETS = 1
 		private const val MODE_SOURCE_SETS = 2
 
+		private const val SECTION_HEADER_TARGETS = "targets:"
+		private const val SECTION_HEADER_SOURCE_SETS = "customSourceSets:"
+
 		private const val LIST_START = "- "
 		private const val LIST_START_LEN = LIST_START.length
 	}
 
 	fun loadInto(kotlin: KotlinMultiplatformExtension) {
+		configFile.takeIf { !it.isFile || it.length() <= 2L }?.let {
+			it.delete()
+			try {
+				Files.createFile(it.toPath()) // Let it throw!
+			} catch (ex: IOException) {
+				// Wrap it so that the exception class name also gets printed
+				// (and not just the exception message).
+				throw InvalidUserDataException(ex.toString(), ex)
+			}
+			it.writeText(
+				"""
+				$SECTION_HEADER_TARGETS
+				# None (for now)
+				#$LIST_START<target>[:<name>]
+
+				$SECTION_HEADER_SOURCE_SETS
+				# None (for now)
+				#$LIST_START<name>
+
+				""".trimIndent()
+			)
+		}
+
 		val configBytes = providers.fileContents(config)
 			.asBytes
-			.orNull
+			.get()
 
-		if (configBytes != null) {
-			val configChars = String(configBytes, Charsets.UTF_8)
-			doParse(configChars, kotlin)
-		} else {
-			println("Not parsing kotlin targets (and source sets) from config file " + configFile.run {
-				when {
-					exists().not() -> "as it's not present."
-					isFile.not() -> "as it's not a file."
-					else -> "for unknown reasons."
-				}
-			})
-			println("- Expected config file: $configFile")
-		}
+		val configChars = String(configBytes, Charsets.UTF_8)
+		doParse(configChars, kotlin)
 	}
 
 	private fun doParse(configFileContents: String, kotlin: KotlinMultiplatformExtension) {
@@ -56,11 +74,11 @@ internal class KotlinTargetsConfigLoader(
 			try {
 				when (cur) {
 					"" -> return@pass
-					"targets:" -> {
+					SECTION_HEADER_TARGETS -> {
 						mode = MODE_TARGETS
 						return@pass
 					}
-					"customSourceSets:" -> {
+					SECTION_HEADER_SOURCE_SETS -> {
 						mode = MODE_SOURCE_SETS
 						return@pass
 					}
