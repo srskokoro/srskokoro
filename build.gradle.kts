@@ -1,6 +1,3 @@
-// TODO: Remove once fixed, https://github.com/gradle/gradle/issues/22797
-@file:Suppress("DSL_SCOPE_VIOLATION", "UnstableApiUsage")
-
 plugins {
 	id("conv.root")
 
