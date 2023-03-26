@@ -21,6 +21,7 @@ internal fun setUp(android: AndroidExtension): Unit = with(android) {
 		}
 	}
 
+	@Suppress("UnstableApiUsage")
 	testOptions {
 		unitTests.all {
 			setUp(it)
