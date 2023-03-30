@@ -10,11 +10,11 @@
       <option name="PACKAGES_TO_USE_STAR_IMPORTS">
         <value>
           <package name="java.util" alias="false" withSubpackages="false" />
-          <package name="convention.attributes" alias="false" withSubpackages="false" />
-          <package name="convention.internal.util" alias="false" withSubpackages="false" />
-          <package name="convention.internal.setup" alias="false" withSubpackages="false" />
-          <package name="convention.util" alias="false" withSubpackages="false" />
-          <package name="convention" alias="false" withSubpackages="false" />
+          <package name="conv.attributes" alias="false" withSubpackages="false" />
+          <package name="conv.internal.util" alias="false" withSubpackages="false" />
+          <package name="conv.internal.setup" alias="false" withSubpackages="false" />
+          <package name="conv.util" alias="false" withSubpackages="false" />
+          <package name="conv" alias="false" withSubpackages="false" />
           <package name="kotlinx.android.synthetic" alias="false" withSubpackages="true" />
           <package name="io.ktor" alias="false" withSubpackages="true" />
         </value>
