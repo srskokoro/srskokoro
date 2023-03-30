@@ -18,7 +18,7 @@ ij_smart_tabs = true
 end_of_line = lf
 #insert_final_newline = true
 trim_trailing_whitespace = true
-max_line_length = 120
+max_line_length = 160
 ij_visual_guides = 80, 120
 
 # Auto-formatting
