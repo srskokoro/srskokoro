@@ -16,6 +16,20 @@ pluginManagement {
 	}
 }
 
+dependencyVersionsSetup {
+	useInProjects()
+
+	"gradle/dependencies".let { dependenciesDir ->
+		for (parent in arrayOf("", "../", "../../")) {
+			val target = "$parent$dependenciesDir"
+			if (File(rootDir, "$target/settings.gradle.kts").exists().not()) continue
+
+			includeBuild(target)
+			break // Done!
+		}
+	}
+}
+
 // Include all subfolders that contain a 'build.gradle.kts' as subprojects (but
 // exclude those that look like included builds).
 rootDir.let { rootDir ->

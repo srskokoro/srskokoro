@@ -1,3 +1,1 @@
-plugins {
-	id("conv.deps.hook.root")
-}
+// Nothing (for now)

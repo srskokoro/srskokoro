@@ -23,7 +23,7 @@ android {
 }
 
 dependencies {
-	deps.bundles.testExtras {
+	deps.bundles.testExtras *= {
 		commonTestImplementation(it)
 	}
 }

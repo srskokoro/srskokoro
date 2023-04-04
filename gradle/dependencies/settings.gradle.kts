@@ -1,20 +1,30 @@
-import conv.deps.internal.*
-import org.gradle.jvm.toolchain.JvmVendorSpec
+@file:Suppress("UnstableApiUsage")
 
-internal fun deps_versions.init() {
+pluginManagement {
+	includeBuild("../meta-plugins")
+}
+plugins {
+	id("conv.settings.deps")
+}
+
+dependencyVersionsSetup {
+	export()
+}
+
+dependencyVersions {
 	jvm {
 		ver = 17
-		vendor = @Suppress("UnstableApiUsage") JvmVendorSpec.ADOPTIUM
+		vendor { ADOPTIUM }
 	}
 
 	val kotlin = "1.8.0"
 	"org.jetbrains.kotlin".let {
-		pluginGroup(it, kotlin)
-		moduleGroup(it, kotlin)
+		plugin("$it.*", kotlin)
+		module("$it:*", kotlin)
 	}
 
 	val android = "7.4.0" // Android Gradle Plugin (AGP)
-	pluginGroup("com.android", android)
+	plugin("com.android.*", android)
 	module("com.android.tools.build:gradle", android)
 
 	val kotest = "5.5.4"
@@ -27,4 +37,11 @@ internal fun deps_versions.init() {
 
 	val kotlinx_coroutines = "1.6.4"
 	module("org.jetbrains.kotlinx:kotlinx-coroutines-test", kotlinx_coroutines)
+}
+
+dependencyBundles {
+	bundle("testExtras") {
+		module("org.jetbrains.kotlinx:kotlinx-coroutines-test")
+		module("io.kotest:kotest-property")
+	}
 }

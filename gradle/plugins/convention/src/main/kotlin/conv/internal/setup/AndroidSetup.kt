@@ -1,9 +1,9 @@
 package conv.internal.setup
 
 import com.android.build.api.dsl.ApplicationBaseFlavor
-import deps
+import org.gradle.api.Project
 
-internal fun setUp(android: AndroidExtension): Unit = with(android) {
+internal fun Project.setUp(android: AndroidExtension): Unit = with(android) {
 	compileSdk = 33
 
 	defaultConfig {
@@ -15,7 +15,7 @@ internal fun setUp(android: AndroidExtension): Unit = with(android) {
 
 	compileOptions {
 		// TODO Remove eventually -- See, https://issuetracker.google.com/issues/260059413
-		deps.jvm.verObj.let {
+		deps.jvm.verObj?.let {
 			sourceCompatibility = it
 			targetCompatibility = it
 		}

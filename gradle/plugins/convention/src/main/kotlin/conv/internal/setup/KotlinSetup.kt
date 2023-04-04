@@ -1,7 +1,6 @@
 package conv.internal.setup
 
 import conv.internal.KotlinTargetsConfigLoader
-import deps
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
@@ -12,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 
 internal fun Project.setUp(kotlin: KotlinProjectExtension): Unit = with(kotlin) {
 	setUpProject(kotlin)
-	jvmToolchain(deps.jvm.toolchainConfig)
+	jvmToolchain(deps.jvm)
 }
 
 internal fun Project.setUpTargetsExtensions(kotlin: KotlinMultiplatformExtension) {

@@ -20,7 +20,7 @@ android {
 }
 
 dependencies {
-	deps.bundles.testExtras {
+	deps.bundles.testExtras *= {
 		testImplementation(it)
 	}
 	implementation(project(":kokoro.app"))
