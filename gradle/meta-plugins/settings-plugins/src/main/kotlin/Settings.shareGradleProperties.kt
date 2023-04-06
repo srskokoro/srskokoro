@@ -55,6 +55,11 @@ fun Settings.shareGradleProperties(projectDir: String) {
 		// last modification time, and so, the former have likely been rounded
 		// to the nearest supported value, making it different from the latter.
 		// This hack fixes that.
+		//
+		// ASSUMPTION: Usually, the creation time has a higher granularity than
+		// the last modification time, so the following isn't needed for such.
+		// See also, https://learn.microsoft.com/en-us/windows/win32/sysinfo/file-times
+		//
 		val createTime = dstAttrView.readAttributes().creationTime()
 		if (createTime != lastModifiedTime) {
 			dstAttrView.setTimes(/* lastModifiedTime = */ createTime, null, null)
