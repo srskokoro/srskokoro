@@ -9,8 +9,8 @@ import java.util.*
 
 /**
  * Generates a 'gradle.properties' file for the specified project directory and
- * fills it with the same entries as those in the build's 'gradle.properties'
- * file (located in the build's settings directory).
+ * fills it with the same entries as those in the current build's
+ * 'gradle.properties' file (located in the build's settings directory).
  *
  * @param projectDir the project directory path, relative to the build's
  * settings directory.
