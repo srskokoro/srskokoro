@@ -14,39 +14,39 @@ import java.util.*
  * directory).
  */
 fun Settings.shareGradleProperties(projectDir: String) {
-	val propSrcFile = File(rootDir, "gradle.properties")
-	val propDstFile = File(rootDir, "$projectDir/gradle.properties")
-	val propDstPath = propDstFile.toPath()
+	val srcFile = File(rootDir, "gradle.properties")
+	val dstFile = File(rootDir, "$projectDir/gradle.properties")
+	val dstPath = dstFile.toPath()
 
-	if (propDstFile.isFile) {
-		Files.readAttributes(propDstPath, BasicFileAttributes::class.java).let { propDstAttr ->
-			val propDstModMs = propDstAttr.lastModifiedTime().toMillis()
-			if (propDstModMs > propSrcFile.lastModified() && propDstModMs == propDstAttr.creationTime().toMillis()) {
+	if (dstFile.isFile) {
+		Files.readAttributes(dstPath, BasicFileAttributes::class.java).let { dstAttr ->
+			val dstModMs = dstAttr.lastModifiedTime().toMillis()
+			if (dstModMs > srcFile.lastModified() && dstModMs == dstAttr.creationTime().toMillis()) {
 				return@shareGradleProperties // It's likely up-to-date
 			}
 		}
 
-		if (!propDstFile.delete()) throw FileAlreadyExistsException(
-			file = propDstFile, reason = "Failed to delete the destination file."
+		if (!dstFile.delete()) throw FileAlreadyExistsException(
+			file = dstFile, reason = "Failed to delete the destination file."
 		)
 	}
 
-	val prop = Properties()
+	val props = Properties()
 	// NOTE: 'gradle.properties' files are supposed to be encoded in ISO-8859-1
 	// (also known as Latin-1).
 	// - See, https://github.com/gradle/gradle/issues/13741#issuecomment-658177619
 	// - See also, https://en.wikipedia.org/wiki/.properties
-	propSrcFile.inputStream().use {
-		prop.load(it)
+	srcFile.inputStream().use {
+		props.load(it)
 	}
-	propDstFile.outputStream().use {
-		prop.store(it, "Auto-generated. DO NOT MODIFY.")
+	dstFile.outputStream().use {
+		props.store(it, "Auto-generated. DO NOT MODIFY.")
 	}
 
-	Files.getFileAttributeView(propDstPath, BasicFileAttributeView::class.java).let { propDstAttrView ->
+	Files.getFileAttributeView(dstPath, BasicFileAttributeView::class.java).let { dstAttrView ->
 		// Sets the creation time to be the same as the last modification time.
-		val lastModifiedTime = propDstAttrView.readAttributes().lastModifiedTime()
-		propDstAttrView.setTimes(null, null, /* createTime = */ lastModifiedTime)
+		val lastModifiedTime = dstAttrView.readAttributes().lastModifiedTime()
+		dstAttrView.setTimes(null, null, /* createTime = */ lastModifiedTime)
 
 		// Sets the last modification time to be the same as the creation time,
 		// that is, if necessary.
@@ -55,11 +55,11 @@ fun Settings.shareGradleProperties(projectDir: String) {
 		// last modification time, and so, the former have likely been rounded
 		// to the nearest supported value, making it different from the latter.
 		// This hack fixes that.
-		val createTime = propDstAttrView.readAttributes().creationTime()
+		val createTime = dstAttrView.readAttributes().creationTime()
 		if (createTime != lastModifiedTime) {
-			propDstAttrView.setTimes(/* lastModifiedTime = */ createTime, null, null)
+			dstAttrView.setTimes(/* lastModifiedTime = */ createTime, null, null)
 		}
 	}
 
-	println("Auto-generated 'gradle.properties' file: ${propDstFile.absolutePath}")
+	println("Auto-generated 'gradle.properties' file: ${dstFile.absolutePath}")
 }
