@@ -1,9 +1,6 @@
 ﻿package conv.deps
 
-import conv.deps.internal.common.first
-import conv.deps.internal.common.hashCodeOfConcat
-import conv.deps.internal.common.remove
-import conv.deps.internal.common.removeLast
+import conv.deps.internal.common.*
 import conv.deps.serialization.cannotStore
 import org.gradle.api.artifacts.ModuleVersionSelector
 
@@ -116,8 +113,8 @@ sealed class ModuleId private constructor() {
 			id.startsWith(other.group) &&
 			id.endsWith(other.name)
 
-		override val group: String get() = id.first(groupEnd)
-		override val name: String get() = id.remove(groupEnd + 1)
+		override val group: String get() = id.until(groupEnd)
+		override val name: String get() = id.from(groupEnd + 1)
 	}
 
 	private class ViaGroupName(

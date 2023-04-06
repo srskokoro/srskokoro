@@ -1,9 +1,9 @@
 package conv.deps.serialization
 
 import conv.deps.*
-import conv.deps.internal.common.first
-import conv.deps.internal.common.remove
+import conv.deps.internal.common.from
 import conv.deps.internal.common.removeLast
+import conv.deps.internal.common.until
 import conv.deps.spec.DependencyBundleSpec
 import conv.deps.spec.DependencyBundlesSpec
 import conv.deps.spec.DependencyVersionsSpec
@@ -89,15 +89,15 @@ private fun consumeHeader(state: ReaderState, header: String): Boolean {
 private fun DependencyVersionsSpec.consumeInJvm(line: String): Boolean = with(jvm) {
 	when {
 		line.startsWith(PREFIX_JVM_00_VER) -> if (ver == 0) {
-			ver = line.remove(PREFIX_JVM_00_VER_len).toInt()
+			ver = line.from(PREFIX_JVM_00_VER_len).toInt()
 		}
 		line.startsWith(PREFIX_JVM_01_VENDOR) -> if (vendor == null) {
-			vendor = line.remove(PREFIX_JVM_01_VENDOR_len)
+			vendor = line.from(PREFIX_JVM_01_VENDOR_len)
 				.takeIf { it.isNotEmpty() }
 				?.let { JvmSetupVendor.parse(it) }
 		}
 		line.startsWith(PREFIX_JVM_02_IMPLEMENTATION) -> if (implementation == null) {
-			implementation = line.remove(PREFIX_JVM_02_IMPLEMENTATION_len)
+			implementation = line.from(PREFIX_JVM_02_IMPLEMENTATION_len)
 				.takeIf { it.isNotEmpty() }
 				?.let { JvmSetupImplementation.parse(it) }
 		}
@@ -110,8 +110,8 @@ private fun DependencyVersionsSpec.consumePlugin(line: String): Boolean {
 	if (!line.startsWith(HEADER_INDICATOR)) {
 		val idEnd = line.indexOf(':')
 
-		val id = line.first(idEnd) // Let it throw!
-		val ver = line.remove(idEnd + 1)
+		val id = line.until(idEnd) // Let it throw!
+		val ver = line.from(idEnd + 1)
 
 		plugins.putIfAbsent(PluginId.of_unsafe(id), Version.of_unsafe(ver))
 		return true
@@ -124,9 +124,9 @@ private fun DependencyVersionsSpec.consumeModule(line: String): Boolean {
 		val groupEnd = line.indexOf(':')
 		val nameEnd = line.indexOf(':', groupEnd + 1)
 
-		val group = line.first(groupEnd) // Let it throw!
-		val name = line.substring(groupEnd + 1, nameEnd) // Let it throw!
-		val ver = line.remove(nameEnd + 1)
+		val group = line.until(groupEnd) // Let it throw!
+		val name = line.from(groupEnd + 1, nameEnd) // Let it throw!
+		val ver = line.from(nameEnd + 1)
 
 		modules.putIfAbsent(ModuleId.of_unsafe(group, name), Version.of_unsafe(ver))
 		return true
@@ -147,18 +147,18 @@ private fun DependencyBundlesSpec.consumeBundleName(state: ReaderState, bundleHe
 private fun DependencyBundleSpec.consumeBundleElement(line: String): Boolean {
 	if (line.startsWith(SUB_PROP_INDICATOR)) {
 		val groupEnd = line.indexOf(':', startIndex = SUB_PROP_INDICATOR_len)
-		val group = line.substring(SUB_PROP_INDICATOR_len, groupEnd) // Let it throw!
+		val group = line.from(SUB_PROP_INDICATOR_len, groupEnd) // Let it throw!
 
 		val nameEnd = line.indexOf(':', startIndex = groupEnd + 1)
 		val name: String
 
 		val ver: Version?
 		if (nameEnd < 0) {
-			name = line.remove(groupEnd + 1)
+			name = line.from(groupEnd + 1)
 			ver = null
 		} else {
-			name = line.substring(groupEnd + 1, nameEnd)
-			ver = Version.of_unsafe(line.remove(nameEnd + 1))
+			name = line.from(groupEnd + 1, nameEnd)
+			ver = Version.of_unsafe(line.from(nameEnd + 1))
 		}
 
 		modules.putIfAbsent(ModuleId.of_unsafe(group, name), ver)

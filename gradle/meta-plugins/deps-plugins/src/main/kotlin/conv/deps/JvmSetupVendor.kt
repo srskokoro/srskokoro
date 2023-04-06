@@ -1,6 +1,6 @@
 package conv.deps
 
-import conv.deps.internal.common.remove
+import conv.deps.internal.common.removeFirst
 import org.gradle.jvm.toolchain.JvmVendorSpec
 import kotlin.reflect.KProperty0
 import org.gradle.jvm.toolchain.JvmVendorSpec as V
@@ -38,7 +38,7 @@ class JvmSetupVendor private constructor(val value: V, internal val id: String) 
 		fun matching(match: String) = JvmSetupVendor(V.matching(match), "$PREFIX_MATCHING$match")
 
 		fun parseOrNull(s: String) = if (!s.startsWith(PREFIX_MATCHING)) knownMap[s] else {
-			val match = s.remove(PREFIX_MATCHING_len)
+			val match = s.removeFirst(PREFIX_MATCHING_len)
 			JvmSetupVendor(V.matching(match), s)
 		}
 
