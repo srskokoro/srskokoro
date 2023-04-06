@@ -55,7 +55,6 @@ abstract class DependencyVersionsSpec internal constructor(
 	internal var extensionName: String = ""
 
 	private val includesDeque = LinkedList<String>()
-	private val includesLoaded = HashSet<String>()
 
 	/**
 	 * See the NOTE in the loading logic to understand why this method is named
@@ -73,7 +72,7 @@ abstract class DependencyVersionsSpec internal constructor(
 			val dirProvider = rootProject.layout.projectDirectory
 
 			val loadDeque = includesDeque
-			val loadedSet = includesLoaded
+			val loadedSet = HashSet<String>()
 
 			// NOTE: Loads each include in reverse order -- the actual loading
 			// logic should make sure that later loads does not override any
