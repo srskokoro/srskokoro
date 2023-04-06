@@ -1,3 +1,5 @@
+@file:Suppress("PackageDirectoryMismatch")
+
 import org.gradle.api.initialization.Settings
 import java.io.File
 import java.nio.file.Files
