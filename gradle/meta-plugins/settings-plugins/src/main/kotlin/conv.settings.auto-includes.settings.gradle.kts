@@ -19,6 +19,7 @@ pluginManagement {
 dependencyVersionsSetup {
 	useInProjects()
 
+	// Include our centralized dependency versions
 	"gradle/dependencies".let { dependenciesDir ->
 		for (parent in arrayOf("", "../", "../../")) {
 			val target = "$parent$dependenciesDir"
