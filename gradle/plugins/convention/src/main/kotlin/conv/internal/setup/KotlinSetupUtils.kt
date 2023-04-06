@@ -31,5 +31,5 @@ internal fun getSourceSets(kotlin: KotlinProjectExtension): NamedDomainObjectCon
 }
 
 internal fun getKotlinSourceSets(kotlinExtensions: ExtensionContainer): NamedDomainObjectContainer<KotlinSourceSet> {
-	@Suppress("UNCHECKED_CAST") return kotlinExtensions.getByName("sourceSets") as NamedDomainObjectContainer<KotlinSourceSet>
+	return kotlinExtensions.getByName("sourceSets").unsafeCast()
 }
