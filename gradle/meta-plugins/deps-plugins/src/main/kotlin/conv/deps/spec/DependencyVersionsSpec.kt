@@ -123,7 +123,7 @@ abstract class DependencyVersionsSpec internal constructor(
 			store(writer)
 		}
 
-		val target = File(rootDir, DEPENDENCY_VERSIONS_EXPORT_PATH)
+		val target = File(settingsDir, DEPENDENCY_VERSIONS_EXPORT_PATH)
 		try {
 			if (
 				target.isFile &&
@@ -153,7 +153,7 @@ abstract class DependencyVersionsSpec internal constructor(
 }
 
 private fun Settings.resolveForIncludeBuild(rootProject: Any?): File = when (rootProject) {
-	is String -> rootDir.safeResolve(rootProject)
+	is String -> settingsDir.safeResolve(rootProject)
 	is File -> rootProject
 	is Path -> rootProject.toFile()
 	is FileSystemLocation -> rootProject.asFile

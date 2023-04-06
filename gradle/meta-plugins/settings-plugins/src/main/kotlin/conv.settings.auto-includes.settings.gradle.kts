@@ -5,12 +5,12 @@ pluginManagement {
 	"gradle/plugins".let { pluginsDir ->
 		for (parent in arrayOf("", "../", "../../")) {
 			val target = "$parent$pluginsDir"
-			if (File(rootDir, "$target/settings.gradle.kts").exists().not()) continue
+			if (File(settingsDir, "$target/settings.gradle.kts").exists().not()) continue
 
 			// If we're the main build, share its root 'gradle.properties'
 			if (parent == "") shareGradleProperties(target)
 
-			includeBuild(target)
+			includeBuild(target) // Resolves relative to `settingsDir`
 			break // Done!
 		}
 	}
@@ -22,12 +22,12 @@ dependencyVersionsSetup {
 	"gradle/dependencies".let { dependenciesDir ->
 		for (parent in arrayOf("", "../", "../../")) {
 			val target = "$parent$dependenciesDir"
-			if (File(rootDir, "$target/settings.gradle.kts").exists().not()) continue
+			if (File(settingsDir, "$target/settings.gradle.kts").exists().not()) continue
 
 			// If we're the main build, share its root 'gradle.properties'
 			if (parent == "") shareGradleProperties(target)
 
-			includeBuild(target)
+			includeBuild(target) // Resolves relative to `settingsDir`
 			break // Done!
 		}
 	}
@@ -39,5 +39,7 @@ rootDir.let { rootDir ->
 	rootDir.list()?.asSequence()?.filter {
 		File(rootDir, "$it/build.gradle.kts").exists() &&
 		!File(rootDir, "$it/settings.gradle.kts").exists()
-	}?.forEach { include(it) }
+	}?.forEach {
+		include(it) // Resolves relative to `rootDir`
+	}
 }

@@ -8,14 +8,16 @@ import java.util.*
 /**
  * Generates a 'gradle.properties' file for the specified project directory and
  * fills it with the same entries as those in the build's 'gradle.properties'
- * file (located in the build's root directory).
+ * file (located in the build's settings directory).
  *
- * @param projectDir the project directory path (relative to the build's root
- * directory).
+ * @param projectDir the project directory path, relative to the build's
+ * settings directory.
+ *
+ * @see Settings.getSettingsDir
  */
 fun Settings.shareGradleProperties(projectDir: String) {
-	val srcFile = File(rootDir, "gradle.properties")
-	val dstFile = File(rootDir, "$projectDir/gradle.properties")
+	val srcFile = File(settingsDir, "gradle.properties")
+	val dstFile = File(settingsDir, "$projectDir/gradle.properties")
 	val dstPath = dstFile.toPath()
 
 	if (dstFile.isFile) {
