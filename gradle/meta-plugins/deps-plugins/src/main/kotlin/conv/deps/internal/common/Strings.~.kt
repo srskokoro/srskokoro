@@ -14,7 +14,7 @@ package conv.deps.internal.common
  * @see String.removeFirst
  */
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun String.from(start: Int) = substring(start)
+internal inline fun String.from(startIndex: Int) = substring(startIndex)
 
 /**
  * Same as [String.substring]`(start, end)` but useful for improving
@@ -24,7 +24,7 @@ internal inline fun String.from(start: Int) = substring(start)
  * @see String.until
  */
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun String.from(start: Int, end: Int) = substring(start, end)
+internal inline fun String.from(startIndex: Int, endIndex: Int) = substring(startIndex, endIndex)
 
 /**
  * Same as [String.substring]`(0, end)` but useful for improving readability,
@@ -39,7 +39,7 @@ internal inline fun String.from(start: Int, end: Int) = substring(start, end)
  * @see String.from
  */
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun String.until(end: Int) = substring(0, end)
+internal inline fun String.until(endIndex: Int) = substring(0, endIndex)
 
 
 /**
