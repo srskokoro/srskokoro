@@ -24,6 +24,9 @@ dependencyVersionsSetup {
 			val target = "$parent$dependenciesDir"
 			if (File(rootDir, "$target/settings.gradle.kts").exists().not()) continue
 
+			// If we're the main build, share its root 'gradle.properties'
+			if (parent == "") shareGradleProperties(target)
+
 			includeBuild(target)
 			break // Done!
 		}
