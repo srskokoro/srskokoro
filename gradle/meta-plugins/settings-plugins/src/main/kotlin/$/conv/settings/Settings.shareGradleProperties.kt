@@ -18,6 +18,7 @@ import java.util.*
  * @see Settings.getSettingsDir
  */
 fun Settings.shareGradleProperties(projectDir: String) {
+	val settingsDir = settingsDir
 	val srcFile = File(settingsDir, "gradle.properties")
 	val dstFile = File(settingsDir, "$projectDir/gradle.properties")
 	val dstPath = dstFile.toPath()
