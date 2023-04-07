@@ -37,6 +37,14 @@ dependencyVersions {
 
 	val kotlinx_coroutines = "1.6.4"
 	module("org.jetbrains.kotlinx:kotlinx-coroutines-test", kotlinx_coroutines)
+
+	// --
+
+	module("androidx.core:core-ktx", "1.9.0")
+	module("androidx.activity:activity-ktx", "1.6.1")
+
+	module("com.squareup.okio:okio", "3.3.0")
+	module("net.harawata:appdirs", "1.2.1") // https://github.com/harawata/appdirs
 }
 
 dependencyBundles {
