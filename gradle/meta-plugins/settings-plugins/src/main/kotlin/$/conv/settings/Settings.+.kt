@@ -38,26 +38,6 @@ val Settings.rootSettingsDir: File
 	}
 
 
-private const val rootSettingsDirRel__name = "rootSettingsDirRel"
-
-/**
- * Returns the settings directory (see [Gradle.settingsDir]) of the root build
- * (see [Gradle.findRoot]`()`) as a string relative to the current build's
- * settings directory.
- *
- * @see Settings.rootSettingsDir
- * @see Settings.getSettingsDir
- */
-val Settings.rootSettingsDirRel: String
-	get() = extensions.let { xs ->
-		// NOTE: The cast below throws on non-null incompatible types (as intended).
-		xs.findByName(rootSettingsDirRel__name) as String?
-		?: rootSettingsDir.toRelativeString(base = settingsDir).also {
-			xs.add(rootSettingsDirRel__name, it)
-		}
-	}
-
-
 /**
  * Converts the given file path into a relative path string, relative to the
  * current build's settings directory (see [Settings.getSettingsDir]`()`).
