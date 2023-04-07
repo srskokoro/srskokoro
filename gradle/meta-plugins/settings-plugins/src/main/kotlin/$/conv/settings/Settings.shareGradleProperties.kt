@@ -22,14 +22,14 @@ import java.util.*
  */
 fun Settings.shareGradleProperties(projectDir: String) {
 	val settingsDir = settingsDir
-	val srcFile = File(settingsDir, "gradle.properties")
-	val dstFile = File(settingsDir, "$projectDir/gradle.properties")
-	val dstPath = dstFile.toPath()
+	val src = File(settingsDir, "gradle.properties")
+	val target = File(settingsDir, "$projectDir/gradle.properties")
+	val targetPath = target.toPath()
 
-	if (dstFile.isFile) {
-		val dstAttr = Files.readAttributes(dstPath, BasicFileAttributes::class.java)
-		val dstModMs = dstAttr.lastModifiedTime().toMillis()
-		if (dstModMs > srcFile.lastModified() && dstModMs == dstAttr.creationTime().toMillis()) {
+	if (target.isFile) {
+		val targetAttr = Files.readAttributes(targetPath, BasicFileAttributes::class.java)
+		val targetModMs = targetAttr.lastModifiedTime().toMillis()
+		if (targetModMs > src.lastModified() && targetModMs == targetAttr.creationTime().toMillis()) {
 			return // It's likely up-to-date
 		}
 	}
@@ -40,12 +40,12 @@ fun Settings.shareGradleProperties(projectDir: String) {
 	// (also known as Latin-1).
 	// - See, https://github.com/gradle/gradle/issues/13741#issuecomment-658177619
 	// - See also, https://en.wikipedia.org/wiki/.properties
-	srcFile.inputStream().use {
+	src.inputStream().use {
 		props.load(it)
 	}
 
 	// Output to a temporary file first
-	val tmp = File("${dstFile.path}.tmp")
+	val tmp = File("${target.path}.tmp")
 	val tmpPath = tmp.toPath()
 
 	// Let the following throw!
@@ -64,10 +64,10 @@ fun Settings.shareGradleProperties(projectDir: String) {
 	tmpPath.setModTimeAsCreateTime()
 
 	// Atomically publish our changes via a rename/move operation
-	Files.move(tmpPath, dstPath, ATOMIC_MOVE, REPLACE_EXISTING)
+	Files.move(tmpPath, targetPath, ATOMIC_MOVE, REPLACE_EXISTING)
 	// ^ Same as in `okio.NioSystemFileSystem.atomicMove()`
 
-	println("Auto-generated 'gradle.properties' file: ${dstFile.absolutePath}")
+	println("Auto-generated 'gradle.properties' file: ${target.absolutePath}")
 }
 
 private fun Path.setModTimeAsCreateTime() {
