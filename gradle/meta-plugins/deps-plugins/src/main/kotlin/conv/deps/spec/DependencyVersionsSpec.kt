@@ -14,6 +14,7 @@ import org.gradle.api.initialization.ConfigurableIncludedBuild
 import org.gradle.api.initialization.Settings
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.ProviderFactory
+import org.gradle.initialization.SettingsLocation
 import org.gradle.kotlin.dsl.create
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -21,12 +22,15 @@ import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.attribute.BasicFileAttributeView
+import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
 
 private const val DEPENDENCY_VERSIONS_EXPORT_PATH = "build/deps.versions.dat"
 
 abstract class DependencyVersionsSpec internal constructor(
 	val settings: Settings,
+	private val layout: SettingsLocation,
 	private val providers: ProviderFactory,
 ) : DependencyBundlesSpec(), ExtensionAware {
 	val jvm: JvmSetupSpec = extensions.create(::jvm.name)
@@ -118,13 +122,32 @@ abstract class DependencyVersionsSpec internal constructor(
 	}
 
 	internal fun setUpForExport(): Unit = settings.gradle.settingsEvaluated {
+		val settingsDir = settingsDir
+
+		val target = File(settingsDir, DEPENDENCY_VERSIONS_EXPORT_PATH)
+		val targetPath = target.toPath()
+
+		if (target.isFile) run<Unit> {
+			val settingsFile = layout.settingsFile ?: return@run
+
+			val targetAttr = Files.readAttributes(targetPath, BasicFileAttributes::class.java)
+			val targetModMs = targetAttr.lastModifiedTime().toMillis()
+
+			// Check if the target file was generated after the settings file,
+			// and that it was not modified since its generation.
+			if (targetModMs > settingsFile.lastModified() && targetModMs == targetAttr.creationTime().toMillis()) {
+				return@settingsEvaluated // It's likely up-to-date
+			}
+		}
+
 		val stream = UnsafeByteArrayOutputStream()
 		val nl = stream.bufferedWriter().use { writer -> // Using `use` here to auto-flush buffer
 			store(writer)
 		}
 
-		val target = File(settingsDir, DEPENDENCY_VERSIONS_EXPORT_PATH)
 		try {
+			// Avoid modifying the target file if the resulting contents would
+			// simply be the same as before.
 			if (
 				target.isFile &&
 				target.length() == stream.size.toLong() &&
@@ -134,12 +157,15 @@ abstract class DependencyVersionsSpec internal constructor(
 			}
 
 			// Let the following throw!
-			if (!Files.deleteIfExists(target.toPath()))
-				Files.createDirectories(target.parentFile.toPath())
+			if (!Files.deleteIfExists(targetPath))
+				Files.createDirectories(targetPath.parent)
 
 			FileOutputStream(target).use {
 				it.write(stream.buffer, 0, stream.size)
 			}
+
+			// Finalize file timestamps
+			targetPath.setModTimeAsCreateTime()
 
 			// Check if the user gave invalid data by inserting newlines in
 			// module IDs, version strings, etc.
@@ -158,6 +184,31 @@ private fun Settings.resolveForIncludeBuild(rootProject: Any?): File = when (roo
 	is Path -> rootProject.toFile()
 	is FileSystemLocation -> rootProject.asFile
 	else -> failOnArgToFile(rootProject)
+}
+
+private fun Path.setModTimeAsCreateTime() {
+	val attrView = Files.getFileAttributeView(this, BasicFileAttributeView::class.java)
+
+	// Sets the creation time to be the same as the last modification time.
+	val lastModifiedTime = attrView.readAttributes().lastModifiedTime()
+	attrView.setTimes(null, null, /* createTime = */ lastModifiedTime)
+
+	// Sets the last modification time to be the same as the creation time, that
+	// is, if necessary.
+	//
+	// Needed since the creation time may have less granularity than the last
+	// modification time, and so, the former have likely been rounded to the
+	// nearest supported value, making it different from the latter. This hack
+	// fixes that.
+	//
+	// ASSUMPTION: Usually, the creation time has a higher granularity than the
+	// last modification time, so the following usually won't be needed. See
+	// also, https://learn.microsoft.com/en-us/windows/win32/sysinfo/file-times
+	//
+	val createTime = attrView.readAttributes().creationTime()
+	if (createTime != lastModifiedTime) {
+		attrView.setTimes(/* lastModifiedTime = */ createTime, null, null)
+	}
 }
 
 private fun failOnDependencyVersionsNotExported(includedRoot: String): Nothing = throw FileNotFoundException(
