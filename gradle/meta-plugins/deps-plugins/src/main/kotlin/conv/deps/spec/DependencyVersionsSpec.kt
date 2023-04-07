@@ -141,7 +141,7 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 			val targetModMs = targetAttr.lastModifiedTime().toMillis()
 
 			// Check if the target was generated after modification of the
-			// settings file, and that the target was not modified since its
+			// settings file, and that the target was not tampered since its
 			// generation.
 			if (targetModMs > settingsFile.lastModified() && targetModMs == targetAttr.creationTime().toMillis()) {
 				return@settingsEvaluated // It's likely up-to-date

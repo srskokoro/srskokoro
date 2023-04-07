@@ -30,7 +30,7 @@ fun Settings.shareGradleProperties(projectDir: String) {
 		val targetAttr = Files.readAttributes(targetPath, BasicFileAttributes::class.java)
 		val targetModMs = targetAttr.lastModifiedTime().toMillis()
 		// Check if the target was generated after the source's modification,
-		// and that the target was not modified since its generation.
+		// and that the target was not tampered since its generation.
 		if (targetModMs > src.lastModified() && targetModMs == targetAttr.creationTime().toMillis()) {
 			return // It's likely up-to-date
 		}
