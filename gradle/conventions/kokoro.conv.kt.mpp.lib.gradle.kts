@@ -14,13 +14,13 @@ kotlin {
 		val commonMain by getting
 		val commonTest by getting
 
-		val jvmCommonMain by creating { dependsOn(commonMain) }
-		val jvmCommonTest by creating { dependsOn(commonTest) }
+		val jvmishMain by creating { dependsOn(commonMain) }
+		val jvmishTest by creating { dependsOn(commonTest) }
 
-		val androidMain/**/ by getting { dependsOn(jvmCommonMain) }
-		val androidUnitTest by getting { dependsOn(jvmCommonTest) }
+		val androidMain/**/ by getting { dependsOn(jvmishMain) }
+		val androidUnitTest by getting { dependsOn(jvmishTest) }
 
-		val desktopMain by getting { dependsOn(jvmCommonMain) }
-		val desktopTest by getting { dependsOn(jvmCommonTest) }
+		val desktopMain by getting { dependsOn(jvmishMain) }
+		val desktopTest by getting { dependsOn(jvmishTest) }
 	}
 }
