@@ -62,7 +62,7 @@ fun Settings.shareGradleProperties(projectDir: String) {
 		// This hack fixes that.
 		//
 		// ASSUMPTION: Usually, the creation time has a higher granularity than
-		// the last modification time, so the following isn't needed for such.
+		// the last modification time, so the following usually won't be needed.
 		// See also, https://learn.microsoft.com/en-us/windows/win32/sysinfo/file-times
 		//
 		val createTime = dstAttrView.readAttributes().creationTime()
