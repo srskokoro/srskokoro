@@ -2,17 +2,18 @@
 
 import org.gradle.api.initialization.Settings
 import org.gradle.api.invocation.Gradle
+import org.gradle.initialization.SettingsLocation
+import org.gradle.kotlin.dsl.support.serviceOf
 import java.io.File
 
 /**
- * Returns the settings directory of the build. The settings directory is the
+ * Finds the settings directory of the build. The settings directory is the
  * directory containing the settings file.
  *
  * @see Settings.getSettingsDir
  * @see Settings.rootSettingsDir
  */
-val Gradle.settingsDir: File
-	inline get() = startParameter.currentDir
+fun Gradle.findSettingsDir(): File = serviceOf<SettingsLocation>().settingsDir
 
 /**
  * Returns `true` if this build is the main build of the composite build.

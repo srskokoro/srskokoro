@@ -17,8 +17,8 @@ val Settings.isRootBuild: Boolean
 private const val rootSettingsDir__name = "rootSettingsDir"
 
 /**
- * Returns the settings directory (see [Gradle.settingsDir]) of the root build
- * (see [Gradle.findRoot]`()`).
+ * Returns the settings directory of the root build (see [Gradle.findRoot]`()`
+ * and [Gradle.findSettingsDir]`()`).
  *
  * @see Settings.getSettingsDir
  */
@@ -30,7 +30,7 @@ val Settings.rootSettingsDir: File
 			if (g.isRootBuild) run<File> {
 				settingsDir // Guarantees referential equality
 			} else {
-				g.findRoot().settingsDir
+				g.findRoot().findSettingsDir()
 			}
 		}.also { dir ->
 			xs.add(rootSettingsDir__name, dir)
