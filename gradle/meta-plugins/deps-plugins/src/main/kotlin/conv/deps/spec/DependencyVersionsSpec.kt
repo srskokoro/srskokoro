@@ -25,14 +25,11 @@ import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributeView
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
+import javax.inject.Inject
 
 private const val DEPENDENCY_VERSIONS_EXPORT_PATH = "build/deps.versions.dat"
 
-abstract class DependencyVersionsSpec internal constructor(
-	val settings: Settings,
-	private val layout: SettingsLocation,
-	private val providers: ProviderFactory,
-) : DependencyBundlesSpec(), ExtensionAware {
+abstract class DependencyVersionsSpec internal constructor(val settings: Settings) : DependencyBundlesSpec(), ExtensionAware {
 	val jvm: JvmSetupSpec = extensions.create(::jvm.name)
 
 	val plugins: MutableMap<PluginId, Version> = HashMap()
@@ -68,12 +65,15 @@ abstract class DependencyVersionsSpec internal constructor(
 		includesDeque.addLast(rootProject.canonicalPath)
 	}
 
+	@get:Inject internal abstract val providers: ProviderFactory
+
 	internal fun setUpForUseInProjects() {
 		hookCustomDependencyResolution(settings, plugins)
 
 		settings.gradle.projectsLoaded {
 			val rootProject = rootProject
 			val dirProvider = rootProject.layout.projectDirectory
+			val providers = providers
 
 			val loadDeque = includesDeque
 			val loadedSet = HashSet<String>()
@@ -120,6 +120,8 @@ abstract class DependencyVersionsSpec internal constructor(
 			}
 		}
 	}
+
+	@get:Inject internal abstract val layout: SettingsLocation
 
 	internal fun setUpForExport(): Unit = settings.gradle.settingsEvaluated {
 		val settingsDir = settingsDir
