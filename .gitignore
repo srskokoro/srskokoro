@@ -2,6 +2,11 @@
 *.lnk
 .DS_Store
 
+# Temporary files
+*~
+*.tmp
+*.temp
+
 # Gradle files
 .gradle/
 build/
