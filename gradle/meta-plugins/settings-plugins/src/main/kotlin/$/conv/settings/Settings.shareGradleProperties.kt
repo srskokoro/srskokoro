@@ -3,6 +3,7 @@
 import org.gradle.api.initialization.Settings
 import java.io.File
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.StandardCopyOption.ATOMIC_MOVE
 import java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import java.nio.file.attribute.BasicFileAttributeView
@@ -59,32 +60,37 @@ fun Settings.shareGradleProperties(projectDir: String) {
 		// ^ Same as in `androidx.core.util.AtomicFile.finishWrite()`
 	}
 
-	Files.getFileAttributeView(tmpPath, BasicFileAttributeView::class.java).let { tmpAttrView ->
-		// Sets the creation time to be the same as the last modification time.
-		val lastModifiedTime = tmpAttrView.readAttributes().lastModifiedTime()
-		tmpAttrView.setTimes(null, null, /* createTime = */ lastModifiedTime)
-
-		// Sets the last modification time to be the same as the creation time,
-		// that is, if necessary.
-		//
-		// Needed since the creation time may have less granularity than the
-		// last modification time, and so, the former have likely been rounded
-		// to the nearest supported value, making it different from the latter.
-		// This hack fixes that.
-		//
-		// ASSUMPTION: Usually, the creation time has a higher granularity than
-		// the last modification time, so the following usually won't be needed.
-		// See also, https://learn.microsoft.com/en-us/windows/win32/sysinfo/file-times
-		//
-		val createTime = tmpAttrView.readAttributes().creationTime()
-		if (createTime != lastModifiedTime) {
-			tmpAttrView.setTimes(/* lastModifiedTime = */ createTime, null, null)
-		}
-	}
+	// Set up the file timestamps for our custom up-to-date check
+	tmpPath.setModTimeAsCreateTime()
 
 	// Atomically publish our changes via a rename/move operation
 	Files.move(tmpPath, dstPath, ATOMIC_MOVE, REPLACE_EXISTING)
 	// ^ Same as in `okio.NioSystemFileSystem.atomicMove()`
 
 	println("Auto-generated 'gradle.properties' file: ${dstFile.absolutePath}")
+}
+
+private fun Path.setModTimeAsCreateTime() {
+	val attrView = Files.getFileAttributeView(this, BasicFileAttributeView::class.java)
+
+	// Sets the creation time to be the same as the last modification time.
+	val lastModifiedTime = attrView.readAttributes().lastModifiedTime()
+	attrView.setTimes(null, null, /* createTime = */ lastModifiedTime)
+
+	// Sets the last modification time to be the same as the creation time, that
+	// is, if necessary.
+	//
+	// Needed since the creation time may have less granularity than the last
+	// modification time, and so, the former have likely been rounded to the
+	// nearest supported value, making it different from the latter. This hack
+	// fixes that.
+	//
+	// ASSUMPTION: Usually, the creation time has a higher granularity than the
+	// last modification time, so the following usually won't be needed. See
+	// also, https://learn.microsoft.com/en-us/windows/win32/sysinfo/file-times
+	//
+	val createTime = attrView.readAttributes().creationTime()
+	if (createTime != lastModifiedTime) {
+		attrView.setTimes(/* lastModifiedTime = */ createTime, null, null)
+	}
 }
