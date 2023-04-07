@@ -59,21 +59,10 @@ val Settings.rootSettingsDirRel: String
 
 
 /**
- * Given a directory path relative to the root build's settings directory (see
- * [Settings.rootSettingsDir]), determines if it has a gradle settings file, and
- * if so, returns the path as instead relative to the current build's settings
- * directory. Otherwise, returns null.
+ * Converts the given file path into a relative path string, relative to the
+ * current build's settings directory (see [Settings.getSettingsDir]`()`).
  *
  * The returned value is ready to be used with [Settings.includeBuild]`()`.
- *
- * @see Settings.getSettingsDir
  */
-internal fun Settings.locateForIncludeBuild(pathFromRootBuild: String): String? {
-	val rootProject = File(rootSettingsDir, pathFromRootBuild)
-	return if (
-		File(rootProject, "settings.gradle.kts").exists() ||
-		File(rootProject, "settings.gradle").exists()
-	) {
-		File(rootSettingsDirRel, pathFromRootBuild).path
-	} else null
-}
+fun Settings.relativize(rootProject: File): String =
+	rootProject.toRelativeString(base = settingsDir).ifEmpty { "." }

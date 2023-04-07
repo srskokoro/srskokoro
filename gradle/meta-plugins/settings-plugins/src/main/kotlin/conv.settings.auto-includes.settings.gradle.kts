@@ -2,7 +2,7 @@
 
 pluginManagement {
 	// Include our own custom plugins
-	locateForIncludeBuild("gradle/plugins")?.let {
+	relativize(File(rootSettingsDir, "gradle/plugins")).let {
 		// If we're the main build, share its root 'gradle.properties'
 		if (isRootBuild) shareGradleProperties(it)
 
@@ -14,7 +14,7 @@ dependencyVersionsSetup {
 	useInProjects()
 
 	// Include our centralized dependency versions
-	locateForIncludeBuild("gradle/dependencies")?.let {
+	relativize(File(rootSettingsDir, "gradle/dependencies")).let {
 		// If we're the main build, share its root 'gradle.properties'
 		if (isRootBuild) shareGradleProperties(it)
 
