@@ -151,22 +151,22 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 			// Avoid modifying the target file if the resulting contents would
 			// simply be the same as before.
 			if (
-				target.isFile &&
-				target.length() == stream.size.toLong() &&
-				target.readBytes().let { Arrays.equals(it, 0, it.size,/**/ stream.buffer, 0, stream.size) }
+				!target.isFile ||
+				target.length() != stream.size.toLong() ||
+				!target.readBytes().let { Arrays.equals(it, 0, it.size,/**/ stream.buffer, 0, stream.size) }
 			) {
-				return@settingsEvaluated // Same contents
+				// Let the following throw!
+				if (!Files.deleteIfExists(targetPath))
+					Files.createDirectories(targetPath.parent)
+
+				FileOutputStream(target).use {
+					it.write(stream.buffer, 0, stream.size)
+				}
+			} else {
+				// Same contents
 			}
 
-			// Let the following throw!
-			if (!Files.deleteIfExists(targetPath))
-				Files.createDirectories(targetPath.parent)
-
-			FileOutputStream(target).use {
-				it.write(stream.buffer, 0, stream.size)
-			}
-
-			// Finalize file timestamps
+			// Set up the file timestamps for our custom up-to-date check
 			targetPath.setModTimeAsCreateTime()
 
 			// Check if the user gave invalid data by inserting newlines in
