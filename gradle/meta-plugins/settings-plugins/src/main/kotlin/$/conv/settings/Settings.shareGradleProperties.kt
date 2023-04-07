@@ -26,11 +26,10 @@ fun Settings.shareGradleProperties(projectDir: String) {
 	val dstPath = dstFile.toPath()
 
 	if (dstFile.isFile) {
-		Files.readAttributes(dstPath, BasicFileAttributes::class.java).let { dstAttr ->
-			val dstModMs = dstAttr.lastModifiedTime().toMillis()
-			if (dstModMs > srcFile.lastModified() && dstModMs == dstAttr.creationTime().toMillis()) {
-				return@shareGradleProperties // It's likely up-to-date
-			}
+		val dstAttr = Files.readAttributes(dstPath, BasicFileAttributes::class.java)
+		val dstModMs = dstAttr.lastModifiedTime().toMillis()
+		if (dstModMs > srcFile.lastModified() && dstModMs == dstAttr.creationTime().toMillis()) {
+			return // It's likely up-to-date
 		}
 	}
 
