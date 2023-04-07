@@ -1,6 +1,9 @@
 <component name="InspectionProjectProfileManager">
   <profile version="1.0">
     <option name="myName" value="Project Default" />
+    <inspection_tool class="AndroidLintNewApi" enabled="true" level="ERROR" enabled_by_default="true">
+      <scope name="Everything under 'desktop*' and 'jvm*' (except 'jvmish*')" level="INFORMATION" enabled="false" />
+    </inspection_tool>
     <inspection_tool class="ClassName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="namePattern" value="[_A-Z][_A-Za-z\d]*" />
     </inspection_tool>
