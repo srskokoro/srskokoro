@@ -140,8 +140,9 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 			val targetAttr = Files.readAttributes(targetPath, BasicFileAttributes::class.java)
 			val targetModMs = targetAttr.lastModifiedTime().toMillis()
 
-			// Check if the target file was generated after the settings file,
-			// and that it was not modified since its generation.
+			// Check if the target was generated after modification of the
+			// settings file, and that the target was not modified since its
+			// generation.
 			if (targetModMs > settingsFile.lastModified() && targetModMs == targetAttr.creationTime().toMillis()) {
 				return@settingsEvaluated // It's likely up-to-date
 			}
