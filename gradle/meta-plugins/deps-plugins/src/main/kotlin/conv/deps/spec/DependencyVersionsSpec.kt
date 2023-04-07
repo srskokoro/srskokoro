@@ -141,8 +141,8 @@ abstract class DependencyVersionsSpec internal constructor(
 				it.write(stream.buffer, 0, stream.size)
 			}
 
-			// Check if the user gave invalid data by inserting newlines in module
-			// IDs, version strings, etc.
+			// Check if the user gave invalid data by inserting newlines in
+			// module IDs, version strings, etc.
 			if (nl != stream.buffer.count { it == '\n'.toByte() }) {
 				failOnUnexpectedNewlineCount()
 			}
