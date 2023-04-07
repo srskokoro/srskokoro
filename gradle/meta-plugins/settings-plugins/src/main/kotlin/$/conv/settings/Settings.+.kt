@@ -52,7 +52,7 @@ val Settings.rootSettingsDirRel: String
 	get() = extensions.let { xs ->
 		// NOTE: The cast below throws on non-null incompatible types (as intended).
 		xs.findByName(rootSettingsDirRel__name) as String?
-		?: settingsDir.toPath().relativize(rootSettingsDir.toPath()).toString().also {
+		?: rootSettingsDir.toRelativeString(base = settingsDir).also {
 			xs.add(rootSettingsDirRel__name, it)
 		}
 	}
