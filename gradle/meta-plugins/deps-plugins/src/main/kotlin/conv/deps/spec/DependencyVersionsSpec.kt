@@ -14,6 +14,7 @@ import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.initialization.ConfigurableIncludedBuild
 import org.gradle.api.initialization.Settings
 import org.gradle.api.invocation.Gradle
+import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.initialization.SettingsLocation
@@ -69,6 +70,11 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 		includesDeque.addLast(rootProject.canonicalPath)
 	}
 
+	private object Logger {
+		val logger: org.gradle.api.logging.Logger =
+			Logging.getLogger(DependencyVersionsSpec::class.java)
+	}
+
 	@get:Inject internal abstract val providers: ProviderFactory
 
 	internal fun setUpForUseInProjects() {
@@ -76,6 +82,10 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 
 		settings.gradle.projectsLoaded(fun(gradle: Gradle) {
 			val rootProject = gradle.rootProject
+
+			val logger = Logger.logger
+			logger.info("Loading dependency versions for {}", rootProject)
+
 			val dirProvider = rootProject.layout.projectDirectory
 			val providers = providers
 
@@ -112,6 +122,8 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 							throw DependencyVersionsFileException.wrapJudiciously(target, ex)
 						}
 					}
+
+					logger.info("Loaded dependency versions from file: {}", target)
 				}
 			}
 
@@ -144,6 +156,7 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 			// settings file, and that the target was not tampered since its
 			// generation.
 			if (targetModMs > settingsFile.lastModified() && targetModMs == targetAttr.creationTime().toMillis()) {
+				Logger.logger.info("Preserving likely up-to-date dependency versions export: {}", targetPath)
 				return@settingsEvaluated // It's likely up-to-date
 			}
 		}
@@ -179,6 +192,8 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 			// Atomically publish our changes via a rename/move operation
 			Files.move(tmpPath, targetPath, ATOMIC_MOVE, REPLACE_EXISTING)
 			// ^ Same as in `okio.NioSystemFileSystem.atomicMove()`
+
+			Logger.logger.info("Generated new dependency versions export: {}", targetPath)
 
 			// Check if the user gave invalid data by inserting newlines in
 			// module IDs, version strings, etc.
