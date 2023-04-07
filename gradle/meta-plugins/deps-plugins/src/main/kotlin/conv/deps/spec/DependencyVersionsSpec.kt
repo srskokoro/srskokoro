@@ -145,6 +145,8 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 			}
 		}
 
+		// Write to a byte array first, so that later, we may easily inspect it
+		// for the correctness of our output.
 		val stream = UnsafeByteArrayOutputStream()
 		val nl = stream.bufferedWriter().use { writer -> // Using `use` here to auto-flush buffer
 			store(writer)
