@@ -2,17 +2,11 @@
 
 pluginManagement {
 	// Include our own custom plugins
-	"gradle/plugins".let { pluginsDir ->
-		for (parent in arrayOf("", "../", "../../")) {
-			val target = "$parent$pluginsDir"
-			if (File(settingsDir, "$target/settings.gradle.kts").exists().not()) continue
+	locateForIncludeBuild("gradle/plugins")?.let {
+		// If we're the main build, share its root 'gradle.properties'
+		if (isRootBuild) shareGradleProperties(it)
 
-			// If we're the main build, share its root 'gradle.properties'
-			if (parent == "") shareGradleProperties(target)
-
-			includeBuild(target) // Resolves relative to `settingsDir`
-			break // Done!
-		}
+		includeBuild(it) // Resolves relative to `settingsDir`
 	}
 }
 
@@ -20,17 +14,11 @@ dependencyVersionsSetup {
 	useInProjects()
 
 	// Include our centralized dependency versions
-	"gradle/dependencies".let { dependenciesDir ->
-		for (parent in arrayOf("", "../", "../../")) {
-			val target = "$parent$dependenciesDir"
-			if (File(settingsDir, "$target/settings.gradle.kts").exists().not()) continue
+	locateForIncludeBuild("gradle/dependencies")?.let {
+		// If we're the main build, share its root 'gradle.properties'
+		if (isRootBuild) shareGradleProperties(it)
 
-			// If we're the main build, share its root 'gradle.properties'
-			if (parent == "") shareGradleProperties(target)
-
-			includeBuild(target) // Resolves relative to `settingsDir`
-			break // Done!
-		}
+		includeBuild(it) // Resolves relative to `settingsDir`
 	}
 }
 
