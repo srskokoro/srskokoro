@@ -170,7 +170,7 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 
 		try {
 			// Output to a temporary file first
-			val tmp = File("${target.path}.tmp")
+			val tmp = File("$targetPath.tmp")
 			val tmpPath = tmp.toPath()
 
 			// Let the following throw!
@@ -201,7 +201,7 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 				failOnUnexpectedNewlineCount()
 			}
 		} catch (ex: Throwable) {
-			throw DependencyVersionsFileException.wrapJudiciously(target, ex)
+			throw DependencyVersionsFileException.wrapJudiciously(targetPath, ex)
 		}
 	})
 }

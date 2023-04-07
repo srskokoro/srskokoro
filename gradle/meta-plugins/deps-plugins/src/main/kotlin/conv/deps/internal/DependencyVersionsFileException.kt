@@ -3,6 +3,7 @@ package conv.deps.internal
 import org.gradle.api.GradleException
 import org.gradle.api.file.FileSystemLocation
 import java.io.File
+import java.nio.file.Path
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -17,6 +18,8 @@ open class DependencyVersionsFileException(val path: String, cause: Throwable?) 
 	cause
 ) {
 	constructor(path: FileSystemLocation, cause: Throwable?) : this(path.asFile, cause)
+
+	constructor(path: Path, cause: Throwable?) : this(path.toFile(), cause)
 
 	constructor(path: File, cause: Throwable?) : this(
 		try {
@@ -36,6 +39,9 @@ open class DependencyVersionsFileException(val path: String, cause: Throwable?) 
 
 	companion object {
 		internal fun wrapJudiciously(path: FileSystemLocation, cause: Throwable?) =
+			if (shouldNotWrap(cause)) cause else DependencyVersionsFileException(path, cause)
+
+		internal fun wrapJudiciously(path: Path, cause: Throwable?) =
 			if (shouldNotWrap(cause)) cause else DependencyVersionsFileException(path, cause)
 
 		internal fun wrapJudiciously(path: File, cause: Throwable?) =
