@@ -28,22 +28,20 @@ internal fun hookCustomDependencyResolution(settings: Settings, map: Map<PluginI
  */
 internal fun hookCustomDependencyResolution(project: Project, map: Map<ModuleId, Version>) {
 	project.configurations.all {
-		dependencies.withType<ExternalDependency> dep@{
-			version {
-				if (requiredVersion.isEmpty() && strictVersion.isEmpty()) {
-					(map[ModuleId.of(this@dep)] ?: map[ModuleId.ofAnyName(this@dep)])?.let { v ->
-						val rejectedVersionsBackup = rejectedVersions
-							.takeUnless { it.isEmpty() }
-							?.toTypedArray()
+		dependencies.withType(fun(dep: ExternalDependency) = dep.version {
+			if (requiredVersion.isEmpty() && strictVersion.isEmpty()) {
+				(map[ModuleId.of(dep)] ?: map[ModuleId.ofAnyName(dep)])?.let { v ->
+					val rejectedVersionsBackup = rejectedVersions
+						.takeUnless { it.isEmpty() }
+						?.toTypedArray()
 
-						require(v.value) // NOTE: Clears `rejectedVersions`
+					require(v.value) // NOTE: Clears `rejectedVersions`
 
-						rejectedVersionsBackup?.let {
-							reject(*it)
-						}
+					rejectedVersionsBackup?.let {
+						reject(*it)
 					}
 				}
 			}
-		}
+		})
 	}
 }
