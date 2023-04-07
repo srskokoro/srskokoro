@@ -9,9 +9,11 @@ import conv.deps.serialization.store
 import dependencyVersionsSetup__name
 import org.gradle.api.Action
 import org.gradle.api.InvalidUserDataException
+import org.gradle.api.Project
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.initialization.ConfigurableIncludedBuild
 import org.gradle.api.initialization.Settings
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.initialization.SettingsLocation
@@ -70,8 +72,8 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 	internal fun setUpForUseInProjects() {
 		hookCustomDependencyResolution(settings, plugins)
 
-		settings.gradle.projectsLoaded {
-			val rootProject = rootProject
+		settings.gradle.projectsLoaded(fun(gradle: Gradle) {
+			val rootProject = gradle.rootProject
 			val dirProvider = rootProject.layout.projectDirectory
 			val providers = providers
 
@@ -111,20 +113,21 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 				}
 			}
 
-			val deps: DependencyVersions = rootProject.extensions
-				.create(extensionName, this@DependencyVersionsSpec)
+			val deps: DependencyVersions = rootProject.extensions.create(extensionName, this)
 
-			allprojects {
-				if (this != rootProject) extensions.add(extensionName, deps)
-				hookCustomDependencyResolution(this, deps.modules)
-			}
-		}
+			gradle.allprojects(fun(project: Project) {
+				if (project != rootProject) {
+					project.extensions.add(extensionName, deps)
+				}
+				hookCustomDependencyResolution(project, deps.modules)
+			})
+		})
 	}
 
 	@get:Inject internal abstract val layout: SettingsLocation
 
-	internal fun setUpForExport(): Unit = settings.gradle.settingsEvaluated {
-		val settingsDir = settingsDir
+	internal fun setUpForExport(): Unit = settings.gradle.settingsEvaluated(fun(settings: Settings) {
+		val settingsDir = settings.settingsDir
 
 		val target = File(settingsDir, DEPENDENCY_VERSIONS_EXPORT_PATH)
 		val targetPath = target.toPath()
@@ -177,7 +180,7 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 		} catch (ex: Throwable) {
 			throw DependencyVersionsFileException.wrapJudiciously(target, ex)
 		}
-	}
+	})
 }
 
 private fun Settings.resolveForIncludeBuild(rootProject: Any?): File = when (rootProject) {
