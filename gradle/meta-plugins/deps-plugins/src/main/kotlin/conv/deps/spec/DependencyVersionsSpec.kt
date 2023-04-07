@@ -24,6 +24,8 @@ import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.StandardCopyOption.ATOMIC_MOVE
+import java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import java.nio.file.attribute.BasicFileAttributeView
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
@@ -153,16 +155,29 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 		}
 
 		try {
-			// Let the following throw!
-			if (!Files.deleteIfExists(targetPath))
-				Files.createDirectories(targetPath.parent)
+			// Output to a temporary file first
+			val tmp = File("${target.path}.tmp")
+			val tmpPath = tmp.toPath()
 
-			FileOutputStream(target).use {
+			// Let the following throw!
+			if (!Files.deleteIfExists(tmpPath))
+				Files.createDirectories(tmpPath.parent)
+
+			FileOutputStream(tmp).use {
 				it.write(stream.buffer, 0, stream.size)
+				// Necessary since file writes can be delayed by the OS (even on
+				// properly closed streams) and we have to do a rename/move
+				// operation later to atomically publish our changes.
+				it.fd.sync()
+				// ^ Same as in `androidx.core.util.AtomicFile.finishWrite()`
 			}
 
 			// Set up the file timestamps for our custom up-to-date check
-			targetPath.setModTimeAsCreateTime()
+			tmpPath.setModTimeAsCreateTime()
+
+			// Atomically publish our changes via a rename/move operation
+			Files.move(tmpPath, targetPath, ATOMIC_MOVE, REPLACE_EXISTING)
+			// ^ Same as in `okio.NioSystemFileSystem.atomicMove()`
 
 			// Check if the user gave invalid data by inserting newlines in
 			// module IDs, version strings, etc.

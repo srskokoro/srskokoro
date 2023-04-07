@@ -3,6 +3,8 @@
 import org.gradle.api.initialization.Settings
 import java.io.File
 import java.nio.file.Files
+import java.nio.file.StandardCopyOption.ATOMIC_MOVE
+import java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import java.nio.file.attribute.BasicFileAttributeView
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.*
@@ -30,13 +32,10 @@ fun Settings.shareGradleProperties(projectDir: String) {
 				return@shareGradleProperties // It's likely up-to-date
 			}
 		}
-
-		if (!dstFile.delete()) throw FileAlreadyExistsException(
-			file = dstFile, reason = "Failed to delete the destination file."
-		)
 	}
 
 	val props = Properties()
+
 	// NOTE: 'gradle.properties' files are supposed to be encoded in ISO-8859-1
 	// (also known as Latin-1).
 	// - See, https://github.com/gradle/gradle/issues/13741#issuecomment-658177619
@@ -44,14 +43,27 @@ fun Settings.shareGradleProperties(projectDir: String) {
 	srcFile.inputStream().use {
 		props.load(it)
 	}
-	dstFile.outputStream().use {
+
+	// Output to a temporary file first
+	val tmp = File("${dstFile.path}.tmp")
+	val tmpPath = tmp.toPath()
+
+	// Let the following throw!
+	Files.deleteIfExists(tmpPath)
+
+	tmp.outputStream().use {
 		props.store(it, "Auto-generated. DO NOT MODIFY.")
+		// Necessary since file writes can be delayed by the OS (even on
+		// properly closed streams) and we have to do a rename/move operation
+		// later to atomically publish our changes.
+		it.fd.sync()
+		// ^ Same as in `androidx.core.util.AtomicFile.finishWrite()`
 	}
 
-	Files.getFileAttributeView(dstPath, BasicFileAttributeView::class.java).let { dstAttrView ->
+	Files.getFileAttributeView(tmpPath, BasicFileAttributeView::class.java).let { tmpAttrView ->
 		// Sets the creation time to be the same as the last modification time.
-		val lastModifiedTime = dstAttrView.readAttributes().lastModifiedTime()
-		dstAttrView.setTimes(null, null, /* createTime = */ lastModifiedTime)
+		val lastModifiedTime = tmpAttrView.readAttributes().lastModifiedTime()
+		tmpAttrView.setTimes(null, null, /* createTime = */ lastModifiedTime)
 
 		// Sets the last modification time to be the same as the creation time,
 		// that is, if necessary.
@@ -65,11 +77,15 @@ fun Settings.shareGradleProperties(projectDir: String) {
 		// the last modification time, so the following usually won't be needed.
 		// See also, https://learn.microsoft.com/en-us/windows/win32/sysinfo/file-times
 		//
-		val createTime = dstAttrView.readAttributes().creationTime()
+		val createTime = tmpAttrView.readAttributes().creationTime()
 		if (createTime != lastModifiedTime) {
-			dstAttrView.setTimes(/* lastModifiedTime = */ createTime, null, null)
+			tmpAttrView.setTimes(/* lastModifiedTime = */ createTime, null, null)
 		}
 	}
+
+	// Atomically publish our changes via a rename/move operation
+	Files.move(tmpPath, dstPath, ATOMIC_MOVE, REPLACE_EXISTING)
+	// ^ Same as in `okio.NioSystemFileSystem.atomicMove()`
 
 	println("Auto-generated 'gradle.properties' file: ${dstFile.absolutePath}")
 }
