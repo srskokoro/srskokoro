@@ -20,7 +20,7 @@ internal fun Project.setUpTargetsExtensions(kotlin: KotlinMultiplatformExtension
 	// model accessors are available | Gradle Kotlin DSL Primer | 7.5.1" --
 	// https://docs.gradle.org/7.5.1/userguide/kotlin_dsl.html#kotdsl:accessor_applicability
 	//
-	// NOTE: If one day, this caused an exception due to "targets" already
+	// NOTE: If one day, this would cause an exception due to "targets" already
 	// existing, simply remove the following. It's likely that it's already
 	// implemented for us, and if so, we shouldn't need to do anything.
 	(kotlin as ExtensionAware).extensions.add<NamedDomainObjectCollection<KotlinTarget>>("targets", kotlin.targets)
