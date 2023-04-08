@@ -1,6 +1,7 @@
 package kokoro.app
 
 import okio.Path
+import kotlin.jvm.JvmField
 
 const val APP_DATA_SCHEMA_VERSION = 0
 
@@ -13,12 +14,12 @@ expect object AppData {
 	 * usually go under this directory. This directory is always a subdirectory
 	 * of the local directory root.
 	 */
-	val localMain: Path
+	@JvmField val localMain: Path
 
 	/**
 	 * The primary directory for storing cache data. All cache data should
 	 * usually go under this directory. This directory is always a subdirectory
 	 * of the cache directory root.
 	 */
-	val cacheMain: Path
+	@JvmField val cacheMain: Path
 }
