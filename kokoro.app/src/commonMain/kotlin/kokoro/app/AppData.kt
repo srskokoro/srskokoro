@@ -15,4 +15,3 @@ expect object AppData {
 	 */
 	val cacheMain: Path
 }
-
