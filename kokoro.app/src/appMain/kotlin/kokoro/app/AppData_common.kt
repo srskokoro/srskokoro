@@ -1,7 +1,9 @@
 package kokoro.app
 
+import kokoro.internal.io.SYSTEM
 import okio.FileSystem
 import okio.Path
+import kotlin.jvm.JvmStatic
 
 internal object AppData_common {
 
