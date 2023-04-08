@@ -12,13 +12,13 @@ class MainApplication : Application() {
 
 		fun getOrNull(): MainApplication? = instance
 
-		fun get(): MainApplication = MainApplicationSingleton.instance
+		fun get(): MainApplication = Singleton.instance
 	}
-}
 
-private object MainApplicationSingleton {
-	@JvmField val instance: MainApplication =
-		MainApplication.getOrNull() ?: throw UninitializedPropertyAccessException(
-			"Main application was not initialized."
-		)
+	private object Singleton {
+		@JvmField val instance: MainApplication =
+			getOrNull() ?: throw UninitializedPropertyAccessException(
+				"Main application was not initialized."
+			)
+	}
 }
