@@ -8,7 +8,7 @@ import okio.Path.Companion.toPath
 
 actual object AppData {
 
-	private const val APP_CACHE_DIR_ROOT_NAME = "SRSKokoroAppCache"
+	private const val APP_CACHE_DIR_ROOT_NAME = "SRSKokoroCache"
 
 	/**
 	 * The primary directory for storing cache data. All cache data should
