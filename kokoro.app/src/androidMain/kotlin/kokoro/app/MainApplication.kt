@@ -4,23 +4,21 @@ import android.app.Application
 
 class MainApplication : Application() {
 	init {
-		MainApplicationHolder.instance = this
+		instance = this
 	}
 
 	companion object {
-		fun get(): MainApplication = MainApplicationSingleton.instance
-		fun getOrNull(): MainApplication? = MainApplicationHolder.instance
-	}
-}
+		private var instance: MainApplication? = null
 
-private object MainApplicationHolder {
-	@JvmField var instance: MainApplication? = null
+		fun getOrNull(): MainApplication? = instance
+
+		fun get(): MainApplication = MainApplicationSingleton.instance
+	}
 }
 
 private object MainApplicationSingleton {
 	@JvmField val instance: MainApplication =
-		MainApplicationHolder.instance
-		?: throw UninitializedPropertyAccessException(
+		MainApplication.getOrNull() ?: throw UninitializedPropertyAccessException(
 			"Main application was not initialized."
 		)
 }
