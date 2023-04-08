@@ -1,7 +1,7 @@
 package kokoro.app
 
 import android.app.Application
-import kokoro.app.App_Common.ensureCacheMain
+import kokoro.app.App_common.ensureCacheMain
 import okio.FileSystem
 import okio.Path.Companion.toOkioPath
 

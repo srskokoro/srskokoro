@@ -4,7 +4,7 @@ import okio.FileSystem
 import okio.Path
 import kotlin.jvm.JvmStatic
 
-internal object App_Common {
+internal object App_common {
 
 	@JvmStatic
 	fun ensureCacheMain(dirRoot: Path, fs: FileSystem): Path {

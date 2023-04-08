@@ -1,6 +1,6 @@
 package kokoro.app
 
-import kokoro.app.App_Common.ensureCacheMain
+import kokoro.app.App_common.ensureCacheMain
 import net.harawata.appdirs.AppDirsFactory
 import okio.FileSystem
 import okio.Path
