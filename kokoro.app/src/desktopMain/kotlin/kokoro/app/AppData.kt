@@ -15,7 +15,7 @@ actual object AppData {
 	 * usually go under this directory. This directory is always a subdirectory
 	 * of the cache directory root.
 	 */
-	@JvmStatic actual val cacheMain: Path = ensureCacheMain(
+	@JvmField actual val cacheMain: Path = ensureCacheMain(
 		AppDirsFactory.getInstance().getUserDataDir(
 			APP_CACHE_DIR_ROOT_NAME, null, null,
 			/* roaming = */ false
