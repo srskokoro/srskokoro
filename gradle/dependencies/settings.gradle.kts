@@ -23,11 +23,11 @@ dependencyVersions {
 		module("$it:*", kotlin)
 	}
 
-	val android = "7.4.0" // Android Gradle Plugin (AGP)
+	val android = "7.4.2" // Android Gradle Plugin (AGP)
 	plugin("com.android.*", android)
 	module("com.android.tools.build:gradle", android)
 
-	val kotest = "5.5.4"
+	val kotest = "5.5.5"
 	plugin("io.kotest.multiplatform", kotest)
 	module("io.kotest:kotest-framework-multiplatform-plugin-gradle", kotest)
 	module("io.kotest:kotest-runner-junit5", kotest)
@@ -40,8 +40,8 @@ dependencyVersions {
 
 	// --
 
-	module("androidx.core:core-ktx", "1.9.0")
-	module("androidx.activity:activity-ktx", "1.6.1")
+	module("androidx.core:core-ktx", "1.10.0")
+	module("androidx.activity:activity-ktx", "1.7.0")
 
 	module("com.squareup.okio:okio", "3.3.0")
 	module("net.harawata:appdirs", "1.2.1") // https://github.com/harawata/appdirs
