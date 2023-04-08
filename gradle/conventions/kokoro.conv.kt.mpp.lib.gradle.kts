@@ -14,8 +14,11 @@ kotlin {
 		val commonMain by getting
 		val commonTest by getting
 
-		val jvmishMain by creating { dependsOn(commonMain) }
-		val jvmishTest by creating { dependsOn(commonTest) }
+		val appMain by creating { dependsOn(commonMain) }
+		val appTest by creating { dependsOn(commonTest) }
+
+		val jvmishMain by creating { dependsOn(appMain) }
+		val jvmishTest by creating { dependsOn(appTest) }
 
 		val androidMain/**/ by getting { dependsOn(jvmishMain) }
 		val androidUnitTest by getting { dependsOn(jvmishTest) }
