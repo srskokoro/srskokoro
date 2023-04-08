@@ -27,7 +27,7 @@ dependencyVersions {
 	plugin("com.android.*", android)
 	module("com.android.tools.build:gradle", android)
 
-	val kotest = "5.5.5"
+	val kotest = "5.5.4"
 	plugin("io.kotest.multiplatform", kotest)
 	module("io.kotest:kotest-framework-multiplatform-plugin-gradle", kotest)
 	module("io.kotest:kotest-runner-junit5", kotest)
