@@ -1,15 +1,10 @@
 package kokoro.app
 
-import android.app.Application
-import kokoro.app.App_common.ensureCacheMain
+import kokoro.app.AppData_common.ensureCacheMain
 import okio.FileSystem
 import okio.Path.Companion.toOkioPath
 
-actual object App {
-
-	val context: Application inline get() = MainApplication.get()
-
-	// --
+actual object AppData {
 
 	/**
 	 * The primary directory for storing cache data. All cache data should
@@ -17,7 +12,7 @@ actual object App {
 	 * of the cache directory root.
 	 */
 	@JvmField actual val cacheMain = ensureCacheMain(
-		context.cacheDir // Assumed thread-safe
+		MainApplication.get().cacheDir // Assumed thread-safe
 			.toOkioPath(), FileSystem.SYSTEM
 	)
 }

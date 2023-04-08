@@ -1,12 +1,12 @@
 package kokoro.app
 
-import kokoro.app.App_common.ensureCacheMain
+import kokoro.app.AppData_common.ensureCacheMain
 import net.harawata.appdirs.AppDirsFactory
 import okio.FileSystem
 import okio.Path
 import okio.Path.Companion.toPath
 
-actual object App {
+actual object AppData {
 
 	private const val APP_CACHE_DIR_ROOT_NAME = "SRSKokoroAppCache"
 
