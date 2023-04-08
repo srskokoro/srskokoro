@@ -1,6 +1,6 @@
 package kokoro.app
 
-import kokoro.app.AppData_common.ensureCacheMain
+import kokoro.app.AppData_common.ensureDirMain
 import net.harawata.appdirs.AppDirsFactory
 import okio.FileSystem
 import okio.Path
@@ -8,17 +8,24 @@ import okio.Path.Companion.toPath
 
 actual object AppData {
 
-	private const val APP_CACHE_DIR_ROOT_NAME = "SRSKokoroCache"
+	private const val APP_DATA_DIR_NAME = "SRSKokoro"
+
+	/**
+	 * The primary directory for storing local data. All local data should
+	 * usually go under this directory. This directory is always a subdirectory
+	 * of the local directory root.
+	 */
+	@JvmField actual val localMain: Path = ensureDirMain(
+		AppDirsFactory.getInstance().getUserDataDir(
+			APP_DATA_DIR_NAME, null, null,
+			/* roaming = */ false
+		).toPath(), FileSystem.SYSTEM
+	)
 
 	/**
 	 * The primary directory for storing cache data. All cache data should
 	 * usually go under this directory. This directory is always a subdirectory
 	 * of the cache directory root.
 	 */
-	@JvmField actual val cacheMain: Path = ensureCacheMain(
-		AppDirsFactory.getInstance().getUserDataDir(
-			APP_CACHE_DIR_ROOT_NAME, null, null,
-			/* roaming = */ false
-		).toPath(), FileSystem.SYSTEM
-	)
+	@JvmField actual val cacheMain: Path = ensureDirMain(localMain / "cache", FileSystem.SYSTEM)
 }
