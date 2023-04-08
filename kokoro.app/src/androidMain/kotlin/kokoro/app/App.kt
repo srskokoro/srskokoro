@@ -7,8 +7,7 @@ import okio.Path.Companion.toOkioPath
 
 actual object App {
 
-	@JvmField val context: Application =
-		MainApplication.`$$inst` ?: throw UninitializedPropertyAccessException("Main application not yet initialized")
+	val context: Application inline get() = MainApplication.get()
 
 	// --
 

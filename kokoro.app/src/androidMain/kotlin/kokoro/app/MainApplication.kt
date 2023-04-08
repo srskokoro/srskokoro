@@ -4,12 +4,22 @@ import android.app.Application
 
 class MainApplication : Application() {
 	init {
-		`$$inst` = this
+		MainApplicationHolder.instance = this
 	}
 
 	companion object {
-		@Suppress("ObjectPropertyName")
-		@JvmField
-		internal var `$$inst`: Application? = null
+		fun get(): MainApplication = MainApplicationSingleton.instance
 	}
+}
+
+private object MainApplicationHolder {
+	@JvmField var instance: MainApplication? = null
+}
+
+private object MainApplicationSingleton {
+	@JvmField val instance: MainApplication =
+		MainApplicationHolder.instance
+		?: throw UninitializedPropertyAccessException(
+			"Main application was not initialized."
+		)
 }
