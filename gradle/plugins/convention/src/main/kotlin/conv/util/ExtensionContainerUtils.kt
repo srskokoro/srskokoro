@@ -7,6 +7,7 @@ import org.gradle.kotlin.dsl.add
 
 inline infix fun <reified T : Named> T.asExtensionIn(extendable: ExtensionAware) = asExtensionIn(extendable.extensions)
 
-inline infix fun <reified T : Named> T.asExtensionIn(extensions: ExtensionContainer) {
+inline infix fun <reified T : Named> T.asExtensionIn(extensions: ExtensionContainer): T {
 	extensions.add<T>(name, this)
+	return this
 }
