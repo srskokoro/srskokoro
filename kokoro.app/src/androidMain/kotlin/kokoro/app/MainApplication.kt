@@ -9,6 +9,7 @@ class MainApplication : Application() {
 
 	companion object {
 		fun get(): MainApplication = MainApplicationSingleton.instance
+		fun getOrNull(): MainApplication? = MainApplicationHolder.instance
 	}
 }
 
