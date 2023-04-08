@@ -1,7 +1,6 @@
 package kokoro.app
 
 import kokoro.app.AppData_common.ensureDirMain
-import okio.FileSystem
 import okio.Path
 import okio.Path.Companion.toOkioPath
 
@@ -14,7 +13,7 @@ actual object AppData {
 	 */
 	@JvmField actual val localMain: Path = ensureDirMain(
 		MainApplication.get().filesDir // Assumed thread-safe
-			.toOkioPath() / "local", FileSystem.SYSTEM
+			.toOkioPath() / "local"
 	)
 
 	/**
@@ -24,6 +23,6 @@ actual object AppData {
 	 */
 	@JvmField actual val cacheMain = ensureDirMain(
 		MainApplication.get().cacheDir // Assumed thread-safe
-			.toOkioPath(), FileSystem.SYSTEM
+			.toOkioPath()
 	)
 }

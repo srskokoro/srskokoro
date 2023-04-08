@@ -2,7 +2,6 @@ package kokoro.app
 
 import kokoro.app.AppData_common.ensureDirMain
 import net.harawata.appdirs.AppDirsFactory
-import okio.FileSystem
 import okio.Path
 import okio.Path.Companion.toPath
 
@@ -19,7 +18,7 @@ actual object AppData {
 		AppDirsFactory.getInstance().getUserDataDir(
 			APP_DATA_DIR_NAME, null, null,
 			/* roaming = */ false
-		).toPath(), FileSystem.SYSTEM
+		).toPath()
 	)
 
 	/**
@@ -27,5 +26,5 @@ actual object AppData {
 	 * usually go under this directory. This directory is always a subdirectory
 	 * of the cache directory root.
 	 */
-	@JvmField actual val cacheMain: Path = ensureDirMain(localMain / "cache", FileSystem.SYSTEM)
+	@JvmField actual val cacheMain: Path = ensureDirMain(localMain / "cache")
 }

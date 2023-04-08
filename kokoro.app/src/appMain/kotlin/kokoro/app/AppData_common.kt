@@ -6,7 +6,7 @@ import okio.Path
 internal object AppData_common {
 
 	@JvmStatic
-	fun ensureDirMain(dirRoot: Path, fs: FileSystem): Path {
+	fun ensureDirMain(dirRoot: Path, fs: FileSystem = FileSystem.SYSTEM): Path {
 		val it = dirRoot / APP_DATA_SCHEMA_VERSION_NAME
 		fs.createDirectories(it)
 		if (fs.metadataOrNull(it)?.isDirectory != true) {
