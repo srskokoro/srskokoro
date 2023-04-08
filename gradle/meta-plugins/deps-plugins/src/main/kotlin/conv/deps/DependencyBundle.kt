@@ -12,4 +12,6 @@ abstract class DependencyBundle internal constructor(spec: DependencyBundleSpec)
 	inline operator fun times(crossinline action: (String) -> Unit) = timesAssign(action)
 
 	inline operator fun timesAssign(crossinline action: (String) -> Unit) = modules.forEach(action)
+
+	override fun toString() = modules.toString()
 }

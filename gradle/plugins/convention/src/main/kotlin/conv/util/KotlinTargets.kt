@@ -18,4 +18,6 @@ abstract class KotlinTargets<out T : KotlinTarget> @Inject constructor(val targe
 	inline operator fun times(crossinline configure: T.() -> Unit) = timesAssign(configure)
 
 	inline operator fun timesAssign(crossinline configure: T.() -> Unit) = targets.forEach(configure)
+
+	override fun toString() = joinToString(prefix = "[", postfix = "]")
 }
