@@ -46,7 +46,7 @@ object AppData {
 	 * subdirectory of the local app data directory root.
 	 *
 	 * The local app data are those that does not participate in cloud sync, but
-	 * may participate in device-to-device direct transfers.
+	 * may participate in device-to-device migrations.
 	 */
 	@JvmStatic val localMain get() = LocalMain.value
 
@@ -62,9 +62,9 @@ object AppData {
 	 * directory is always a subdirectory of the device-bound local app data
 	 * directory root.
 	 *
-	 * The device-bound local app data are those that should not be transferred
-	 * to other devices, such as, device identifiers meant to uniquely identify
-	 * the device – see also, “[Best practices for unique identifiers | Android Developers](https://developer.android.com/training/articles/user-data-ids)”
+	 * The device-bound local app data are those that should never be
+	 * transferred to other devices, such as, device identifiers meant to
+	 * uniquely identify the device – see also, “[Best practices for unique identifiers | Android Developers](https://developer.android.com/training/articles/user-data-ids)”
 	 */
 	@JvmStatic val deviceBoundMain get() = DeviceBoundMain.value
 
