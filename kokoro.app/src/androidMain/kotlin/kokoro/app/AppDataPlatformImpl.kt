@@ -2,7 +2,7 @@ package kokoro.app
 
 import java.io.File
 
-actual object AppDataPlatformDefaults {
+actual object AppDataPlatformImpl {
 
 	@Suppress("NOTHING_TO_INLINE")
 	@JvmStatic actual inline fun forDefaultRoot(): String =

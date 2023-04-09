@@ -1,6 +1,6 @@
 package kokoro.app
 
-expect object AppDataPlatformDefaults {
+expect object AppDataPlatformImpl {
 	fun forDefaultRoot(): String
 
 	fun forRoamingRoot(): String

@@ -1,10 +1,10 @@
 package kokoro.app
 
 import kokoro.app.AppDataDirCode.*
-import kokoro.app.AppDataPlatformDefaults.forCacheRoot
-import kokoro.app.AppDataPlatformDefaults.forDefaultRoot
-import kokoro.app.AppDataPlatformDefaults.forLocalRoot
-import kokoro.app.AppDataPlatformDefaults.forRoamingRoot
+import kokoro.app.AppDataPlatformImpl.forCacheRoot
+import kokoro.app.AppDataPlatformImpl.forDefaultRoot
+import kokoro.app.AppDataPlatformImpl.forLocalRoot
+import kokoro.app.AppDataPlatformImpl.forRoamingRoot
 import kokoro.internal.io.SYSTEM
 import okio.FileSystem
 import okio.Path

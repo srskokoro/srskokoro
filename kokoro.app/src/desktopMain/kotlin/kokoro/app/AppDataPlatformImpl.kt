@@ -7,7 +7,7 @@ import kokoro.app.AppDataOverrides.roamingRoot
 import net.harawata.appdirs.AppDirsFactory.getInstance as getAppDirsFactory
 
 @Suppress("NOTHING_TO_INLINE")
-actual object AppDataPlatformDefaults {
+actual object AppDataPlatformImpl {
 
 	private const val APP_DATA_DIR_NAME = "SRSKokoro"
 

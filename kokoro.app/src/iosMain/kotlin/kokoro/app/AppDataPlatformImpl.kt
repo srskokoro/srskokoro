@@ -1,6 +1,6 @@
 package kokoro.app
 
-actual object AppDataPlatformDefaults {
+actual object AppDataPlatformImpl {
 
 	actual fun forDefaultRoot(): String {
 		TODO("Not yet implemented")
