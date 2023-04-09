@@ -2,7 +2,7 @@ package kokoro.app
 
 import kokoro.app.AppDataDirCode.*
 import kokoro.app.AppDataPlatformImpl.forCacheRoot
-import kokoro.app.AppDataPlatformImpl.forDefaultRoot
+import kokoro.app.AppDataPlatformImpl.forDeviceBoundRoot
 import kokoro.app.AppDataPlatformImpl.forLocalRoot
 import kokoro.app.AppDataPlatformImpl.forRoamingRoot
 import kokoro.internal.io.SYSTEM
@@ -68,7 +68,7 @@ object AppData {
 
 	private object DeviceBoundMain {
 		@JvmField val value: Path =
-			forDefaultRoot().toPath(true).div(
+			forDeviceBoundRoot().toPath(true).div(
 				getDirMainName(D)
 			).ensureDirs()
 	}
