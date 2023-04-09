@@ -1,9 +1,37 @@
 package kokoro.app
 
-object AppDataOverrides {
-	@JvmField var defaultRoot: String? = null
+import java.util.concurrent.atomic.AtomicReference
 
-	@JvmField var roamingRoot: String? = null
-	@JvmField var localRoot: String? = null
-	@JvmField var cacheRoot: String? = null
+data class AppDataOverrides(
+	@JvmField val defaultRoot: String? = null,
+
+	@JvmField val roamingRoot: String? = null,
+	@JvmField val localRoot: String? = null,
+	@JvmField val cacheRoot: String? = null,
+) {
+	private var isPlaceholder = false
+
+	companion object {
+		private val ref = AtomicReference(AppDataOverrides().apply { isPlaceholder = true })
+
+		fun get() = ref.get()
+	}
+
+	fun install() {
+		val ref = ref
+		do {
+			val prev = ref.get()
+			if (!prev.isPlaceholder) {
+				if (this == prev) break
+				throw InstallationConflictException()
+			}
+		} while (!ref.weakCompareAndSetVolatile(prev, this))
+	}
+
+	class InstallationConflictException : IllegalStateException {
+		constructor()
+		constructor(message: String?) : super(message)
+		constructor(message: String?, cause: Throwable?) : super(message, cause)
+		constructor(cause: Throwable?) : super(cause)
+	}
 }
