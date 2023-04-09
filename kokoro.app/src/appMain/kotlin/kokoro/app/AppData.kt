@@ -7,6 +7,7 @@ import kokoro.app.AppDataPlatformImpl.forLocalRoot
 import kokoro.app.AppDataPlatformImpl.forRoamingRoot
 import kokoro.internal.io.SYSTEM
 import okio.FileSystem
+import okio.IOException
 import okio.Path
 import okio.Path.Companion.toPath
 import kotlin.jvm.JvmField
@@ -96,10 +97,15 @@ private fun getSchemaVersionName(version: Int) = version.toString().padStart(3, 
 private fun Path.ensureDirs(): Path {
 	val fs = FileSystem.SYSTEM
 	fs.createDirectories(this)
-	if (fs.metadataOrNull(this)?.isDirectory != true) {
+	if (fs.metadataOrNull(this)?.isDirectory != true) try {
 		// Let the following throw its own exception (so that we don't have to
 		// throw our own customized one).
 		fs.createDirectory(this, mustCreate = true)
+	} catch (ex: IOException) {
+		// Doesn't throw if it ended up existing anyway
+		if (fs.metadataOrNull(this)?.isDirectory != true) {
+			throw ex
+		}
 	}
 	return this
 }
