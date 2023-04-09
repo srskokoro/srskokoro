@@ -31,9 +31,10 @@ object AppData {
 	@JvmStatic val roamingMain get() = RoamingMain.value
 
 	private object RoamingMain {
-		@JvmField val value: Path = (run<String> {
-			forRoamingRoot() + Path.DIRECTORY_SEPARATOR
-		} + getDirMainName(R)).toPath(true).ensureDirs()
+		@JvmField val value: Path =
+			forRoamingRoot().toPath(true).div(
+				getDirMainName(R)
+			).ensureDirs()
 	}
 
 	/**
@@ -47,9 +48,10 @@ object AppData {
 	@JvmStatic val localMain get() = LocalMain.value
 
 	private object LocalMain {
-		@JvmField val value: Path = (run<String> {
-			forLocalRoot() + Path.DIRECTORY_SEPARATOR
-		} + getDirMainName(L)).toPath(true).ensureDirs()
+		@JvmField val value: Path =
+			forLocalRoot().toPath(true).div(
+				getDirMainName(L)
+			).ensureDirs()
 	}
 
 	/**
@@ -65,9 +67,10 @@ object AppData {
 	@JvmStatic val deviceBoundMain get() = DeviceBoundMain.value
 
 	private object DeviceBoundMain {
-		@JvmField val value: Path = (run<String> {
-			forDefaultRoot() + Path.DIRECTORY_SEPARATOR
-		} + getDirMainName(D)).toPath(true).ensureDirs()
+		@JvmField val value: Path =
+			forDefaultRoot().toPath(true).div(
+				getDirMainName(D)
+			).ensureDirs()
 	}
 
 	/**
@@ -81,9 +84,10 @@ object AppData {
 	@JvmStatic val cacheMain get() = CacheMain.value
 
 	private object CacheMain {
-		@JvmField val value: Path = (run<String> {
-			forCacheRoot() + Path.DIRECTORY_SEPARATOR
-		} + getDirMainName(C)).toPath(true).ensureDirs()
+		@JvmField val value: Path =
+			forCacheRoot().toPath(true).div(
+				getDirMainName(C)
+			).ensureDirs()
 	}
 }
 
