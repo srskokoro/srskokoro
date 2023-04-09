@@ -23,5 +23,6 @@ actual object AppDataPlatformImpl {
 		getOverrides().defaultRoot ?: getPlatformAppDir()
 
 	@JvmStatic actual fun forCacheRoot(): String =
-		getOverrides().run { cacheRoot ?: defaultRoot } ?: getPlatformAppDir()
+		getOverrides().run { cacheRoot ?: defaultRoot } ?: getAppDirsFactory()
+			.getUserCacheDir(APP_DATA_DIR_NAME, null, null)
 }
