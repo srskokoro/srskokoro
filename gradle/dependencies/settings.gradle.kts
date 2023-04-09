@@ -40,6 +40,8 @@ dependencyVersions {
 
 	// --
 
+	module("org.jetbrains.kotlinx:atomicfu-gradle-plugin", "0.20.2")
+
 	module("androidx.core:core-ktx", "1.10.0")
 	module("androidx.activity:activity-ktx", "1.7.0")
 

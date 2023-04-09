@@ -21,4 +21,6 @@ dependencies {
 	implementation("com.android.tools.build:gradle")
 
 	implementation("io.kotest:kotest-framework-multiplatform-plugin-gradle")
+
+	implementation("org.jetbrains.kotlinx:atomicfu-gradle-plugin")
 }
