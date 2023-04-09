@@ -1,2 +1,2 @@
-fun run(workingDir: String, args: Array<out String>) {
+suspend fun run(workingDir: String, args: Array<out String>) {
 }

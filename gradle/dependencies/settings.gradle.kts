@@ -37,6 +37,8 @@ dependencyVersions {
 
 	val kotlinx_coroutines = "1.6.4"
 	module("org.jetbrains.kotlinx:kotlinx-coroutines-test", kotlinx_coroutines)
+	module("org.jetbrains.kotlinx:kotlinx-coroutines-core", kotlinx_coroutines)
+	module("org.jetbrains.kotlinx:kotlinx-coroutines-swing", kotlinx_coroutines)
 
 	// --
 

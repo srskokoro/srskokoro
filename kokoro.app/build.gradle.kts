@@ -29,6 +29,8 @@ dependencies {
 	}
 
 	commonMainImplementation(project(":kokoro.lib.internal"))
+	commonMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+	desktopMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing")
 
 	desktopMainImplementation(jcef.dependency)
 	androidMainApi("androidx.core:core-ktx")
