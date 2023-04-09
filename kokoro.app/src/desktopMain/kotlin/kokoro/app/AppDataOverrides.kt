@@ -1,7 +1,5 @@
 package kokoro.app
 
-import kotlin.jvm.JvmField
-
 object AppDataOverrides {
 	@JvmField var defaultRoot: String? = null
 

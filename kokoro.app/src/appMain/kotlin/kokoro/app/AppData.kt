@@ -1,10 +1,6 @@
 package kokoro.app
 
 import kokoro.app.AppDataDirCode.*
-import kokoro.app.AppDataOverrides.cacheRoot
-import kokoro.app.AppDataOverrides.defaultRoot
-import kokoro.app.AppDataOverrides.localRoot
-import kokoro.app.AppDataOverrides.roamingRoot
 import kokoro.app.AppDataPlatformDefaults.forCacheRoot
 import kokoro.app.AppDataPlatformDefaults.forDefaultRoot
 import kokoro.app.AppDataPlatformDefaults.forLocalRoot
@@ -36,7 +32,7 @@ object AppData {
 
 	private object RoamingMain {
 		@JvmField val value: Path = (run<String> {
-			(roamingRoot ?: defaultRoot ?: forRoamingRoot()) + Path.DIRECTORY_SEPARATOR
+			forRoamingRoot() + Path.DIRECTORY_SEPARATOR
 		} + getDirMainName(R)).toPath(true).ensureDirs()
 	}
 
@@ -52,7 +48,7 @@ object AppData {
 
 	private object LocalMain {
 		@JvmField val value: Path = (run<String> {
-			(localRoot ?: defaultRoot ?: forLocalRoot()) + Path.DIRECTORY_SEPARATOR
+			forLocalRoot() + Path.DIRECTORY_SEPARATOR
 		} + getDirMainName(L)).toPath(true).ensureDirs()
 	}
 
@@ -70,7 +66,7 @@ object AppData {
 
 	private object DeviceBoundMain {
 		@JvmField val value: Path = (run<String> {
-			(defaultRoot ?: forDefaultRoot()) + Path.DIRECTORY_SEPARATOR
+			forDefaultRoot() + Path.DIRECTORY_SEPARATOR
 		} + getDirMainName(D)).toPath(true).ensureDirs()
 	}
 
@@ -86,7 +82,7 @@ object AppData {
 
 	private object CacheMain {
 		@JvmField val value: Path = (run<String> {
-			(cacheRoot ?: defaultRoot ?: forCacheRoot()) + Path.DIRECTORY_SEPARATOR
+			forCacheRoot() + Path.DIRECTORY_SEPARATOR
 		} + getDirMainName(C)).toPath(true).ensureDirs()
 	}
 }
