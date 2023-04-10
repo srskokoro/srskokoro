@@ -185,9 +185,10 @@ private fun DependencyVersionsSpec.consumeInclude(line: String): Boolean {
 internal inline fun cannotStore(str: String) = str.startsWith(HEADER_INDICATOR)
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun DependencyVersionsSpec.store(writer: BufferedWriter): Int = doStore(this, writer)
+@JvmName("-store")
+internal inline fun DependencyVersionsSpec.store(writer: BufferedWriter): Int = store(this, writer)
 
-private fun doStore(spec: DependencyVersionsSpec, writer: Writer): Int = writer.run {
+private fun store(spec: DependencyVersionsSpec, writer: Writer): Int = writer.run {
 	// NOTE: Don't use `BufferedWriter` here, so as to not accidentally call `BufferedWriter.newLine()`
 
 	// The expected number of newline characters in the output
