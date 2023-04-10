@@ -176,7 +176,9 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 				Files.createDirectories(tmpPath.parent)
 
 			val fs = FileOutputStream(tmp)
-			fs.writer().use { // Will auto-close the file stream
+			// NOTE: Using `use` on the following `writer` is necessary in order
+			// to have it auto-flush its internal buffers.
+			fs.writer().use { // Will also auto-close the file stream
 				it.write(caw.buffer, 0, caw.size)
 				// Necessary since file writes can be delayed by the OS (even on
 				// properly closed streams) and we have to do a rename/move
