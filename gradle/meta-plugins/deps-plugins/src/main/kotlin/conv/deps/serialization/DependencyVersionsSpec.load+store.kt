@@ -184,7 +184,8 @@ private fun DependencyVersionsSpec.consumeInclude(line: String): Boolean {
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun cannotStore(str: String) = str.startsWith(HEADER_INDICATOR)
 
-internal fun DependencyVersionsSpec.store(writer: BufferedWriter): Int = doStore(this, writer)
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun DependencyVersionsSpec.store(writer: BufferedWriter): Int = doStore(this, writer)
 
 private fun doStore(spec: DependencyVersionsSpec, writer: Writer): Int = writer.run {
 	// NOTE: Don't use `BufferedWriter` here, so as to not accidentally call `BufferedWriter.newLine()`
