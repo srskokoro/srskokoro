@@ -115,9 +115,9 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 					ByteArrayInputStream(
 						providers.fileContents(target).asBytes.orNull
 						?: failOnDependencyVersionsNotExported(includedRoot)
-					).bufferedReader().use { reader -> // Using `use` here because... paranoia
+					).bufferedReader().use { // Using `use` here because... paranoia
 						try {
-							load(reader)
+							load(it)
 						} catch (ex: Throwable) {
 							throw DependencyVersionsFileException.wrapJudiciously(target, ex)
 						}
