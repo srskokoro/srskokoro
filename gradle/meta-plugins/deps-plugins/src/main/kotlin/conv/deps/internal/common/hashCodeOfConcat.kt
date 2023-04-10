@@ -13,7 +13,8 @@ internal inline fun hashCodeOfConcat(a: String, b: String): Int {
 	return a.hashCode() * fastPow31(b.length) + b.hashCode()
 }
 
-private fun fastPow31(n: Int): Int {
+@Suppress("NOTHING_TO_INLINE")
+private inline fun fastPow31(n: Int): Int {
 	fastPow31Table.run {
 		if (n < size) return this[n]
 	}
