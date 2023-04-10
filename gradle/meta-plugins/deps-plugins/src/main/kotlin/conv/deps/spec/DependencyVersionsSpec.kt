@@ -2,7 +2,7 @@ package conv.deps.spec
 
 import conv.deps.*
 import conv.deps.internal.DependencyVersionsFileException
-import conv.deps.internal.common.UnsafeByteArrayOutputStream
+import conv.deps.internal.common.UnsafeCharArrayWriter
 import conv.deps.internal.common.safeResolve
 import conv.deps.serialization.load
 import conv.deps.serialization.store
@@ -161,14 +161,10 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 			}
 		}
 
-		// Write to a byte array first, so that later, we may easily inspect it
-		// for the correctness of our output.
-		val stream = UnsafeByteArrayOutputStream()
-		// Using `BufferedWriter` here to "avoid frequent converter invocations"
-		// according to the API docs for `OutputStreamWriter`
-		val nl = stream.bufferedWriter().use { writer -> // Using `use` here to auto-flush buffer
-			store(writer)
-		}
+		// Write to an array first, so that later, we may easily inspect it for
+		// the correctness of our output.
+		val caw = UnsafeCharArrayWriter()
+		val nl = store(caw)
 
 		try {
 			// Output to a temporary file first
@@ -179,12 +175,13 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 			if (!Files.deleteIfExists(tmpPath))
 				Files.createDirectories(tmpPath.parent)
 
-			FileOutputStream(tmp).use {
-				it.write(stream.buffer, 0, stream.size)
+			val fs = FileOutputStream(tmp)
+			fs.writer().use { // Will auto-close the file stream
+				it.write(caw.buffer, 0, caw.size)
 				// Necessary since file writes can be delayed by the OS (even on
 				// properly closed streams) and we have to do a rename/move
 				// operation later to atomically publish our changes.
-				it.fd.sync()
+				fs.fd.sync()
 				// ^ Same as in `androidx.core.util.AtomicFile.finishWrite()`
 			}
 
@@ -199,7 +196,7 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 
 			// Check if the user gave invalid data by inserting newlines in
 			// module IDs, version strings, etc.
-			if (nl != stream.buffer.count { it == '\n'.toByte() }) {
+			if (nl != caw.buffer.count { it == '\n' }) {
 				failOnUnexpectedNewlineCount()
 			}
 		} catch (ex: Throwable) {

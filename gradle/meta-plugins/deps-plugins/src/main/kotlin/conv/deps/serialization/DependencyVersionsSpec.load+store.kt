@@ -9,7 +9,6 @@ import conv.deps.spec.DependencyBundlesSpec
 import conv.deps.spec.DependencyVersionsSpec
 import org.gradle.api.InvalidUserDataException
 import java.io.BufferedReader
-import java.io.BufferedWriter
 import java.io.File
 import java.io.Writer
 
@@ -186,7 +185,7 @@ internal inline fun cannotStore(str: String) = str.startsWith(HEADER_INDICATOR)
 
 @Suppress("NOTHING_TO_INLINE")
 @JvmName("-store")
-internal inline fun DependencyVersionsSpec.store(writer: BufferedWriter): Int = store(this, writer)
+internal inline fun DependencyVersionsSpec.store(writer: Writer): Int = store(this, writer)
 
 private fun store(spec: DependencyVersionsSpec, writer: Writer): Int = writer.run {
 	// NOTE: Don't use `BufferedWriter` here, so as to not accidentally call `BufferedWriter.newLine()`
