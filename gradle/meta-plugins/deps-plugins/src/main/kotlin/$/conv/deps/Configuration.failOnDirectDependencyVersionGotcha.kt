@@ -92,9 +92,13 @@ fun Configuration.failOnDirectDependencyVersionGotcha(
 
 private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(excludeFilter: (ModuleIdentifier) -> Boolean) {
 	val depSet = resolutionResult.allDependencies
+
+	// Cache for module versions requested by project components
+	val reqByAnyProj = mutableSetOf<Pair<ModuleIdentifier, String>>()
+
+	// Resolved dependencies that failed our check criteria
 	val failedSet = mutableSetOf<ResolvedDependencyResult>()
 
-	// Look for resolved dependencies that failed our check criteria
 	for (dep in depSet) {
 		if (dep !is ResolvedDependencyResult) continue
 
@@ -116,12 +120,21 @@ private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(exclude
 		if (reqVer == selVer) continue
 
 		// Check for projects that explicitly requested for the selected version
-		if (
-			sel.dependents.any {
-				it.from.id is ProjectComponentIdentifier &&
-				(it.requested as? ModuleComponentSelector)?.version == selVer
-			}
-		) continue
+		val selModId = selModVer.module
+		if (selModId to selVer in reqByAnyProj) continue
+
+		var isReqByAnyProj = false
+		for (dependent in sel.dependents) {
+			if (dependent.from.id !is ProjectComponentIdentifier) continue
+
+			val dependentReq = dependent.requested
+			if (dependentReq !is ModuleComponentSelector) continue
+
+			val dependentReqVer = dependentReq.version
+			isReqByAnyProj = isReqByAnyProj or (dependentReqVer == selVer)
+			reqByAnyProj += selModId to dependentReqVer // Cache for future checks
+		}
+		if (isReqByAnyProj) continue
 
 		if (!sel.selectionReason.isConflictResolution) continue
 		if (excludeFilter(selModVer.module)) continue
