@@ -93,7 +93,7 @@ fun Configuration.failOnDirectDependencyVersionGotcha(
 private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(excludeFilter: (ModuleIdentifier) -> Boolean) {
 	val depSet = resolutionResult.allDependencies
 
-	// Cache for selected versions explicitly requested by project components
+	// Cache for selected versions directly requested by project components
 	val reqByAnyProj = mutableSetOf<Triple<ProjectComponentIdentifier, ModuleIdentifier, String>>()
 
 	// Resolved dependencies that failed our check criteria
