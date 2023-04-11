@@ -131,10 +131,7 @@ private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(exclude
 			if (dependent.from.id != projectId) continue
 
 			val dependentReq = dependent.requested
-			if (dependentReq !is ModuleComponentSelector) continue
-
-			val dependentReqVer = dependentReq.version
-			if (dependentReqVer == selVer) {
+			if (dependentReq is ModuleComponentSelector && dependentReq.version == selVer) {
 				reqByAnyProj += projectId_selModId_selVer // Cache for future checks
 				continue@outer
 			}
