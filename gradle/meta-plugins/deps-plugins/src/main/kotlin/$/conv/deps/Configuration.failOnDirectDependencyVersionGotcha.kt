@@ -6,6 +6,7 @@ import org.gradle.api.artifacts.ModuleIdentifier
 import org.gradle.api.artifacts.ResolvableDependencies
 import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.ExtensionAware
@@ -93,13 +94,15 @@ fun Configuration.failOnDirectDependencyVersionGotcha(
 private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(excludeFilter: (ModuleIdentifier) -> Boolean) {
 	val depSet = resolutionResult.allDependencies
 
+	// Cache for selected components whose dependents we've already scanned
+	val selDependentsScanned = mutableSetOf<ResolvedComponentResult>()
+
 	// Cache for selected versions directly requested by project components
 	val reqByAnyProj = mutableSetOf<Triple<ProjectComponentIdentifier, ModuleIdentifier, String>>()
 
 	// Resolved dependencies that failed our check criteria
 	val failedSet = mutableSetOf<ResolvedDependencyResult>()
 
-	outer@
 	for (dep in depSet) {
 		if (dep !is ResolvedDependencyResult) continue
 
@@ -120,22 +123,19 @@ private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(exclude
 		val selVer = selModVer.version
 		if (reqVer == selVer) continue
 
+		val selModId = selModVer.module
+		if (selDependentsScanned.add(sel)) for (dependent in sel.dependents) {
+			val dependentProjectId = dependent.from.id as? ProjectComponentIdentifier ?: continue
+			val dependentReqVer = (dependent.requested as? ModuleComponentSelector ?: continue).version
+
+			// Cache to speed up future checks
+			reqByAnyProj += Triple(dependentProjectId, selModId, dependentReqVer)
+		}
+
 		// Allow the requested version to be changed by a project component
 		// (into the selected version), so long as the change was done by the
 		// same project that directly requested for the differing version.
-		val selModId = selModVer.module
-		val projectId_selModId_selVer = Triple(projectId, selModId, selVer)
-		if (projectId_selModId_selVer in reqByAnyProj) continue
-
-		for (dependent in sel.dependents) {
-			if (dependent.from.id != projectId) continue
-
-			val dependentReq = dependent.requested
-			if (dependentReq is ModuleComponentSelector && dependentReq.version == selVer) {
-				reqByAnyProj += projectId_selModId_selVer // Cache for future checks
-				continue@outer
-			}
-		}
+		if (Triple(projectId, selModId, selVer) in reqByAnyProj) continue
 
 		if (!sel.selectionReason.isConflictResolution) continue
 		if (excludeFilter(selModId)) continue
