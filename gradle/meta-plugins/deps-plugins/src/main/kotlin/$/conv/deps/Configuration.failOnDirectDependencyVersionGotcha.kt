@@ -5,6 +5,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleIdentifier
 import org.gradle.api.artifacts.ResolvableDependencies
 import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.ExtensionAware
@@ -14,8 +15,8 @@ import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.provideDelegate
 
 /**
- * Fails on transitive upgrade/downgrade of versions for dependencies directly
- * declared under this configuration.
+ * Fails on transitive upgrade/downgrade of versions for dependencies under this
+ * configuration that are direct dependencies of project components.
  *
  * Useful for solving the issue described in “[Effects of Gradle's default resolution behavior | Understanding Gradle #10 – Dependency Version Conflicts](https://youtu.be/YYWhfy6c2YQ?t=145)”
  *
@@ -89,26 +90,15 @@ fun Configuration.failOnDirectDependencyVersionGotcha(
 }
 
 private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(excludeFilter: (ModuleIdentifier) -> Boolean) {
-	val depSet = resolutionResult.root.dependencies
-	val reqModVerSet = mutableSetOf<Pair<ModuleIdentifier, String>>()
-
-	// Gather the versions first, as some dependencies could be declared more
-	// than once under different versions.
-	for (dep in depSet) {
-		val req = dep.requested
-		if (req !is ModuleComponentSelector) continue
-
-		val reqVer = req.version
-		if (reqVer.isNullOrBlank()) continue
-
-		val reqModId = req.moduleIdentifier
-		reqModVerSet.add(reqModId to reqVer)
-	}
-
-	// Look for dependencies that failed our check criteria.
+	val depSet = resolutionResult.allDependencies
 	val failedSet = mutableSetOf<ResolvedDependencyResult>()
+
+	// Look for resolved dependencies that failed our check criteria
 	for (dep in depSet) {
 		if (dep !is ResolvedDependencyResult) continue
+
+		// Include only dependencies directly declared by project components
+		if (dep.from.id !is ProjectComponentIdentifier) continue
 
 		val req = dep.requested
 		if (req !is ModuleComponentSelector) continue
@@ -121,24 +111,34 @@ private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(exclude
 		val sel = dep.selected
 		val selModVer = sel.moduleVersion ?: continue
 
-		val selModId = selModVer.module
-		if (selModId to selModVer.version in reqModVerSet) continue
+		val selVer = selModVer.version
+		if (reqVer == selVer) continue
+
+		// Check for projects that explicitly requested for the selected version
+		if (
+			sel.dependents.any {
+				it.from.id is ProjectComponentIdentifier &&
+				(it.requested as? ModuleComponentSelector)?.version == selVer
+			}
+		) continue
 
 		if (!sel.selectionReason.isConflictResolution) continue
-		if (excludeFilter(selModId)) continue
+		if (excludeFilter(selModVer.module)) continue
 
 		failedSet.add(dep)
 	}
 
 	if (failedSet.isNotEmpty()) throw GradleException(
 		"""
-		Conflicts found for the following direct dependencies of configuration '$name':
+		Could not resolve all dependencies for configuration '$name'.
+		Conflict(s) found for the following direct dependencies of project components:
 		""".trimIndent() +
-		"\n" + failedSet.joinToString("") { "  - $it\n" } +
+		failedSet.joinToString("", prefix = "\n") { "  - $it\n    - from '${it.from}'\n" } +
 		"""
 		Note:
 		  For each of the above, the version has been quietly changed by a transitive
-		  dependency, but the resolution strategy has forbidden this.
+		  dependency, but the configuration's resolution strategy has forbidden this for
+		  all direct dependencies of project components.
 		--
 		""".trimIndent()
 	)
