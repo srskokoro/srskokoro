@@ -152,6 +152,7 @@ private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(exclude
 			"""
 			- $it
 			  - from '${it.from}'
+			  - caused by '${it.selected.findFirstDependentWithMatchingVersion().from}'
 			""".replaceIndent("  ") + "\n"
 		} +
 		"""
@@ -163,3 +164,6 @@ private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(exclude
 		""".trimIndent()
 	)
 }
+
+private fun ResolvedComponentResult.findFirstDependentWithMatchingVersion(): ResolvedDependencyResult =
+	dependents.first { (it.requested as? ModuleComponentSelector)?.version == this.moduleVersion?.version }
