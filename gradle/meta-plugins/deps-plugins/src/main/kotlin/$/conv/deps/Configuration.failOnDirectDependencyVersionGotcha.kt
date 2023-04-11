@@ -94,7 +94,7 @@ private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(exclude
 	val depSet = resolutionResult.allDependencies
 
 	// Cache for selected versions explicitly requested by project components
-	val reqByAnyProj = mutableSetOf<Pair<ModuleIdentifier, String>>()
+	val reqByAnyProj = mutableSetOf<Triple<ProjectComponentIdentifier, ModuleIdentifier, String>>()
 
 	// Resolved dependencies that failed our check criteria
 	val failedSet = mutableSetOf<ResolvedDependencyResult>()
@@ -104,7 +104,7 @@ private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(exclude
 		if (dep !is ResolvedDependencyResult) continue
 
 		// Include only dependencies directly declared by project components
-		if (dep.from.id !is ProjectComponentIdentifier) continue
+		val projectId = dep.from.id as? ProjectComponentIdentifier ?: continue
 
 		val req = dep.requested
 		if (req !is ModuleComponentSelector) continue
@@ -120,18 +120,22 @@ private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(exclude
 		val selVer = selModVer.version
 		if (reqVer == selVer) continue
 
-		// Check for projects that explicitly requested for the selected version
+		// Allow the requested version to be changed by project components (into
+		// the selected version), so long as the change happened under the same
+		// project component that directly requested for the differing version.
 		val selModId = selModVer.module
-		if (selModId to selVer in reqByAnyProj) continue
+		val projectId_selModId_selVer = Triple(projectId, selModId, selVer)
+		if (projectId_selModId_selVer in reqByAnyProj) continue
+
 		for (dependent in sel.dependents) {
-			if (dependent.from.id !is ProjectComponentIdentifier) continue
+			if (dependent.from.id != projectId) continue
 
 			val dependentReq = dependent.requested
 			if (dependentReq !is ModuleComponentSelector) continue
 
 			val dependentReqVer = dependentReq.version
 			if (dependentReqVer == selVer) {
-				reqByAnyProj += selModId to dependentReqVer // Cache for future checks
+				reqByAnyProj += projectId_selModId_selVer // Cache for future checks
 				continue@outer
 			}
 		}
