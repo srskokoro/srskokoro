@@ -138,7 +138,7 @@ private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(exclude
 		}
 
 		if (!sel.selectionReason.isConflictResolution) continue
-		if (excludeFilter(selModVer.module)) continue
+		if (excludeFilter(selModId)) continue
 
 		failedSet.add(dep)
 	}
