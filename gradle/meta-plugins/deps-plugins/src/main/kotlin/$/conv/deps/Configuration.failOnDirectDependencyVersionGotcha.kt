@@ -120,9 +120,9 @@ private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(exclude
 		val selVer = selModVer.version
 		if (reqVer == selVer) continue
 
-		// Allow the requested version to be changed by project components (into
-		// the selected version), so long as the change happened under the same
-		// project component that directly requested for the differing version.
+		// Allow the requested version to be changed by a project component
+		// (into the selected version), so long as the change was done by the
+		// same project that directly requested for the differing version.
 		val selModId = selModVer.module
 		val projectId_selModId_selVer = Triple(projectId, selModId, selVer)
 		if (projectId_selModId_selVer in reqByAnyProj) continue
