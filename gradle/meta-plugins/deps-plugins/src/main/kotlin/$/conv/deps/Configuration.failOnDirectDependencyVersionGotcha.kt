@@ -152,7 +152,7 @@ private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(exclude
 			"""
 			- $it
 			  - from '${it.from}'
-			  - caused by '${it.selected.findFirstDependentWithMatchingVersion().from}'
+			  - changed by '${it.selected.findFirstDependentWithMatchingVersion().from}'
 			""".replaceIndent("  ") + "\n"
 		} +
 		"""
