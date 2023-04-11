@@ -16,7 +16,8 @@ import org.gradle.kotlin.dsl.provideDelegate
 
 /**
  * Fails on transitive upgrade/downgrade of versions for dependencies under this
- * configuration that are direct dependencies of project components.
+ * configuration that are direct dependencies of any project component (which
+ * isn't necessarily the current project).
  *
  * Useful for solving the issue described in “[Effects of Gradle's default resolution behavior | Understanding Gradle #10 – Dependency Version Conflicts](https://youtu.be/YYWhfy6c2YQ?t=145)”
  *
