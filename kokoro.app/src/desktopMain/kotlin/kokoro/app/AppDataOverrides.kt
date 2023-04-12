@@ -23,12 +23,12 @@ data class AppDataOverrides(
 			val prev = ref.get()
 			if (!prev.isPlaceholder) {
 				if (this == prev) break
-				throw InstallationConflictException()
+				throw InstallConflictException()
 			}
 		} while (!ref.weakCompareAndSetVolatile(prev, this))
 	}
 
-	class InstallationConflictException : IllegalStateException {
+	class InstallConflictException : IllegalStateException {
 		constructor()
 		constructor(message: String?) : super(message)
 		constructor(message: String?, cause: Throwable?) : super(message, cause)
