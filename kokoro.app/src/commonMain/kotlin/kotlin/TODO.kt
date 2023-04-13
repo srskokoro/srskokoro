@@ -12,6 +12,9 @@ internal object TODO {
 
 	fun IMPLEMENT(): Nothing = throw NotImplementedError("TODO Implement")
 
+	fun IMPLEMENT(feature: String): Nothing = if (feature.isEmpty()) IMPLEMENT() else
+		throw NotImplementedError("TODO Implement: $feature")
+
 	inline val NOP get() = NOP()
 
 	inline fun NOP() = Unit
