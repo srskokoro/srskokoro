@@ -1,9 +1,19 @@
 ﻿import kokoro.app.AppData
 import java.io.File
 import java.io.RandomAccessFile
+import java.net.InetAddress
+import java.net.InetSocketAddress
+import java.net.SocketAddress
+import java.net.StandardProtocolFamily
+import java.net.UnixDomainSocketAddress
+import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
 import java.nio.channels.FileLock
+import java.nio.channels.ServerSocketChannel
+import java.nio.file.Files
+import java.nio.file.StandardOpenOption
 import java.util.concurrent.atomic.AtomicInteger
+import java.nio.file.Path as NioPath
 
 /**
  * An offset to a lock byte that can be locked on in the lock file.
@@ -74,6 +84,50 @@ private class AppDaemon(
 
 	initialArgs: Array<out String>,
 ) {
+	private val server: ServerSocketChannel
+	private val bindPath: NioPath
+
+	init {
+		var server: ServerSocketChannel
+		var isInet: Boolean
+		var bindPath: NioPath
+		var bindAddress: SocketAddress
+
+		try {
+			server = ServerSocketChannel.open(StandardProtocolFamily.UNIX)
+			isInet = false
+			bindPath = NioPath.of(sockDir, ".sock")
+			bindAddress = UnixDomainSocketAddress.of(bindPath)
+		} catch (ex: UnsupportedOperationException) {
+			server = ServerSocketChannel.open()
+			isInet = true
+			bindPath = NioPath.of(sockDir, ".port")
+			bindAddress = InetSocketAddress(InetAddress.getLoopbackAddress(), 0)
+		}
+		this.server = server
+		this.bindPath = bindPath
+
+		try {
+			if (Files.deleteIfExists(bindPath)) {
+				TODO // TODO Do additional cleanup work here
+			}
+		} catch (ex: Throwable) {
+			server.closeInCatch(ex)
+			throw ex
+		}
+
+		// TODO Launch initial app instance
+
+		try {
+			server.bind(bindAddress)
+		} catch (ex: Throwable) {
+			server.closeInCatch(ex)
+			throw ex
+		}
+		if (isInet)
+			generateInetPortFile(bindPath, server)
+	}
+
 	fun doWorkLoop() {
 		TODO { IMPLEMENT }
 	}
@@ -120,10 +174,27 @@ private class AppDaemon(
 		lockChannel.use {
 			instanceChangeLock.use {
 				masterInstanceLock.use {
-					TODO { IMPLEMENT }
+					server.use {
+						Files.deleteIfExists(bindPath)
+					}
 				}
 			}
 		}
+	}
+}
+
+private fun generateInetPortFile(target: NioPath, server: ServerSocketChannel) {
+	try {
+		val buffer = ByteBuffer.allocate(2)
+		val port = (server.localAddress as InetSocketAddress).port.toShort()
+		buffer.putShort(port)
+
+		FileChannel.open(target, StandardOpenOption.CREATE_NEW).use {
+			it.write(buffer)
+		}
+	} catch (ex: Throwable) {
+		server.closeInCatch(ex)
+		throw ex
 	}
 }
 
