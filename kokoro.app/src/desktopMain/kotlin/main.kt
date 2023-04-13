@@ -124,6 +124,7 @@ private class AppDaemon(
 			throw ex
 		}
 
+		// The following won't throw here (but may, in a separate coroutine).
 		scope.launch {
 			handleAppInstance {
 				// TODO Consume initial args
