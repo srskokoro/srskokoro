@@ -203,8 +203,11 @@ private class AppDaemon(
 
 private fun generateInetPortFile(target: NioPath, boundServer: ServerSocketChannel) {
 	try {
+		// The following cast throws NPE if the server is not bound
+		val address = boundServer.localAddress as InetSocketAddress
+		val port = address.port.toShort()
+
 		val buffer = ByteBuffer.allocate(2)
-		val port = (boundServer.localAddress as InetSocketAddress).port.toShort()
 		buffer.putShort(port)
 
 		FileChannel.open(target, StandardOpenOption.CREATE_NEW).use {
