@@ -10,6 +10,8 @@ internal object TODO {
 
 	inline fun IMPLEMENT(): Nothing = throw NotImplementedError("TODO Implement")
 
+	inline val NOP get() = Unit
+
 	inline fun NOP() = Unit
 
 	/** Same as [NOP] */
