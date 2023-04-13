@@ -1,6 +1,6 @@
 @file:Suppress("FunctionName", "unused")
 
-package kotlin
+package kokoro.internal.kotlin
 
 @DslMarker
 internal annotation class TODOMarker
