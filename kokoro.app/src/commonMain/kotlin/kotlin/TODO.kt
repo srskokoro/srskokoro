@@ -8,11 +8,16 @@ internal annotation class TODOMarker
 @TODOMarker
 internal object TODO {
 
+	inline val IMPLEMENT: Nothing get() = IMPLEMENT()
+
 	inline fun IMPLEMENT(): Nothing = throw NotImplementedError("TODO Implement")
 
-	inline val NOP get() = Unit
+	inline val NOP get() = NOP()
 
 	inline fun NOP() = Unit
+
+	/** Same as [NOP] */
+	inline val PLACEHOLDER get() = PLACEHOLDER()
 
 	/** Same as [NOP] */
 	inline fun PLACEHOLDER() = Unit
