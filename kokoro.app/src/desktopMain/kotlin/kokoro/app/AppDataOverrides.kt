@@ -29,7 +29,7 @@ data class AppDataOverrides(
 	}
 
 	@Suppress("unused")
-	class InstallConflictException : IllegalStateException {
+	open class InstallConflictException : IllegalStateException {
 		constructor()
 		constructor(message: String?) : super(message)
 		constructor(message: String?, cause: Throwable?) : super(message, cause)
