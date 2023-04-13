@@ -3,6 +3,7 @@ import java.io.File
 import java.io.RandomAccessFile
 import java.nio.channels.FileChannel
 import java.nio.channels.FileLock
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * An offset to a lock byte that can be locked on in the lock file.
@@ -74,6 +75,37 @@ private class AppDaemon(
 	initialArgs: Array<out String>,
 ) {
 	fun doWorkLoop() {
+		TODO { IMPLEMENT }
+	}
+
+	// --
+
+	// > 0 - Has current app instances
+	//   0 - No current app instances
+	// < 0 - Daemon already shut down
+	private val appInstanceCount = AtomicInteger()
+
+	private inline fun handleAppInstance(block: () -> Unit) {
+		val count = appInstanceCount
+		val observed = count.incrementAndGet()
+		if (observed > 0) {
+			try {
+				block()
+			} finally {
+				if (count.decrementAndGet() == 0) {
+					considerShutdown()
+				}
+			}
+		} else {
+			revertAppInstanceIncrementAndMaybeFail(observed)
+		}
+	}
+
+	private fun revertAppInstanceIncrementAndMaybeFail(observedCount: Int) {
+		TODO { observedCount }
+	}
+
+	private fun considerShutdown() {
 		TODO { IMPLEMENT }
 	}
 }
