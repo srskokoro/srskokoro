@@ -10,7 +10,7 @@ internal object TODO {
 
 	inline val IMPLEMENT: Nothing get() = IMPLEMENT()
 
-	inline fun IMPLEMENT(): Nothing = throw NotImplementedError("TODO Implement")
+	fun IMPLEMENT(): Nothing = throw NotImplementedError("TODO Implement")
 
 	inline val NOP get() = NOP()
 
