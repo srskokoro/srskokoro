@@ -125,8 +125,8 @@ private class AppDaemon(
 			server.closeInCatch(ex)
 			throw ex
 		}
-		if (isInet)
-			generateInetPortFile(bindPath, server)
+		if (isInet) // Now that the server is bound, let everyone know the port.
+			generateInetPortFile(bindPath, boundServer = server)
 	}
 
 	fun doWorkLoop() {
@@ -184,17 +184,17 @@ private class AppDaemon(
 	}
 }
 
-private fun generateInetPortFile(target: NioPath, server: ServerSocketChannel) {
+private fun generateInetPortFile(target: NioPath, boundServer: ServerSocketChannel) {
 	try {
 		val buffer = ByteBuffer.allocate(2)
-		val port = (server.localAddress as InetSocketAddress).port.toShort()
+		val port = (boundServer.localAddress as InetSocketAddress).port.toShort()
 		buffer.putShort(port)
 
 		FileChannel.open(target, StandardOpenOption.CREATE_NEW).use {
 			it.write(buffer)
 		}
 	} catch (ex: Throwable) {
-		server.closeInCatch(ex)
+		boundServer.closeInCatch(ex)
 		throw ex
 	}
 }
