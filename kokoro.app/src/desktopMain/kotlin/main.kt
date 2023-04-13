@@ -1,7 +1,9 @@
 ﻿import kokoro.app.AppData
 import kokoro.internal.kotlin.TODO
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.swing.Swing
@@ -13,6 +15,7 @@ import java.net.SocketAddress
 import java.net.StandardProtocolFamily
 import java.net.UnixDomainSocketAddress
 import java.nio.ByteBuffer
+import java.nio.channels.ClosedChannelException
 import java.nio.channels.FileChannel
 import java.nio.channels.FileLock
 import java.nio.channels.ServerSocketChannel
@@ -142,7 +145,28 @@ private class AppDaemon(
 	}
 
 	fun doWorkLoop() {
-		TODO { IMPLEMENT }
+		val scope = this.scope
+		val server = this.server
+		try {
+			while (true) {
+				val client = server.accept() // May throw
+
+				@OptIn(ExperimentalCoroutinesApi::class)
+				// The following won't throw here (but may, in a separate coroutine).
+				scope.launch(Dispatchers.IO, CoroutineStart.ATOMIC) {
+					client.use {
+						handleAppInstance {
+							TODO { IMPLEMENT }
+						}
+					}
+				}
+			}
+		} catch (ex: ClosedChannelException) {
+			// Do nothing. Daemon shutdown was requested.
+		} catch (ex: Throwable) {
+			server.closeInCatch(ex)
+			throw ex
+		}
 	}
 
 	// --
