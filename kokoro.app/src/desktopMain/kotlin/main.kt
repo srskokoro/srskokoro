@@ -1,6 +1,8 @@
 ﻿import kokoro.app.AppData
 import java.io.File
 import java.io.RandomAccessFile
+import java.nio.channels.FileChannel
+import java.nio.channels.FileLock
 
 /**
  * An offset to a lock byte that can be locked on in the lock file.
@@ -48,7 +50,11 @@ fun main(args: Array<out String>) {
 
 		if (masterInstanceLock != null) {
 			// We're the first instance!
-			TODO { NOP }
+
+			val daemon = AppDaemon(lockDir, lockChannel, masterInstanceLock, args)
+			instanceChangeLock.release()
+
+			daemon.doWorkLoop() // Will block the current thread
 		} else {
 			// We're a secondary instance!
 			TODO { NOP }
@@ -56,6 +62,19 @@ fun main(args: Array<out String>) {
 	} catch (ex: Throwable) {
 		lockChannel.closeInCatch(ex) // Releases all locks
 		throw ex
+	}
+}
+
+private class AppDaemon(
+	sockDir: String,
+
+	private val lockChannel: FileChannel,
+	private val masterInstanceLock: FileLock,
+
+	initialArgs: Array<out String>,
+) {
+	fun doWorkLoop() {
+		TODO { IMPLEMENT }
 	}
 }
 
