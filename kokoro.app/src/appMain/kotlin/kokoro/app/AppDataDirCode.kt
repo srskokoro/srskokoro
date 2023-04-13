@@ -1,4 +1,4 @@
-package kokoro.app;
+package kokoro.app
 
 enum class AppDataDirCode {
 
