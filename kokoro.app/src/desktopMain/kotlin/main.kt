@@ -106,7 +106,24 @@ private class AppDaemon(
 	}
 
 	private fun considerShutdown() {
-		TODO { IMPLEMENT }
+		// Blocks until the lock is acquired
+		val instanceChangeLock = lockChannel.lock(INSTANCE_CHANGE_LOCK_BYTE, /*size=*/1, /*shared=*/false)
+		// NOTE: ^ By the time we've acquired the above lock, the app instance
+		// count might have already changed.
+
+		// Double-check and don't proceed if app instances may still run
+		if (appInstanceCount.compareAndSet(0, Int.MIN_VALUE)) {
+			instanceChangeLock.release() // Done. Nothing should be done.
+			return // Skip everything below
+		}
+
+		lockChannel.use {
+			instanceChangeLock.use {
+				masterInstanceLock.use {
+					TODO { IMPLEMENT }
+				}
+			}
+		}
 	}
 }
 
