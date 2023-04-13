@@ -1,5 +1,10 @@
 ﻿import kokoro.app.AppData
 import kokoro.internal.kotlin.TODO
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.swing.Swing
 import java.io.File
 import java.io.RandomAccessFile
 import java.net.InetAddress
@@ -85,6 +90,8 @@ private class AppDaemon(
 
 	initialArgs: Array<out String>,
 ) {
+	private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Swing)
+
 	private val server: ServerSocketChannel
 	private val bindPath: NioPath
 
@@ -117,7 +124,11 @@ private class AppDaemon(
 			throw ex
 		}
 
-		// TODO Launch initial app instance
+		scope.launch {
+			handleAppInstance {
+				// TODO Consume initial args
+			}
+		}
 
 		try {
 			server.bind(bindAddress)
