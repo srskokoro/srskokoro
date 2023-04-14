@@ -10,6 +10,7 @@ import java.nio.channels.ClosedChannelException
 import java.nio.channels.FileChannel
 import java.nio.channels.FileLock
 import java.nio.channels.ServerSocketChannel
+import java.nio.channels.SocketChannel
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption.ATOMIC_MOVE
 import java.nio.file.StandardCopyOption.REPLACE_EXISTING
@@ -261,8 +262,50 @@ private class AppRelay(
 	sockDir: String,
 	args: Array<out String>,
 ) {
+	private val client: SocketChannel
+	private val serverVersion: Int
+
+	init {
+		var client: SocketChannel
+		var connectAddress: SocketAddress
+		try {
+			client = SocketChannel.open(StandardProtocolFamily.UNIX)
+			connectAddress = UnixDomainSocketAddress.of(NioPath.of(sockDir, ".sock"))
+		} catch (_: UnsupportedOperationException) {
+			client = SocketChannel.open()
+			val port = readInetPortFile(NioPath.of(sockDir, ".port"), client)
+			connectAddress = InetSocketAddress(InetAddress.getLoopbackAddress(), port)
+		}
+		this.client = client
+		this.serverVersion = try {
+			client.connect(connectAddress)
+			val bb = ByteBuffer.allocate(1)
+			if (client.read(bb) > 0) {
+				bb.rewind()
+				bb.get().toInt() and 0xFF
+			} else -1
+		} catch (ex: Throwable) {
+			client.closeInCatch(ex)
+			throw ex
+		}
+	}
+
 	fun doForwardAndExit(): Nothing {
 		TODO { IMPLEMENT }
+	}
+}
+
+fun readInetPortFile(target: NioPath, client: SocketChannel): Int {
+	try {
+		val bb = ByteBuffer.allocate(2)
+		FileChannel.open(target, READ).use {
+			it.read(bb)
+		}
+		// Flip then get, to throw if not enough bytes read.
+		return bb.flip().short.toInt() and 0xFFFF
+	} catch (ex: Throwable) {
+		client.closeInCatch(ex)
+		throw ex
 	}
 }
 
