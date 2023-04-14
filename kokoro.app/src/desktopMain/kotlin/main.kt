@@ -231,9 +231,9 @@ private fun generateInetPortFile(target: NioPath, boundServer: ServerSocketChann
 		val address = boundServer.localAddress as InetSocketAddress
 		val port = address.port.toShort()
 
-		val buffer = ByteBuffer.allocate(2)
-		buffer.putShort(port)
-		buffer.flip()
+		val bb = ByteBuffer.allocate(2)
+		bb.putShort(port)
+		bb.flip()
 
 		// Output to a temporary file first
 		val tmp = NioPath.of("$target.tmp")
@@ -243,7 +243,7 @@ private fun generateInetPortFile(target: NioPath, boundServer: ServerSocketChann
 		// operation later to atomically publish our changes. See also,
 		// https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/package-summary.html#integrity
 		FileChannel.open(tmp, DSYNC, CREATE, WRITE, TRUNCATE_EXISTING).use {
-			it.write(buffer)
+			it.write(bb)
 		}
 
 		// Atomically publish our changes via a rename/move operation
