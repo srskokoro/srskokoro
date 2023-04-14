@@ -113,7 +113,7 @@ private class AppDaemon(
 			isInet = false
 			bindPath = NioPath.of(sockDir, ".sock")
 			bindAddress = UnixDomainSocketAddress.of(bindPath)
-		} catch (ex: UnsupportedOperationException) {
+		} catch (_: UnsupportedOperationException) {
 			server = ServerSocketChannel.open()
 			isInet = true
 			bindPath = NioPath.of(sockDir, ".port")
