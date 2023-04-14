@@ -237,13 +237,15 @@ private fun generateInetPortFile(target: NioPath, boundServer: ServerSocketChann
 
 		// Output to a temporary file first
 		val tmp = NioPath.of("$target.tmp")
-		FileChannel.open(tmp, CREATE, WRITE, TRUNCATE_EXISTING).use {
+
+		// Needs `DSYNC` here since otherwise, file writes can be delayed by the
+		// OS (even when properly closed) and we have to do a rename/move
+		// operation later to atomically publish our changes. See also,
+		// https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/package-summary.html#integrity
+		FileChannel.open(tmp, DSYNC, CREATE, WRITE, TRUNCATE_EXISTING).use {
 			it.write(buffer)
-			// Necessary since file writes can be delayed by the OS (even when
-			// properly closed) and we have to do a rename/move operation later
-			// to atomically publish our changes.
-			it.force(false)
 		}
+
 		// Atomically publish our changes via a rename/move operation
 		Files.move(tmp, target, ATOMIC_MOVE, REPLACE_EXISTING)
 		// ^ Same as in `okio.NioSystemFileSystem.atomicMove()`
