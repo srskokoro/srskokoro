@@ -13,8 +13,7 @@ import java.nio.channels.ServerSocketChannel
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption.ATOMIC_MOVE
 import java.nio.file.StandardCopyOption.REPLACE_EXISTING
-import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
-import java.nio.file.StandardOpenOption.WRITE
+import java.nio.file.StandardOpenOption.*
 import java.util.concurrent.atomic.AtomicInteger
 import java.nio.file.Path as NioPath
 
@@ -238,7 +237,7 @@ private fun generateInetPortFile(target: NioPath, boundServer: ServerSocketChann
 
 		// Output to a temporary file first
 		val tmp = NioPath.of("$target.tmp")
-		FileChannel.open(tmp, WRITE, TRUNCATE_EXISTING).use {
+		FileChannel.open(tmp, CREATE, WRITE, TRUNCATE_EXISTING).use {
 			it.write(buffer)
 			// Necessary since file writes can be delayed by the OS (even when
 			// properly closed) and we have to do a rename/move operation later
