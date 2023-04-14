@@ -72,10 +72,10 @@ fun main(args: Array<out String>) {
 		} else {
 			// We're a secondary instance!
 
-			val relay = AppRelay(lockDir, args)
+			val relay = AppRelay(lockDir)
 			instanceChangeLock.release()
 
-			relay.doForwardAndExit() // Never returns normally
+			relay.doForwardAndExit(args) // Never returns normally
 		}
 	} catch (ex: Throwable) {
 		lockChannel.closeInCatch(ex) // Releases all locks
@@ -258,10 +258,7 @@ private fun generateInetPortFile(target: NioPath, boundServer: ServerSocketChann
 
 // --
 
-private class AppRelay(
-	sockDir: String,
-	args: Array<out String>,
-) {
+private class AppRelay(sockDir: String) {
 	private val client: SocketChannel
 	private val serverVersion: Int
 
@@ -290,7 +287,7 @@ private class AppRelay(
 		}
 	}
 
-	fun doForwardAndExit(): Nothing {
+	fun doForwardAndExit(args: Array<out String>): Nothing {
 		TODO { IMPLEMENT }
 	}
 }
