@@ -11,7 +11,10 @@ import java.nio.channels.FileChannel
 import java.nio.channels.FileLock
 import java.nio.channels.ServerSocketChannel
 import java.nio.file.Files
-import java.nio.file.StandardOpenOption
+import java.nio.file.StandardCopyOption.ATOMIC_MOVE
+import java.nio.file.StandardCopyOption.REPLACE_EXISTING
+import java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
+import java.nio.file.StandardOpenOption.WRITE
 import java.util.concurrent.atomic.AtomicInteger
 import java.nio.file.Path as NioPath
 
@@ -233,9 +236,18 @@ private fun generateInetPortFile(target: NioPath, boundServer: ServerSocketChann
 		buffer.putShort(port)
 		buffer.flip()
 
-		FileChannel.open(target, StandardOpenOption.CREATE_NEW).use {
+		// Output to a temporary file first
+		val tmp = NioPath.of("$target.tmp")
+		FileChannel.open(tmp, WRITE, TRUNCATE_EXISTING).use {
 			it.write(buffer)
+			// Necessary since file writes can be delayed by the OS (even when
+			// properly closed) and we have to do a rename/move operation later
+			// to atomically publish our changes.
+			it.force(false)
 		}
+		// Atomically publish our changes via a rename/move operation
+		Files.move(tmp, target, ATOMIC_MOVE, REPLACE_EXISTING)
+		// ^ Same as in `okio.NioSystemFileSystem.atomicMove()`
 	} catch (ex: Throwable) {
 		boundServer.closeInCatch(ex)
 		throw ex
