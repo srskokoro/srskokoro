@@ -97,6 +97,11 @@ private class AppDaemon(
 	private val server: ServerSocketChannel
 	private val bindPath: NioPath
 
+	// > 0 - Has current app instances
+	//   0 - No current app instances
+	// < 0 - Daemon already shut down
+	private val appInstanceCount = AtomicInteger() // Must be set first before the `init` block below
+
 	init {
 		var server: ServerSocketChannel
 		var isInet: Boolean
@@ -169,11 +174,6 @@ private class AppDaemon(
 	}
 
 	// --
-
-	// > 0 - Has current app instances
-	//   0 - No current app instances
-	// < 0 - Daemon already shut down
-	private val appInstanceCount = AtomicInteger()
 
 	private inline fun handleAppInstance(block: () -> Unit) {
 		val count = appInstanceCount
