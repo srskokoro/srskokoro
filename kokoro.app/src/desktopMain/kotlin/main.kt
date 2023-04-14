@@ -231,6 +231,7 @@ private fun generateInetPortFile(target: NioPath, boundServer: ServerSocketChann
 
 		val buffer = ByteBuffer.allocate(2)
 		buffer.putShort(port)
+		buffer.flip()
 
 		FileChannel.open(target, StandardOpenOption.CREATE_NEW).use {
 			it.write(buffer)
