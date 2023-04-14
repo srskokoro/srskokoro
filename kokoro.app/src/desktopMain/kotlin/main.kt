@@ -209,7 +209,7 @@ private class AppDaemon(
 		// count might have already changed.
 
 		// Double-check and don't proceed if app instances may still run
-		if (appInstanceCount.compareAndSet(0, Int.MIN_VALUE)) {
+		if (!appInstanceCount.compareAndSet(0, Int.MIN_VALUE)) {
 			instanceChangeLock.release() // Done. Nothing should be done.
 			return // Skip everything below
 		}
