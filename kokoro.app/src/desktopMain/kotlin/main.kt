@@ -233,7 +233,7 @@ private fun generateInetPortFile(target: NioPath, boundServer: ServerSocketChann
 
 		val bb = ByteBuffer.allocate(2)
 		bb.putShort(port)
-		bb.flip()
+		bb.rewind()
 
 		// Output to a temporary file first
 		val tmp = NioPath.of("$target.tmp")
