@@ -68,13 +68,19 @@ fun main(args: Array<out String>) {
 			daemon.doWorkLoop() // Will block the current thread
 		} else {
 			// We're a secondary instance!
-			TODO { NOP }
+
+			val relay = AppRelay(lockDir, args)
+			instanceChangeLock.release()
+
+			relay.doForwardAndExit() // Never returns normally
 		}
 	} catch (ex: Throwable) {
 		lockChannel.closeInCatch(ex) // Releases all locks
 		throw ex
 	}
 }
+
+// --
 
 private class AppDaemon(
 	sockDir: String,
@@ -234,6 +240,19 @@ private fun generateInetPortFile(target: NioPath, boundServer: ServerSocketChann
 		throw ex
 	}
 }
+
+// --
+
+private class AppRelay(
+	sockDir: String,
+	args: Array<out String>,
+) {
+	fun doForwardAndExit(): Nothing {
+		TODO { IMPLEMENT }
+	}
+}
+
+// --
 
 private fun AutoCloseable.closeInCatch(ex: Throwable) {
 	try {
