@@ -83,8 +83,6 @@ fun main(args: Array<out String>) {
 	}
 }
 
-// --
-
 private class AppDaemon(
 	sockDir: String,
 
@@ -230,38 +228,6 @@ private class AppDaemon(
 	}
 }
 
-private fun generateInetPortFile(target: NioPath, boundServer: ServerSocketChannel) {
-	try {
-		// The following cast throws NPE if the server is not bound
-		val address = boundServer.localAddress as InetSocketAddress
-		val port = address.port.toShort()
-
-		val bb = ByteBuffer.allocate(2)
-		bb.putShort(port)
-		bb.rewind()
-
-		// Output to a temporary file first
-		val tmp = NioPath.of("$target.tmp")
-
-		// Needs `DSYNC` here since otherwise, file writes can be delayed by the
-		// OS (even when properly closed) and we have to do a rename/move
-		// operation later to atomically publish our changes. See also,
-		// https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/package-summary.html#integrity
-		FileChannel.open(tmp, DSYNC, CREATE, WRITE, TRUNCATE_EXISTING).use {
-			it.write(bb)
-		}
-
-		// Atomically publish our changes via a rename/move operation
-		Files.move(tmp, target, ATOMIC_MOVE, REPLACE_EXISTING)
-		// ^ Same as in `okio.NioSystemFileSystem.atomicMove()`
-	} catch (ex: Throwable) {
-		boundServer.closeInCatch(ex)
-		throw ex
-	}
-}
-
-// --
-
 private class AppRelay(sockDir: String) {
 	private val client: SocketChannel
 	private val serverVersion: Int
@@ -303,6 +269,38 @@ private class AppRelay(sockDir: String) {
 	}
 }
 
+// --
+
+private fun generateInetPortFile(target: NioPath, boundServer: ServerSocketChannel) {
+	try {
+		// The following cast throws NPE if the server is not bound
+		val address = boundServer.localAddress as InetSocketAddress
+		val port = address.port.toShort()
+
+		val bb = ByteBuffer.allocate(2)
+		bb.putShort(port)
+		bb.rewind()
+
+		// Output to a temporary file first
+		val tmp = NioPath.of("$target.tmp")
+
+		// Needs `DSYNC` here since otherwise, file writes can be delayed by the
+		// OS (even when properly closed) and we have to do a rename/move
+		// operation later to atomically publish our changes. See also,
+		// https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/package-summary.html#integrity
+		FileChannel.open(tmp, DSYNC, CREATE, WRITE, TRUNCATE_EXISTING).use {
+			it.write(bb)
+		}
+
+		// Atomically publish our changes via a rename/move operation
+		Files.move(tmp, target, ATOMIC_MOVE, REPLACE_EXISTING)
+		// ^ Same as in `okio.NioSystemFileSystem.atomicMove()`
+	} catch (ex: Throwable) {
+		boundServer.closeInCatch(ex)
+		throw ex
+	}
+}
+
 fun readInetPortFile(target: NioPath, client: SocketChannel): Int {
 	try {
 		val bb = ByteBuffer.allocate(2)
@@ -316,8 +314,6 @@ fun readInetPortFile(target: NioPath, client: SocketChannel): Int {
 		throw ex
 	}
 }
-
-// --
 
 private fun AutoCloseable.closeInCatch(ex: Throwable) {
 	try {
