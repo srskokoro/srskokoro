@@ -1,4 +1,4 @@
-@file:Suppress("FunctionName", "unused")
+@file:Suppress("FunctionName", "unused", "NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
 
 package kokoro.internal.kotlin
 
