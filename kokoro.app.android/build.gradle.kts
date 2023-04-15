@@ -1,5 +1,6 @@
 plugins {
 	id("conv.kt.android.app")
+	id("conv.version")
 }
 
 android {
@@ -7,8 +8,8 @@ android {
 
 	defaultConfig {
 		applicationId = "$group.app"
-		versionCode = 1
-		versionName = "1.0"
+		versionName = project.versionName
+		versionCode = project.versionCode
 	}
 
 	buildTypes {
