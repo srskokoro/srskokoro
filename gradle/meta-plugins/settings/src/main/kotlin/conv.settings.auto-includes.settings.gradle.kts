@@ -2,9 +2,9 @@
 
 pluginManagement {
 	// Include our own custom plugins
-	relativize(File(rootSettingsDir, "gradle/plugins")).let {
-		// If we're the main build, share its root 'gradle.properties'
-		if (isRootBuild) shareGradleProperties(it)
+	relativize(File(gitRootDir!!, "gradle/plugins")).let {
+		// If we're the root, share the root 'gradle.properties'
+		if (isAtGitRoot) shareGradleProperties(it)
 
 		includeBuild(it) // Resolves relative to `settingsDir`
 	}
@@ -14,9 +14,9 @@ dependencyVersionsSetup {
 	useInProjects()
 
 	// Include our centralized dependency versions
-	relativize(File(rootSettingsDir, "gradle/dependencies")).let {
-		// If we're the main build, share its root 'gradle.properties'
-		if (isRootBuild) shareGradleProperties(it)
+	relativize(File(gitRootDir!!, "gradle/dependencies")).let {
+		// If we're the root, share the root 'gradle.properties'
+		if (isAtGitRoot) shareGradleProperties(it)
 
 		includeBuild(it) // Resolves relative to `settingsDir`
 	}
