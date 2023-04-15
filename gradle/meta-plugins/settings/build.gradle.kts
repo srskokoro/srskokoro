@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-	implementation(project(":deps-plugins"))
+	implementation(project(":deps"))
 }

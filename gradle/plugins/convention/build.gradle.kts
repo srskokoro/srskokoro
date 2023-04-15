@@ -15,7 +15,7 @@ kotlin {
 apply(plugin = "org.gradle.kotlin.kotlin-dsl")
 
 dependencies {
-	implementation("convention:deps-plugins")
+	implementation("convention:deps")
 
 	implementation("org.jetbrains.kotlin:kotlin-gradle-plugin")
 	implementation("com.android.tools.build:gradle")
