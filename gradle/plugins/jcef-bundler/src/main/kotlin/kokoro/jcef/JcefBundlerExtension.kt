@@ -14,7 +14,10 @@ abstract class JcefBundlerExtension @Inject internal constructor(
 		const val DEFAULT_INSTALL_TASK_NAME = "installJcef"
 	}
 
-	val installTask = project.tasks.register<JcefInstallTask>(DEFAULT_INSTALL_TASK_NAME)
+	val installTask = project.tasks.register<JcefInstallTask>(DEFAULT_INSTALL_TASK_NAME) {
+		group = DEFAULT_TASK_GROUP
+		description = "Installs native binaries provided by JCEF Maven."
+	}
 
 	fun installTask(configure: Action<in JcefInstallTask>) = installTask.also { it.configure(configure) }
 

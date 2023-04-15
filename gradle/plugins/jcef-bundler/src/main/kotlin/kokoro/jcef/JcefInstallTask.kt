@@ -16,11 +16,6 @@ import javax.inject.Inject
 
 abstract class JcefInstallTask @Inject constructor() : DefaultTask() {
 
-	init {
-		group = JcefExtension.DEFAULT_TASK_GROUP
-		description = "Installs native binaries provided by JCEF Maven."
-	}
-
 	val platform @Internal get() = jcefBuildPlatform
 
 	@get:OutputDirectory
