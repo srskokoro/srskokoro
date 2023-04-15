@@ -38,4 +38,6 @@ dependencies {
 
 	commonMainImplementation("com.squareup.okio:okio")
 	desktopMainImplementation("net.harawata:appdirs")
+
+	desktopMainImplementation("com.github.ajalt.clikt:clikt")
 }
