@@ -19,10 +19,10 @@
       <option name="namePattern" value="(?:_*[a-z][A-Za-z\d]*)+|[A-Z][_A-Z\d]*" />
     </inspection_tool>
     <inspection_tool class="PrivatePropertyName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
-      <option name="namePattern" value="(?:_*[a-z][A-Za-z\d]*)+_?" />
+      <option name="namePattern" value="(?:_*[a-z][A-Za-z\d]*)+|[A-Z][_A-Z\d]*" />
     </inspection_tool>
     <inspection_tool class="PropertyName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
-      <option name="namePattern" value="[a-z][A-Za-z\d]*_?" />
+      <option name="namePattern" value="(?:_*[a-z][A-Za-z\d]*)+|[A-Z][_A-Z\d]*" />
     </inspection_tool>
   </profile>
 </component>
