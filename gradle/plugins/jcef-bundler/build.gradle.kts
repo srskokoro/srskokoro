@@ -2,8 +2,7 @@ import me.friwi.jcefmaven.EnumPlatform
 
 plugins {
 	`kotlin-dsl`
-	// See, https://github.com/gmazzo/gradle-buildconfig-plugin
-	id("com.github.gmazzo.buildconfig") version "3.1.0"
+	id("com.github.gmazzo.buildconfig")
 }
 
 group = "kokoro.jcef" // Used by `com.github.gmazzo.buildconfig`
