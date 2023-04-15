@@ -104,19 +104,21 @@ private class AppDaemon(
 	private val appInstanceCount = AtomicInteger() // Must be set first before the `init` block below
 
 	init {
-		var server: ServerSocketChannel
-		var isInet: Boolean
-		var bindPath: NioPath
-		var bindAddress: SocketAddress
+		val server: ServerSocketChannel
+		val bindPath: NioPath
+		val bindAddress: SocketAddress
 
-		try {
-			server = ServerSocketChannel.open(StandardProtocolFamily.UNIX)
-			isInet = false
+		val serverUnix = try {
+			ServerSocketChannel.open(StandardProtocolFamily.UNIX)
+		} catch (_: UnsupportedOperationException) {
+			null
+		}
+		if (serverUnix != null) {
+			server = serverUnix
 			bindPath = NioPath.of(sockDir, ".sock")
 			bindAddress = UnixDomainSocketAddress.of(bindPath)
-		} catch (_: UnsupportedOperationException) {
+		} else {
 			server = ServerSocketChannel.open()
-			isInet = true
 			bindPath = NioPath.of(sockDir, ".port")
 			bindAddress = InetSocketAddress(InetAddress.getLoopbackAddress(), 0)
 		}
@@ -145,8 +147,10 @@ private class AppDaemon(
 			server.closeInCatch(ex)
 			throw ex
 		}
-		if (isInet) // Now that the server is bound, let everyone know the port.
+		if (serverUnix == null) {
+			// Now that our (INET) server is bound, let everyone know the port.
 			generateInetPortFile(bindPath, boundServer = server)
+		}
 	}
 
 	fun doWorkLoop() {
@@ -263,16 +267,23 @@ private class AppRelay(sockDir: String) {
 	private val serverVersion: Int
 
 	init {
-		var client: SocketChannel
-		var connectAddress: SocketAddress
-		try {
-			client = SocketChannel.open(StandardProtocolFamily.UNIX)
-			connectAddress = UnixDomainSocketAddress.of(NioPath.of(sockDir, ".sock"))
+		val client: SocketChannel
+		val connectAddress: SocketAddress
+
+		val clientUnix = try {
+			SocketChannel.open(StandardProtocolFamily.UNIX)
 		} catch (_: UnsupportedOperationException) {
+			null
+		}
+		if (clientUnix != null) {
+			client = clientUnix
+			connectAddress = UnixDomainSocketAddress.of(NioPath.of(sockDir, ".sock"))
+		} else {
 			client = SocketChannel.open()
 			val port = readInetPortFile(NioPath.of(sockDir, ".port"), client)
 			connectAddress = InetSocketAddress(InetAddress.getLoopbackAddress(), port)
 		}
+
 		this.client = client
 		this.serverVersion = try {
 			client.connect(connectAddress)
