@@ -11,6 +11,7 @@ abstract class JcefBundlerExtension @Inject internal constructor(
 ) : JcefDependencyExtension() {
 
 	internal companion object {
+		const val DEFAULT_TASK_GROUP = "jcef"
 		const val DEFAULT_INSTALL_TASK_NAME = "installJcef"
 	}
 
