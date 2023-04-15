@@ -1,6 +1,6 @@
 plugins {
 	id("kokoro.conv.kt.mpp.lib")
-	id("com.github.gmazzo.buildconfig")
+	id("conv.gmazzo.buildconfig")
 	id("jcef-bundler-dependency")
 }
 

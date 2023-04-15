@@ -42,7 +42,9 @@ dependencyVersions {
 
 	// --
 
-	plugin("com.github.gmazzo.buildconfig", "3.1.0") // https://github.com/gmazzo/gradle-buildconfig-plugin
+	val gmazzo_buildConfig = "3.1.0" // https://github.com/gmazzo/gradle-buildconfig-plugin
+	plugin("com.github.gmazzo.buildconfig", gmazzo_buildConfig)
+	module("com.github.gmazzo:gradle-buildconfig-plugin", gmazzo_buildConfig)
 
 	module("org.jetbrains.kotlinx:atomicfu-gradle-plugin", "0.20.2")
 
