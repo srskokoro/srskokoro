@@ -286,25 +286,25 @@ private class AppRelay(sockDir: String) {
 			)
 			buffer.writeByte(CLI_PROTOCOL_DEFAULT)
 
-			val passOffset = buffer.size
+			val payloadOffset = buffer.size
 
 			// We'll pass the current working directory plus command arguments
-			val passCount = 1 + args.size
-			val passUtf8Lengths = ShortArray(passCount)
+			val payloadCount = 1 + args.size
+			val payloadUtf8Lengths = ShortArray(payloadCount)
 
 			// Reserves a `Short` for storing the UTF-8 length later
 			var size = buffer.writeShort(0).size
 			var i = 0
 			try {
 				buffer.writeUtf8(System.getProperty("user.dir")).size.let { newSize ->
-					passUtf8Lengths[i] = (newSize - size).toShortExact()
+					payloadUtf8Lengths[i] = (newSize - size).toShortExact()
 					size = newSize
 				}
 				for (arg in args) {
 					// Reserves a `Short` for storing the UTF-8 length later
 					size = buffer.writeShort(0).size
 					buffer.writeUtf8(arg).size.let { newSize ->
-						passUtf8Lengths[++i] = (newSize - size).toShortExact()
+						payloadUtf8Lengths[++i] = (newSize - size).toShortExact()
 						size = newSize
 					}
 				}
@@ -318,8 +318,8 @@ private class AppRelay(sockDir: String) {
 
 			// Fill the parts we reserved for
 			buffer.readAndWriteUnsafe().use { u ->
-				u.seek(passOffset)
-				for (ls in passUtf8Lengths) {
+				u.seek(payloadOffset)
+				for (ls in payloadUtf8Lengths) {
 					val data = u.data!!
 					val s = u.start
 					val len = ls.toInt()
