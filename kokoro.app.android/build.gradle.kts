@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-	namespace = extra["srs.kokoro.app.target.ns"] as String
+	namespace = extra["kokoro.app.target.ns"] as String
 
 	defaultConfig {
 		applicationId = "$group.app"

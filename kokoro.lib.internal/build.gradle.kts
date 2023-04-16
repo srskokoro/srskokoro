@@ -19,7 +19,7 @@ kotlin {
 }
 
 android {
-	namespace = extra["srs.kokoro.internal.ns"] as String
+	namespace = extra["kokoro.internal.ns"] as String
 }
 
 dependencies {

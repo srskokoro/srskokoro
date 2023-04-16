@@ -22,11 +22,11 @@ kotlin {
 }
 
 android {
-	namespace = extra["srs.kokoro.app.ns"] as String
+	namespace = extra["kokoro.app.ns"] as String
 }
 
 buildConfig.appMain {
-	packageName(extra["srs.kokoro.app.ns"] as String)
+	packageName(extra["kokoro.app.ns"] as String)
 	className("AppBuild")
 	useKotlinOutput { internalVisibility = true }
 	buildConfigField("String", "VERSION", "\"$version\"")
