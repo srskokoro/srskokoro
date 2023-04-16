@@ -257,8 +257,9 @@ private class AppRelay(sockDir: String) {
 			val bb = ByteBuffer.allocate(1)
 			if (client.read(bb) > 0) {
 				bb.rewind()
-				bb.get().toInt() and 0xFF
-			} else -1
+				// We don't support versions > 127, for now -- we'll use a varint later.
+				bb.get().toInt() // Also, 0 is reserved as a special value.
+			} else 0
 		} catch (ex: Throwable) {
 			client.closeInCatch(ex)
 			throw ex

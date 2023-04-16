@@ -30,6 +30,9 @@ buildConfig.appMain {
 	buildConfigField("boolean", "IS_RELEASING", "$isReleasing")
 	buildConfigField("String", "VERSION", "\"$version\"")
 	buildConfigField("int", "VERSION_CODE", "$versionCode")
+	if (versionCode == 0) throw InvalidUserDataException(
+		"Version code 0 (zero) should not be used"
+	)
 }
 
 buildConfig.desktopMain {
