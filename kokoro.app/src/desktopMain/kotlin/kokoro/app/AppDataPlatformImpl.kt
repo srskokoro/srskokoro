@@ -5,13 +5,6 @@ import net.harawata.appdirs.AppDirsFactory.getInstance as getAppDirsFactory
 
 actual object AppDataPlatformImpl {
 
-	private const val APP_DATA_DIR_NAME = "SRSKokoro"
-
-	private fun getPlatformAppDir(roaming: Boolean = false) = getAppDirsFactory()
-		.getUserDataDir(APP_DATA_DIR_NAME, null, null, /* roaming = */ roaming)
-
-	// --
-
 	@JvmStatic actual fun forRoamingRoot(): String =
 		getOverrides().run { roamingRoot ?: defaultRoot } ?: getPlatformAppDir(roaming = true)
 
@@ -25,3 +18,9 @@ actual object AppDataPlatformImpl {
 		getOverrides().run { cacheRoot ?: defaultRoot } ?: getAppDirsFactory()
 			.getUserCacheDir(APP_DATA_DIR_NAME, null, null)
 }
+
+private const val APP_DATA_DIR_NAME = "SRSKokoro"
+
+@Suppress("NOTHING_TO_INLINE")
+private inline fun getPlatformAppDir(roaming: Boolean = false) = getAppDirsFactory()
+	.getUserDataDir(APP_DATA_DIR_NAME, null, null, /* roaming = */ roaming)
