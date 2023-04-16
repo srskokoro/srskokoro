@@ -1,5 +1,6 @@
 ﻿package conv.version
 
+import isReleasing
 import org.ajoberstar.grgit.gradle.GrgitService
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.provider.Property
@@ -33,7 +34,7 @@ internal abstract class InternalVersionLoader(
 			props.load(stream)
 			var version = props["LATEST_RELEASE"] as String?
 			var versionCode = (props["LATEST_RELEASE_CODE"] as String?)?.toIntOrNull() ?: 0
-			if (!"true".equals(providers.environmentVariable("IS_RELEASING").orNull, ignoreCase = true)) {
+			if (!providers.isReleasing) {
 				version?.let {
 					val headId = grgitService.get().grgit.head().abbreviatedId
 					version = "$it+commits/$headId"
