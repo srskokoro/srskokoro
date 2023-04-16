@@ -1,6 +1,7 @@
 plugins {
 	id("kokoro.conv.kt.mpp.lib")
 	id("conv.gmazzo.buildconfig")
+	id("conv.version")
 	id("jcef-bundler-dependency")
 }
 
@@ -22,6 +23,14 @@ kotlin {
 
 android {
 	namespace = extra["srs.kokoro.app.ns"] as String
+}
+
+buildConfig.appMain {
+	packageName(extra["srs.kokoro.app.ns"] as String)
+	className("AppBuild")
+	useKotlinOutput { internalVisibility = true }
+	buildConfigField("String", "VERSION", "\"$version\"")
+	buildConfigField("int", "VERSION_CODE", "$versionCode")
 }
 
 dependencies {
