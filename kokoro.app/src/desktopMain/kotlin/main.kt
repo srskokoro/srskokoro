@@ -231,7 +231,7 @@ private class AppDaemon(
 
 private class AppRelay(sockDir: String) {
 	private val client: SocketChannel
-	private val serverVersion: Int
+	private val serverVersionCode: Int
 
 	init {
 		val client: SocketChannel
@@ -252,7 +252,7 @@ private class AppRelay(sockDir: String) {
 		}
 
 		this.client = client
-		this.serverVersion = try {
+		this.serverVersionCode = try {
 			client.connect(connectAddress)
 			val bb = ByteBuffer.allocate(1)
 			if (client.read(bb) > 0) {
