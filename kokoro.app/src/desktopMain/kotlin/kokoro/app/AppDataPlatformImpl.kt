@@ -1,5 +1,6 @@
 package kokoro.app
 
+import kokoro.app.AppBuildDesktop.APP_DATA_DIR_NAME
 import kokoro.app.AppDataOverrides.Companion.get as getOverrides
 import net.harawata.appdirs.AppDirsFactory.getInstance as getAppDirsFactory
 
@@ -18,8 +19,6 @@ actual object AppDataPlatformImpl {
 		getOverrides().run { cacheRoot ?: defaultRoot } ?: getAppDirsFactory()
 			.getUserCacheDir(APP_DATA_DIR_NAME, null, null)
 }
-
-private const val APP_DATA_DIR_NAME = "SRSKokoro"
 
 @Suppress("NOTHING_TO_INLINE")
 private inline fun getPlatformAppDir(roaming: Boolean = false) = getAppDirsFactory()

@@ -34,6 +34,13 @@ buildConfig.appMain {
 	buildConfigField("int", "VERSION_CODE", "$versionCode")
 }
 
+buildConfig.desktopMain {
+	packageName(extra["kokoro.app.ns"] as String)
+	className("AppBuildDesktop")
+	useKotlinOutput { internalVisibility = true }
+	buildConfigField("String", "APP_DATA_DIR_NAME", "\"SRSKokoro${if (isReleasing) "" else "-Dev"}\"")
+}
+
 dependencies {
 	deps.bundles.testExtras *= {
 		commonTestImplementation(it)
