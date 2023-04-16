@@ -3,10 +3,12 @@ import kokoro.app.AppData
 import kokoro.internal.kotlin.TODO
 import kotlinx.coroutines.*
 import kotlinx.coroutines.swing.Swing
+import okio.sink
 import java.io.File
 import java.io.RandomAccessFile
 import java.net.*
 import java.nio.ByteBuffer
+import java.nio.channels.Channels
 import java.nio.channels.ClosedChannelException
 import java.nio.channels.FileChannel
 import java.nio.channels.FileLock
@@ -86,6 +88,11 @@ fun main(args: Array<out String>) {
 		throw ex
 	}
 }
+
+// --
+
+private const val CLI_PROTOCOL_V1 = 0x01
+private const val CLI_PROTOCOL_DEFAULT = CLI_PROTOCOL_V1
 
 private class AppDaemon(
 	sockDir: String,
@@ -270,11 +277,46 @@ private class AppRelay(sockDir: String) {
 	}
 
 	fun doForwardAndExit(args: Array<out String>) {
-		if (serverVersionCode == AppBuild.VERSION_CODE) try {
-			TODO { IMPLEMENT }
-		} catch (ex: Throwable) {
-			client.closeInCatch(ex)
-			throw ex
+		val version = serverVersionCode
+		if (version == AppBuild.VERSION_CODE) Channels.newOutputStream(client).sink().use { sink ->
+			val buffer = okio.Buffer()
+			if (CLI_PROTOCOL_DEFAULT > Byte.MAX_VALUE) throw AssertionError(
+				"Should be implemented as a varint at this point"
+			)
+			buffer.writeByte(CLI_PROTOCOL_DEFAULT)
+
+			val passCount = 1 + args.size
+			buffer.writeInt(passCount)
+
+			// Reserves a header for the UTF8 lengths
+			val passUtf8LengthsOffset = buffer.size
+			var size = passUtf8LengthsOffset + Int.SIZE_BYTES * passCount
+
+			val u = okio.Buffer.UnsafeCursor()
+			buffer.readAndWriteUnsafe(u).use { it.resizeBuffer(size) }
+
+			val passUtf8Lengths = IntArray(passCount)
+			val currentDir = System.getProperty("user.dir")
+			var i = 0
+			buffer.writeUtf8(currentDir).size.let { newSize ->
+				passUtf8Lengths[i] = Math.toIntExact(newSize - size)
+				size = newSize
+			}
+			for (arg in args) buffer.writeUtf8(arg).size.let { newSize ->
+				passUtf8Lengths[++i] = Math.toIntExact(newSize - size)
+				size = newSize
+			}
+
+			// Fill the reserved header with the UTF8 lengths
+			@Suppress("NAME_SHADOWING") buffer.readAndWriteUnsafe(u).use { u ->
+				u.seek(passUtf8LengthsOffset)
+				// Not sure if a loop would be more efficient. Anyway…
+				ByteBuffer.wrap(u.data, u.start, u.end - u.start)
+					.asIntBuffer().put(passUtf8Lengths)
+			}
+
+			// Done!
+			sink.write(buffer, size)
 		} else {
 			var thrownByClose: Throwable? = null
 			try {
