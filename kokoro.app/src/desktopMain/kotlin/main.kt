@@ -92,8 +92,8 @@ fun main(args: Array<out String>) {
 
 // --
 
-private const val CLI_PROTOCOL_V1 = 0x01
-private const val CLI_PROTOCOL_DEFAULT = CLI_PROTOCOL_V1
+private const val CLI_PROTOCOL_1 = 0x01
+private const val CLI_PROTOCOL_DEFAULT = CLI_PROTOCOL_1
 
 private class AppDaemon(
 	sockDir: String,
