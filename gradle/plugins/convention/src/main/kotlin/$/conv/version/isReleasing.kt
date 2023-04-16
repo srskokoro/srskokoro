@@ -8,7 +8,8 @@ import org.gradle.api.provider.ProviderFactory
  * otherwise.
  */
 val ProviderFactory.isReleasing: Boolean
-	get() = "true".equals(environmentVariable("IS_RELEASING").orNull, ignoreCase = true)
+	get() = @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN", "KotlinConstantConditions")
+	("true" as java.lang.String).equalsIgnoreCase(environmentVariable("IS_RELEASING").orNull)
 
 /**
  * `true` if the environment variable `IS_RELEASING=true` is defined; `false`
