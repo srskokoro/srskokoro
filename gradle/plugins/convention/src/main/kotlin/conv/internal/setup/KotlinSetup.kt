@@ -1,13 +1,11 @@
 package conv.internal.setup
 
 import conv.internal.KotlinTargetsConfigLoader
-import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.kotlin.dsl.add
+import org.gradle.kotlin.dsl.typeOf
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 
 internal fun Project.setUp(kotlin: KotlinProjectExtension): Unit = with(kotlin) {
 	setUpProject(kotlin)
@@ -23,7 +21,7 @@ internal fun Project.setUpTargetsExtensions(kotlin: KotlinMultiplatformExtension
 	// NOTE: If one day, this would cause an exception due to "targets" already
 	// existing, simply remove the following. It's likely that it's already
 	// implemented for us, and if so, we shouldn't need to do anything.
-	(kotlin as ExtensionAware).extensions.add<NamedDomainObjectCollection<KotlinTarget>>("targets", kotlin.targets)
+	(kotlin as ExtensionAware).extensions.add(typeOf(), "targets", kotlin.targets)
 
 	val config = layout.projectDirectory.file("build.targets.txt")
 	KotlinTargetsConfigLoader(providers, config).loadInto(kotlin)
