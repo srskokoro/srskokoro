@@ -30,14 +30,14 @@ dependencies {
 	}
 
 	commonMainImplementation(project(":kokoro.lib.internal"))
-	commonMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+	appMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 	desktopMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing")
 
 	desktopMainImplementation(jcef.dependency)
 	androidMainApi("androidx.core:core-ktx")
 	androidMainApi("androidx.activity:activity-ktx")
 
-	commonMainImplementation("com.squareup.okio:okio")
+	appMainImplementation("com.squareup.okio:okio")
 	desktopMainImplementation("net.harawata:appdirs")
 
 	desktopMainImplementation("com.github.ajalt.clikt:clikt")
