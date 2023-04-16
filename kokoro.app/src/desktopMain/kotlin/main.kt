@@ -1,4 +1,5 @@
-﻿import kokoro.app.AppData
+﻿import kokoro.app.AppBuild
+import kokoro.app.AppData
 import kokoro.internal.kotlin.TODO
 import kotlinx.coroutines.*
 import kotlinx.coroutines.swing.Swing
@@ -16,6 +17,8 @@ import java.nio.file.StandardCopyOption.ATOMIC_MOVE
 import java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import java.nio.file.StandardOpenOption.*
 import java.util.concurrent.atomic.AtomicInteger
+import javax.swing.SwingUtilities
+import kotlin.system.exitProcess
 import java.nio.file.Path as NioPath
 
 /**
@@ -267,7 +270,25 @@ private class AppRelay(sockDir: String) {
 	}
 
 	fun doForwardAndExit(args: Array<out String>) {
-		TODO { IMPLEMENT }
+		if (serverVersionCode == AppBuild.VERSION_CODE) try {
+			TODO { IMPLEMENT }
+		} catch (ex: Throwable) {
+			client.closeInCatch(ex)
+			throw ex
+		} else {
+			var thrownByClose: Throwable? = null
+			try {
+				client.close()
+			} catch (ex: Throwable) {
+				thrownByClose = ex
+			}
+			SwingUtilities.invokeAndWait {
+				// TODO Display error dialog for incompatible version.
+				//  - Also, interpret 0 as an unknown error.
+				// TODO Display stacktrace dialog for `thrownByClose` if nonnull
+				exitProcess(1)
+			}
+		}
 	}
 }
 
