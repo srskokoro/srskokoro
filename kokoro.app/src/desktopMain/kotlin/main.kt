@@ -75,7 +75,8 @@ fun main(args: Array<out String>) {
 			val relay = AppRelay(lockDir)
 			instanceChangeLock.release()
 
-			relay.doForwardAndExit(args) // Never returns normally
+			// Exits the process in either the current thread or Swing EDT
+			relay.doForwardAndExit(args)
 		}
 	} catch (ex: Throwable) {
 		lockChannel.closeInCatch(ex) // Releases all locks
@@ -264,7 +265,7 @@ private class AppRelay(sockDir: String) {
 		}
 	}
 
-	fun doForwardAndExit(args: Array<out String>): Nothing {
+	fun doForwardAndExit(args: Array<out String>) {
 		TODO { IMPLEMENT }
 	}
 }
