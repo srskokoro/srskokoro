@@ -8,6 +8,7 @@ android {
 
 	defaultConfig {
 		applicationId = "$group.app"
+		applicationIdSuffix = ".dev".takeUnless { project.isReleasing }
 		versionName = project.versionName
 		versionCode = project.versionCode
 	}
