@@ -29,6 +29,7 @@ buildConfig.appMain {
 	packageName(extra["kokoro.app.ns"] as String)
 	className("AppBuild")
 	useKotlinOutput { internalVisibility = true }
+	buildConfigField("boolean", "IS_RELEASING", "$isReleasing")
 	buildConfigField("String", "VERSION", "\"$version\"")
 	buildConfigField("int", "VERSION_CODE", "$versionCode")
 }
