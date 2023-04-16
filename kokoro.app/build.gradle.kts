@@ -26,18 +26,14 @@ android {
 }
 
 buildConfig.appMain {
-	packageName(extra["kokoro.app.ns"] as String)
-	className("AppBuild")
-	useKotlinOutput { internalVisibility = true }
+	internalObject("AppBuild", extra["kokoro.app.ns"] as String)
 	buildConfigField("boolean", "IS_RELEASING", "$isReleasing")
 	buildConfigField("String", "VERSION", "\"$version\"")
 	buildConfigField("int", "VERSION_CODE", "$versionCode")
 }
 
 buildConfig.desktopMain {
-	packageName(extra["kokoro.app.ns"] as String)
-	className("AppBuildDesktop")
-	useKotlinOutput { internalVisibility = true }
+	internalObject("AppBuildDesktop", extra["kokoro.app.ns"] as String)
 	buildConfigField("String", "APP_DATA_DIR_NAME", "\"SRSKokoro${if (isReleasing) "" else "-Dev"}\"")
 }
 
