@@ -336,7 +336,13 @@ private class AppRelay(sockDir: String) {
 			var size = payloadUtf8LengthsOffset + Int.SIZE_BYTES * payloadCount
 
 			val unsafe = okio.Buffer.UnsafeCursor()
-			buffer.readAndWriteUnsafe(unsafe).use { u -> u.resizeBuffer(size) }
+			buffer.readAndWriteUnsafe(unsafe).use { u ->
+				// Needed to ensure a contiguous range of available bytes.
+				// - Throws if larger than the buffer's supported segment size.
+				u.expandBuffer(Math.toIntExact(size - payloadUtf8LengthsOffset))
+				// Resize into where we only plan to write our header
+				u.resizeBuffer(size)
+			}
 
 			val payloadUtf8Lengths = IntArray(payloadCount)
 			var i = 0
