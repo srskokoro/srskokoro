@@ -327,27 +327,29 @@ private class AppRelay(sockDir: String) {
 			)
 			buffer.writeByte(CLI_PROTOCOL_DEFAULT)
 
-			val payloadOffset = buffer.size
-
 			// We'll pass the current working directory plus command arguments
 			val payloadCount = 1 + args.size
-			val payloadUtf8Lengths = ShortArray(payloadCount)
+			buffer.writeInt(payloadCount)
 
-			// Reserves a `Short` for storing the UTF-8 length later
-			var size = buffer.writeShort(0).size
+			// Reserves a header for the UTF-8 lengths
+			val payloadUtf8LengthsOffset = buffer.size
+			var size = payloadUtf8LengthsOffset + Int.SIZE_BYTES * payloadCount
+
+			val unsafe = okio.Buffer.UnsafeCursor()
+			buffer.readAndWriteUnsafe(unsafe).use { u -> u.resizeBuffer(size) }
+
+			val payloadUtf8Lengths = IntArray(payloadCount)
 			var i = 0
+
 			try {
-				buffer.writeUtf8(System.getProperty("user.dir")).size.let { newSize ->
-					payloadUtf8Lengths[i] = (newSize - size).toShortExact()
+				val currentDir = System.getProperty("user.dir")
+				buffer.writeUtf8(currentDir).size.let { newSize ->
+					payloadUtf8Lengths[i] = Math.toIntExact(newSize - size)
 					size = newSize
 				}
-				for (arg in args) {
-					// Reserves a `Short` for storing the UTF-8 length later
-					size = buffer.writeShort(0).size
-					buffer.writeUtf8(arg).size.let { newSize ->
-						payloadUtf8Lengths[++i] = (newSize - size).toShortExact()
-						size = newSize
-					}
+				for (arg in args) buffer.writeUtf8(arg).size.let { newSize ->
+					payloadUtf8Lengths[++i] = Math.toIntExact(newSize - size)
+					size = newSize
 				}
 			} catch (ex: ArithmeticException) {
 				throw IOException(
@@ -357,17 +359,12 @@ private class AppRelay(sockDir: String) {
 					" bytes.", ex)
 			}
 
-			// Fill the parts we reserved for
-			buffer.readAndWriteUnsafe().use { u ->
-				u.seek(payloadOffset)
-				for (ls in payloadUtf8Lengths) {
-					val data = u.data!!
-					val s = u.start
-					val len = ls.toInt()
-					data[s] = (len ushr 8 and 0xff).toByte()
-					data[s + 1] = (len and 0xff).toByte()
-					u.seek(u.offset + len)
-				}
+			// Fill the reserved header with the UTF-8 lengths
+			buffer.readAndWriteUnsafe(unsafe).use { u ->
+				u.seek(payloadUtf8LengthsOffset)
+				// Not sure if a loop would be more efficient. Anyway…
+				ByteBuffer.wrap(u.data, u.start, u.end - u.start)
+					.asIntBuffer().put(payloadUtf8Lengths)
 			}
 
 			// Done!
