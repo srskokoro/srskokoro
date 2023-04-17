@@ -4,6 +4,7 @@ import kokoro.internal.kotlin.TODO
 import kotlinx.coroutines.*
 import kotlinx.coroutines.swing.Swing
 import okio.BufferedSource
+import okio.EOFException
 import okio.buffer
 import okio.sink
 import okio.source
@@ -178,12 +179,23 @@ private class AppDaemon(
 				scope.launch(Dispatchers.IO, CoroutineStart.ATOMIC) {
 					client.use {
 						handleAppInstance {
-							sendVersionCode(client)
-							val source = Channels.newInputStream(client).source().buffer()
-							when (val protocol = source.readByte().toInt()) {
-								CLI_PROTOCOL_01 -> CLI_PROTOCOL_01_impl(source)
-								else -> throw UnsupportedOperationException(
-									"Unknown CLI protocol: 0x${protocol.toString(16)} ($protocol)")
+							try {
+								sendVersionCode(client)
+								val source = Channels.newInputStream(client).source().buffer()
+								when (val protocol = source.readByte().toInt()) {
+									CLI_PROTOCOL_01 -> CLI_PROTOCOL_01_impl(source)
+									else -> throw UnsupportedOperationException(
+										"Unknown CLI protocol: 0x${protocol.toString(16)} ($protocol)")
+								}
+							} catch (ex: IOException) {
+								when (ex) {
+									is ClosedChannelException, is EOFException -> {
+										// Client disconnected early.
+										// Perhaps its process got killed.
+										// Do nothing.
+									}
+									else -> throw ex
+								}
 							}
 						}
 					}
@@ -204,7 +216,12 @@ private class AppDaemon(
 		)
 		bb.put(AppBuild.VERSION_CODE.toByte())
 		bb.rewind()
-		client.write(bb)
+		try {
+			client.write(bb)
+		} catch (ex: IOException) {
+			if (ex is ClosedChannelException) throw ex
+			throw ClosedChannelException().apply { initCause(ex) }
+		}
 	}
 
 	@Suppress("FunctionName")
