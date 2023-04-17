@@ -226,7 +226,27 @@ private class AppDaemon(
 
 	@Suppress("FunctionName")
 	private fun CLI_PROTOCOL_01_impl(source: BufferedSource) {
-		TODO { IMPLEMENT }
+		val workingDir: String
+		val args: Array<String>
+
+		run<Unit> {
+			val argsSize = source.readInt() - 1
+			@Suppress("UNCHECKED_CAST")
+			args = arrayOfNulls<String>(argsSize) as Array<String>
+
+			val workingDirLength = source.readInt()
+			val argsLengths = IntArray(argsSize)
+			repeat(argsSize) { i ->
+				argsLengths[i] = source.readInt()
+			}
+
+			workingDir = source.readUtf8(workingDirLength.toLong())
+			repeat(argsSize) { i ->
+				args[i] = source.readUtf8(argsLengths[i].toLong())
+			}
+		}
+
+		TODO { IMPLEMENT("Consume `args` and `workingDir`") }
 	}
 
 	// --
