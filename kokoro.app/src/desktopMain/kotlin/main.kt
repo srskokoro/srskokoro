@@ -3,7 +3,10 @@ import kokoro.app.AppData
 import kokoro.internal.kotlin.TODO
 import kotlinx.coroutines.*
 import kotlinx.coroutines.swing.Swing
+import okio.BufferedSource
+import okio.buffer
 import okio.sink
+import okio.source
 import java.io.File
 import java.io.IOException
 import java.io.RandomAccessFile
@@ -175,7 +178,13 @@ private class AppDaemon(
 				scope.launch(Dispatchers.IO, CoroutineStart.ATOMIC) {
 					client.use {
 						handleAppInstance {
-							TODO { IMPLEMENT }
+							sendVersionCode(client)
+							val source = Channels.newInputStream(client).source().buffer()
+							when (val protocol = source.readByte().toInt()) {
+								CLI_PROTOCOL_01 -> CLI_PROTOCOL_01_impl(source)
+								else -> throw UnsupportedOperationException(
+									"Unknown CLI protocol: 0x${protocol.toString(16)} ($protocol)")
+							}
 						}
 					}
 				}
@@ -186,6 +195,21 @@ private class AppDaemon(
 			server.closeInCatch(ex)
 			throw ex
 		}
+	}
+
+	private fun sendVersionCode(client: SocketChannel) {
+		val bb = ByteBuffer.allocate(1)
+		if (AppBuild.VERSION_CODE > Byte.MAX_VALUE) throw AssertionError(
+			"Should be implemented as a varint at this point"
+		)
+		bb.put(AppBuild.VERSION_CODE.toByte())
+		bb.rewind()
+		client.write(bb)
+	}
+
+	@Suppress("FunctionName")
+	private fun CLI_PROTOCOL_01_impl(source: BufferedSource) {
+		TODO { IMPLEMENT }
 	}
 
 	// --
