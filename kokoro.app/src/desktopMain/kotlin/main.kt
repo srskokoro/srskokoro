@@ -458,15 +458,6 @@ fun readInetPortFile(target: NioPath, client: SocketChannel): Int {
 	}
 }
 
-/** Similar to [Math.toIntExact]`()` but for safely casting to a [Short]. */
-private fun Long.toShortExact(): Short {
-	val result = toShort()
-	if (result.toLong() != this) {
-		throw ArithmeticException("integer overflow")
-	}
-	return result
-}
-
 private fun AutoCloseable.closeInCatch(ex: Throwable) {
 	try {
 		close()
