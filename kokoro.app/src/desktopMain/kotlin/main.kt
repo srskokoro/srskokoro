@@ -444,7 +444,7 @@ private fun generateInetPortFile(target: NioPath, boundServer: ServerSocketChann
 	}
 }
 
-fun readInetPortFile(target: NioPath, client: SocketChannel): Int {
+private fun readInetPortFile(target: NioPath, client: SocketChannel): Int {
 	try {
 		val bb = ByteBuffer.allocate(2)
 		FileChannel.open(target, READ).use {
