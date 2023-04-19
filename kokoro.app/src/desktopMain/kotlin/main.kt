@@ -401,6 +401,7 @@ private class AppRelay(sockDir: String) {
 
 			// Done!
 			sink.write(buffer, size)
+			exitProcess(0)
 		} else {
 			var thrownByClose: Throwable? = null
 			try {
