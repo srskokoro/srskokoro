@@ -274,7 +274,9 @@ private class AppDaemon(
 	private fun revertAppInstanceIncrementAndMaybeFail(observedCount: Int) {
 		appInstanceCount.decrementAndGet() // Revert the (presumed) increment
 		if (observedCount < 0) {
-			return // Daemon already shut down
+			// Daemon already shut down.
+			// Pretend that our process got killed while processing a client.
+			return // Do nothing. We're exiting anyway.
 		} else if (observedCount == 0 || observedCount == Int.MIN_VALUE) {
 			throw Error("Maximum app instance count exceeded")
 		} else
