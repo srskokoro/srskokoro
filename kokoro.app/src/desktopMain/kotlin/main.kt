@@ -349,7 +349,7 @@ private class AppRelay(sockDir: String) {
 
 	fun doForward(args: Array<out String>) {
 		val version = serverVersionCode
-		if (version == AppBuild.VERSION_CODE) Channels.newOutputStream(client).sink().use { sink ->
+		if (version == AppBuild.VERSION_CODE) {
 			val buffer = okio.Buffer()
 			if (CLI_PROTOCOL_DEFAULT > Byte.MAX_VALUE) throw AssertionError(
 				"Should be implemented as a varint at this point"
@@ -402,22 +402,43 @@ private class AppRelay(sockDir: String) {
 					.asIntBuffer().put(payloadUtf8Lengths)
 			}
 
-			// Done!
-			sink.write(buffer, size)
-		} else {
-			var thrownByClose: Throwable? = null
+			val sink = Channels.newOutputStream(client).sink()
 			try {
-				client.close()
-			} catch (ex: Throwable) {
-				thrownByClose = ex
+				sink.write(buffer, size) // Send it!
+			} catch (_: IOException) {
+				// Will close the client connection for us
+				showErrorThenExit(versionOrErrorCode = E_SERVICE_HALT)
+				return // Skip everything below
 			}
-			SwingUtilities.invokeAndWait {
-				// TODO Display error dialog for incompatible version.
-				//  - Also, interpret 0 as an unknown error.
-				// TODO Display stacktrace dialog for `thrownByClose` if nonnull
-				exitProcess(1)
-			}
+			// Deliberately closing outside of any `try` or `use`, as `close()`
+			// may throw and interfere with our custom error handling.
+			sink.close() // May throw; Let it!
+			// Done!
+		} else showErrorThenExit(
+			versionOrErrorCode =
+			if (version >= 0) version
+			else E_VERSION_BEYOND
+		)
+	}
+
+	private fun showErrorThenExit(versionOrErrorCode: Int) {
+		var thrownByClose: Throwable? = null
+		try {
+			client.close()
+		} catch (ex: Throwable) {
+			thrownByClose = ex
 		}
+		SwingUtilities.invokeLater {
+			// TODO Display error dialog for incompatible version or service
+			//  halt. Also, interpret 0 as unknown error.
+			// TODO Display stacktrace dialog for `thrownByClose` if nonnull
+			exitProcess(1)
+		}
+	}
+
+	companion object {
+		const val E_VERSION_BEYOND = -1
+		const val E_SERVICE_HALT = -2
 	}
 }
 
