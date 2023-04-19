@@ -249,6 +249,10 @@ private class AppDaemon(
 			args = emptyArray()
 		}
 
+		// Close the client connection early, as we might be about to run for a
+		// very long time. The following may throw -- let it!
+		source.close()
+
 		TODO { IMPLEMENT("Consume `args` and `workingDir`") }
 	}
 
