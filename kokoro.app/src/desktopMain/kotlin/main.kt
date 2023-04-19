@@ -229,8 +229,9 @@ private class AppDaemon(
 		val workingDir: String
 		val args: Array<String>
 
-		run<Unit> {
-			val argsSize = source.readInt() - 1
+		val payloadCount = source.readInt()
+		if (payloadCount > 0) {
+			val argsSize = payloadCount - 1
 			@Suppress("UNCHECKED_CAST")
 			args = arrayOfNulls<String>(argsSize) as Array<String>
 
@@ -244,6 +245,9 @@ private class AppDaemon(
 			repeat(argsSize) { i ->
 				args[i] = source.readUtf8(argsLengths[i].toLong())
 			}
+		} else {
+			workingDir = ""
+			args = emptyArray()
 		}
 
 		TODO { IMPLEMENT("Consume `args` and `workingDir`") }
