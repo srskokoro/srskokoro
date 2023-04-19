@@ -85,8 +85,7 @@ fun main(args: Array<out String>) {
 			val relay = AppRelay(lockDir)
 			instanceChangeLock.release()
 
-			// Exits the process in either the current thread or Swing EDT
-			relay.doForwardAndExit(args)
+			relay.doForward(args)
 		}
 	} catch (ex: Throwable) {
 		lockChannel.closeInCatch(ex) // Releases all locks
@@ -344,7 +343,7 @@ private class AppRelay(sockDir: String) {
 		}
 	}
 
-	fun doForwardAndExit(args: Array<out String>) {
+	fun doForward(args: Array<out String>) {
 		val version = serverVersionCode
 		if (version == AppBuild.VERSION_CODE) Channels.newOutputStream(client).sink().use { sink ->
 			val buffer = okio.Buffer()
@@ -401,7 +400,6 @@ private class AppRelay(sockDir: String) {
 
 			// Done!
 			sink.write(buffer, size)
-			exitProcess(0)
 		} else {
 			var thrownByClose: Throwable? = null
 			try {
