@@ -98,6 +98,10 @@ fun main(args: Array<out String>) {
 private const val CLI_PROTOCOL_01 = 0x01
 private const val CLI_PROTOCOL_DEFAULT = CLI_PROTOCOL_01
 
+private object RootSwingScope : CoroutineScope {
+	override val coroutineContext = SupervisorJob() + Dispatchers.Swing
+}
+
 private class AppDaemon(
 	sockDir: String,
 
@@ -106,8 +110,6 @@ private class AppDaemon(
 
 	initialArgs: Array<out String>,
 ) {
-	private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Swing)
-
 	private val server: ServerSocketChannel
 	private val bindPath: NioPath
 
@@ -148,7 +150,7 @@ private class AppDaemon(
 		}
 
 		// The following won't throw here (but may, in a separate coroutine).
-		scope.launch {
+		RootSwingScope.launch {
 			handleAppInstance {
 				// TODO Consume initial args
 			}
@@ -167,7 +169,7 @@ private class AppDaemon(
 	}
 
 	fun doWorkLoop() {
-		val scope = this.scope
+		val scope = RootSwingScope
 		val server = this.server
 		try {
 			while (true) {
