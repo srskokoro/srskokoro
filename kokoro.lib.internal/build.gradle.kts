@@ -1,5 +1,7 @@
 plugins {
 	id("kokoro.conv.kt.mpp.lib")
+	id("conv.gmazzo.buildconfig")
+	id("conv.version")
 }
 
 kotlin {
@@ -18,8 +20,15 @@ kotlin {
 	}
 }
 
+val NAMESPACE = extra["kokoro.internal.ns"] as String
+
 android {
-	namespace = extra["kokoro.internal.ns"] as String
+	namespace = NAMESPACE
+}
+
+buildConfig {
+	publicTopLevel() inPackage NAMESPACE
+	buildConfigField("boolean", "IS_RELEASING", "$isReleasing")
 }
 
 dependencies {

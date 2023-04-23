@@ -29,7 +29,6 @@ android {
 
 buildConfig.appMain {
 	internalObject("AppBuild") inPackage NAMESPACE
-	buildConfigField("boolean", "IS_RELEASING", "$isReleasing")
 	buildConfigField("String", "VERSION", "\"$version\"")
 	buildConfigField("int", "VERSION_CODE", "$versionCode")
 	if (versionCode == 0) throw InvalidUserDataException(
