@@ -43,6 +43,11 @@ abstract class BaseCommand(
 	treatUnknownOptionsAsArgs = treatUnknownOptionsAsArgs,
 	hidden = hidden,
 ) {
+	private var _main: Main? = null
+	val main: Main
+		get() = _main ?: (currentContext.findRoot().command as Main)
+			.also { _main = it }
+
 	val workingDir: String
 		get() = deferredState.workingDir
 
