@@ -1,5 +1,6 @@
 ﻿import kokoro.app.AppBuild
 import kokoro.app.AppData
+import kokoro.app.cli.Main
 import kokoro.internal.kotlin.TODO
 import kotlinx.coroutines.*
 import kotlinx.coroutines.swing.Swing
@@ -152,7 +153,7 @@ private class AppDaemon(
 		// The following won't throw here (but may, in a separate coroutine).
 		RootSwingScope.launch {
 			handleAppInstance {
-				// TODO Consume initial args
+				executeMain(System.getProperty("user.dir"), initialArgs)
 			}
 		}
 
@@ -226,7 +227,7 @@ private class AppDaemon(
 	}
 
 	@Suppress("FunctionName")
-	private fun CLI_PROTOCOL_01_impl(source: BufferedSource) {
+	private suspend fun CLI_PROTOCOL_01_impl(source: BufferedSource) {
 		val workingDir: String
 		val args: Array<String>
 
@@ -251,14 +252,21 @@ private class AppDaemon(
 			args = emptyArray()
 		}
 
+		@Suppress("BlockingMethodInNonBlockingContext")
 		// Close the client connection early, as we might be about to run for a
 		// very long time. The following may throw -- let it!
 		source.close()
 
-		TODO { IMPLEMENT("Consume `args` and `workingDir`") }
+		withContext(Dispatchers.Swing) {
+			executeMain(workingDir, args)
+		}
 	}
 
 	// --
+
+	private suspend inline fun executeMain(workingDir: String, args: Array<out String>) {
+		Main().feed(workingDir, args)
+	}
 
 	private inline fun handleAppInstance(block: () -> Unit) {
 		val count = appInstanceCount

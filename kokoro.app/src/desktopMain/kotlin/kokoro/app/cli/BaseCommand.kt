@@ -1,0 +1,131 @@
+package kokoro.app.cli
+
+import com.github.ajalt.clikt.core.Abort
+import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.core.CliktError
+import com.github.ajalt.clikt.core.PrintCompletionMessage
+import com.github.ajalt.clikt.core.PrintHelpMessage
+import com.github.ajalt.clikt.core.PrintMessage
+import com.github.ajalt.clikt.core.ProgramResult
+import com.github.ajalt.clikt.core.UsageError
+import com.github.ajalt.clikt.core.context
+import com.github.ajalt.clikt.output.CliktConsole
+import kokoro.internal.assert
+import kokoro.internal.kotlin.TODO
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
+import java.util.*
+import javax.swing.SwingUtilities
+
+/**
+ * @see CliktCommand
+ */
+abstract class BaseCommand(
+	help: String = "",
+	epilog: String = "",
+	name: String? = null,
+	invokeWithoutSubcommand: Boolean = false,
+	printHelpOnEmptyArgs: Boolean = false,
+	helpTags: Map<String, String> = emptyMap(),
+	autoCompleteEnvvar: String? = "",
+	allowMultipleSubcommands: Boolean = false,
+	treatUnknownOptionsAsArgs: Boolean = false,
+	hidden: Boolean = false,
+) : CliktCommand(
+	help = help,
+	epilog = epilog,
+	name = name,
+	invokeWithoutSubcommand = invokeWithoutSubcommand,
+	printHelpOnEmptyArgs = printHelpOnEmptyArgs,
+	helpTags = helpTags,
+	autoCompleteEnvvar = autoCompleteEnvvar,
+	allowMultipleSubcommands = allowMultipleSubcommands,
+	treatUnknownOptionsAsArgs = treatUnknownOptionsAsArgs,
+	hidden = hidden,
+) {
+	val workingDir: String
+		get() = deferredState.workingDir
+
+	private inline val deferredState
+		get() = currentContext.console as DeferredState
+
+	@Deprecated("Should not be called directly", ReplaceWith(""), DeprecationLevel.ERROR)
+	final override fun run() = deferredState.pendingExecutions.addLast(this)
+
+	// --
+
+	protected open suspend fun CoroutineScope.execute() = Unit
+
+	suspend fun feed(workingDir: String, args: Array<out String>) {
+		assert { SwingUtilities.isEventDispatchThread() }
+
+		val console = DeferredState(workingDir)
+		context { this.console = console }
+
+		val errorAndStatus = try {
+			parse(args.asList())
+			null
+		} catch (ex: ProgramResult) {
+			ex to ex.statusCode
+		} catch (ex: PrintHelpMessage) {
+			echo(ex.command.getFormattedHelp())
+			ex to if (ex.error) 1 else 0
+		} catch (ex: PrintCompletionMessage) {
+			val s = if (ex.forceUnixLineEndings) "\n" else currentContext.console.lineSeparator
+			echo(ex.message, lineSeparator = s)
+			ex to 0
+		} catch (ex: PrintMessage) {
+			echo(ex.message)
+			ex to if (ex.error) 1 else 0
+		} catch (ex: UsageError) {
+			echo(ex.helpMessage(), err = true)
+			ex to ex.statusCode
+		} catch (ex: CliktError) {
+			echo(ex.message, err = true)
+			ex to 1
+		} catch (ex: Abort) {
+			echo(currentContext.localization.aborted(), err = true)
+			ex to if (ex.error) 1 else 0
+		}
+
+		console.consumeMessages()
+		errorAndStatus?.let { (ex, status) ->
+			if (status != 0) throw ex
+		}
+
+		coroutineScope {
+			for (cmd in console.pendingExecutions) with(cmd) {
+				this@coroutineScope.execute()
+			}
+		} // Does not return until all launched (coroutine) children complete
+	}
+
+	private class DeferredState(
+		val workingDir: String,
+	) : CliktConsole {
+		val err = StringBuilder()
+		val out = StringBuilder()
+
+		val pendingExecutions = LinkedList<BaseCommand>()
+
+		override fun promptForLine(prompt: String, hideInput: Boolean): String? = null
+
+		override fun print(text: String, error: Boolean) {
+			(if (error) err else out).append(text)
+		}
+
+		override val lineSeparator = "\n"
+
+		fun consumeMessages() {
+			val errorMessage = with(err) { val r = trim(); clear(); r }
+			if (errorMessage.isNotEmpty()) {
+				TODO // TODO Display dialog and wait for dismissal
+			}
+
+			val printMessage = with(out) { val r = trim(); clear(); r }
+			if (printMessage.isNotEmpty()) {
+				TODO // TODO Display dialog and wait for dismissal
+			}
+		}
+	}
+}
