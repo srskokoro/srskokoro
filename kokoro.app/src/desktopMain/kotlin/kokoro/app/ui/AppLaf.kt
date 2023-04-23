@@ -22,6 +22,8 @@ internal inline fun ensureAppLaf(component: Component) {
 	SwingUtilities.updateComponentTreeUI(component)
 }
 
+// --
+
 private fun wrap(ex: Throwable) = InvocationTargetException(ex)
 
 @Suppress("ObjectPropertyName")
