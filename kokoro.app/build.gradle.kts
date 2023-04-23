@@ -58,4 +58,11 @@ dependencies {
 	desktopMainImplementation("net.harawata:appdirs")
 
 	desktopMainImplementation("com.github.ajalt.clikt:clikt")
+
+	desktopMainImplementation("com.formdev:flatlaf")
+	// See, https://www.formdev.com/flatlaf/native-libraries/
+	// TODO Auto-detect which native library to use for current OS
+	desktopMainImplementation("com.formdev:flatlaf::linux-x86_64@so")
+	desktopMainImplementation("com.formdev:flatlaf::windows-x86_64@dll")
+	desktopMainImplementation("com.formdev:flatlaf::windows-x86@dll")
 }

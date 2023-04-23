@@ -61,6 +61,8 @@ dependencyVersions {
 	module("net.harawata:appdirs", "1.2.1") // https://github.com/harawata/appdirs
 
 	module("com.github.ajalt.clikt:clikt", "3.5.2") // https://github.com/ajalt/clikt
+
+	module("com.formdev:flatlaf", "3.1.1") // https://github.com/JFormDesigner/FlatLaf
 }
 
 dependencyBundles {
