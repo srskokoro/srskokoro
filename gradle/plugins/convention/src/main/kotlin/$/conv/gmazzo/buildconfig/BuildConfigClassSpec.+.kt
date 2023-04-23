@@ -2,8 +2,7 @@
 
 import com.github.gmazzo.gradle.plugins.BuildConfigClassSpec
 
+inline infix fun BuildConfigClassSpec.inPackage(packageName: String) = packageName(packageName)
+
 inline fun BuildConfigClassSpec.internalObject(name: String) =
 	className(name).useKotlinOutput { internalVisibility = true }
-
-inline fun BuildConfigClassSpec.internalObject(name: String, packageName: String) =
-	internalObject(name).packageName(packageName)

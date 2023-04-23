@@ -26,7 +26,7 @@ android {
 }
 
 buildConfig.appMain {
-	internalObject("AppBuild", extra["kokoro.app.ns"] as String)
+	internalObject("AppBuild") inPackage extra["kokoro.app.ns"] as String
 	buildConfigField("boolean", "IS_RELEASING", "$isReleasing")
 	buildConfigField("String", "VERSION", "\"$version\"")
 	buildConfigField("int", "VERSION_CODE", "$versionCode")
@@ -36,7 +36,7 @@ buildConfig.appMain {
 }
 
 buildConfig.desktopMain {
-	internalObject("AppBuildDesktop", extra["kokoro.app.ns"] as String)
+	internalObject("AppBuildDesktop") inPackage extra["kokoro.app.ns"] as String
 	buildConfigField("String", "APP_DATA_DIR_NAME", "\"SRSKokoro${if (isReleasing) "" else "-Dev"}\"")
 }
 
