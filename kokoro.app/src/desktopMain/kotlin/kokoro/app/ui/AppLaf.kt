@@ -60,12 +60,10 @@ private object LafFixer : Consumer<Boolean>, Runnable {
 		}
 	}
 
-	override fun run() {
-		try {
-			UIManager.setLookAndFeel(if (!isDark) FlatLightLaf() else FlatDarkLaf())
-		} catch (ex: Throwable) {
-			OsThemeDetector.getDetector().removeListener(this)
-			`-AppLaf-thrown` = ex
-		}
+	override fun run(): Unit = try {
+		UIManager.setLookAndFeel(if (!isDark) FlatLightLaf() else FlatDarkLaf())
+	} catch (ex: Throwable) {
+		OsThemeDetector.getDetector().removeListener(this)
+		`-AppLaf-thrown` = ex
 	}
 }
