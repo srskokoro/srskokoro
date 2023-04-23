@@ -63,6 +63,7 @@ dependencyVersions {
 	module("com.github.ajalt.clikt:clikt", "3.5.2") // https://github.com/ajalt/clikt
 
 	module("com.formdev:flatlaf", "3.1.1") // https://github.com/JFormDesigner/FlatLaf
+	module("com.github.Dansoftowner:jSystemThemeDetector", "3.8") // https://github.com/Dansoftowner/jSystemThemeDetector
 }
 
 dependencyBundles {

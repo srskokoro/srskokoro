@@ -65,4 +65,6 @@ dependencies {
 	desktopMainImplementation("com.formdev:flatlaf::linux-x86_64@so")
 	desktopMainImplementation("com.formdev:flatlaf::windows-x86_64@dll")
 	desktopMainImplementation("com.formdev:flatlaf::windows-x86@dll")
+
+	desktopMainImplementation("com.github.Dansoftowner:jSystemThemeDetector")
 }
