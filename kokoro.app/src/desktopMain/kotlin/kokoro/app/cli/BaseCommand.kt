@@ -67,35 +67,40 @@ abstract class BaseCommand(
 		val console = DeferredState(workingDir)
 		context { this.console = console }
 
-		val errorAndStatus = try {
+		try {
 			parse(args.asList())
-			null
 		} catch (ex: ProgramResult) {
-			ex to ex.statusCode
+			if (ex.statusCode != 0)
+				echo("Error! Status code: ${ex.statusCode}", err = true)
+			return // Exit
 		} catch (ex: PrintHelpMessage) {
-			echo(ex.command.getFormattedHelp())
-			ex to if (ex.error) 1 else 0
+			echo(ex.command.getFormattedHelp(), err = ex.error)
+			return // Exit
 		} catch (ex: PrintCompletionMessage) {
-			val s = if (ex.forceUnixLineEndings) "\n" else currentContext.console.lineSeparator
-			echo(ex.message, lineSeparator = s)
-			ex to 0
+			val ls = if (ex.forceUnixLineEndings) "\n" else currentContext.console.lineSeparator
+			echo(ex.message, lineSeparator = ls)
+			return // Exit
 		} catch (ex: PrintMessage) {
-			echo(ex.message)
-			ex to if (ex.error) 1 else 0
+			echo(ex.message, err = ex.error)
+			return // Exit
 		} catch (ex: UsageError) {
 			echo(ex.helpMessage(), err = true)
-			ex to ex.statusCode
+			when (ex.statusCode) {
+				0, 1 -> {}
+				else -> {
+					val ls = currentContext.console.lineSeparator
+					echo("$ls${ls}Status code: ${ex.statusCode}")
+				}
+			}
+			return // Exit
 		} catch (ex: CliktError) {
 			echo(ex.message, err = true)
-			ex to 1
+			return // Exit
 		} catch (ex: Abort) {
 			echo(currentContext.localization.aborted(), err = true)
-			ex to if (ex.error) 1 else 0
-		}
-
-		console.consumeMessages()
-		errorAndStatus?.let { (ex, status) ->
-			if (status != 0) throw ex
+			return // Exit
+		} finally {
+			console.consumeMessages()
 		}
 
 		coroutineScope {
