@@ -77,9 +77,7 @@ abstract class BaseCommand(
 			echo(ex.command.getFormattedHelp(), err = ex.error)
 			return // Exit
 		} catch (ex: PrintCompletionMessage) {
-			val ls = if (ex.forceUnixLineEndings) "\n" else currentContext.console.lineSeparator
-			echo(ex.message, lineSeparator = ls)
-			return // Exit
+			throw ex
 		} catch (ex: PrintMessage) {
 			echo(ex.message, err = ex.error)
 			return // Exit
