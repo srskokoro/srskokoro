@@ -29,7 +29,7 @@ private fun wrap(ex: Throwable) = InvocationTargetException(ex)
 @JvmField internal var `-AppLaf-thrown`: Throwable? = null
 // ^ `internal` (and not `private`) to avoid synthetic accessor.
 
-@Suppress("unused") val init: Unit = run {
+@Suppress("unused") private val init: Unit = run {
 	val listener = LafFixer
 	val detector = OsThemeDetector.getDetector()
 	detector.registerListener(listener)
