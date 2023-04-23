@@ -21,12 +21,14 @@ kotlin {
 	}
 }
 
+val NAMESPACE = extra["kokoro.app.ns"] as String
+
 android {
-	namespace = extra["kokoro.app.ns"] as String
+	namespace = NAMESPACE
 }
 
 buildConfig.appMain {
-	internalObject("AppBuild") inPackage extra["kokoro.app.ns"] as String
+	internalObject("AppBuild") inPackage NAMESPACE
 	buildConfigField("boolean", "IS_RELEASING", "$isReleasing")
 	buildConfigField("String", "VERSION", "\"$version\"")
 	buildConfigField("int", "VERSION_CODE", "$versionCode")
@@ -36,7 +38,7 @@ buildConfig.appMain {
 }
 
 buildConfig.desktopMain {
-	internalObject("AppBuildDesktop") inPackage extra["kokoro.app.ns"] as String
+	internalObject("AppBuildDesktop") inPackage NAMESPACE
 	buildConfigField("String", "APP_DATA_DIR_NAME", "\"SRSKokoro${if (isReleasing) "" else "-Dev"}\"")
 }
 
