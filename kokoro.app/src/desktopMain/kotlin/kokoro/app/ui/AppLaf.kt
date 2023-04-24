@@ -109,7 +109,12 @@ internal object AppLafSetup : Runnable {
 	}
 
 	override fun run() {
-		val isDark = AutoDarkAppLaf.isDark
-		UIManager.setLookAndFeel(if (!isDark) FlatLightLaf() else FlatDarkLaf())
+		UIManager.setLookAndFeel(
+			if (!AutoDarkAppLaf.isDark) {
+				FlatLightLaf()
+			} else {
+				FlatDarkLaf()
+			}
+		)
 	}
 }
