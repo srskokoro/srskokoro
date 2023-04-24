@@ -67,4 +67,5 @@ dependencies {
 	desktopMainImplementation("com.formdev:flatlaf::windows-x86@dll")
 
 	desktopMainImplementation("com.github.Dansoftowner:jSystemThemeDetector")
+	desktopMainImplementation("org.slf4j:slf4j-jdk14") // Needed for `jSystemThemeDetector`
 }
