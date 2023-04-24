@@ -38,7 +38,7 @@ private object AutoDarkAppLaf : Consumer<Boolean>, Runnable {
 		detector.registerListener(this)
 		isDark = detector.isDark
 		// NOTE: `detector.isDark` must be queried 'after' registering as a
-		// listener above. Otherwise, if it's queried before the registration,
+		// listener above. Otherwise, if it's queried 'before' the registration,
 		// there's a possibility of a race with the OS changing the theme just
 		// right after the query but before the registration; and yet, the
 		// listener won't be called during registration, but only after another
