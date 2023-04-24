@@ -14,7 +14,7 @@ inline fun assert(lazyMessage: () -> Any = { "Assertion failed!" }, lazyCheck: (
 		callsInPlace(lazyMessage, InvocationKind.AT_MOST_ONCE)
 		callsInPlace(lazyCheck, InvocationKind.AT_MOST_ONCE)
 	}
-	if (ASSERTIONS_ENABLED && lazyCheck()) {
+	if (ASSERTIONS_ENABLED && !lazyCheck()) {
 		throw AssertionError(lazyMessage())
 	}
 }
