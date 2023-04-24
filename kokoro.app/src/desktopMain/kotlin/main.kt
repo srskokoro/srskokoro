@@ -286,7 +286,7 @@ private class AppDaemon(
 
 	private fun revertAppInstanceIncrementAndMaybeFail(observedCount: Int) {
 		appInstanceCount.decrementAndGet() // Revert the (presumed) increment
-		if (observedCount < 0) {
+		if (0 > observedCount && observedCount > Int.MIN_VALUE) {
 			// Daemon already shut down.
 			// Pretend that our process got killed while processing a client.
 			return // Do nothing. We're exiting anyway.
