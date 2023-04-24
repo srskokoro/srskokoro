@@ -6,6 +6,7 @@ import com.jthemedetecor.OsThemeDetector
 import java.awt.Component
 import java.awt.EventQueue
 import java.awt.Toolkit
+import java.awt.Window
 import java.awt.event.InvocationEvent
 import java.lang.reflect.InvocationTargetException
 import java.util.function.Consumer
@@ -58,7 +59,11 @@ private object AutoDarkAppLaf : Consumer<Boolean>, Runnable {
 			AppLafSetup.run()
 		} catch (ex: Throwable) {
 			AppLafSetup.thrown = ex
+			return // Skip everything below
 		}
+		// Also update existing windows
+		for (w in Window.getWindows())
+			SwingUtilities.updateComponentTreeUI(w)
 	}
 }
 
