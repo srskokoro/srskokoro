@@ -12,7 +12,7 @@ import javax.swing.UIManager
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun ensureAppLaf() {
-	val ex = `-AppLaf-thrown`
+	val ex = AppLafSetup.thrown
 	if (ex != null) throw wrap(ex)
 }
 
@@ -26,46 +26,59 @@ internal inline fun ensureAppLaf(component: Component) {
 
 private fun wrap(ex: Throwable) = InvocationTargetException(ex)
 
-@Suppress("ObjectPropertyName")
-// WARNING: Needs to be set before `init`
-@JvmField internal var `-AppLaf-thrown`: Throwable? = null
-// ^ `internal` (and not `private`) to avoid synthetic accessor.
+internal object AppLafSetup : Runnable {
+	@JvmField var thrown: Throwable? = null // WARNING: Needs to be set before `init`
+	@JvmField var isDark: Boolean
 
-@Suppress("unused") private val init: Unit = run {
-	val listener = LafFixer
-	val detector = OsThemeDetector.getDetector()
-	detector.registerListener(listener)
-	// Must manually invoke the listener 'right after' registering it (and not
-	// before it), as the listener will only be called after an OS theme change
-	// is detected, i.e., it won't be called until then.
-	listener.accept(detector.isDark) // NOTE: May set `-AppLaf-thrown`
-	// We shouldn't invoke the listener 'before registration' as there's a
-	// possibility of a race with the OS changing the theme right after the
-	// invocation but before the registration -- and remember, the listener
-	// won't be called during registration, but rather, only after another OS
-	// theme change.
-}
-
-private object LafFixer : Consumer<Boolean>, Runnable {
-	// Volatile isn't necessary here. See comment in `accept()`.
-	private var isDark: Boolean = false
-
-	override fun accept(isDark: Boolean) {
-		// The following operation is guaranteed to *happen before* the
-		// `invokeAndWait()`, even if the variable isn't volatile.
+	init {
+		val detector = OsThemeDetector.getDetector()
+		// NOTE: The listener registered below will only be called after an OS
+		// theme change is detected, i.e., it won't be called until then.
+		detector.registerListener(AutoDarkAppLaf())
+		val isDark = detector.isDark
+		// NOTE: `detector.isDark` must be queried 'after' registering the
+		// listener above. Otherwise, if it's queried before the registration,
+		// there's a possibility of a race with the OS changing the theme just
+		// right after the query but before the registration; and yet, the
+		// listener won't be called during registration, but only after another
+		// OS theme change, thus causing us to miss the current theme change.
 		this.isDark = isDark
 
 		if (EventQueue.isDispatchThread()) {
-			run()
+			try {
+				run()
+			} catch (ex: Throwable) {
+				thrown = ex
+			}
 		} else {
-			EventQueue.invokeAndWait(this)
+			try {
+				EventQueue.invokeAndWait(this)
+			} catch (ex: InvocationTargetException) {
+				thrown = ex.cause
+			}
 		}
 	}
 
-	override fun run(): Unit = try {
+	override fun run() {
 		UIManager.setLookAndFeel(if (!isDark) FlatLightLaf() else FlatDarkLaf())
-	} catch (ex: Throwable) {
-		OsThemeDetector.getDetector().removeListener(this)
-		`-AppLaf-thrown` = ex
+	}
+}
+
+private class AutoDarkAppLaf : Consumer<Boolean>, Runnable {
+
+	override fun accept(isDark: Boolean) {
+		// The following 'write' is guaranteed to *happen before* the
+		// `invokeAndWait()`, even if the field wasn't marked volatile.
+		AppLafSetup.isDark = isDark // May block until `LafSetup` is fully initialized
+		EventQueue.invokeAndWait(this)
+	}
+
+	override fun run() {
+		// Unless `LafSetup` has fully initialized, any access to it will block.
+		try {
+			AppLafSetup.run()
+		} catch (ex: Throwable) {
+			AppLafSetup.thrown = ex
+		}
 	}
 }
