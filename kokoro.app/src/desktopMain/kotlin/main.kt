@@ -99,7 +99,7 @@ fun main(args: Array<out String>) {
 private const val CLI_PROTOCOL_01 = 0x01
 private const val CLI_PROTOCOL_DEFAULT = CLI_PROTOCOL_01
 
-private object RootSwingScope : CoroutineScope {
+private object ClientHandlingSwingScope : CoroutineScope {
 	override val coroutineContext = SupervisorJob() + Dispatchers.Swing
 }
 
@@ -151,7 +151,7 @@ private class AppDaemon(
 		}
 
 		// The following won't throw here (but may, in a separate coroutine).
-		RootSwingScope.launch {
+		ClientHandlingSwingScope.launch {
 			handleAppInstance {
 				executeMain(System.getProperty("user.dir"), initialArgs)
 			}
@@ -170,7 +170,7 @@ private class AppDaemon(
 	}
 
 	fun doWorkLoop() {
-		val scope = RootSwingScope
+		val scope = ClientHandlingSwingScope
 		val server = this.server
 		try {
 			while (true) {
