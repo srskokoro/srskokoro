@@ -28,24 +28,44 @@ internal inline fun ensureAppLaf(component: Component) {
 
 private fun wrap(ex: Throwable) = InvocationTargetException(ex)
 
-internal object AppLafSetup : Runnable {
-	@JvmField var thrown: Throwable?
+private object AutoDarkAppLaf : Consumer<Boolean>, Runnable {
 	@JvmField var isDark: Boolean
 
 	init {
 		val detector = OsThemeDetector.getDetector()
 		// NOTE: The listener registered below will only be called after an OS
 		// theme change is detected, i.e., it won't be called until then.
-		detector.registerListener(AutoDarkAppLaf())
-		val isDark = detector.isDark
-		// NOTE: `detector.isDark` must be queried 'after' registering the
+		detector.registerListener(this)
+		isDark = detector.isDark
+		// NOTE: `detector.isDark` must be queried 'after' registering as a
 		// listener above. Otherwise, if it's queried before the registration,
 		// there's a possibility of a race with the OS changing the theme just
 		// right after the query but before the registration; and yet, the
 		// listener won't be called during registration, but only after another
 		// OS theme change, thus causing us to miss the current theme change.
-		this.isDark = isDark
+	}
 
+	override fun accept(isDark: Boolean) {
+		// The following 'write' is guaranteed to *happen before* the
+		// `invokeLater()`, even if the field wasn't marked volatile.
+		this.isDark = isDark
+		EventQueue.invokeLater(this)
+	}
+
+	override fun run() {
+		// NOTE: Access to `AppLafSetup` blocks until it's fully initialized
+		try {
+			AppLafSetup.run()
+		} catch (ex: Throwable) {
+			AppLafSetup.thrown = ex
+		}
+	}
+}
+
+internal object AppLafSetup : Runnable {
+	@JvmField var thrown: Throwable?
+
+	init {
 		if (EventQueue.isDispatchThread()) {
 			try {
 				run()
@@ -89,25 +109,7 @@ internal object AppLafSetup : Runnable {
 	}
 
 	override fun run() {
+		val isDark = AutoDarkAppLaf.isDark
 		UIManager.setLookAndFeel(if (!isDark) FlatLightLaf() else FlatDarkLaf())
-	}
-}
-
-private class AutoDarkAppLaf : Consumer<Boolean>, Runnable {
-
-	override fun accept(isDark: Boolean) {
-		// The following 'write' is guaranteed to *happen before* the
-		// `invokeLater()`, even if the field wasn't marked volatile.
-		AppLafSetup.isDark = isDark // May block until `LafSetup` is fully initialized
-		EventQueue.invokeLater(this)
-	}
-
-	override fun run() {
-		// Unless `LafSetup` has fully initialized, any access to it will block.
-		try {
-			AppLafSetup.run()
-		} catch (ex: Throwable) {
-			AppLafSetup.thrown = ex
-		}
 	}
 }
