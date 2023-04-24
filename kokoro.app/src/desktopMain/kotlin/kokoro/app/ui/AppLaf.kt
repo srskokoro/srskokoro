@@ -68,9 +68,9 @@ private class AutoDarkAppLaf : Consumer<Boolean>, Runnable {
 
 	override fun accept(isDark: Boolean) {
 		// The following 'write' is guaranteed to *happen before* the
-		// `invokeAndWait()`, even if the field wasn't marked volatile.
+		// `invokeLater()`, even if the field wasn't marked volatile.
 		AppLafSetup.isDark = isDark // May block until `LafSetup` is fully initialized
-		EventQueue.invokeAndWait(this)
+		EventQueue.invokeLater(this)
 	}
 
 	override fun run() {
