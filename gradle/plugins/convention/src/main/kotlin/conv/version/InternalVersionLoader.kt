@@ -37,7 +37,7 @@ internal abstract class InternalVersionLoader(
 			if (!providers.isReleasing) {
 				version?.let {
 					val headId = grgitService.get().grgit.head().abbreviatedId
-					version = "$it+commits/$headId"
+					version = "$it+commit#$headId"
 				}
 				versionCode += NON_RELEASE_CODE_INCREMENT
 			}
