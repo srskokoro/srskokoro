@@ -67,7 +67,7 @@ private object AutoDarkAppLaf : Consumer<Boolean>, Runnable {
 		}
 		// Also update existing windows
 		for (w in Window.getWindows())
-			SwingUtilities.updateComponentTreeUI(w)
+			SwingUtilities.updateComponentTreeUI(w) // May throw; let it!
 	}
 }
 
