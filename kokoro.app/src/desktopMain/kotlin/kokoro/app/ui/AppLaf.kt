@@ -8,10 +8,10 @@ import java.awt.EventQueue
 import java.awt.Toolkit
 import java.awt.Window
 import java.awt.event.InvocationEvent
-import java.lang.reflect.InvocationTargetException
 import java.util.function.Consumer
 import javax.swing.SwingUtilities
 import javax.swing.UIManager
+import javax.swing.UnsupportedLookAndFeelException
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun ensureAppLaf() {
@@ -27,7 +27,11 @@ internal inline fun ensureAppLaf(component: Component) {
 
 // --
 
-private fun wrap(ex: Throwable) = InvocationTargetException(ex)
+private fun wrap(ex: Throwable): UnsupportedLookAndFeelException {
+	val wrapper = UnsupportedLookAndFeelException("Failed to initialize look and feel")
+	wrapper.initCause(ex)
+	return wrapper
+}
 
 private object AutoDarkAppLaf : Consumer<Boolean>, Runnable {
 	@JvmField var isDark: Boolean
