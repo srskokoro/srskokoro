@@ -5,6 +5,8 @@ import com.formdev.flatlaf.FlatLightLaf
 import com.jthemedetecor.OsThemeDetector
 import java.awt.Component
 import java.awt.EventQueue
+import java.awt.Toolkit
+import java.awt.event.InvocationEvent
 import java.lang.reflect.InvocationTargetException
 import java.util.function.Consumer
 import javax.swing.SwingUtilities
@@ -27,7 +29,7 @@ internal inline fun ensureAppLaf(component: Component) {
 private fun wrap(ex: Throwable) = InvocationTargetException(ex)
 
 internal object AppLafSetup : Runnable {
-	@JvmField var thrown: Throwable? = null // WARNING: Needs to be set before `init`
+	@JvmField var thrown: Throwable?
 	@JvmField var isDark: Boolean
 
 	init {
@@ -47,15 +49,42 @@ internal object AppLafSetup : Runnable {
 		if (EventQueue.isDispatchThread()) {
 			try {
 				run()
+				thrown = null
 			} catch (ex: Throwable) {
 				thrown = ex
 			}
 		} else {
-			try {
-				EventQueue.invokeAndWait(this)
-			} catch (ex: InvocationTargetException) {
-				thrown = ex.cause
+			// The following mimics `EventQueue.invokeAndWait()` but without
+			// throwing on thread interrupts.
+
+			@Suppress("RemoveRedundantQualifierName", "PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+			class AWTInvocationLock : java.lang.Object()
+
+			val lock = AWTInvocationLock()
+
+			val toolkit = Toolkit.getDefaultToolkit()
+			val event = InvocationEvent(toolkit, this, lock, true)
+
+			var interrupted = false
+
+			val queue = toolkit.systemEventQueue
+			synchronized(lock) {
+				queue.postEvent(event)
+				while (!event.isDispatched) {
+					try {
+						@Suppress("BlockingMethodInNonBlockingContext")
+						lock.wait()
+					} catch (ex: InterruptedException) {
+						interrupted = true
+						// Proceed as if we weren't interrupted
+					}
+				}
 			}
+
+			thrown = event.throwable
+
+			if (interrupted)
+				Thread.currentThread().interrupt()
 		}
 	}
 
