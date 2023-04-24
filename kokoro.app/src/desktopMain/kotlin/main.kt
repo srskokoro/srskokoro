@@ -61,7 +61,7 @@ fun main(args: Array<out String>) {
 	// without either having to check if its available or needing to guard
 	// against `UnsupportedOperationException`. Please don't change this to NIO
 	// without first seeing, https://stackoverflow.com/a/39298690
-	val lockRaf = RandomAccessFile(lockFile, "rw") // May throw; Let it!
+	val lockRaf = RandomAccessFile(lockFile, "rw") // May throw; let it!
 
 	val lockChannel = lockRaf.channel
 	try {
@@ -422,7 +422,7 @@ private class AppRelay(sockDir: String) {
 			}
 			// Deliberately closing outside of any `try` or `use`, as `close()`
 			// may throw and interfere with our custom error handling.
-			sink.close() // May throw; Let it!
+			sink.close() // May throw; let it!
 			// Done!
 		} else showErrorThenExit(
 			versionOrErrorCode =
