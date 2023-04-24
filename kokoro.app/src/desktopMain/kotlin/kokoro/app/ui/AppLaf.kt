@@ -103,7 +103,7 @@ internal object AppLafSetup : Runnable {
 
 			thrown = event.throwable
 
-			if (interrupted)
+			if (interrupted) // Restore "interrupted" status
 				Thread.currentThread().interrupt()
 		}
 	}
