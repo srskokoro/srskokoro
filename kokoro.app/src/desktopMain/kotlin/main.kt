@@ -1,6 +1,7 @@
 ﻿import kokoro.app.AppBuild
 import kokoro.app.AppData
 import kokoro.app.cli.Main
+import kokoro.internal.DEBUG
 import kokoro.internal.kotlin.TODO
 import kotlinx.coroutines.*
 import kotlinx.coroutines.swing.Swing
@@ -182,27 +183,21 @@ private class AppDaemon(
 				@OptIn(ExperimentalCoroutinesApi::class)
 				// The following won't throw here (but may, in a separate coroutine).
 				scope.launch(Dispatchers.IO, CoroutineStart.ATOMIC) {
-					client.use {
+					try {
 						handleAppInstance {
-							try {
-								sendVersionCode(client)
-								val source = Channels.newInputStream(client).source().buffer()
-								when (val protocol = source.readByte().toInt()) {
-									CLI_PROTOCOL_01 -> CLI_PROTOCOL_01_impl(source)
-									else -> throw UnsupportedOperationException(
-										"Unknown CLI protocol: 0x${protocol.toString(16)} ($protocol)")
-								}
-							} catch (ex: IOException) {
-								when (ex) {
-									is ClosedChannelException, is EOFException -> {
-										// Client disconnected early.
-										// Perhaps its process got killed.
-										// Do nothing.
-									}
-									else -> throw ex
-								}
+							sendVersionCode(client)
+							val source = Channels.newInputStream(client).source().buffer()
+							when (val protocol = identifyCliProtocol(source)) {
+								CLI_PROTOCOL_01 -> CLI_PROTOCOL_01_impl(source)
+								else -> throw UnsupportedOperationException(
+									"Unknown CLI protocol: 0x${protocol.toString(16)} ($protocol)")
 							}
 						}
+					} catch (ex: Throwable) {
+						client.closeInCatch(ex)
+						if (ex is AbortClientConnection) {
+							ex.throwAnySuppressed()
+						} else throw ex
 					}
 				}
 			}
@@ -212,6 +207,28 @@ private class AppDaemon(
 		} catch (ex: Throwable) {
 			server.closeInCatch(ex)
 			throw ex
+		}
+	}
+
+	// --
+
+	/**
+	 * Custom throwable to simply end the active client connection, without fear
+	 * of catching exceptions not related to the processing of an incoming
+	 * client. That is, we used a custom exception so that once the app instance
+	 * is now running, and the client already closed, we're guaranteed to not
+	 * accidentally catch an exception thrown by that app instance's running
+	 * logic.
+	 */
+	private class AbortClientConnection : CancellationException() {
+		override fun fillInStackTrace(): Throwable = this
+
+		fun throwAnySuppressed() {
+			val suppressed = suppressed
+			if (suppressed.isEmpty()) return
+
+			val ex = suppressed[0]
+			for (exx in suppressed) ex.addSuppressed(exx)
 		}
 	}
 
@@ -225,8 +242,26 @@ private class AppDaemon(
 		try {
 			client.write(bb)
 		} catch (ex: IOException) {
-			if (ex is ClosedChannelException) throw ex
-			throw ClosedChannelException().apply { initCause(ex) }
+			if (DEBUG && ex !is ClosedChannelException) throw ex
+			// Ignore the original exception.
+			// Simply pretend that the client disconnected early.
+			throw AbortClientConnection()
+		}
+	}
+
+	private fun identifyCliProtocol(source: BufferedSource): Int {
+		try {
+			return source.readByte().toInt()
+		} catch (ex: IOException) {
+			when (ex) {
+				is ClosedChannelException, is EOFException -> {
+					// Client disconnected early.
+					// Perhaps its process got killed.
+					// Anyway, abort.
+					throw AbortClientConnection()
+				}
+				else -> throw ex
+			}
 		}
 	}
 
@@ -235,25 +270,37 @@ private class AppDaemon(
 		val workingDir: String
 		val args: Array<String>
 
-		val payloadCount = source.readInt()
-		if (payloadCount > 0) {
-			val argsSize = payloadCount - 1
-			@Suppress("UNCHECKED_CAST")
-			args = arrayOfNulls<String>(argsSize) as Array<String>
+		try {
+			val payloadCount = source.readInt()
+			if (payloadCount > 0) {
+				val argsSize = payloadCount - 1
+				@Suppress("UNCHECKED_CAST")
+				args = arrayOfNulls<String>(argsSize) as Array<String>
 
-			val workingDirLength = source.readInt()
-			val argsLengths = IntArray(argsSize)
-			repeat(argsSize) { i ->
-				argsLengths[i] = source.readInt()
-			}
+				val workingDirLength = source.readInt()
+				val argsLengths = IntArray(argsSize)
+				repeat(argsSize) { i ->
+					argsLengths[i] = source.readInt()
+				}
 
-			workingDir = source.readUtf8(workingDirLength.toLong())
-			repeat(argsSize) { i ->
-				args[i] = source.readUtf8(argsLengths[i].toLong())
+				workingDir = source.readUtf8(workingDirLength.toLong())
+				repeat(argsSize) { i ->
+					args[i] = source.readUtf8(argsLengths[i].toLong())
+				}
+			} else {
+				workingDir = ""
+				args = emptyArray()
 			}
-		} else {
-			workingDir = ""
-			args = emptyArray()
+		} catch (ex: IOException) {
+			when (ex) {
+				is ClosedChannelException, is EOFException -> {
+					// Client disconnected early.
+					// Perhaps its process got killed.
+					// Anyway, abort.
+					throw AbortClientConnection()
+				}
+				else -> throw ex
+			}
 		}
 
 		@Suppress("BlockingMethodInNonBlockingContext")
@@ -293,7 +340,8 @@ private class AppDaemon(
 		if (0 > observedCount && observedCount > Int.MIN_VALUE) {
 			// Daemon already shut down.
 			// Pretend that our process got killed while processing a client.
-			return // Do nothing. We're exiting anyway.
+			// Kill any enclosing coroutine.
+			throw CancellationException("Daemon already shut down")
 		} else if (observedCount == 0 || observedCount == Int.MIN_VALUE) {
 			throw Error("Maximum app instance count exceeded")
 		} else
