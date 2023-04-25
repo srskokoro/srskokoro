@@ -207,7 +207,8 @@ private class AppDaemon(
 				}
 			}
 		} catch (ex: ClosedChannelException) {
-			// Do nothing. Daemon shutdown was requested.
+			// Daemon shutdown was requested.
+			// Do nothing.
 		} catch (ex: Throwable) {
 			server.closeInCatch(ex)
 			throw ex
