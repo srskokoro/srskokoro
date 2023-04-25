@@ -60,7 +60,7 @@ abstract class BaseCommand(
 
 	protected open suspend fun CoroutineScope.execute() = Unit
 
-	suspend fun feed(workingDir: String, args: Array<out String>, reusedScope: CoroutineScope) {
+	suspend fun feed(workingDir: String, args: Array<out String>, executionScope: CoroutineScope) {
 		assert { SwingUtilities.isEventDispatchThread() }
 
 		val console = DeferredState(workingDir)
@@ -101,7 +101,7 @@ abstract class BaseCommand(
 		}
 
 		for (cmd in console.pendingExecutions) with(cmd) {
-			reusedScope.execute()
+			executionScope.execute()
 		}
 	}
 
