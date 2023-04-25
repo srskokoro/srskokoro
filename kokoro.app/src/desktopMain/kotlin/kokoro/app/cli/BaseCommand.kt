@@ -13,7 +13,6 @@ import com.github.ajalt.clikt.output.CliktConsole
 import kokoro.internal.assert
 import kokoro.internal.kotlin.TODO
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
 import java.util.*
 import javax.swing.SwingUtilities
 
@@ -61,7 +60,7 @@ abstract class BaseCommand(
 
 	protected open suspend fun CoroutineScope.execute() = Unit
 
-	suspend fun feed(workingDir: String, args: Array<out String>) {
+	suspend fun feed(workingDir: String, args: Array<out String>, reusedScope: CoroutineScope) {
 		assert { SwingUtilities.isEventDispatchThread() }
 
 		val console = DeferredState(workingDir)
@@ -101,11 +100,9 @@ abstract class BaseCommand(
 			console.consumeMessages()
 		}
 
-		coroutineScope {
-			for (cmd in console.pendingExecutions) with(cmd) {
-				this@coroutineScope.execute()
-			}
-		} // Does not return until all launched (coroutine) children complete
+		for (cmd in console.pendingExecutions) with(cmd) {
+			reusedScope.execute()
+		}
 	}
 
 	private class DeferredState(

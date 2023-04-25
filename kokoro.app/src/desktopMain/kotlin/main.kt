@@ -264,8 +264,8 @@ private class AppDaemon(
 
 	// --
 
-	private suspend inline fun executeMain(workingDir: String, args: Array<out String>) {
-		Main().feed(workingDir, args)
+	private suspend inline fun CoroutineScope.executeMain(workingDir: String, args: Array<out String>) {
+		Main().feed(workingDir, args, this)
 	}
 
 	private inline fun handleAppInstance(block: () -> Unit) {
