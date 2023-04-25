@@ -159,13 +159,16 @@ private class AppDaemon(
 
 		try {
 			server.bind(bindAddress)
+			if (serverUnix == null) {
+				// The now bound server is INET; let everyone know the port.
+				generateInetPortFile(bindPath, boundServer = server)
+			}
+		} catch (ex: ClosedChannelException) {
+			// Daemon shutdown was requested (by the initial app instance).
+			// Do nothing.
 		} catch (ex: Throwable) {
 			server.closeInCatch(ex)
 			throw ex
-		}
-		if (serverUnix == null) {
-			// Now that our (INET) server is bound, let everyone know the port.
-			generateInetPortFile(bindPath, boundServer = server)
 		}
 	}
 
