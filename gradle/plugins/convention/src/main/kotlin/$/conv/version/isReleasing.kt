@@ -19,3 +19,11 @@ val ProviderFactory.isReleasing: Boolean
  */
 val Project.isReleasing: Boolean
 	inline get() = providers.isReleasing
+
+/**
+ * `true` if all debugging facilities should be fully enabled. Currently, this
+ * is implemented simply as `!`[isReleasing] (but future implementations may
+ * change this).
+ */
+val Project.isDebug: Boolean
+	inline get() = !isReleasing
