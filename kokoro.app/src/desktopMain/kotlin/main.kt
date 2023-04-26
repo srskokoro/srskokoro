@@ -327,10 +327,16 @@ private class AppDaemon(
 		if (observed > 0) {
 			try {
 				block()
-			} finally {
-				if (count.decrementAndGet() == 0) {
+			} catch (ex: Throwable) {
+				if (count.decrementAndGet() == 0) try {
 					considerShutdown()
+				} catch (exx: Throwable) {
+					ex.addSuppressed(exx)
 				}
+				throw ex
+			}
+			if (count.decrementAndGet() == 0) {
+				considerShutdown()
 			}
 		} else {
 			revertAppInstanceIncrementAndMaybeFail(observed)
