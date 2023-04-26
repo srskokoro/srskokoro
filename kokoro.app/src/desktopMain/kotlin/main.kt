@@ -369,12 +369,10 @@ private class AppDaemon(
 			return // Skip everything below
 		}
 
-		lockChannel.use {
-			instanceChangeLock.use {
-				masterInstanceLock.use {
-					server.use {
-						Files.deleteIfExists(bindPath)
-					}
+		instanceChangeLock.use {
+			masterInstanceLock.use {
+				server.use {
+					Files.deleteIfExists(bindPath)
 				}
 			}
 		}
