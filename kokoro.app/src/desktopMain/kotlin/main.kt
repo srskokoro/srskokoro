@@ -513,7 +513,7 @@ private class AppRelay(sockDir: String) {
 		}
 	}
 
-	companion object {
+	private companion object {
 		const val E_VERSION_BEYOND = -1
 		const val E_SERVICE_HALT = -2
 	}
