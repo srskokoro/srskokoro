@@ -170,8 +170,7 @@ private class AppDaemon(
 			// Daemon shutdown was requested (by the initial app instance).
 			// Do nothing.
 		} catch (ex: Throwable) {
-			server.closeInCatch(ex)
-			throw ex
+			onServerCrashedWhileRunningApp(server, ex)
 		}
 	}
 
@@ -207,9 +206,17 @@ private class AppDaemon(
 			// Daemon shutdown was requested.
 			// Do nothing.
 		} catch (ex: Throwable) {
-			server.closeInCatch(ex)
-			throw ex
+			onServerCrashedWhileRunningApp(server, ex)
 		}
+	}
+
+	/** Called when an app instance has already run and the server crashes. */
+	@Suppress("NOTHING_TO_INLINE")
+	private inline fun onServerCrashedWhileRunningApp(server: ServerSocketChannel, ex: Throwable): Nothing {
+		// Wrap as `Error` to treat it as fatal!
+		val err = Error("App daemon server crashed", ex)
+		server.closeInCatch(err)
+		throw err
 	}
 
 	// --
