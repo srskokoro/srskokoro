@@ -108,26 +108,26 @@ abstract class BaseCommand(
 	private class DeferredState(
 		val workingDir: String,
 	) : CliktConsole {
-		val err = StringBuilder()
-		val out = StringBuilder()
+		var err: StringBuilder? = StringBuilder()
+		var out: StringBuilder? = StringBuilder()
 
 		val pendingExecutions = LinkedList<BaseCommand>()
 
 		override fun promptForLine(prompt: String, hideInput: Boolean): String? = null
 
 		override fun print(text: String, error: Boolean) {
-			(if (error) err else out).append(text)
+			(if (error) err else out)!!.append(text)
 		}
 
 		override val lineSeparator = "\n"
 
 		fun consumeMessages() {
-			val errorMessage = with(err) { val r = trim(); clear(); r }
+			val errorMessage = err!!.trim(); err = null
 			if (errorMessage.isNotEmpty()) {
 				TODO // TODO Display dialog and wait for dismissal
 			}
 
-			val printMessage = with(out) { val r = trim(); clear(); r }
+			val printMessage = out!!.trim(); out = null
 			if (printMessage.isNotEmpty()) {
 				TODO // TODO Display dialog and wait for dismissal
 			}
