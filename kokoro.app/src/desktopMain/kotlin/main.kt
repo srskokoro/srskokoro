@@ -154,7 +154,9 @@ private class AppDaemon(
 		// The following won't throw here (but may, in a separate coroutine).
 		ClientHandlingSwingScope.launch {
 			handleAppInstance {
-				executeMain(System.getProperty("user.dir"), initialArgs)
+				coroutineScope {
+					executeMain(System.getProperty("user.dir"), initialArgs)
+				}
 			}
 		}
 
