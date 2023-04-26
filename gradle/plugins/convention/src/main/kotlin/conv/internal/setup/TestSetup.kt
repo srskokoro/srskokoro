@@ -5,6 +5,7 @@ import org.gradle.api.tasks.testing.Test
 
 internal fun setUp(task: Test): Unit = with(task) {
 	useJUnitPlatform()
+	setUpForDebug(this)
 }
 
 internal fun setUpTestFrameworkDeps_android(consume: DependencyConsumer) {
