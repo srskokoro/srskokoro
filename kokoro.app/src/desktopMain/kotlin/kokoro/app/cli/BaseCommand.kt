@@ -97,7 +97,11 @@ abstract class BaseCommand(
 			echo(currentContext.localization.aborted(), err = true)
 			return // Exit
 		} finally {
-			console.consumeMessages()
+			try {
+				console.consumeMessages()
+			} catch (ex: Throwable) {
+				throw AssertionError("Shouldn't fail", ex)
+			}
 		}
 
 		for (cmd in console.pendingExecutions) with(cmd) {
