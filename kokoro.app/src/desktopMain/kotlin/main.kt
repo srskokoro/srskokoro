@@ -63,17 +63,11 @@ fun main(args: Array<out String>) {
 	// against `UnsupportedOperationException`. Please don't change this to NIO
 	// without first seeing, https://stackoverflow.com/a/39298690
 	val lockRaf = RandomAccessFile(lockFile, "rw") // May throw; let it!
-
 	val lockChannel = lockRaf.channel
-	try {
-		/*
-		 * WARNING: DO NOT REORDER THE FOLLOWING LOCKING SEQUENCE without first
-		 * understanding the catastrophic consequences of doing so (or why they
-		 * were ordered the way they are at the moment).
- 		 */
-		val instanceChangeLock = lockChannel.lock(INSTANCE_CHANGE_LOCK_BYTE, /*size=*/1, /*shared=*/false)
-		val masterInstanceLock = lockChannel.tryLock(MASTER_INSTANCE_LOCK_BYTE, /*size=*/1, /*shared=*/false)
 
+	val instanceChangeLock = lockChannel.lock(INSTANCE_CHANGE_LOCK_BYTE, /*size=*/1, /*shared=*/false)
+	try {
+		val masterInstanceLock = lockChannel.tryLock(MASTER_INSTANCE_LOCK_BYTE, /*size=*/1, /*shared=*/false)
 		if (masterInstanceLock != null) {
 			// We're the first instance!
 
@@ -90,7 +84,7 @@ fun main(args: Array<out String>) {
 			relay.doForward(args)
 		}
 	} catch (ex: Throwable) {
-		lockChannel.closeInCatch(ex) // Releases all locks
+		instanceChangeLock.closeInCatch(ex)
 		throw ex
 	}
 }
