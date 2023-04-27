@@ -2,6 +2,7 @@ package kokoro.app.ui
 
 import com.formdev.flatlaf.FlatDarkLaf
 import com.formdev.flatlaf.FlatLightLaf
+import com.formdev.flatlaf.extras.FlatAnimatedLafChange
 import com.jthemedetecor.OsThemeDetector
 import java.awt.EventQueue
 import java.awt.Toolkit
@@ -51,16 +52,31 @@ private object AutoDarkAppLaf : Consumer<Boolean>, Runnable {
 	}
 
 	override fun run() {
-		// NOTE: Access to `AppLafSetup` blocks until it's fully initialized
 		try {
-			AppLafSetup.run()
+			FlatAnimatedLafChange.showSnapshot()
+			// ---===--- ---===--- ---===---
+
+			// NOTE: Access to `AppLafSetup` blocks until it's fully initialized
+			try {
+				AppLafSetup.run()
+			} catch (ex: Throwable) {
+				AppLafSetup.thrown = ex
+				return // Skip everything below
+			}
+			// Also update existing windows
+			for (w in Window.getWindows())
+				SwingUtilities.updateComponentTreeUI(w) // May throw; let it!
+
+			// ---===--- ---===--- ---===---
+			FlatAnimatedLafChange.hideSnapshotWithAnimation()
 		} catch (ex: Throwable) {
-			AppLafSetup.thrown = ex
-			return // Skip everything below
+			try {
+				FlatAnimatedLafChange.stop()
+			} catch (exx: Throwable) {
+				ex.addSuppressed(exx)
+			}
+			throw ex
 		}
-		// Also update existing windows
-		for (w in Window.getWindows())
-			SwingUtilities.updateComponentTreeUI(w) // May throw; let it!
 	}
 }
 
