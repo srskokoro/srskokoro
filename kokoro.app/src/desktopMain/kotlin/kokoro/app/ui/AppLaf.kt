@@ -3,7 +3,6 @@ package kokoro.app.ui
 import com.formdev.flatlaf.FlatDarkLaf
 import com.formdev.flatlaf.FlatLightLaf
 import com.jthemedetecor.OsThemeDetector
-import java.awt.Component
 import java.awt.EventQueue
 import java.awt.Toolkit
 import java.awt.Window
@@ -17,12 +16,6 @@ import javax.swing.UnsupportedLookAndFeelException
 internal inline fun ensureAppLaf() {
 	val ex = AppLafSetup.thrown
 	if (ex != null) throw wrap(ex)
-}
-
-@Suppress("NOTHING_TO_INLINE")
-internal inline fun ensureAppLaf(component: Component) {
-	ensureAppLaf()
-	SwingUtilities.updateComponentTreeUI(component)
 }
 
 // --
