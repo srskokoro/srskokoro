@@ -10,11 +10,10 @@ import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.core.context
 import com.github.ajalt.clikt.output.CliktConsole
-import kokoro.internal.assert
+import kokoro.internal.assertThreadSwing
 import kokoro.internal.kotlin.TODO
 import kotlinx.coroutines.CoroutineScope
 import java.util.*
-import javax.swing.SwingUtilities
 
 /**
  * @see CliktCommand
@@ -61,7 +60,7 @@ abstract class BaseCommand(
 	protected open suspend fun CoroutineScope.execute() = Unit
 
 	suspend fun feed(workingDir: String, args: Array<out String>, executionScope: CoroutineScope) {
-		assert { SwingUtilities.isEventDispatchThread() }
+		assertThreadSwing()
 
 		val console = DeferredState(workingDir)
 		context { this.console = console }
