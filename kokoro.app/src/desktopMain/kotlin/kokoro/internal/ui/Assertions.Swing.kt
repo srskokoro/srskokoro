@@ -1,5 +1,6 @@
-package kokoro.internal
+package kokoro.internal.ui
 
+import kokoro.internal.assert
 import javax.swing.SwingUtilities
 
 @Suppress("NOTHING_TO_INLINE")

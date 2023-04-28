@@ -10,7 +10,7 @@ import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.core.context
 import com.github.ajalt.clikt.output.CliktConsole
-import kokoro.internal.assertThreadSwing
+import kokoro.internal.ui.assertThreadSwing
 import kokoro.internal.kotlin.TODO
 import kotlinx.coroutines.CoroutineScope
 import java.util.*
