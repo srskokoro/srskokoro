@@ -101,7 +101,7 @@ internal object AppLafSetup :
 	fun initialize() {
 		assertThreadSwing()
 		try {
-			noninit = null
+			noninit = null // Prevent being called again by `maybeInit()`
 			// TODO More initialization logic goes here
 			//  ...
 			updateLaf()
