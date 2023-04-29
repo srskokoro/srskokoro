@@ -156,6 +156,7 @@ internal object AppLafSetup :
 	}
 
 	private fun wrapThrown(): UnsupportedLookAndFeelException {
+		assert({ "Expected: thrown while initializing" }) { noninit != null }
 		assert({ "Should be considered initialized by now" }) { hasInit }
 		val wrapper = UnsupportedLookAndFeelException("Failed to initialize look and feel")
 		wrapper.initCause(noninit)
