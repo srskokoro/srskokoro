@@ -155,13 +155,13 @@ internal object AppLafSetup :
 		}
 	}
 
-	override fun fillInStackTrace(): Throwable =
-		throw AssertionError("Should not be called")
-
 	private fun wrapThrown(): UnsupportedLookAndFeelException {
 		assert({ "Should be considered initialized by now" }) { hasInit }
 		val wrapper = UnsupportedLookAndFeelException("Failed to initialize look and feel")
 		wrapper.initCause(noninit)
 		return wrapper
 	}
+
+	override fun fillInStackTrace(): Throwable =
+		throw AssertionError("Should not be called")
 }
