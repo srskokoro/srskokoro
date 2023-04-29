@@ -100,9 +100,13 @@ internal object AppLafSetup :
 
 	fun initialize() {
 		if (!EventQueue.isDispatchThread()) {
-			initializeViaEdt()
+			initializeViaSwingEdt()
 			return
 		}
+
+		// ---===--- ---===--- ---===---
+		// In Swing EDT...
+
 		try {
 			noninit = null // Prevent being called again by `maybeInit()`
 			// TODO More initialization logic goes here
@@ -114,7 +118,7 @@ internal object AppLafSetup :
 		}
 	}
 
-	private fun initializeViaEdt() {
+	private fun initializeViaSwingEdt() {
 		// The following mimics `EventQueue.invokeAndWait()` but without
 		// throwing on thread interrupts.
 
