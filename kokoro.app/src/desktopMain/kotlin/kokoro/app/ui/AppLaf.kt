@@ -147,11 +147,11 @@ internal object AppLafSetup :
 			Thread.currentThread().interrupt()
 
 		if (thrown != null) {
-			if (thrown is UnsupportedLookAndFeelException) {
-				assert({ thrown }) { thrown.cause.let { it != null && it === noninit } }
-				throw wrapThrown() // So that we get the correct stacktrace
+			assert({ thrown }) {
+				thrown is UnsupportedLookAndFeelException &&
+				thrown.cause.let { it != null && it === noninit }
 			}
-			throw thrown
+			throw wrapThrown() // So that we get the correct stacktrace
 		}
 	}
 
