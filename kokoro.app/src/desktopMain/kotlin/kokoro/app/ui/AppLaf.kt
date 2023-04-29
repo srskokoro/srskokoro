@@ -4,31 +4,28 @@ import com.formdev.flatlaf.FlatDarkLaf
 import com.formdev.flatlaf.FlatLightLaf
 import com.formdev.flatlaf.extras.FlatAnimatedLafChange
 import com.jthemedetecor.OsThemeDetector
+import kokoro.internal.assert
+import kokoro.internal.ui.assertThreadSwing
 import java.awt.EventQueue
-import java.awt.Toolkit
 import java.awt.Window
-import java.awt.event.InvocationEvent
 import java.util.function.Consumer
 import javax.swing.SwingUtilities
 import javax.swing.UIManager
 import javax.swing.UnsupportedLookAndFeelException
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun ensureAppLaf() {
-	val ex = AppLafSetup.thrown
-	if (ex != null) throw wrap(ex)
-}
+internal inline fun ensureAppLaf() = AppLafSetup.maybeInit()
 
 // --
 
-private fun wrap(ex: Throwable): UnsupportedLookAndFeelException {
-	val wrapper = UnsupportedLookAndFeelException("Failed to initialize look and feel")
-	wrapper.initCause(ex)
-	return wrapper
-}
+internal object AppLafSetup :
+	Throwable(null, null, false, false),
+	Consumer<Boolean>, Runnable {
 
-private object AutoDarkAppLaf : Consumer<Boolean>, Runnable {
-	@JvmField var isDark: Boolean
+	@JvmField var noninit: Throwable? = this
+	// ^ Not `private` to avoid the extra synthetic accessor
+
+	private var isDark: Boolean
 
 	init {
 		val detector = OsThemeDetector.getDetector()
@@ -56,13 +53,13 @@ private object AutoDarkAppLaf : Consumer<Boolean>, Runnable {
 			FlatAnimatedLafChange.showSnapshot()
 			// ---===--- ---===--- ---===---
 
-			// NOTE: Access to `AppLafSetup` blocks until it's fully initialized
-			try {
-				AppLafSetup.run()
-			} catch (ex: Throwable) {
-				AppLafSetup.thrown = ex
-				return // Skip everything below
+			if (hasInit) {
+				updateLaf()
+			} else {
+				// Got called early (due to other means of class initialization)
+				initialize()
 			}
+
 			// Also update existing windows
 			for (w in Window.getWindows())
 				SwingUtilities.updateComponentTreeUI(w) // May throw; let it!
@@ -78,61 +75,49 @@ private object AutoDarkAppLaf : Consumer<Boolean>, Runnable {
 			throw ex
 		}
 	}
-}
 
-internal object AppLafSetup : Runnable {
-	@JvmField var thrown: Throwable?
-
-	init {
-		if (EventQueue.isDispatchThread()) {
-			try {
-				run()
-				thrown = null
-			} catch (ex: Throwable) {
-				thrown = ex
-			}
-		} else {
-			// The following mimics `EventQueue.invokeAndWait()` but without
-			// throwing on thread interrupts.
-
-			@Suppress("RemoveRedundantQualifierName", "PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-			class AWTInvocationLock : java.lang.Object()
-
-			val lock = AWTInvocationLock()
-
-			val toolkit = Toolkit.getDefaultToolkit()
-			val event = InvocationEvent(toolkit, this, lock, true)
-
-			var interrupted = false
-
-			val queue = toolkit.systemEventQueue
-			synchronized(lock) {
-				queue.postEvent(event)
-				while (!event.isDispatched) {
-					try {
-						@Suppress("BlockingMethodInNonBlockingContext")
-						lock.wait()
-					} catch (ex: InterruptedException) {
-						interrupted = true
-						// Proceed as if we weren't interrupted
-					}
-				}
-			}
-
-			thrown = event.throwable
-
-			if (interrupted) // Restore "interrupted" status
-				Thread.currentThread().interrupt()
-		}
-	}
-
-	override fun run() {
+	private fun updateLaf() {
 		UIManager.setLookAndFeel(
-			if (!AutoDarkAppLaf.isDark) {
+			if (!isDark) {
 				FlatLightLaf()
 			} else {
 				FlatDarkLaf()
 			}
 		)
+	}
+
+	// --
+
+	private inline val hasInit: Boolean get() = noninit != this
+
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun maybeInit() {
+		assertThreadSwing()
+		if (noninit == null) return
+		if (noninit == this) return initialize()
+		throw wrapThrown()
+	}
+
+	fun initialize() {
+		assertThreadSwing()
+		try {
+			noninit = null
+			// TODO More initialization logic goes here
+			//  ...
+			updateLaf()
+		} catch (ex: Throwable) {
+			noninit = ex
+			throw wrapThrown()
+		}
+	}
+
+	override fun fillInStackTrace(): Throwable =
+		throw AssertionError("Should not be called")
+
+	private fun wrapThrown(): UnsupportedLookAndFeelException {
+		assert({ "Should be considered initialized by now" }) { hasInit }
+		val wrapper = UnsupportedLookAndFeelException("Failed to initialize look and feel")
+		wrapper.initCause(noninit)
+		return wrapper
 	}
 }
