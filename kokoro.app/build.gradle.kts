@@ -23,15 +23,22 @@ kotlin {
 
 val NAMESPACE = extra["kokoro.app.ns"] as String
 val APP_TITLE = extra["kokoro.app.title"] as String
+val APP_TITLE_SHORT = extra["kokoro.app.title.short"] as String
 
 android {
 	namespace = NAMESPACE
-	defaultConfig.manifestPlaceholders[::APP_TITLE.name] = APP_TITLE
+	defaultConfig.manifestPlaceholders.let { map ->
+		map[::APP_TITLE.name] = APP_TITLE
+		map[::APP_TITLE_SHORT.name] = APP_TITLE_SHORT
+	}
 }
 
 buildConfig.appMain {
 	internalObject("AppBuild") inPackage NAMESPACE
+
 	buildConfigField("String", "TITLE", "\"$APP_TITLE\"")
+	buildConfigField("String", "TITLE_SHORT", "\"$APP_TITLE_SHORT\"")
+
 	buildConfigField("String", "VERSION", "\"$version\"")
 	buildConfigField("int", "VERSION_CODE", "$versionCode")
 	if (versionCode == 0) throw InvalidUserDataException(
