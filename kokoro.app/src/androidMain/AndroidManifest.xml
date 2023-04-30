@@ -3,6 +3,7 @@
 
 	<application
 		android:allowBackup="false"
+		android:label="${APP_TITLE}"
 		android:name=".MainApplication">
 		<!--
 		TODO Re-allow auto-backup but exclude our local app data from cloud backup
