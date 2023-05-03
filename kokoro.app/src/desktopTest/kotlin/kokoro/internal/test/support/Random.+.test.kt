@@ -4,7 +4,6 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.forAll
 
-@Suppress("ClassName")
 class `Random + (Test)` : FunSpec({
 	test("`nextIntFavorSmall(until)` returns `0` until `until`") {
 		forAll(arbitrary { rs ->

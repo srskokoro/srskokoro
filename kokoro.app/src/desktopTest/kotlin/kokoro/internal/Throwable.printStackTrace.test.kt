@@ -9,7 +9,6 @@ import kokoro.internal.io.UnsafeCharArrayWriter
 import kokoro.internal.test.support.ThrowableArb
 import java.io.PrintWriter
 
-@Suppress("ClassName")
 class `Throwable printStackTrace (Test)` : FunSpec({
 	test("Output of `printSafeStackTrace_fallback` is consistent with `printStackTrace`") {
 		checkAll(ThrowableArb()) { throwable ->
