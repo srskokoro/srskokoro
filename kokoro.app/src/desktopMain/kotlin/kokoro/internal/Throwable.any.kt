@@ -25,3 +25,5 @@ fun Throwable.any(dejaVu: ThrowableDejaVuSet = ThrowableDejaVuSet(), predicate: 
 	}
 	return false
 }
+
+fun Throwable.anyError() = any { it is Error }
