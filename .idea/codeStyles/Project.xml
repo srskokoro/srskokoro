@@ -8,7 +8,6 @@
     <JetCodeStyleSettings>
       <option name="PACKAGES_TO_USE_STAR_IMPORTS">
         <value>
-          <package name="java.util" alias="false" withSubpackages="false" />
           <package name="conv.attributes" alias="false" withSubpackages="false" />
           <package name="conv.internal.util" alias="false" withSubpackages="false" />
           <package name="conv.internal.setup" alias="false" withSubpackages="false" />
