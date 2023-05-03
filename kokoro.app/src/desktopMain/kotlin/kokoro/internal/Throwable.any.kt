@@ -9,8 +9,8 @@ fun Throwable.any(dejaVu: ThrowableDejaVuSet = ThrowableDejaVuSet(), predicate: 
 		if (predicate(this))
 			return true
 
-		for (se in suppressed) {
-			if (se.any(dejaVu, predicate))
+		for (sx in suppressed) {
+			if (sx.any(dejaVu, predicate))
 				return true
 		}
 
