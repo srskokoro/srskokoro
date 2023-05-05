@@ -12,7 +12,9 @@ import kotlin.random.Random
 
 private typealias ThrowableFactory = (message: String?) -> Throwable
 
-class ThrowableArb : Arb<Throwable>() {
+class ThrowableArb(
+	private val circularRefsProb: Double = 0.10,
+) : Arb<Throwable>() {
 	companion object {
 		private val THROWABLE_FACTORIES = listOf<ThrowableFactory>(
 			{ Throwable(it) },
@@ -100,24 +102,41 @@ class ThrowableArb : Arb<Throwable>() {
 		return throwable
 	}
 
-	private fun Random.randomizeCauseAndSuppressions(throwable: Throwable, randomizationDepth: Int) {
+	private fun Random.randomizeCauseAndSuppressions(throwable: Throwable, randomizationDepth: Int, throwablesSoFar: ArrayList<Throwable>) {
+		if (circularRefsProb > 0.0) throwablesSoFar.add(throwable)
+
 		if (randomizationDepth <= 0) return
 		val nextRandomizationDepth = randomizationDepth - 1
+
 		while (nextBoolean()) {
-			val sx = nextSimpleThrowable()
-			randomizeCauseAndSuppressions(sx, nextRandomizationDepth)
+			var sx: Throwable
+			kotlin.run {
+				if (nextDouble() < circularRefsProb) {
+					sx = throwablesSoFar.run { this[nextInt(size)] }
+					if (sx !== throwable) return@run
+				}
+				sx = nextSimpleThrowable()
+				randomizeCauseAndSuppressions(sx, nextRandomizationDepth, throwablesSoFar)
+			}
 			throwable.addSuppressed(sx)
 		}
 		if (nextBoolean()) {
-			val cause = nextSimpleThrowable()
-			randomizeCauseAndSuppressions(cause, nextRandomizationDepth)
+			var cause: Throwable
+			kotlin.run {
+				if (nextDouble() < circularRefsProb) {
+					cause = throwablesSoFar.run { this[nextInt(size)] }
+					if (cause !== throwable) return@run
+				}
+				cause = nextSimpleThrowable()
+				randomizeCauseAndSuppressions(cause, nextRandomizationDepth, throwablesSoFar)
+			}
 			throwable.initCause(cause)
 		}
 	}
 
 	private fun Random.nextComplexThrowable(): Throwable {
 		val ex = nextSimpleThrowable()
-		randomizeCauseAndSuppressions(ex, nextInt(10))
+		randomizeCauseAndSuppressions(ex, nextInt(10), ArrayList())
 		return ex
 	}
 
