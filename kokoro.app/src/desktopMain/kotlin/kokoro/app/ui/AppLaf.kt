@@ -103,7 +103,7 @@ internal object AppLafSetup :
 
 	fun initialize() {
 		if (!EventQueue.isDispatchThread()) {
-			initializeViaSwingEdt() // Blocks until initialization is complete
+			awaitInitializeViaSwingEdt()
 			return
 		}
 
@@ -123,7 +123,7 @@ internal object AppLafSetup :
 		noninit = null // Prevent being called again by `maybeInit()`
 	}
 
-	private fun initializeViaSwingEdt() {
+	private fun awaitInitializeViaSwingEdt() {
 		// The following mimics `EventQueue.invokeAndWait()` but without
 		// throwing on thread interrupts.
 
