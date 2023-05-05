@@ -1,10 +1,9 @@
 package kokoro.internal
 
-import java.util.*
+import java.util.Collections
+import java.util.IdentityHashMap
 
 @JvmInline
-value class ThrowableDejaVuSet private constructor(
-	private val actual: MutableSet<Throwable>
-) : MutableSet<Throwable> by actual {
+value class ThrowableDejaVuSet private constructor(val set: MutableSet<Throwable>) {
 	constructor() : this(Collections.newSetFromMap(IdentityHashMap()))
 }

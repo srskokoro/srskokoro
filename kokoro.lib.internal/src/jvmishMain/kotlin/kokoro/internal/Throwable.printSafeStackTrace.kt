@@ -98,7 +98,7 @@ private fun UnsafeCharArrayWriter.println(value: String) {
 
 internal fun Throwable.printSafeStackTrace_fallback(out: UnsafeCharArrayWriter, onFailure: OnFailure) {
 	val dejaVu = ThrowableDejaVuSet()
-	dejaVu.add(this)
+	dejaVu.set.add(this)
 
 	out.println(safeToString(onFailure))
 
@@ -124,7 +124,7 @@ private fun Throwable.printEnclosedSafeStackTrace(
 	onFailure: OnFailure,
 ) {
 	safeToString(onFailure).let { toString ->
-		if (dejaVu.add(this)) {
+		if (dejaVu.set.add(this)) {
 			// Print our stack trace
 			out.println("$prefix$caption$toString")
 		} else {

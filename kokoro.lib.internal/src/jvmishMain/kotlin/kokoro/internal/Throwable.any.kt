@@ -5,7 +5,7 @@ inline fun Throwable.any(noinline predicate: (Throwable) -> Boolean) =
 	any(ThrowableDejaVuSet(), predicate)
 
 fun Throwable.any(dejaVu: ThrowableDejaVuSet = ThrowableDejaVuSet(), predicate: (Throwable) -> Boolean): Boolean {
-	if (dejaVu.add(this)) {
+	if (dejaVu.set.add(this)) {
 		if (predicate(this))
 			return true
 
