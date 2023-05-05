@@ -8,14 +8,15 @@ import io.kotest.property.checkAll
 import kokoro.internal.io.UnsafeCharArrayWriter
 import kokoro.internal.test.support.ThrowableArb
 import java.io.PrintWriter
+import java.util.LinkedList
 
 class `Throwable printStackTrace (Test)` : FunSpec({
 	test("Output of `printSafeStackTrace_fallback` is consistent with `printStackTrace`") {
 		checkAll(ThrowableArb()) { throwable ->
-			val failures = ArrayList<Throwable>()
+			val failures = LinkedList<Throwable>()
 
 			val actual = UnsafeCharArrayWriter().also {
-				throwable.printSafeStackTrace_fallback(it, failures)
+				throwable.printSafeStackTrace_fallback(it, failures::addLast)
 			}.toString()
 
 			val expected = UnsafeCharArrayWriter().also {
