@@ -1,12 +1,11 @@
 package kokoro.internal.io
 
-import java.io.Serializable
 import java.io.Writer
 
 /**
  * [Writer] implementation that outputs to a [StringBuilder].
  */
-class StringBuilderWriter : Writer, Serializable {
+class StringBuilderWriter : Writer {
 	val builder: StringBuilder
 
 	constructor() {
