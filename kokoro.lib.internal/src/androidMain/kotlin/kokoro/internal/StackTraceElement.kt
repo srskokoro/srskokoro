@@ -1,6 +1,6 @@
 package kokoro.internal
 
-@Suppress("NOTHING_TO_INLINE", "RemoveRedundantQualifierName")
+@Suppress("NOTHING_TO_INLINE")
 actual inline fun StackTraceElement(
 	classLoaderName: String?,
 	moduleName: String?,
