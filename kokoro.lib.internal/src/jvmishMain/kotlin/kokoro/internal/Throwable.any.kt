@@ -1,8 +1,7 @@
 package kokoro.internal
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun Throwable.any(noinline predicate: (Throwable) -> Boolean) =
-	any(ThrowableDejaVuSet(), predicate)
+inline fun Throwable.any(noinline predicate: (Throwable) -> Boolean) = any(ThrowableDejaVuSet(), predicate)
 
 fun Throwable.any(dejaVu: ThrowableDejaVuSet = ThrowableDejaVuSet(), predicate: (Throwable) -> Boolean): Boolean {
 	if (dejaVu.set.add(this)) {
