@@ -25,7 +25,7 @@ internal object AppLafSetup :
 	Consumer<Boolean>, Runnable {
 
 	// CONTRACT: MUST be regarded as immutable once set to any other value.
-	@JvmField var noninit: Throwable? = this
+	@JvmField var nonInitStatus: Throwable? = this
 	// ^ Not `private` to avoid the extra synthetic accessor.
 	// ^ Deliberately not `@Volatile` -- it's OK for threads to not immediately see updates.
 
@@ -92,12 +92,12 @@ internal object AppLafSetup :
 
 	// --
 
-	private inline val hasInit: Boolean get() = noninit != this
+	private inline val hasInit: Boolean get() = nonInitStatus != this
 
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun maybeInit() {
-		if (noninit == null) return
-		if (noninit == this) return initialize()
+		if (nonInitStatus == null) return
+		if (nonInitStatus == this) return initialize()
 		throw wrapThrown()
 	}
 
@@ -116,11 +116,11 @@ internal object AppLafSetup :
 			updateLaf()
 		} catch (ex: Throwable) {
 			VarHandle.releaseFence() // Prevent the update below from being seen too early
-			noninit = ex // Prevent being called again by `maybeInit()`
+			nonInitStatus = ex // Prevent being called again by `maybeInit()`
 			throw wrapThrown()
 		}
 		VarHandle.releaseFence() // Prevent the update below from being seen too early
-		noninit = null // Prevent being called again by `maybeInit()`
+		nonInitStatus = null // Prevent being called again by `maybeInit()`
 	}
 
 	private fun awaitInitializeViaSwingEdt() {
@@ -158,17 +158,17 @@ internal object AppLafSetup :
 		if (thrown != null) {
 			assert(lazyMessage = { thrown }) {
 				thrown is UnsupportedLookAndFeelException &&
-				thrown.cause.let { it != null && it === noninit }
+				thrown.cause.let { it != null && it === nonInitStatus }
 			}
 			throw wrapThrown() // So that we get the correct stacktrace
 		}
 	}
 
 	private fun wrapThrown(): UnsupportedLookAndFeelException {
-		assert({ "Expected: thrown while initializing" }) { noninit != null }
+		assert({ "Expected: thrown while initializing" }) { nonInitStatus != null }
 		assert({ "Should be considered initialized by now" }) { hasInit }
 		val wrapper = UnsupportedLookAndFeelException("Failed to initialize look and feel")
-		wrapper.initCause(noninit)
+		wrapper.initCause(nonInitStatus)
 		return wrapper
 	}
 
