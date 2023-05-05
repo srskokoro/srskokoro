@@ -49,6 +49,9 @@ class UnsafeCharArrayWriter : CharArrayWriter {
 		out.write(buf, 0, count)
 	}
 
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun writeln() = write(System.lineSeparator())
+
 	fun truncate(size: Int) {
 		count = min(size, count)
 	}
