@@ -17,7 +17,7 @@ fun Throwable.any(dejaVu: ThrowableDejaVuSet = ThrowableDejaVuSet(), predicate: 
 		try {
 			cause
 		} catch (ex: Throwable) {
-			// Ignore. Let an ensuing `printStackTrace()` discover it instead.
+			// Ignore. Let `printStackTrace()` discover it instead.
 			return false
 		}?.let { cause ->
 			return cause.any(dejaVu, predicate)
