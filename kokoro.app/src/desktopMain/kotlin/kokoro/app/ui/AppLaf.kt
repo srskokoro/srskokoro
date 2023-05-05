@@ -24,7 +24,7 @@ internal object AppLafSetup :
 	Throwable(null, null, false, false),
 	Consumer<Boolean>, Runnable {
 
-	// CONTRACT: MUST be regarded as immutable, once set to any other value.
+	// CONTRACT: MUST be regarded as immutable once set to any other value.
 	@JvmField var noninit: Throwable? = this
 	// ^ Not `private` to avoid the extra synthetic accessor.
 	// ^ Deliberately not `@Volatile` -- it's OK for threads to not immediately see updates.
