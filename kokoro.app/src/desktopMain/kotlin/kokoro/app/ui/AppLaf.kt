@@ -156,7 +156,7 @@ internal object AppLafSetup :
 			Thread.currentThread().interrupt()
 
 		if (thrown != null) {
-			assert({ thrown }) {
+			assert(lazyMessage = { thrown }) {
 				thrown is UnsupportedLookAndFeelException &&
 				thrown.cause.let { it != null && it === noninit }
 			}
