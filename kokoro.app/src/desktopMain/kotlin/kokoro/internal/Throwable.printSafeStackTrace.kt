@@ -93,7 +93,7 @@ private fun Throwable.safeGetCause(out: UnsafeCharArrayWriter, onFailure: OnFail
 
 private fun UnsafeCharArrayWriter.println(value: String) {
 	write(value)
-	write(System.lineSeparator())
+	writeln()
 }
 
 internal fun Throwable.printSafeStackTrace_fallback(out: UnsafeCharArrayWriter, onFailure: OnFailure) {
