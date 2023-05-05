@@ -103,7 +103,7 @@ internal object AppLafSetup :
 
 	fun initialize() {
 		if (!EventQueue.isDispatchThread()) {
-			initializeViaSwingEdt()
+			initializeViaSwingEdt() // Blocks until initialization is complete
 			return
 		}
 
