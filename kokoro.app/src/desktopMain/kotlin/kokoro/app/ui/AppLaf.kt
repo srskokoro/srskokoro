@@ -9,6 +9,7 @@ import java.awt.EventQueue
 import java.awt.Toolkit
 import java.awt.Window
 import java.awt.event.InvocationEvent
+import java.lang.invoke.VarHandle
 import java.util.function.Consumer
 import javax.swing.SwingUtilities
 import javax.swing.UIManager
@@ -23,8 +24,10 @@ internal object AppLafSetup :
 	Throwable(null, null, false, false),
 	Consumer<Boolean>, Runnable {
 
+	// CONTRACT: MUST be regarded as immutable, once set to any other value.
 	@JvmField var noninit: Throwable? = this
-	// ^ Not `private` to avoid the extra synthetic accessor
+	// ^ Not `private` to avoid the extra synthetic accessor.
+	// ^ Deliberately not `@Volatile` -- it's OK for threads to not immediately see updates.
 
 	private var isDark: Boolean
 
@@ -108,14 +111,16 @@ internal object AppLafSetup :
 		// In Swing EDT...
 
 		try {
-			noninit = null // Prevent being called again by `maybeInit()`
 			// TODO More initialization logic goes here
 			//  ...
 			updateLaf()
 		} catch (ex: Throwable) {
-			noninit = ex
+			VarHandle.releaseFence() // Prevent the update below from being seen too early
+			noninit = ex // Prevent being called again by `maybeInit()`
 			throw wrapThrown()
 		}
+		VarHandle.releaseFence() // Prevent the update below from being seen too early
+		noninit = null // Prevent being called again by `maybeInit()`
 	}
 
 	private fun initializeViaSwingEdt() {
