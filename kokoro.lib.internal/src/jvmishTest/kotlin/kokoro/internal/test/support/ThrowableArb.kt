@@ -155,10 +155,9 @@ class ThrowableArb(
 	private fun Random.nextFqnFragment() = buildString { nextFqnFragment(this) }
 
 	private fun Random.nextStackTraceElement() = StackTraceElement(
-		/* classLoaderName = */ if (nextInt(5) != 0) null else nextFqnFragment(),
-		/* moduleName = */ if (nextInt(4) != 0) null else nextFqnFragment(),
-		/* moduleVersion = */
-		if (nextBoolean()) null else buildString {
+		classLoaderName = if (nextInt(5) != 0) null else nextFqnFragment(),
+		moduleName = if (nextInt(4) != 0) null else nextFqnFragment(),
+		moduleVersion = if (nextBoolean()) null else buildString {
 			fun nextVersionLength() = nextIntFavorSmallGreatly(3) + 1
 			nextString(this, DIGIT_CHARS, nextVersionLength())
 			if (nextInt(3) != 0) {
@@ -170,8 +169,7 @@ class ThrowableArb(
 				}
 			}
 		},
-		/* declaringClass = */
-		buildString {
+		declaringClass = buildString {
 			var fragments = nextIntFavorSmall(10)
 			while (--fragments >= 0) {
 				nextFqnFragment(this)
@@ -179,9 +177,8 @@ class ThrowableArb(
 			}
 			nextFqnFragment(this)
 		},
-		/* methodName = */ nextFqnFragment(),
-		/* fileName = */
-		if (nextInt(4) != 0) buildString {
+		methodName = nextFqnFragment(),
+		fileName = if (nextInt(4) != 0) buildString {
 			nextFqnFragment(this)
 			when (nextIntFavorSmall(5)) {
 				0 -> append(".kt")
@@ -194,6 +191,6 @@ class ThrowableArb(
 				else -> append('.')
 			}
 		} else null,
-		/* lineNumber = */ nextIntFavorSmall(1 shl nextInt(15)) - 2,
+		lineNumber = nextIntFavorSmall(1 shl nextInt(15)) - 2,
 	)
 }
