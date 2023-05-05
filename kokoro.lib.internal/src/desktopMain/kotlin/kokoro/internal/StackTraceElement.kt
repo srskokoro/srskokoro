@@ -15,8 +15,10 @@ actual inline fun StackTraceElement(
 	/* classLoaderName = */ classLoaderName,
 	/* moduleName = */ moduleName,
 	/* moduleVersion = */ moduleVersion,
+
 	/* declaringClass = */ declaringClass,
 	/* methodName = */ methodName,
+
 	/* fileName = */ fileName,
 	/* lineNumber = */ lineNumber,
 )
