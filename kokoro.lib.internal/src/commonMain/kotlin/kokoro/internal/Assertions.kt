@@ -13,6 +13,13 @@ inline fun assert(lazyMessage: () -> Any = { "Assertion failed!" }, lazyCheck: (
 	}
 }
 
+inline fun assertUnreachable(lazyMessage: () -> Any = { "Should be unreachable" }) {
+	if (ASSERTIONS_ENABLED) {
+		val message = lazyMessage()
+		throw AssertionError(message)
+	}
+}
+
 /**
  * Throws an [AssertionError] if the [value] is null.
  */
