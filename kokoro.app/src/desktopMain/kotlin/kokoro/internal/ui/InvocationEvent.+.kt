@@ -7,7 +7,7 @@ import java.lang.reflect.InaccessibleObjectException
 
 fun InvocationEvent.isLikelyFromSwing(): Boolean {
 	val eventClass = javaClass
-	val targetModuleName =
+	val targetModuleName: String? =
 		if (eventClass !== InvocationEvent::class.java) {
 			eventClass
 		} else {
