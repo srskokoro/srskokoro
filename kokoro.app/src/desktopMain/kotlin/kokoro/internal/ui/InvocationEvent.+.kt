@@ -9,13 +9,13 @@ fun InvocationEvent.isLikelyFromSwing(): Boolean {
 	val eventClass = javaClass
 	val targetModuleName =
 		if (eventClass !== InvocationEvent::class.java) {
-			eventClass.module
+			eventClass
 		} else {
 			// A null `runnable` is highly unlikely to be set by Swing or AWT,
 			// since otherwise, `InvocationEvent.dispatch()` would throw NPE.
 			(Reflect_InvocationEvent.runnable?.get(this) ?: return false)
-				.javaClass.module
-		}.name
+				.javaClass
+		}.module.name
 	@Suppress("ReplaceCallWithBinaryOperator")
 	return "java.desktop".equals(targetModuleName)
 }
