@@ -23,11 +23,11 @@ kotlin {
 		val commonMain by getting
 		val commonTest by getting
 
-		val appMain by creating { dependsOn(commonMain) }
-		val appTest by creating { dependsOn(commonTest) }
+		val appMain by creating { /*--------------*/; dependsOn(commonMain) }
+		val appTest by creating { dependsOn(appMain); dependsOn(commonTest) }
 
-		val jvmishMain by creating { dependsOn(appMain) }
-		val jvmishTest by creating { dependsOn(appTest) }
+		val jvmishMain by creating { /*-----------------*/; dependsOn(appMain) }
+		val jvmishTest by creating { dependsOn(jvmishMain); dependsOn(appTest) }
 
 		val androidMain/**/ by getting { dependsOn(jvmishMain) }
 		val androidUnitTest by getting { dependsOn(jvmishTest) }
@@ -35,8 +35,8 @@ kotlin {
 		val desktopMain by getting { dependsOn(jvmishMain) }
 		val desktopTest by getting { dependsOn(jvmishTest) }
 
-		val iosMain by creating { dependsOn(appMain) }
-		val iosTest by creating { dependsOn(appTest) }
+		val iosMain by creating { /*--------------*/; dependsOn(appMain) }
+		val iosTest by creating { dependsOn(iosMain); dependsOn(appTest) }
 
 		val iosX64Main by getting { dependsOn(iosMain) }
 		val iosX64Test by getting { dependsOn(iosTest) }
