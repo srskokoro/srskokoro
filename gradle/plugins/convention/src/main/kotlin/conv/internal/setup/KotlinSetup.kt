@@ -1,7 +1,7 @@
 package conv.internal.setup
 
 import conv.internal.KotlinTargetsConfigLoader
-import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.ExtensionAware
@@ -36,28 +36,37 @@ internal fun Project.setUpTargetsExtensions(kotlin: KotlinMultiplatformExtension
 private fun Project.setUpProject(kotlin: KotlinProjectExtension) {
 	val kotlinSourceSets = getSourceSets(kotlin)
 	this.kotlinSourceSets = kotlinSourceSets
+	setUpSeparateTestDir(kotlinSourceSets)
+}
 
-	// Allow tests to be placed under 'test' directory instead of 'src'
-	// - Eager configuration is necessary here (i.e., must use `all` instead of
+/**
+ * Allow tests to be placed under 'test' directory instead of 'src'
+ */
+private fun Project.setUpSeparateTestDir(kotlinSourceSets: NamedDomainObjectContainer<KotlinSourceSet>) {
+	val defaultSrcPath = file("src").path + File.separatorChar
+	val separateTestDir = file("test")
+
+	fun SourceDirectorySet.setUpSeparateTestDir(): Unit = srcDirs.forEach {
+		val path = it.path
+		if (path.startsWith(defaultSrcPath)) srcDir(File(
+			separateTestDir, path.substring(defaultSrcPath.length),
+		))
+	}
+
+	// Eager configuration is necessary here (i.e., must use `all` instead of
 	// `configureEach`). Otherwise, expect-actual declarations won't work.
-	kotlinSourceSets.all(object : Action<KotlinSourceSet> {
-		private val defaultSrcPath = file("src").path + File.separatorChar
-		private val separateTestDir = file("test")
-
-		private fun SourceDirectorySet.setUpSeparateTestDir() {
-			srcDirs.forEach {
-				val path = it.path
-				if (path.startsWith(defaultSrcPath)) srcDir(File(
-					separateTestDir, path.substring(defaultSrcPath.length),
-				))
-			}
+	kotlinSourceSets.all {
+		if (name.let { it.endsWith("Test") || it == "test" }) {
+			kotlin.setUpSeparateTestDir()
+			resources.setUpSeparateTestDir()
 		}
+	}
 
-		override fun execute(srcSet: KotlinSourceSet) {
-			if (srcSet.name.let { it.endsWith("Test") || it == "test" }) {
-				srcSet.kotlin.setUpSeparateTestDir()
-				srcSet.resources.setUpSeparateTestDir()
-			}
+	// Also set up for `org.gradle.api.tasks.SourceSet` (if any).
+	sourceSets.configureEach {
+		if (name.let { it.endsWith("Test") || it == "test" }) {
+			java.setUpSeparateTestDir()
+			resources.setUpSeparateTestDir()
 		}
-	})
+	}
 }
