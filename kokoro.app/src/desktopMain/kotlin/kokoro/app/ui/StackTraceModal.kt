@@ -205,7 +205,6 @@ private object StackTraceModalImpl {
 			JLabel(TEXT_FATAL_ERROR_ENCOUNTERED).apply {
 				vAdd(this, min = PREFERRED_SIZE, max = PREFERRED_SIZE)
 			}
-
 			SUGGEST_MUST_QUIT_NOW
 		}
 
