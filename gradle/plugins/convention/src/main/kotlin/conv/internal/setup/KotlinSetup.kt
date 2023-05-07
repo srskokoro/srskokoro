@@ -38,7 +38,7 @@ private fun Project.setUpProject(kotlin: KotlinProjectExtension) {
 	this.kotlinSourceSets = kotlinSourceSets
 
 	// Allow tests to be placed under 'test' directory instead of 'src'
-	kotlinSourceSets.configureEach(object : Action<KotlinSourceSet> {
+	kotlinSourceSets.all(object : Action<KotlinSourceSet> {
 		private val defaultSrcPath = file("src").path + File.separatorChar
 		private val separateTestDir = file("test")
 
