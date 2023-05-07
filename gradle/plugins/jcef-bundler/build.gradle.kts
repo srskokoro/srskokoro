@@ -49,8 +49,7 @@ run {
 			topLevelConstants = true
 		}
 
-		val pluginGradlePropsRootRelPath = gradle.parent!!.rootProject.relativePath(file("gradle.properties"))
-		buildConfigField("String", "pluginGradlePropsRootRelPath", "\"\"\"$pluginGradlePropsRootRelPath\"\"\"")
+		buildConfigField("String", "pluginGradlePropsPath", "\"\"\"${file("gradle.properties")}\"\"\"")
 
 		buildConfigField("String", "jcefBuildJcefCommitProp", "\"$jcefBuildJcefCommitProp\"")
 		buildConfigField("String", "jcefBuildCefVersionProp", "\"$jcefBuildCefVersionProp\"")

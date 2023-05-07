@@ -65,7 +65,7 @@ private fun JcefInstallTask.installJcef(installDir: File) {
 			  $jcefBuildJcefCommitProp
 			  $jcefBuildCefVersionProp
 
-			Preferably in, ${project.rootProject.file(pluginGradlePropsRootRelPath)}
+			Preferably in, $pluginGradlePropsPath
 			""".trimIndent()
 		)
 	}
