@@ -54,7 +54,7 @@ private fun Project.setUpProject(kotlin: KotlinProjectExtension) {
 		}
 
 		override fun execute(srcSet: KotlinSourceSet) {
-			if (srcSet.name.endsWith("Test")) {
+			if (srcSet.name.let { it.endsWith("Test") || it == "test" }) {
 				srcSet.kotlin.setUpSeparateTestDir()
 				srcSet.resources.setUpSeparateTestDir()
 			}
