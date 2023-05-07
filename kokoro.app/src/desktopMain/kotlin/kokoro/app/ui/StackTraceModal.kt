@@ -102,6 +102,7 @@ private class StackTraceModalEvent(target: Throwable) : InvocationEvent(StackTra
 					if (!GraphicsEnvironment.isHeadless()) {
 						awaitDismiss(stackTrace, gotError)
 					} else if (!gotError) {
+						// Make it so that `poll()` would return `null`
 						current.deferredFailures.addLast(null)
 						// ^ Avoids a potential endless loop that may happen due
 						// to the next code below.
