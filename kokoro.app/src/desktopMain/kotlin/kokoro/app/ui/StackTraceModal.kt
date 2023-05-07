@@ -151,8 +151,8 @@ private object StackTraceModalImpl {
 		"The app is now likely unstable.\n" +
 		"Process terminating..."
 
-	private const val SUGGESTION_MAY_QUIT_NOW = "While the error can be ignored, you may also choose to quit the app now."
-	private const val SUGGESTION_MUST_QUIT_NOW = "The app is now likely unstable. It is recommended to quit the app now."
+	private const val SUGGEST_MAY_QUIT_NOW = "While the error can be ignored, you may also choose to quit the app now."
+	private const val SUGGEST_MUST_QUIT_NOW = "The app is now likely unstable. It is recommended to quit the app now."
 
 	// --
 
@@ -196,7 +196,7 @@ private object StackTraceModalImpl {
 			defaultOption = IGNORE
 			titleSuffix = TITLE_SUFFIX_UNHANDLED_EXCEPTION
 
-			SUGGESTION_MAY_QUIT_NOW
+			SUGGEST_MAY_QUIT_NOW
 		} else {
 			options = arrayOf(QUIT_NOW)
 			defaultOption = QUIT_NOW
@@ -206,7 +206,7 @@ private object StackTraceModalImpl {
 				vAdd(this, min = PREFERRED_SIZE, max = PREFERRED_SIZE)
 			}
 
-			SUGGESTION_MUST_QUIT_NOW
+			SUGGEST_MUST_QUIT_NOW
 		}
 
 		JLabel(closingSuggestion).apply {
