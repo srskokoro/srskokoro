@@ -85,6 +85,7 @@
       <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
       <option name="KEEP_BLANK_LINES_BEFORE_RBRACE" value="0" />
       <option name="CALL_PARAMETERS_WRAP" value="0" />
+      <option name="CALL_PARAMETERS_LPAREN_ON_NEXT_LINE" value="false" />
       <option name="CALL_PARAMETERS_RPAREN_ON_NEXT_LINE" value="false" />
       <option name="METHOD_CALL_CHAIN_WRAP" value="0" />
       <option name="METHOD_ANNOTATION_WRAP" value="1" />
