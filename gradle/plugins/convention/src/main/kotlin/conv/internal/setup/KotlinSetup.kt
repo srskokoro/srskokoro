@@ -1,11 +1,15 @@
 package conv.internal.setup
 
 import conv.internal.KotlinTargetsConfigLoader
+import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.typeOf
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import java.io.File
 
 internal fun Project.setUp(kotlin: KotlinProjectExtension): Unit = with(kotlin) {
 	setUpProject(kotlin)
@@ -30,5 +34,28 @@ internal fun Project.setUpTargetsExtensions(kotlin: KotlinMultiplatformExtension
 // --
 
 private fun Project.setUpProject(kotlin: KotlinProjectExtension) {
-	kotlinSourceSets = getSourceSets(kotlin)
+	val kotlinSourceSets = getSourceSets(kotlin)
+	this.kotlinSourceSets = kotlinSourceSets
+
+	// Allow tests to be placed under 'test' directory instead of 'src'
+	kotlinSourceSets.configureEach(object : Action<KotlinSourceSet> {
+		private val defaultSrcPath = file("src").path + File.separatorChar
+		private val separateTestDir = file("test")
+
+		private fun SourceDirectorySet.setUpSeparateTestDir() {
+			srcDirs.forEach {
+				val path = it.path
+				if (path.startsWith(defaultSrcPath)) srcDir(File(
+					separateTestDir, path.substring(defaultSrcPath.length),
+				))
+			}
+		}
+
+		override fun execute(srcSet: KotlinSourceSet) {
+			if (srcSet.name.endsWith("Test")) {
+				srcSet.kotlin.setUpSeparateTestDir()
+				srcSet.resources.setUpSeparateTestDir()
+			}
+		}
+	})
 }
