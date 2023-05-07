@@ -1,5 +1,3 @@
-package kokoro.internal.test.config
-
 import io.kotest.core.config.AbstractProjectConfig
 
 /**

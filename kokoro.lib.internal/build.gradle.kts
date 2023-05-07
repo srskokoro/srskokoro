@@ -4,7 +4,7 @@ plugins {
 	id("conv.version")
 }
 
-kotestConfigClass = "kokoro.internal.test.config.KotestConfig"
+kotestConfigClass = "KotestConfig"
 
 kotlin {
 	/**
