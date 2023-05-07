@@ -6,6 +6,8 @@ import org.gradle.api.provider.ProviderFactory
 /**
  * `true` if the environment variable `IS_RELEASING=true` is defined; `false`
  * otherwise.
+ *
+ * @see Project.isReleasing
  */
 val ProviderFactory.isReleasing: Boolean
 	get() = @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN", "KotlinConstantConditions")
