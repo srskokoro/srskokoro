@@ -101,13 +101,13 @@ private class StackTraceModalEvent(target: Throwable) : InvocationEvent(StackTra
 
 					if (!GraphicsEnvironment.isHeadless()) {
 						awaitDismiss(stackTrace, gotError)
-					} else if (gotError) {
-						System.err.println(HEADLESS_NOTICE_FATAL_ERROR_ENCOUNTERED_TERMINATING)
-						exitProcess(NONZERO_STATUS)
-					} else {
+					} else if (!gotError) {
 						current.deferredFailures.addLast(null)
 						// ^ Avoids a potential endless loop that may happen due
-						// to the following code below.
+						// to the next code below.
+					} else {
+						System.err.println(HEADLESS_NOTICE_FATAL_ERROR_ENCOUNTERED_TERMINATING)
+						exitProcess(NONZERO_STATUS)
 					}
 
 					val deferredFailure = current.deferredFailures.poll()
