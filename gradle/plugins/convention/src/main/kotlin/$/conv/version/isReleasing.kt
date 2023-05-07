@@ -18,14 +18,18 @@ val ProviderFactory.isReleasing: Boolean
  * otherwise. Same as [`providers.isReleasing`][ProviderFactory.isReleasing]
  *
  * @see ProviderFactory.isReleasing
+ * @see Project.isDebug
  */
 val Project.isReleasing: Boolean
 	inline get() = providers.isReleasing
 
 /**
- * `true` if all debugging facilities should be fully enabled. Currently, this
- * is implemented simply as `!`[isReleasing] (but future implementations may
- * change this).
+ * `true` if all debugging facilities should be fully enabled. The return value
+ * is expected to be always the same as the following:
+ * ```
+ * !project.isReleasing
+ * ```
+ * @see Project.isReleasing
  */
 val Project.isDebug: Boolean
 	inline get() = !isReleasing

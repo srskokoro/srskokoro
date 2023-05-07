@@ -31,7 +31,8 @@ android {
 buildConfig {
 	publicTopLevel() inPackage NAMESPACE
 	buildConfigField("boolean", "IS_RELEASING", "$isReleasing")
-	buildConfigField("boolean", "DEBUG", "$isDebug")
+	require(!isReleasing == isDebug) { throw AssertionError() }
+	buildConfigField("boolean", "DEBUG", "!IS_RELEASING")
 }
 
 dependencies {
