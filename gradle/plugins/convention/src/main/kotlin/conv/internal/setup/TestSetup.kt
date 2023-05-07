@@ -1,11 +1,19 @@
 package conv.internal.setup
 
 import conv.internal.util.*
+import io.kotest.core.internal.KotestEngineProperties
+import kotestConfigClass
+import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
 
-internal fun setUp(task: Test): Unit = with(task) {
+internal fun Project.setUp(task: Test): Unit = with(task) {
 	useJUnitPlatform()
 	setUpForDebug(this)
+
+	kotestConfigClass?.let {
+		systemProperty(KotestEngineProperties.configurationClassName, it)
+		systemProperty(KotestEngineProperties.disableConfigurationClassPathScanning, "true")
+	}
 }
 
 internal fun setUpTestFrameworkDeps_android(consume: DependencyConsumer) {

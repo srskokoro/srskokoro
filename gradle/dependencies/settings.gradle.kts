@@ -31,6 +31,7 @@ dependencyVersions {
 	plugin("io.kotest.multiplatform", kotest)
 	module("io.kotest:kotest-framework-multiplatform-plugin-gradle", kotest)
 	module("io.kotest:kotest-runner-junit5", kotest)
+	module("io.kotest:kotest-framework-api", kotest)
 	module("io.kotest:kotest-framework-engine", kotest)
 	module("io.kotest:kotest-assertions-core", kotest)
 	module("io.kotest:kotest-property", kotest)

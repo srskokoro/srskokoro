@@ -4,6 +4,8 @@ plugins {
 	id("conv.version")
 }
 
+kotestConfigClass = "kokoro.internal.test.config.KotestConfig"
+
 kotlin {
 	/**
 	 * See 'build.targets.txt' to declare build targets, then use
