@@ -38,6 +38,8 @@ private fun Project.setUpProject(kotlin: KotlinProjectExtension) {
 	this.kotlinSourceSets = kotlinSourceSets
 
 	// Allow tests to be placed under 'test' directory instead of 'src'
+	// - Eager configuration is necessary here (i.e., must use `all` instead of
+	// `configureEach`). Otherwise, expect-actual declarations won't work.
 	kotlinSourceSets.all(object : Action<KotlinSourceSet> {
 		private val defaultSrcPath = file("src").path + File.separatorChar
 		private val separateTestDir = file("test")
