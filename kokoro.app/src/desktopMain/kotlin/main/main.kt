@@ -1,4 +1,6 @@
-﻿import kokoro.app.AppBuild
+﻿package main
+
+import kokoro.app.AppBuild
 import kokoro.app.AppData
 import kokoro.app.cli.Main
 import kokoro.internal.DEBUG
