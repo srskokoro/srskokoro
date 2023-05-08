@@ -9,12 +9,14 @@ import kotlinx.coroutines.runBlocking
 import java.io.IOException
 import java.io.InterruptedIOException
 import java.nio.file.FileSystemException
+import kotlin.math.max
 import kotlin.random.Random
 
 private typealias ThrowableFactory = (message: String?) -> Throwable
 
 class ThrowableArb(
 	private val circularRefsProb: Double = 0.10,
+	private val maxThrowableCount: Int = 20,
 ) : Arb<Throwable>() {
 	companion object {
 		private val THROWABLE_FACTORIES = listOf<ThrowableFactory>(
@@ -103,13 +105,10 @@ class ThrowableArb(
 		return throwable
 	}
 
-	private fun Random.randomizeCauseAndSuppressions(throwable: Throwable, randomizationDepth: Int, throwablesSoFar: ArrayList<Throwable>) {
-		if (circularRefsProb > 0.0) throwablesSoFar.add(throwable)
+	private fun Random.randomizeCauseAndSuppressions(throwable: Throwable, maxThrowableCount: Int, throwablesSoFar: ArrayList<Throwable>) {
+		throwablesSoFar.add(throwable)
 
-		if (randomizationDepth <= 0) return
-		val nextRandomizationDepth = randomizationDepth - 1
-
-		while (nextBoolean()) {
+		while (throwablesSoFar.size < maxThrowableCount && nextBoolean()) {
 			var sx: Throwable
 			kotlin.run {
 				if (nextDouble() < circularRefsProb) {
@@ -117,11 +116,11 @@ class ThrowableArb(
 					if (sx !== throwable) return@run
 				}
 				sx = nextSimpleThrowable()
-				randomizeCauseAndSuppressions(sx, nextRandomizationDepth, throwablesSoFar)
+				randomizeCauseAndSuppressions(sx, maxThrowableCount, throwablesSoFar)
 			}
 			throwable.addSuppressed(sx)
 		}
-		if (nextBoolean()) {
+		if (throwablesSoFar.size < maxThrowableCount && nextBoolean()) {
 			var cause: Throwable
 			kotlin.run {
 				if (nextDouble() < circularRefsProb) {
@@ -129,7 +128,7 @@ class ThrowableArb(
 					if (cause !== throwable) return@run
 				}
 				cause = nextSimpleThrowable()
-				randomizeCauseAndSuppressions(cause, nextRandomizationDepth, throwablesSoFar)
+				randomizeCauseAndSuppressions(cause, maxThrowableCount, throwablesSoFar)
 			}
 			throwable.initCause(cause)
 		}
@@ -137,7 +136,7 @@ class ThrowableArb(
 
 	private fun Random.nextComplexThrowable(): Throwable {
 		val ex = nextSimpleThrowable()
-		randomizeCauseAndSuppressions(ex, nextInt(10), ArrayList())
+		randomizeCauseAndSuppressions(ex, nextInt(max(maxThrowableCount, 0) + 1), ArrayList())
 		return ex
 	}
 
