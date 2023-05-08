@@ -232,6 +232,7 @@ private class AppDaemon(
 
 			val ex = suppressed[0]
 			for (exx in suppressed) ex.addSuppressed(exx)
+			throw ex
 		}
 	}
 
