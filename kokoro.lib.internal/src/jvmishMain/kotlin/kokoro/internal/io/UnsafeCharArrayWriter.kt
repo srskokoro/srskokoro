@@ -3,7 +3,7 @@ package kokoro.internal.io
 import java.io.CharArrayWriter
 import java.io.Writer
 import java.nio.CharBuffer
-import java.util.*
+import java.util.Arrays
 import kotlin.math.max
 import kotlin.math.min
 
