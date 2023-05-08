@@ -10,6 +10,7 @@ import kokoro.internal.getSafeStackTrace
 import kokoro.internal.io.UnsafeCharArrayWriter
 import kokoro.internal.printSafeStackTrace
 import kokoro.internal.ui.ensureBounded
+import kotlinx.coroutines.CoroutineExceptionHandler
 import java.awt.Component
 import java.awt.Dialog
 import java.awt.Font
@@ -28,9 +29,11 @@ import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JTextArea
 import javax.swing.WindowConstants
+import kotlin.coroutines.CoroutineContext
 import kotlin.system.exitProcess
 
-object StackTraceModal {
+object StackTraceModal : CoroutineExceptionHandler, Thread.UncaughtExceptionHandler {
+
 	/**
 	 * Eventually, prints the stacktrace of the given [throwable] to the
 	 * standard error stream, then displays a [modal window](https://en.wikipedia.org/wiki/Modal_window)
@@ -64,6 +67,21 @@ object StackTraceModal {
 	fun print(throwable: Throwable) {
 		Toolkit.getDefaultToolkit().systemEventQueue
 			.postEvent(StackTraceModalEvent(throwable))
+	}
+
+	// --
+
+	override val key: CoroutineContext.Key<*>
+		get() = CoroutineExceptionHandler
+
+	override fun handleException(context: CoroutineContext, exception: Throwable) {
+		// TODO Also include `context.toString()`?
+		print(exception)
+	}
+
+	override fun uncaughtException(thread: Thread, exception: Throwable) {
+		// TODO Also include `thread` name?
+		print(exception)
 	}
 }
 
