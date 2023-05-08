@@ -462,8 +462,8 @@ private class AppRelay(sockDir: String) {
 				throw IOException(
 					(if (i == 0) "Current working directory too long."
 					else "Command argument too long (at index ${i - 1}).") +
-					" Length in UTF-8 must be less than " + Short.MAX_VALUE +
-					" bytes.", ex)
+						" Length in UTF-8 must be less than " + Short.MAX_VALUE +
+						" bytes.", ex)
 			}
 
 			// Fill the reserved header with the UTF-8 lengths
