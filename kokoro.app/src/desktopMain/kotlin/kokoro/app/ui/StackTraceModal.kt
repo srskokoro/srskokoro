@@ -19,6 +19,7 @@ import java.awt.GraphicsEnvironment
 import java.awt.Toolkit
 import java.awt.event.ActionEvent
 import java.awt.event.InvocationEvent
+import java.io.Writer
 import java.util.LinkedList
 import javax.swing.AbstractAction
 import javax.swing.GroupLayout
@@ -64,11 +65,19 @@ object StackTraceModal : CoroutineExceptionHandler, Thread.UncaughtExceptionHand
 	 * stream), before forcibly exiting the current process with a nonzero
 	 * status code &ndash; i.e., this should instead be treated as an
 	 * irrevocable, fatal error.
+	 *
+	 * @param throwable the [Throwable] to print.
+	 * @param extra a function to receive a [Writer] &ndash; use this to append
+	 * additional diagnostic information.
 	 */
-	fun print(throwable: Throwable) {
+	fun print(throwable: Throwable, extra: (Writer) -> Unit) {
 		Toolkit.getDefaultToolkit().systemEventQueue
-			.postEvent(StackTraceModalEvent(throwable))
+			.postEvent(StackTraceModalEvent(throwable, extra))
 	}
+
+	/** @see print */
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun print(throwable: Throwable) = print(throwable) {}
 
 	// --
 
@@ -76,13 +85,30 @@ object StackTraceModal : CoroutineExceptionHandler, Thread.UncaughtExceptionHand
 		get() = CoroutineExceptionHandler
 
 	override fun handleException(context: CoroutineContext, exception: Throwable) {
-		// TODO Also include `context.toString()`?
-		print(exception)
+		print(exception) { out ->
+			out.write("\tContext: ")
+			out.write(context.toString())
+			out.writeln()
+		}
 	}
 
 	override fun uncaughtException(thread: Thread, exception: Throwable) {
-		// TODO Also include `thread` name?
-		print(exception)
+		print(exception) { out ->
+			out.write("\tThread: [")
+			out.write(thread.name)
+
+			out.write("]{priority=")
+			out.write(thread.priority.toString())
+
+			thread.threadGroup?.let { group ->
+				out.write(",group=[")
+				out.write(group.name)
+				out.write(']'.code)
+			}
+
+			out.write('}'.code)
+			out.writeln()
+		}
 	}
 }
 
@@ -93,9 +119,17 @@ private inline fun echoStackTrace(stackTrace: String) {
 	// a final newline.
 }
 
-private class StackTraceModalEvent(target: Throwable) : InvocationEvent(StackTraceModal, null) {
+private class StackTraceModalEvent(target: Throwable, extra: (Writer) -> Unit) : InvocationEvent(StackTraceModal, null) {
 	private val deferredFailures = LinkedList<Throwable?>()
-	private val stackTrace = target.getSafeStackTrace(deferredFailures::addLast)
+	private val stackTrace = UnsafeCharArrayWriter().let { out ->
+		target.printSafeStackTrace(out, deferredFailures::addLast)
+		try {
+			extra(out)
+		} catch (ex: Throwable) {
+			deferredFailures.addLast(ex)
+		}
+		out.toString()
+	}
 	private val gotError = target.anyError()
 
 	private companion object {
