@@ -23,6 +23,7 @@ inline fun assertUnreachable(lazyMessage: () -> Any = { "Should be unreachable" 
 /**
  * Throws an [AssertionError] if the [value] is null.
  */
+@Suppress("NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
 @OptIn(ExperimentalContracts::class)
 inline fun <T : Any> assertNotNull(value: T?) {
 	contract {
