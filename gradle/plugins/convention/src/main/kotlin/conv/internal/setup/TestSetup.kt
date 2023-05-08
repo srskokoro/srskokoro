@@ -37,6 +37,6 @@ internal fun setUpTestFrameworkDeps_kmp_common(consume: DependencyConsumer) {
 }
 
 internal fun setUpTestCommonDeps(consume: DependencyConsumer) {
-	consume("org.jetbrains.kotlin:kotlin-test")
+	consume("org.jetbrains.kotlin:kotlin-test") // https://kotlinlang.org/docs/gradle-configure-project.html#set-dependencies-on-test-libraries
 	consume("io.kotest:kotest-assertions-core")
 }
