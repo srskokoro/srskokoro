@@ -10,7 +10,7 @@ import kokoro.internal.test.support.ThrowableArb
 import java.io.PrintWriter
 import java.util.LinkedList
 
-class `Throwable printStackTrace (Test)` : FunSpec({
+class Throwable_spec : FunSpec({
 	test("Output of `printSafeStackTrace_fallback` is consistent with `printStackTrace`") {
 		checkAll(ThrowableArb()) { throwable ->
 			val failures = LinkedList<Throwable>()

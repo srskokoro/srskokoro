@@ -6,7 +6,7 @@ import io.kotest.property.arbitrary.arbitrary
 import io.kotest.property.checkAll
 import io.kotest.property.forAll
 
-class `Random ~ (Test)` : FunSpec({
+class Random_spec : FunSpec({
 	test("`nextIntFavorSmall(u)` returns `0` until `u`") {
 		forAll(arbitrary { rs ->
 			rs.random.nextIntFavorSmall(rs.random.nextInt(1, 11))
