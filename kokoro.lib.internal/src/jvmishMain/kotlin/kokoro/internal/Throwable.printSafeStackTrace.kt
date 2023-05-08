@@ -1,6 +1,7 @@
 package kokoro.internal
 
 import kokoro.internal.io.UnsafeCharArrayWriter
+import kokoro.internal.io.writeln
 import java.io.PrintStream
 import java.io.PrintWriter
 

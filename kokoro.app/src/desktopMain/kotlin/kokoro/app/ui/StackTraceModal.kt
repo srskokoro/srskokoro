@@ -8,6 +8,7 @@ import kokoro.internal.anyError
 import kokoro.internal.assert
 import kokoro.internal.getSafeStackTrace
 import kokoro.internal.io.UnsafeCharArrayWriter
+import kokoro.internal.io.writeln
 import kokoro.internal.printSafeStackTrace
 import kokoro.internal.ui.ensureBounded
 import kotlinx.coroutines.CoroutineExceptionHandler
