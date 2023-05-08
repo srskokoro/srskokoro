@@ -231,7 +231,9 @@ private class AppDaemon(
 			if (suppressed.isEmpty()) return
 
 			val ex = suppressed[0]
-			for (exx in suppressed) ex.addSuppressed(exx)
+			for (i in 1 until suppressed.size) {
+				ex.addSuppressed(suppressed[i])
+			}
 			throw ex
 		}
 	}
