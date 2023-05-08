@@ -11,7 +11,7 @@
       <option name="namePattern" value="[_A-Z][_A-Za-z\d]*|.*\([Tt]est\)" />
     </inspection_tool>
     <inspection_tool class="ConstPropertyName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
-      <option name="namePattern" value="(?:_*[A-Za-z][A-Za-z\d]*)+" />
+      <option name="namePattern" value="(?:_*[A-Za-z\d][A-Za-z\d]*)+" />
     </inspection_tool>
     <inspection_tool class="EditorConfigEmptySection" enabled="true" level="INFORMATION" enabled_by_default="true" />
     <inspection_tool class="EditorConfigNoMatchingFiles" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
@@ -24,7 +24,7 @@
       <option name="namePattern" value="(?:_*[a-z][A-Za-z\d]*)+|[A-Z][_A-Z\d]*" />
     </inspection_tool>
     <inspection_tool class="ObjectPropertyName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
-      <option name="namePattern" value="(?:_*[A-Za-z][A-Za-z\d]*)+" />
+      <option name="namePattern" value="(?:_*[A-Za-z\d][A-Za-z\d]*)+" />
     </inspection_tool>
     <inspection_tool class="PrivatePropertyName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="namePattern" value="(?:_*[a-z][A-Za-z\d]*)+|[A-Z][_A-Z\d]*" />
