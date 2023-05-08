@@ -14,6 +14,10 @@ internal fun Project.setUp(task: Test): Unit = with(task) {
 		systemProperty(KotestEngineProperties.configurationClassName, it)
 		systemProperty(KotestEngineProperties.disableConfigurationClassPathScanning, "true")
 	}
+
+	maxParallelForks = Runtime.getRuntime().availableProcessors()
+	// ^ NOTE: Kotest isn't affected by the above, regardless of its value. The
+	// above is only relevant for tests outside of Kotest.
 }
 
 internal fun setUpTestFrameworkDeps_android(consume: DependencyConsumer) {
