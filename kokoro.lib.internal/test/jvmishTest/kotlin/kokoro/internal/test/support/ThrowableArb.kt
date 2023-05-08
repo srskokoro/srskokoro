@@ -105,32 +105,32 @@ class ThrowableArb(
 		return throwable
 	}
 
-	private fun Random.randomizeCauseAndSuppressions(throwable: Throwable, maxThrowableCount: Int, throwablesSoFar: ArrayList<Throwable>) {
-		throwablesSoFar.add(throwable)
+	private fun Random.randomizeCauseAndSuppressions(current: Throwable, maxThrowableCount: Int, throwablesSoFar: ArrayList<Throwable>) {
+		throwablesSoFar.add(current)
 
 		while (throwablesSoFar.size < maxThrowableCount && nextBoolean()) {
 			var sx: Throwable
 			kotlin.run {
 				if (nextDouble() < circularRefsProb) {
 					sx = throwablesSoFar.run { this[nextInt(size)] }
-					if (sx !== throwable) return@run
+					if (sx !== current) return@run
 				}
 				sx = nextSimpleThrowable()
 				randomizeCauseAndSuppressions(sx, maxThrowableCount, throwablesSoFar)
 			}
-			throwable.addSuppressed(sx)
+			current.addSuppressed(sx)
 		}
 		if (throwablesSoFar.size < maxThrowableCount && nextBoolean()) {
 			var cause: Throwable
 			kotlin.run {
 				if (nextDouble() < circularRefsProb) {
 					cause = throwablesSoFar.run { this[nextInt(size)] }
-					if (cause !== throwable) return@run
+					if (cause !== current) return@run
 				}
 				cause = nextSimpleThrowable()
 				randomizeCauseAndSuppressions(cause, maxThrowableCount, throwablesSoFar)
 			}
-			throwable.initCause(cause)
+			current.initCause(cause)
 		}
 	}
 
