@@ -3,6 +3,7 @@
 import kokoro.app.AppBuild
 import kokoro.app.AppData
 import kokoro.app.cli.Main
+import kokoro.app.ui.StackTraceModal
 import kokoro.internal.DEBUG
 import kokoro.internal.kotlin.TODO
 import kotlinx.coroutines.*
@@ -54,7 +55,7 @@ private const val INSTANCE_CHANGE_LOCK_BYTE = 0L
 private const val MASTER_INSTANCE_LOCK_BYTE = 1L
 
 fun main(args: Array<out String>) {
-	// TODO Install uncaught exception handler
+	Thread.setDefaultUncaughtExceptionHandler(StackTraceModal) // Installed early to help with debugging
 
 	val lockDir = AppData.deviceBoundMain.parent!!.toString()
 	val lockFile = File(lockDir, ".lock")
@@ -97,7 +98,7 @@ private const val CLI_PROTOCOL_01 = 0x01
 private const val CLI_PROTOCOL_DEFAULT = CLI_PROTOCOL_01
 
 private object ClientHandlingSwingScope : CoroutineScope {
-	override val coroutineContext = SupervisorJob() + Dispatchers.Swing
+	override val coroutineContext = SupervisorJob() + Dispatchers.Swing + StackTraceModal
 }
 
 private class AppDaemon(
