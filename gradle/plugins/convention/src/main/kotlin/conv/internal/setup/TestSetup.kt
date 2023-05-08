@@ -10,6 +10,14 @@ internal fun Project.setUp(task: Test): Unit = with(task) {
 	useJUnitPlatform()
 	setUpForDebug(this)
 
+	// Must be 1, as both Kotest and JUnit already have their own mechanism to
+	// parallelize tests.
+	maxParallelForks = 1
+	// ^ WARNING: When greater than 1, the test engine would get forked into
+	// several processes, which is quite expensive: there's heavy startup cost.
+	// ^ NOTE: The above is already 1 by default, but this makes things
+	// explicit, and also serves as a warning to future devs.
+
 	kotestConfigClass?.let {
 		systemProperty(KotestEngineProperties.configurationClassName, it)
 		systemProperty(KotestEngineProperties.disableConfigurationClassPathScanning, "true")
