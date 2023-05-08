@@ -128,6 +128,7 @@ private class StackTraceModalEvent(target: Throwable, extra: (Writer) -> Unit) :
 		} catch (ex: Throwable) {
 			deferredFailures.addLast(ex)
 		}
+		out.applyBackspaces()
 		out.toString()
 	}
 	private val gotError = target.anyError()
@@ -170,7 +171,7 @@ private class StackTraceModalEvent(target: Throwable, extra: (Writer) -> Unit) :
 						continue@outer
 					}
 
-					stackTrace = deferredFailure.getSafeStackTrace(current.deferredFailures::addLast)
+					stackTrace = deferredFailure.getSafeStackTrace(applyBackspaces = true, current.deferredFailures::addLast)
 					gotError = deferredFailure.anyError()
 				}
 			}

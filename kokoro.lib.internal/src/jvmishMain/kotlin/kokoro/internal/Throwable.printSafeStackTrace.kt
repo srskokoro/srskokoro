@@ -21,6 +21,17 @@ fun Throwable.getSafeStackTrace(onFailure: OnFailure): String {
 }
 
 @Suppress("NOTHING_TO_INLINE")
+inline fun Throwable.getSafeStackTrace(applyBackspaces: Boolean) = getSafeStackTrace(applyBackspaces, ON_FAILURE_IGNORE)
+
+fun Throwable.getSafeStackTrace(applyBackspaces: Boolean, onFailure: OnFailure): String {
+	return UnsafeCharArrayWriter().run {
+		printSafeStackTrace(this, onFailure)
+		if (applyBackspaces) applyBackspaces()
+		toString()
+	}
+}
+
+@Suppress("NOTHING_TO_INLINE")
 inline fun Throwable.printSafeStackTrace() = printSafeStackTrace(ON_FAILURE_IGNORE)
 
 @Suppress("NOTHING_TO_INLINE")

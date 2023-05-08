@@ -49,6 +49,25 @@ class UnsafeCharArrayWriter : CharArrayWriter {
 		out.write(buf, 0, count)
 	}
 
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun applyBackspaces() = applyBackspaces(0)
+
+	fun applyBackspaces(offset: Int) {
+		var j = 0
+		var i = offset
+		val n = count
+		val buf = buf
+		while (i < n) {
+			val c = buf[i++]
+			if (c != '\b') {
+				buf[j++] = c
+			} else if (--j < 0) {
+				j = 0
+			}
+		}
+		count = j
+	}
+
 	fun truncate(size: Int) {
 		count = min(size, count)
 	}
