@@ -113,7 +113,8 @@ class ThrowableArb(
 			kotlin.run {
 				if (nextDouble() < circularRefsProb) {
 					sx = throwablesSoFar.run { this[nextInt(size)] }
-					if (sx !== current) return@run
+					// NOTE: Suppressed cannot be self: it's disallowed.
+					if (sx !== current) return@run // Suppression allowed.
 				}
 				sx = nextSimpleThrowable()
 				randomizeCauseAndSuppressions(sx, maxThrowableCount, throwablesSoFar)
@@ -125,7 +126,8 @@ class ThrowableArb(
 			kotlin.run {
 				if (nextDouble() < circularRefsProb) {
 					cause = throwablesSoFar.run { this[nextInt(size)] }
-					if (cause !== current) return@run
+					// NOTE: Cause cannot be self: it's disallowed.
+					if (cause !== current) return@run // Causation allowed.
 				}
 				cause = nextSimpleThrowable()
 				randomizeCauseAndSuppressions(cause, maxThrowableCount, throwablesSoFar)
