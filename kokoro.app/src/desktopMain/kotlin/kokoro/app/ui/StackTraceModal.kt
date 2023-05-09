@@ -86,7 +86,7 @@ object StackTraceModal : CoroutineExceptionHandler, Thread.UncaughtExceptionHand
 
 	override fun handleException(context: CoroutineContext, exception: Throwable) {
 		print(exception) { out ->
-			out.write("\tContext: ")
+			out.write(" ^- Context: ")
 			out.write(context.toString())
 			out.writeln()
 		}
@@ -94,7 +94,7 @@ object StackTraceModal : CoroutineExceptionHandler, Thread.UncaughtExceptionHand
 
 	override fun uncaughtException(thread: Thread, exception: Throwable) {
 		print(exception) { out ->
-			out.write("\tThread: [")
+			out.write(" ^- Thread: [")
 			out.write(thread.name)
 
 			out.write("]{priority=")
