@@ -22,4 +22,9 @@ actual data class Locale actual constructor(
 		country = "",
 		variant = "",
 	)
+
+	// TODO Switch to Kotlin `static` instead, once available -- https://youtrack.jetbrains.com/issue/KT-11968
+	actual companion object {
+		actual val ROOT = Locale("", "", "")
+	}
 }
