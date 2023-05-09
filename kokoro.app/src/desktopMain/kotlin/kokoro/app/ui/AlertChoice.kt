@@ -2,7 +2,8 @@ package kokoro.app.ui
 
 import kokoro.app.i18n.Locale
 
-actual fun interface AlertChoice {
+actual abstract class AlertChoice : `-AlertChoice-common`()
 
-	fun toString(locale: Locale): String
+inline fun AlertChoice(crossinline toString: (locale: Locale) -> String) = object : AlertChoice() {
+	override fun toString(locale: Locale) = toString(locale)
 }

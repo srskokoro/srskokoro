@@ -1,3 +1,3 @@
 package kokoro.app.ui
 
-actual interface AlertChoice
+actual abstract class AlertChoice : `-AlertChoice-common`()
