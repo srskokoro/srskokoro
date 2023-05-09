@@ -23,6 +23,8 @@ dependencyVersions {
 		module("$it:*", kotlin)
 	}
 
+	plugin("com.louiscad.complete-kotlin", "1.1.0") // https://github.com/LouisCAD/CompleteKotlin
+
 	val android = "7.4.2" // Android Gradle Plugin (AGP)
 	plugin("com.android.*", android)
 	module("com.android.tools.build:gradle", android)
