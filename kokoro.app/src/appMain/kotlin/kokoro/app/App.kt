@@ -1,3 +1,8 @@
 package kokoro.app
 
-expect object App
+import kokoro.app.i18n.Locale
+
+expect object App {
+
+	fun currentLocale(): Locale
+}
