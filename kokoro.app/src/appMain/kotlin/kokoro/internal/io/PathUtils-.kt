@@ -4,7 +4,6 @@ import okio.FileSystem
 import okio.IOException
 import okio.Path
 
-@Suppress("FunctionName")
 internal fun `-ensureDirs-fallback`(dir: Path): Path {
 	val fs = FileSystem.SYSTEM
 	try {
