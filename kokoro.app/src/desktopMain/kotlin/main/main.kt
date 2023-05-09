@@ -274,7 +274,6 @@ private class AppDaemon(
 		}
 	}
 
-	@Suppress("FunctionName")
 	private suspend fun CLI_PROTOCOL_01_impl(source: BufferedSource) {
 		val workingDir: String
 		val args: Array<String>

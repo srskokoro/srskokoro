@@ -16,7 +16,7 @@ inline fun Spec.withConcurrencyVia(context: CoroutineContext, concurrency: Int =
 }
 
 /** Alias for [WithContextCoroutineDispatcherFactory] construction. */
-@Suppress("NOTHING_TO_INLINE", "TestFunctionName")
+@Suppress("NOTHING_TO_INLINE")
 inline fun CoroutineDispatcherFactory(context: CoroutineContext) = WithContextCoroutineDispatcherFactory(context)
 
 class WithContextCoroutineDispatcherFactory(private val context: CoroutineContext) : CoroutineDispatcherFactory {
