@@ -1,4 +1,5 @@
 import conv.internal.setup.*
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
 	id("conv.base")
@@ -7,6 +8,10 @@ plugins {
 
 kotlin {
 	setUp(this)
+}
+
+tasks.withType<KotlinJvmCompile>().configureEach {
+	setUp(compilerOptions)
 }
 
 tasks.test {

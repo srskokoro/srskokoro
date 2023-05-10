@@ -12,6 +12,7 @@ kotlin {
 
 android {
 	setUp(this)
+	kotlinOptions { setUp(options) }
 
 	packagingOptions {
 		resources {
