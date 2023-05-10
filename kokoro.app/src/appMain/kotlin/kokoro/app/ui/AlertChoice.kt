@@ -6,8 +6,8 @@ expect abstract class AlertChoice : `-AlertChoice-common`
 
 abstract class `-AlertChoice-common` {
 
-	abstract fun toString(locale: Locale): Any
+	abstract fun getLabel(locale: Locale): Any
 
 	override fun toString(): String =
-		toString(Locale.ROOT).toString()
+		getLabel(Locale.ROOT).toString()
 }
