@@ -10,6 +10,6 @@ abstract class AlertChoice {
 		getLabel(Locale.ROOT).toString()
 }
 
-inline fun AlertChoice(crossinline lazyLabel: (locale: Locale) -> Any) = object : AlertChoice() {
+inline fun AlertChoice(crossinline lazyLabel: AlertChoice.(locale: Locale) -> Any) = object : AlertChoice() {
 	override fun getLabel(locale: Locale) = lazyLabel(locale)
 }
