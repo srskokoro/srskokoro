@@ -1,29 +1,27 @@
 package kokoro.app.ui
 
-import kokoro.app.i18n.Locale
-
 abstract class AlertChoice {
 
-	abstract fun getButton(locale: Locale): Any
+	abstract fun getButton(context: AlertContext?): Any?
 
-	abstract fun getText(locale: Locale): Any
+	abstract fun getText(context: AlertContext?): Any
 
 	override fun toString(): String =
-		getText(Locale.ROOT).toString()
+		getText(null).toString()
 }
 
 inline fun AlertChoice(
-	crossinline lazyButton: AlertChoice.(Locale) -> Any = { getText(it) },
-	crossinline lazyText: AlertChoice.(Locale) -> Any,
+	crossinline lazyButton: AlertChoice.(AlertContext?) -> Any? = { getText(it) },
+	crossinline lazyText: AlertChoice.(AlertContext?) -> Any,
 ): AlertChoice = object : AlertChoice() {
-	override fun getButton(locale: Locale) = lazyButton(locale)
-	override fun getText(locale: Locale) = lazyText(locale)
+	override fun getButton(context: AlertContext?) = lazyButton(context)
+	override fun getText(context: AlertContext?) = lazyText(context)
 }
 
 inline fun AlertChoice2(
-	crossinline lazyButton: AlertChoice.(text: Any, Locale) -> Any,
-	crossinline lazyText: AlertChoice.(Locale) -> Any,
+	crossinline lazyButton: AlertChoice.(AlertContext?, text: Any) -> Any?,
+	crossinline lazyText: AlertChoice.(AlertContext?) -> Any,
 ): AlertChoice = object : AlertChoice() {
-	override fun getButton(locale: Locale) = lazyButton(getText(locale), locale)
-	override fun getText(locale: Locale) = lazyText(locale)
+	override fun getButton(context: AlertContext?) = lazyButton(context, getText(context))
+	override fun getText(context: AlertContext?) = lazyText(context)
 }
