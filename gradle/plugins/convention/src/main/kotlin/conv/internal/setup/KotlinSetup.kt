@@ -45,17 +45,21 @@ private fun Project.setUpProject(kotlin: KotlinProjectExtension) {
 private fun Project.setUpMoreSrc(kotlinSourceSets: NamedDomainObjectContainer<KotlinSourceSet>) {
 	val defaultSrcPath = file("src").path + File.separatorChar
 
+	fun isForTest(name: String): Boolean {
+		// Either it's suffixed with "Test" or it's named "test" -- and not
+		// because it's suffixed with "test" (all lowercase).
+		return name.endsWith("Test") || name == "test"
+	}
+
 	kotlinSourceSets.configureEach {
-		// Either it's suffixed with "Test" or it's named "test" (and not because it's suffixed with "test")
-		val isForTest = name.let { it.endsWith("Test") || it == "test" }
+		val isForTest = isForTest(name)
 		kotlin.setUpMoreSrc(defaultSrcPath, isForTest)
 		resources.setUpMoreSrc(defaultSrcPath, isForTest)
 	}
 
 	// Also set up for `org.gradle.api.tasks.SourceSet` (if any).
 	sourceSets.configureEach {
-		// Either it's suffixed with "Test" or it's named "test" (and not because it's suffixed with "test")
-		val isForTest = name.let { it.endsWith("Test") || it == "test" }
+		val isForTest = isForTest(name)
 		java.setUpMoreSrc(defaultSrcPath, isForTest)
 		resources.setUpMoreSrc(defaultSrcPath, isForTest)
 	}
