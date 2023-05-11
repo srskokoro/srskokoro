@@ -13,6 +13,9 @@ plugins {
 	id("com.louiscad.complete-kotlin")
 }
 
-allprojects {
-	group = "srs.kokoro"
+// NOTE: Only modify the `group` for direct subprojects of this project; let
+// Gradle automatically provide a unique `group` for subprojects of subprojects.
+// - See also, https://github.com/gradle/gradle/issues/847#issuecomment-1205001575
+childProjects.values.forEach {
+	it.group = "srs.kokoro"
 }

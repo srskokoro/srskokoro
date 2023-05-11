@@ -22,13 +22,17 @@ dependencyVersionsSetup {
 	}
 }
 
-// Include all subfolders that contain a 'build.gradle.kts' as subprojects (but
-// exclude those that look like included builds).
-rootDir.let { rootDir ->
-	rootDir.list()?.asSequence()?.filter {
-		File(rootDir, "$it/build.gradle.kts").exists() &&
-		!File(rootDir, "$it/settings.gradle.kts").exists()
-	}?.forEach {
-		include(it) // Resolves relative to `rootDir`
+autoIncludeSubProjects(rootDir, "")
+
+fun Settings.autoIncludeSubProjects(parentProjectDir: File, parentProjectId: String) {
+	parentProjectDir.list()?.forEach {
+		// Include all subfolders that contain a 'build.gradle.kts' as
+		// subprojects (but exclude those that look like included builds).
+		val buildFile = File(parentProjectDir, "$it/build.gradle.kts")
+		if (buildFile.exists() && !File(parentProjectDir, "$it/settings.gradle.kts").exists()) {
+			val childProjectId = "$parentProjectId:$it"
+			include(childProjectId) // Resolves relative to `settings.rootDir`
+			autoIncludeSubProjects(buildFile.parentFile, childProjectId)
+		}
 	}
 }
