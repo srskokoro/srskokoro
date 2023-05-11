@@ -14,7 +14,8 @@ internal fun Project.setUp(task: Test): Unit = with(task) {
 	// parallelize tests.
 	maxParallelForks = 1
 	// ^ WARNING: When greater than 1, the test engine would get forked into
-	// several processes, which is quite expensive: there's heavy startup cost.
+	// several processes, which is quite expensive; it even comes with a heavy
+	// startup cost.
 	// ^ NOTE: The above is already 1 by default, but this makes things
 	// explicit, and also serves as a warning to future devs.
 
