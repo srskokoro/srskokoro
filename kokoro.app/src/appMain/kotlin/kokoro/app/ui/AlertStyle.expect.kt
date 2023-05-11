@@ -16,6 +16,6 @@ expect value class AlertStyle private constructor(val value: Int) {
 	}
 }
 
-@Suppress("UnusedReceiverParameter")
+@Suppress("NOTHING_TO_INLINE", "UnusedReceiverParameter")
 internal inline fun AlertStyle.`-toString`(name: String) = "$`-AlertStyle-`.$name"
 private const val `-AlertStyle-` = "AlertStyle"
