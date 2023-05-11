@@ -56,6 +56,7 @@ private fun Project.setUpSeparateTestDir(kotlinSourceSets: NamedDomainObjectCont
 	// Eager configuration is necessary here (i.e., must use `all` instead of
 	// `configureEach`). Otherwise, expect-actual declarations won't work.
 	kotlinSourceSets.all {
+		// Either it's suffixed with "Test" or it's named "test" (and not because it's suffixed with "test")
 		if (name.let { it.endsWith("Test") || it == "test" }) {
 			kotlin.setUpSeparateTestDir()
 			resources.setUpSeparateTestDir()
@@ -64,6 +65,7 @@ private fun Project.setUpSeparateTestDir(kotlinSourceSets: NamedDomainObjectCont
 
 	// Also set up for `org.gradle.api.tasks.SourceSet` (if any).
 	sourceSets.configureEach {
+		// Either it's suffixed with "Test" or it's named "test" (and not because it's suffixed with "test")
 		if (name.let { it.endsWith("Test") || it == "test" }) {
 			java.setUpSeparateTestDir()
 			resources.setUpSeparateTestDir()
