@@ -1,7 +1,10 @@
 ﻿package conv.deps
 
-import conv.deps.internal.common.*
 import conv.deps.serialization.cannotStore
+import conv.internal.support.from
+import conv.internal.support.hashCodeOfConcat
+import conv.internal.support.removeLast
+import conv.internal.support.until
 import org.gradle.api.artifacts.ModuleVersionSelector
 
 sealed class ModuleId private constructor() {

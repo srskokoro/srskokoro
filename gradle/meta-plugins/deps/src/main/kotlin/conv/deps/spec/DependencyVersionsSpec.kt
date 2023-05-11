@@ -8,10 +8,10 @@ import conv.deps.Version
 import conv.deps.failOnArgToFile
 import conv.deps.hookCustomDependencyResolution
 import conv.deps.internal.DependencyVersionsFileException
-import conv.deps.internal.common.UnsafeCharArrayWriter
-import conv.deps.internal.common.safeResolve
 import conv.deps.serialization.load
 import conv.deps.serialization.store
+import conv.internal.support.io.UnsafeCharArrayWriter
+import conv.internal.support.io.safeResolve
 import dependencyVersionsSetup__name
 import org.gradle.api.Action
 import org.gradle.api.InvalidUserDataException

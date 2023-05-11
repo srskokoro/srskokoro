@@ -1,4 +1,4 @@
-package conv.deps.internal.common
+package conv.internal.support
 
 /**
  * Same as [String.substring]`(start)` but useful for improving readability,
@@ -14,7 +14,7 @@ package conv.deps.internal.common
  * @see String.removeFirst
  */
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun String.from(startIndex: Int) = substring(startIndex)
+inline fun String.from(startIndex: Int) = substring(startIndex)
 
 /**
  * Same as [String.substring]`(start, end)` but useful for improving
@@ -24,7 +24,7 @@ internal inline fun String.from(startIndex: Int) = substring(startIndex)
  * @see String.until
  */
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun String.from(startIndex: Int, endIndex: Int) = substring(startIndex, endIndex)
+inline fun String.from(startIndex: Int, endIndex: Int) = substring(startIndex, endIndex)
 
 /**
  * Same as [String.substring]`(0, end)` but useful for improving readability,
@@ -39,7 +39,7 @@ internal inline fun String.from(startIndex: Int, endIndex: Int) = substring(star
  * @see String.from
  */
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun String.until(endIndex: Int) = substring(0, endIndex)
+inline fun String.until(endIndex: Int) = substring(0, endIndex)
 
 
 /**
@@ -51,7 +51,7 @@ internal inline fun String.until(endIndex: Int) = substring(0, endIndex)
  * @see String.removeLast
  */
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun String.removeFirst(n: Int) = from(n)
+inline fun String.removeFirst(n: Int) = from(n)
 
 /**
  * Same as [String.until]`(length - n)`.
@@ -62,4 +62,4 @@ internal inline fun String.removeFirst(n: Int) = from(n)
  * @see String.removeFirst
  */
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun String.removeLast(n: Int) = until(length - n)
+inline fun String.removeLast(n: Int) = until(length - n)

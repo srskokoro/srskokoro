@@ -1,7 +1,7 @@
-package conv.deps.internal.common
+package conv.internal.support
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun hashCodeOfConcat(a: String, b: String): Int {
+inline fun hashCodeOfConcat(a: String, b: String): Int {
 	// The following computes the equivalent of `(a + b).hashCode()`, but
 	// without actually concatenating the strings.
 	// - Possible because `java.lang.String.hashCode()` is stable and set in
@@ -14,7 +14,8 @@ internal inline fun hashCodeOfConcat(a: String, b: String): Int {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-private inline fun fastPow31(n: Int): Int {
+@PublishedApi
+internal inline fun fastPow31(n: Int): Int {
 	fastPow31Table.run {
 		if (n < size) return this[n]
 	}
@@ -24,7 +25,8 @@ private inline fun fastPow31(n: Int): Int {
 // From,
 // - https://gist.github.com/apangin/91c07684635893e3f1d5
 // - https://stackoverflow.com/a/35671374
-private fun fastPow31Calc(n: Int): Int {
+@PublishedApi
+internal fun fastPow31Calc(n: Int): Int {
 	var x = 31
 	var y = n
 	var result = if (y and 1 != 0) x else 1
@@ -49,7 +51,8 @@ private fun fastPow31Calc(n: Int): Int {
  * }
  * ```
  */
-private val fastPow31Table = intArrayOf(
+@PublishedApi
+internal val fastPow31Table = intArrayOf(
 	1, 31, 961, 29791, 923521, 28629151, 887503681, 1742810335,
 	-1807454463, -196513505, -1796951359, 129082719, -293403007, -505558625, 1507551809, -510534177,
 	1353309697, -997072353, -844471871, -408824225, 211350913, -2038056289, 1244764481, -67006753,

@@ -5,12 +5,12 @@ import conv.deps.JvmSetupVendor
 import conv.deps.ModuleId
 import conv.deps.PluginId
 import conv.deps.Version
-import conv.deps.internal.common.from
-import conv.deps.internal.common.removeLast
-import conv.deps.internal.common.until
 import conv.deps.spec.DependencyBundleSpec
 import conv.deps.spec.DependencyBundlesSpec
 import conv.deps.spec.DependencyVersionsSpec
+import conv.internal.support.from
+import conv.internal.support.removeLast
+import conv.internal.support.until
 import org.gradle.api.InvalidUserDataException
 import java.io.BufferedReader
 import java.io.File

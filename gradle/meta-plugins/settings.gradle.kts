@@ -4,4 +4,4 @@ dependencyResolutionManagement {
 	repositories.gradlePluginPortal()
 }
 
-include("deps", "settings")
+include("build-support", "deps", "settings")

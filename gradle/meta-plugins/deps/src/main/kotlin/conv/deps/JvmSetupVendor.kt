@@ -1,6 +1,6 @@
 package conv.deps
 
-import conv.deps.internal.common.removeFirst
+import conv.internal.support.removeFirst
 import org.gradle.jvm.toolchain.JvmVendorSpec
 import kotlin.reflect.KProperty0
 import org.gradle.jvm.toolchain.JvmVendorSpec as V

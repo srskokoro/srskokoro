@@ -1,8 +1,8 @@
 package conv.deps
 
-import conv.deps.internal.common.hashCodeOfConcat
-import conv.deps.internal.common.removeLast
 import conv.deps.serialization.cannotStore
+import conv.internal.support.hashCodeOfConcat
+import conv.internal.support.removeLast
 import org.gradle.plugin.use.PluginId as GradlePluginId
 
 sealed class PluginId private constructor() {
