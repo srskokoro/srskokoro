@@ -43,11 +43,11 @@ internal class KotlinTargetsConfigLoader(
 			it.writeText(
 				"""
 				$SECTION_HEADER_TARGETS
-				# None (for now)
+				# Example entry:
 				#$LIST_START<target>[:<name>]
 
 				$SECTION_HEADER_SOURCE_SETS
-				# None (for now)
+				# Example entry:
 				#$LIST_START<name>
 
 				""".trimIndent()

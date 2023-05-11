@@ -1,7 +1,7 @@
 targets:
-# None (for now)
+# Example entry:
 #- <target>[:<name>]
 
 customSourceSets:
-# None (for now)
+# Example entry:
 #- <name>
