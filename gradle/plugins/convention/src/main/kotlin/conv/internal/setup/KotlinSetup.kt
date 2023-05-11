@@ -36,37 +36,34 @@ internal fun Project.setUpTargetsExtensions(kotlin: KotlinMultiplatformExtension
 private fun Project.setUpProject(kotlin: KotlinProjectExtension) {
 	val kotlinSourceSets = getSourceSets(kotlin)
 	this.kotlinSourceSets = kotlinSourceSets
-	setUpSeparateTestDir(kotlinSourceSets)
+	setUpMoreSrc(kotlinSourceSets)
 }
 
 /**
- * Allow tests to be placed under 'test' directory instead of 'src'
+ * Sets up extra source directories in addition to the default 'src' directory.
  */
-private fun Project.setUpSeparateTestDir(kotlinSourceSets: NamedDomainObjectContainer<KotlinSourceSet>) {
+private fun Project.setUpMoreSrc(kotlinSourceSets: NamedDomainObjectContainer<KotlinSourceSet>) {
 	val defaultSrcPath = file("src").path + File.separatorChar
 
 	kotlinSourceSets.configureEach {
 		// Either it's suffixed with "Test" or it's named "test" (and not because it's suffixed with "test")
-		if (name.let { it.endsWith("Test") || it == "test" }) {
-			kotlin.setUpMoreSrc("test", defaultSrcPath)
-			resources.setUpMoreSrc("test", defaultSrcPath)
-		}
+		val isForTest = name.let { it.endsWith("Test") || it == "test" }
+		kotlin.setUpMoreSrc(defaultSrcPath, isForTest)
+		resources.setUpMoreSrc(defaultSrcPath, isForTest)
 	}
 
 	// Also set up for `org.gradle.api.tasks.SourceSet` (if any).
 	sourceSets.configureEach {
 		// Either it's suffixed with "Test" or it's named "test" (and not because it's suffixed with "test")
-		if (name.let { it.endsWith("Test") || it == "test" }) {
-			java.setUpMoreSrc("test", defaultSrcPath)
-			resources.setUpMoreSrc("test", defaultSrcPath)
-		}
+		val isForTest = name.let { it.endsWith("Test") || it == "test" }
+		java.setUpMoreSrc(defaultSrcPath, isForTest)
+		resources.setUpMoreSrc(defaultSrcPath, isForTest)
 	}
 }
 
 /**
- * Allows source code to be placed under a '[newSrcName]' directory instead of
- * the default 'src' directory. The parameter [defaultSrcPath] must be a value
- * evaluated via the following expression (or equivalent):
+ * NOTE: The parameter [defaultSrcPath] must be a value evaluated via the
+ * following expression (or equivalent):
  * ```
  * project.file("src").path + File.separatorChar
  * ```
@@ -74,12 +71,17 @@ private fun Project.setUpSeparateTestDir(kotlinSourceSets: NamedDomainObjectCont
  * @see Project.file
  * @see File.separatorChar
  */
-private fun SourceDirectorySet.setUpMoreSrc(newSrcName: String, defaultSrcPath: String) {
-	srcDirs.forEach {
-		val path = it.path
-		if (path.startsWith(defaultSrcPath)) srcDir(
-			newSrcName + File.separatorChar +
-				path.substring(defaultSrcPath.length)
-		)
+private fun SourceDirectorySet.setUpMoreSrc(
+	defaultSrcPath: String,
+	isForTest: Boolean,
+): Unit = srcDirs.forEach { srcDir ->
+	val path = srcDir.path
+	if (path.startsWith(defaultSrcPath)) {
+		val subPath = path.substring(defaultSrcPath.length)
+		srcDir("src-core" + File.separatorChar + subPath)
+		if (isForTest) {
+			srcDir("test" + File.separatorChar + subPath)
+			srcDir("test-core" + File.separatorChar + subPath)
+		}
 	}
 }
