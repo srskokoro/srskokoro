@@ -44,20 +44,12 @@ private fun Project.setUpProject(kotlin: KotlinProjectExtension) {
  */
 private fun Project.setUpSeparateTestDir(kotlinSourceSets: NamedDomainObjectContainer<KotlinSourceSet>) {
 	val defaultSrcPath = file("src").path + File.separatorChar
-	val separateTestDir = file("test")
-
-	fun SourceDirectorySet.setUpSeparateTestDir(): Unit = srcDirs.forEach {
-		val path = it.path
-		if (path.startsWith(defaultSrcPath)) srcDir(File(
-			separateTestDir, path.substring(defaultSrcPath.length),
-		))
-	}
 
 	kotlinSourceSets.configureEach {
 		// Either it's suffixed with "Test" or it's named "test" (and not because it's suffixed with "test")
 		if (name.let { it.endsWith("Test") || it == "test" }) {
-			kotlin.setUpSeparateTestDir()
-			resources.setUpSeparateTestDir()
+			kotlin.setUpMoreSrc("test", defaultSrcPath)
+			resources.setUpMoreSrc("test", defaultSrcPath)
 		}
 	}
 
@@ -65,8 +57,29 @@ private fun Project.setUpSeparateTestDir(kotlinSourceSets: NamedDomainObjectCont
 	sourceSets.configureEach {
 		// Either it's suffixed with "Test" or it's named "test" (and not because it's suffixed with "test")
 		if (name.let { it.endsWith("Test") || it == "test" }) {
-			java.setUpSeparateTestDir()
-			resources.setUpSeparateTestDir()
+			java.setUpMoreSrc("test", defaultSrcPath)
+			resources.setUpMoreSrc("test", defaultSrcPath)
 		}
+	}
+}
+
+/**
+ * Allows source code to be placed under a '[newSrcName]' directory instead of
+ * the default 'src' directory. The parameter [defaultSrcPath] must be a value
+ * evaluated via the following expression (or equivalent):
+ * ```
+ * project.file("src").path + File.separatorChar
+ * ```
+ *
+ * @see Project.file
+ * @see File.separatorChar
+ */
+private fun SourceDirectorySet.setUpMoreSrc(newSrcName: String, defaultSrcPath: String) {
+	srcDirs.forEach {
+		val path = it.path
+		if (path.startsWith(defaultSrcPath)) srcDir(
+			newSrcName + File.separatorChar +
+				path.substring(defaultSrcPath.length)
+		)
 	}
 }
