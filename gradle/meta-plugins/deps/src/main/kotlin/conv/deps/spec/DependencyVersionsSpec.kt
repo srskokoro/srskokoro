@@ -1,6 +1,12 @@
 package conv.deps.spec
 
-import conv.deps.*
+import conv.deps.DependencyVersions
+import conv.deps.DependencyVersionsSetup
+import conv.deps.ModuleId
+import conv.deps.PluginId
+import conv.deps.Version
+import conv.deps.failOnArgToFile
+import conv.deps.hookCustomDependencyResolution
 import conv.deps.internal.DependencyVersionsFileException
 import conv.deps.internal.common.UnsafeCharArrayWriter
 import conv.deps.internal.common.safeResolve
@@ -29,7 +35,7 @@ import java.nio.file.StandardCopyOption.ATOMIC_MOVE
 import java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import java.nio.file.attribute.BasicFileAttributeView
 import java.nio.file.attribute.BasicFileAttributes
-import java.util.*
+import java.util.LinkedList
 import javax.inject.Inject
 
 private const val DEPENDENCY_VERSIONS_EXPORT_PATH = "build/deps.versions.dat"
@@ -114,7 +120,7 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 
 					ByteArrayInputStream(
 						providers.fileContents(target).asBytes.orNull
-						?: failOnDependencyVersionsNotExported(includedRoot)
+							?: failOnDependencyVersionsNotExported(includedRoot)
 					).bufferedReader().use { // Using `use` here because... paranoia
 						try {
 							load(it)
@@ -248,7 +254,7 @@ private fun failOnDependencyVersionsNotExported(includedRoot: String): Nothing =
 	""".trimIndent()
 )
 
-private fun failOnUnexpectedNewlineCount(): Nothing = throw InvalidUserDataException(
+private fun failOnUnexpectedNewlineCount(): Nothing = throw InvalidUserDataException("" +
 	"Malformed output caused by newlines in unexpected places. Please make " +
 	"sure that module IDs, version strings, etc., does not contain newline " +
 	"characters."

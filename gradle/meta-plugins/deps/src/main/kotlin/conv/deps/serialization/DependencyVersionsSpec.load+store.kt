@@ -1,6 +1,10 @@
 package conv.deps.serialization
 
-import conv.deps.*
+import conv.deps.JvmSetupImplementation
+import conv.deps.JvmSetupVendor
+import conv.deps.ModuleId
+import conv.deps.PluginId
+import conv.deps.Version
 import conv.deps.internal.common.from
 import conv.deps.internal.common.removeLast
 import conv.deps.internal.common.until

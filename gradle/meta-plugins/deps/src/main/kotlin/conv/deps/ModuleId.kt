@@ -110,8 +110,8 @@ sealed class ModuleId private constructor() {
 
 		internal fun equals2(other: ViaGroupName) =
 			groupEnd == other.group.length &&
-			id.startsWith(other.group) &&
-			id.endsWith(other.name)
+				id.startsWith(other.group) &&
+				id.endsWith(other.name)
 
 		override val group: String get() = id.until(groupEnd)
 		override val name: String get() = id.from(groupEnd + 1)
