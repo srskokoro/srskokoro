@@ -1,6 +1,6 @@
 package conv.internal.setup
 
-import conv.internal.util.*
+import conv.internal.support.unsafeCast
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.ExtensionContainer
