@@ -3,14 +3,23 @@ package conv.internal
 import conv.internal.setup.*
 import conv.util.*
 import org.gradle.api.InvalidUserDataException
+import org.gradle.api.Project
 import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.provider.ProviderFactory
+import org.gradle.kotlin.dsl.extra
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import java.io.IOException
 import java.lang.reflect.InvocationTargetException
 import java.nio.file.Files
+
+internal var Project.skipPlaceholderGenerationForKotlinTargetsConfigLoader: Boolean
+	get() = extra.let {
+		it.has(::skipPlaceholderGenerationForKotlinTargetsConfigLoader.name) &&
+			it[::skipPlaceholderGenerationForKotlinTargetsConfigLoader.name] as Boolean
+	}
+	set(value) = extra.set(::skipPlaceholderGenerationForKotlinTargetsConfigLoader.name, value)
 
 internal class KotlinTargetsConfigLoader(
 	private val providers: ProviderFactory,
@@ -30,9 +39,14 @@ internal class KotlinTargetsConfigLoader(
 		private const val LIST_START_LEN = LIST_START.length
 	}
 
-	fun loadInto(kotlin: KotlinMultiplatformExtension) {
+	fun loadInto(kotlin: KotlinMultiplatformExtension, skipPlaceholderGeneration: Boolean) {
 		configFile.takeIf { !it.isFile || it.length() <= 2L }?.let {
-			it.delete()
+			val deleted = it.delete()
+			if (skipPlaceholderGeneration && (deleted || !it.exists())) {
+				// Don't generate placeholder (but do let Gradle listen for
+				// changes to the file once it actually exists).
+				return@let // Should skip only placeholder generation logic
+			}
 			try {
 				Files.createFile(it.toPath()) // Let it throw!
 			} catch (ex: IOException) {
@@ -56,7 +70,8 @@ internal class KotlinTargetsConfigLoader(
 
 		val configBytes = providers.fileContents(config)
 			.asBytes
-			.get()
+			.orNull
+			?: return // Skip loading otherwise
 
 		val configChars = String(configBytes, Charsets.UTF_8)
 		doParse(configChars, kotlin)

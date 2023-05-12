@@ -1,6 +1,8 @@
-plugins {
-	id("kokoro.conv.kt.mpp.lib")
-}
+import conv.internal.setup.*
+import conv.internal.skipPlaceholderGenerationForKotlinTargetsConfigLoader
+
+skipPlaceholderGenerationForKotlinTargetsConfigLoader = true
+apply(plugin = "kokoro.conv.kt.mpp.lib")
 
 run<Unit> {
 	val parent = parent ?: error("Must have a parent project")
@@ -11,8 +13,8 @@ run<Unit> {
 		"Expected plugin in parent project not found: $REQUIRED_PARENT_PLUGIN"
 	}
 
-	android.namespace = buildString {
-		val parentNamespace = parent.android.namespace
+	androidExt.namespace = buildString {
+		val parentNamespace = parent.androidExt.namespace
 		if (!parentNamespace.isNullOrEmpty()) {
 			append(parentNamespace)
 			append(".")
@@ -28,6 +30,6 @@ run<Unit> {
 		// Prevents conflicts when generating the archives, especially for tasks
 		// that output an installation distribution where all the archives are
 		// placed under the same directory.
-		base.archivesName.set(it)
+		baseExt.archivesName.set(it)
 	}
 }

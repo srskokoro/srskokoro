@@ -1,6 +1,7 @@
 package conv.internal.setup
 
 import conv.internal.KotlinTargetsConfigLoader
+import conv.internal.skipPlaceholderGenerationForKotlinTargetsConfigLoader
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
@@ -28,7 +29,7 @@ internal fun Project.setUpTargetsExtensions(kotlin: KotlinMultiplatformExtension
 	(kotlin as ExtensionAware).extensions.add(typeOf(), "targets", kotlin.targets)
 
 	val config = layout.projectDirectory.file("build.targets.txt")
-	KotlinTargetsConfigLoader(providers, config).loadInto(kotlin)
+	KotlinTargetsConfigLoader(providers, config).loadInto(kotlin, skipPlaceholderGenerationForKotlinTargetsConfigLoader)
 }
 
 // --

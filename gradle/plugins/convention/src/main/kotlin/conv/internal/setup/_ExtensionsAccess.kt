@@ -4,8 +4,16 @@ import conv.deps.DependencyVersions
 import conv.internal.support.unsafeCast
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.tasks.SourceSetContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+
+
+internal val Project.baseExt
+	get() = extensions.getByName("base") as BasePluginExtension
+
+internal val Project.androidExt
+	get() = extensions.getByName("android") as AndroidExtension
 
 
 internal val Project.deps
