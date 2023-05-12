@@ -1,6 +1,7 @@
 package kokoro.app
 
 import android.app.Application
+import kokoro.app.MainApplication.Singleton.instance as mainApplication
 
 class MainApplication : Application() {
 	init {
@@ -12,7 +13,7 @@ class MainApplication : Application() {
 
 		fun getOrNull(): MainApplication? = instance
 
-		fun get(): MainApplication = Singleton.instance
+		fun get(): MainApplication = mainApplication
 	}
 
 	private object Singleton {
