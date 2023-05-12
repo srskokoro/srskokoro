@@ -14,6 +14,7 @@ android {
 	setUp(this)
 	kotlinOptions { setUp(options) }
 
+	@Suppress("UnstableApiUsage")
 	packagingOptions {
 		resources {
 			excludes += "/META-INF/{AL2.0,LGPL2.1}"
