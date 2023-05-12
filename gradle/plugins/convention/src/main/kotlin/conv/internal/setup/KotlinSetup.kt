@@ -2,6 +2,7 @@ package conv.internal.setup
 
 import conv.internal.KotlinTargetsConfigLoader
 import conv.internal.skipPlaceholderGenerationForKotlinTargetsConfigLoader
+import conv.internal.support.removeFirst
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
@@ -37,26 +38,23 @@ internal fun Project.setUpTargetsExtensions(kotlin: KotlinMultiplatformExtension
 private fun Project.setUpProject(kotlin: KotlinProjectExtension) {
 	val kotlinSourceSets = getSourceSets(kotlin)
 	this.kotlinSourceSets = kotlinSourceSets
-	setUpMoreSrc(kotlinSourceSets)
+	setUpAltSrcDirs(kotlinSourceSets)
 }
 
-/**
- * Sets up extra source directories in addition to the default 'src' directory.
- */
-private fun Project.setUpMoreSrc(kotlinSourceSets: NamedDomainObjectContainer<KotlinSourceSet>) {
+private fun Project.setUpAltSrcDirs(kotlinSourceSets: NamedDomainObjectContainer<KotlinSourceSet>) {
 	val defaultSrcPath = file("src").path + File.separatorChar
 
 	kotlinSourceSets.configureEach {
 		val isTestSourceSet = isTestSourceSet(name)
-		kotlin.setUpMoreSrc(defaultSrcPath, isTestSourceSet)
-		resources.setUpMoreSrc(defaultSrcPath, isTestSourceSet)
+		kotlin.setUpAltSrcDirs(defaultSrcPath, isTestSourceSet)
+		resources.setUpAltSrcDirs(defaultSrcPath, isTestSourceSet)
 	}
 
 	// Also set up for `org.gradle.api.tasks.SourceSet` (if any).
 	sourceSets.configureEach {
 		val isTestSourceSet = isTestSourceSet(name)
-		java.setUpMoreSrc(defaultSrcPath, isTestSourceSet)
-		resources.setUpMoreSrc(defaultSrcPath, isTestSourceSet)
+		java.setUpAltSrcDirs(defaultSrcPath, isTestSourceSet)
+		resources.setUpAltSrcDirs(defaultSrcPath, isTestSourceSet)
 	}
 }
 
@@ -70,17 +68,19 @@ private fun Project.setUpMoreSrc(kotlinSourceSets: NamedDomainObjectContainer<Ko
  * @see Project.file
  * @see File.separatorChar
  */
-private fun SourceDirectorySet.setUpMoreSrc(
+private fun SourceDirectorySet.setUpAltSrcDirs(
 	defaultSrcPath: String,
 	isTestSourceSet: Int,
 ): Unit = srcDirs.forEach { srcDir ->
 	val path = srcDir.path
 	if (path.startsWith(defaultSrcPath)) {
-		val subPath = path.substring(defaultSrcPath.length)
-		srcDir("src-core" + File.separatorChar + subPath)
+		val subPath = path.removeFirst(defaultSrcPath.length)
+		srcDir("src" + File.separatorChar + "#" + subPath)
+		srcDir("src" + File.separatorChar + "+" + subPath)
 		if (isTestSourceSet != 0) {
 			srcDir("test" + File.separatorChar + subPath)
-			srcDir("test-core" + File.separatorChar + subPath)
+			srcDir("test" + File.separatorChar + "#" + subPath)
+			srcDir("test" + File.separatorChar + "+" + subPath)
 			if (isTestSourceSet == 1) srcDir(subPath)
 		}
 	}
