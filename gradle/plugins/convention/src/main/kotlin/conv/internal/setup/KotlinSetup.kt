@@ -45,23 +45,17 @@ private fun Project.setUpProject(kotlin: KotlinProjectExtension) {
 private fun Project.setUpMoreSrc(kotlinSourceSets: NamedDomainObjectContainer<KotlinSourceSet>) {
 	val defaultSrcPath = file("src").path + File.separatorChar
 
-	fun isForTest(name: String): Boolean {
-		// Either it's suffixed with "Test" or it's named "test" -- and not
-		// because it's suffixed with "test" (all lowercase).
-		return name.endsWith("Test") || name == "test"
-	}
-
 	kotlinSourceSets.configureEach {
-		val isForTest = isForTest(name)
-		kotlin.setUpMoreSrc(defaultSrcPath, isForTest)
-		resources.setUpMoreSrc(defaultSrcPath, isForTest)
+		val isTestSourceSet = isTestSourceSet(name)
+		kotlin.setUpMoreSrc(defaultSrcPath, isTestSourceSet)
+		resources.setUpMoreSrc(defaultSrcPath, isTestSourceSet)
 	}
 
 	// Also set up for `org.gradle.api.tasks.SourceSet` (if any).
 	sourceSets.configureEach {
-		val isForTest = isForTest(name)
-		java.setUpMoreSrc(defaultSrcPath, isForTest)
-		resources.setUpMoreSrc(defaultSrcPath, isForTest)
+		val isTestSourceSet = isTestSourceSet(name)
+		java.setUpMoreSrc(defaultSrcPath, isTestSourceSet)
+		resources.setUpMoreSrc(defaultSrcPath, isTestSourceSet)
 	}
 }
 
@@ -77,15 +71,24 @@ private fun Project.setUpMoreSrc(kotlinSourceSets: NamedDomainObjectContainer<Ko
  */
 private fun SourceDirectorySet.setUpMoreSrc(
 	defaultSrcPath: String,
-	isForTest: Boolean,
+	isTestSourceSet: Int,
 ): Unit = srcDirs.forEach { srcDir ->
 	val path = srcDir.path
 	if (path.startsWith(defaultSrcPath)) {
 		val subPath = path.substring(defaultSrcPath.length)
 		srcDir("src-core" + File.separatorChar + subPath)
-		if (isForTest) {
+		if (isTestSourceSet != 0) {
 			srcDir("test" + File.separatorChar + subPath)
 			srcDir("test-core" + File.separatorChar + subPath)
+			if (isTestSourceSet == 1) srcDir(subPath)
 		}
 	}
+}
+
+private fun isTestSourceSet(name: String): Int {
+	// Either it's suffixed with "Test" or it's named "test" -- and not because
+	// it's suffixed with "test" (all lowercase).
+	return if (!name.endsWith("Test")) {
+		if (name != "test") 0 else 1
+	} else 2
 }
