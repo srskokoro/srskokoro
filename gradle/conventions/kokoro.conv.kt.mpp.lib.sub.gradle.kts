@@ -9,7 +9,7 @@ run<Unit> {
 	evaluationDependsOn(parent.path)
 
 	val REQUIRED_PARENT_PLUGIN = "kokoro.conv.kt.mpp.lib"
-	check(parent.plugins.hasPlugin(REQUIRED_PARENT_PLUGIN)) {
+	check(parent.pluginManager.hasPlugin(REQUIRED_PARENT_PLUGIN)) {
 		"Expected plugin in parent project not found: $REQUIRED_PARENT_PLUGIN"
 	}
 
