@@ -17,9 +17,9 @@ actual object App {
 
 			if (cached != null) {
 				// IDE complains about `==` when type `Any` isn't specified :P
-				val cachedNs: Any = cached.first
+				val cachedNs: Any = cached.platformLocale
 				if (cachedNs == ns) {
-					return cached.second
+					return cached.appLocale
 				}
 			}
 
@@ -29,11 +29,16 @@ actual object App {
 				country = ns.countryCode.orEmpty(),
 				variant = ns.variantCode.orEmpty(),
 			)
-			if (currentLocale_cached.compareAndSet(cached, ns to locale)) {
+			if (currentLocale_cached.compareAndSet(cached, LocaleCacheEntry(ns, locale))) {
 				return locale
 			}
 		}
 	}
 }
 
-private var currentLocale_cached = atomic<Pair<NSLocale, Locale>?>(null)
+private class LocaleCacheEntry(
+	val platformLocale: NSLocale,
+	val appLocale: Locale,
+)
+
+private var currentLocale_cached = atomic<LocaleCacheEntry?>(null)
