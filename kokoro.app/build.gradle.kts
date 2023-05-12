@@ -3,6 +3,7 @@ plugins {
 	id("conv.gmazzo.buildconfig")
 	id("conv.version")
 	id("jcef-bundler-dependency")
+	id("conv.ktx.atomicfu")
 }
 
 kotlin {
