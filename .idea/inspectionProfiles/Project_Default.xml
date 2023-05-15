@@ -22,7 +22,7 @@
       <option name="namePattern" value="[\-_]*[A-Za-z][\-_A-Za-z\d]*" />
     </inspection_tool>
     <inspection_tool class="KotlinRedundantDiagnosticSuppress" enabled="true" level="WEAK WARNING" enabled_by_default="true" editorAttributes="NOT_USED_ELEMENT_ATTRIBUTES" />
-    <inspection_tool class="LiftReturnOrAssignment" enabled="true" level="INFORMATION" enabled_by_default="true" editorAttributes="INFORMATION_ATTRIBUTES" />
+    <inspection_tool class="LiftReturnOrAssignment" enabled="true" level="INFO" enabled_by_default="true" editorAttributes="INFORMATION_ATTRIBUTES" />
     <inspection_tool class="LocalVariableName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="namePattern" value="[\-_]*[A-Za-z][\-_A-Za-z\d]*" />
     </inspection_tool>
