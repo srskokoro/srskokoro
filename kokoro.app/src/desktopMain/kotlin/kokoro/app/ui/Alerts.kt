@@ -26,8 +26,9 @@ import kotlin.math.max
 
 //region
 
-actual suspend fun Alerts.await(handler: AlertHandler, spec: AlertSpec): AlertButton? =
-	suspendCancellableCoroutine(AlertAwaitImpl(handler, spec))
+actual suspend fun Alerts.await(handler: AlertHandler, spec: AlertSpec): AlertButton? {
+	return suspendCancellableCoroutine(AlertAwaitImpl(handler, spec))
+}
 
 private class AlertAwaitImpl(
 	private val client: AlertHandler, private val spec: AlertSpec,
