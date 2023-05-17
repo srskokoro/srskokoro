@@ -17,11 +17,9 @@ import java.awt.Dialog
 import java.awt.Font
 import java.awt.GraphicsEnvironment
 import java.awt.Toolkit
-import java.awt.event.ActionEvent
 import java.awt.event.InvocationEvent
 import java.io.Writer
 import java.util.LinkedList
-import javax.swing.AbstractAction
 import javax.swing.GroupLayout
 import javax.swing.GroupLayout.DEFAULT_SIZE
 import javax.swing.GroupLayout.PREFERRED_SIZE
@@ -281,13 +279,7 @@ private object StackTraceModalImpl {
 
 		// Necessary to prevent `Esc` key "close" action (which is otherwise
 		// still enabled even if `defaultCloseOperation` is configured).
-		pane.actionMap.put("close", object : AbstractAction("close") {
-			// @formatter:off
-			init { enabled = false }
-			// @formatter:on
-			override fun setEnabled(newValue: Boolean) = Unit
-			override fun actionPerformed(e: ActionEvent) = Unit
-		})
+		pane.actionMap.put(NopCloseAction.NAME, NopCloseAction)
 
 		// NOTE: Deliberately not parented to anyone, so that it gets its own
 		// entry in the system taskbar.

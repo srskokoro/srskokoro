@@ -103,7 +103,7 @@ fun Alerts.swing(handler: AlertHandler, spec: AlertSpec): AlertButton? {
 	} else {
 		// Necessary to prevent `Esc` key "close" action (which is otherwise
 		// still enabled even if `defaultCloseOperation` is configured).
-		pane.actionMap.put("close", NopCloseAction)
+		pane.actionMap.put(NopCloseAction.NAME, NopCloseAction)
 		// We're NOT cancellable/closeable
 		WindowConstants.DO_NOTHING_ON_CLOSE
 	}.let {
@@ -190,7 +190,9 @@ private class AlertTokenImpl(
 	}
 }
 
-private object NopCloseAction : AbstractAction("close") {
+internal object NopCloseAction : AbstractAction("close") {
+	const val NAME = "close"
+
 	init {
 		enabled = false
 	}
