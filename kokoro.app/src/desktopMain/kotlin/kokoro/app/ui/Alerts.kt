@@ -43,7 +43,8 @@ private class AlertAwaitImpl(
 	override fun run() {
 		val continuation = continuation
 		continuation.resume(try {
-			Alerts.swing(this, spec)
+			val parent = null // TODO Infer via `continuation.context`
+			Alerts.swing(this, parent, spec)
 		} catch (ex: Throwable) {
 			continuation.resumeWithException(ex)
 			return
@@ -60,14 +61,14 @@ private class AlertAwaitImpl(
 
 //region Counterpart in "Swing"
 
-inline fun Alerts.swing(spec: AlertSpec.() -> Unit) = swing(AlertHandler.DEFAULT, spec)
+inline fun Alerts.swing(parent: Component?, spec: AlertSpec.() -> Unit) = swing(AlertHandler.DEFAULT, parent, spec)
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun Alerts.swing(spec: AlertSpec) = swing(AlertHandler.DEFAULT, spec)
+inline fun Alerts.swing(parent: Component?, spec: AlertSpec) = swing(AlertHandler.DEFAULT, parent, spec)
 
-inline fun Alerts.swing(handler: AlertHandler, spec: AlertSpec.() -> Unit) = swing(handler, AlertSpec().apply(spec))
+inline fun Alerts.swing(handler: AlertHandler, parent: Component?, spec: AlertSpec.() -> Unit) = swing(handler, parent, AlertSpec().apply(spec))
 
-fun Alerts.swing(handler: AlertHandler, spec: AlertSpec): AlertButton? {
+fun Alerts.swing(handler: AlertHandler, parent: Component?, spec: AlertSpec): AlertButton? {
 	checkThreadSwing()
 	ensureAppLaf()
 
@@ -91,10 +92,11 @@ fun Alerts.swing(handler: AlertHandler, spec: AlertSpec): AlertButton? {
 	)
 	inflater.paneRef.value = pane
 
-	// Nullable, so that the dialog may have its own system taskbar entry.
-	val parent: Component? = spec.context ?: BaseAppWindow.lastActive
-	pane.componentOrientation = (parent ?: JOptionPane.getRootFrame()).componentOrientation
+	val relative = parent ?: BaseAppWindow.lastActive
+	pane.componentOrientation = (relative ?: JOptionPane.getRootFrame()).componentOrientation
 
+	// NOTE: Let `parent` be null, so that the dialog may have its own entry in
+	// the system taskbar.
 	val dialog = pane.createDialog(parent, spec.title)
 	if (!isNonCancellable) {
 		// We're cancellable/closeable
@@ -111,7 +113,7 @@ fun Alerts.swing(handler: AlertHandler, spec: AlertSpec): AlertButton? {
 
 	dialog.ensureBounded(2)
 	dialog.isResizable = true
-	dialog.setLocationRelativeTo(parent)
+	dialog.setLocationRelativeTo(relative)
 
 	// NOTE: The following not only gives the client code an opportunity to
 	// dismiss the dialog, but also, to dismiss it before it could be shown.

@@ -47,8 +47,6 @@ class AlertSpec {
 		const val DEFAULT_TITLE = AppBuild.TITLE
 	}
 
-	var context: AlertContext? = null
-
 	var message: Any? = null
 	var title: String = DEFAULT_TITLE
 	var style: AlertStyle = AlertStyle.PLAIN
@@ -58,8 +56,6 @@ class AlertSpec {
 
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun init(
-		context: AlertContext? = null,
-
 		message: Any? = null,
 		title: String = DEFAULT_TITLE,
 		style: AlertStyle = AlertStyle.PLAIN,
@@ -67,8 +63,6 @@ class AlertSpec {
 		buttons: AlertButtonsSetup = AlertButtonsSetup.OK,
 		defaultButton: Int = 0,
 	) {
-		this.context = context
-
 		this.message = message
 		this.title = title
 		this.style = style
