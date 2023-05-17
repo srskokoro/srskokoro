@@ -24,6 +24,8 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.math.max
 
+//region
+
 actual suspend fun Alerts.await(handler: AlertHandler, spec: AlertSpec): AlertButton? =
 	suspendCancellableCoroutine(AlertAwaitImpl(handler, spec))
 
@@ -56,7 +58,9 @@ private class AlertAwaitImpl(
 	}
 }
 
-// --
+//endregion
+
+//region Counterpart in "Swing"
 
 inline fun Alerts.swing(spec: AlertSpec.() -> Unit) = swing(AlertHandler.DEFAULT, spec)
 
@@ -198,7 +202,9 @@ private object NopCloseAction : AbstractAction("close") {
 	override fun actionPerformed(e: ActionEvent) = Unit
 }
 
-// --
+//endregion
+
+//region Style
 
 actual enum class AlertStyle(internal val value: Int) {
 	PLAIN(JOptionPane.PLAIN_MESSAGE),
@@ -207,6 +213,10 @@ actual enum class AlertStyle(internal val value: Int) {
 	QUESTION(JOptionPane.QUESTION_MESSAGE),
 	INFO(JOptionPane.INFORMATION_MESSAGE),
 }
+
+//endregion
+
+//region Buttons
 
 actual sealed interface AlertButton {
 	actual val choice: AlertChoice
@@ -329,3 +339,5 @@ internal class AlertButtonInflater {
 		}
 	}
 }
+
+//endregion
