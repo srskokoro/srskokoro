@@ -4,6 +4,9 @@ import kokoro.app.i18n.Locale
 import kokoro.internal.ui.assertThreadSwing
 import kokoro.internal.ui.checkThreadSwing
 import kokoro.internal.ui.ensureBounded
+import kotlinx.coroutines.CancellableContinuation
+import kotlinx.coroutines.CompletionHandler
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.awt.Dimension
 import java.awt.EventQueue
 import java.awt.Toolkit
@@ -17,9 +20,41 @@ import javax.swing.JOptionPane
 import javax.swing.UIDefaults
 import javax.swing.UIManager
 import javax.swing.WindowConstants
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 import kotlin.math.max
 
-actual suspend fun Alerts.await(handler: AlertHandler, spec: AlertSpec): AlertButton? = TODO("Not yet implemented")
+actual suspend fun Alerts.await(handler: AlertHandler, spec: AlertSpec): AlertButton? =
+	suspendCancellableCoroutine(AlertAwaitImpl(handler, spec))
+
+private class AlertAwaitImpl(
+	private val client: AlertHandler, private val spec: AlertSpec,
+) : AlertHandler, Runnable, (CancellableContinuation<AlertButton?>) -> Unit {
+	private lateinit var continuation: CancellableContinuation<AlertButton?>
+
+	override fun invoke(continuation: CancellableContinuation<AlertButton?>) {
+		// The following 'write' is guaranteed to *happen before* the
+		// `invokeLater()`, even if the field isn't marked volatile.
+		this.continuation = continuation
+		if (EventQueue.isDispatchThread()) run()
+		else EventQueue.invokeLater(this)
+	}
+
+	override fun run() {
+		val continuation = continuation
+		continuation.resume(try {
+			Alerts.swing(this, spec)
+		} catch (ex: Throwable) {
+			continuation.resumeWithException(ex)
+			return
+		})
+	}
+
+	override fun onShow(token: AlertToken) {
+		continuation.invokeOnCancellation(token as AlertTokenImpl)
+		client.onShow(token)
+	}
+}
 
 // --
 
@@ -127,8 +162,10 @@ private fun playSystemSound(messageType: Int) {
 private class AlertTokenImpl(
 	private val dialog: JDialog,
 	private val pane: JOptionPane,
-) : AlertToken, Runnable {
+) : AlertToken, Runnable, CompletionHandler {
 	private var deferredValue: AlertButton? = null
+
+	override fun invoke(cause: Throwable?) = dismiss(null)
 
 	override fun dismiss() = dismiss(null)
 
