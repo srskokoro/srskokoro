@@ -13,12 +13,12 @@ import kotlin.math.max
 
 actual suspend fun Alerts.await(handler: AlertHandler, spec: AlertSpec): AlertButton? = TODO("Not yet implemented")
 
-actual enum class AlertStyle {
-	PLAIN,
-	ERROR,
-	WARN,
-	QUESTION,
-	INFO,
+actual enum class AlertStyle(internal val value: Int) {
+	PLAIN(JOptionPane.PLAIN_MESSAGE),
+	ERROR(JOptionPane.ERROR_MESSAGE),
+	WARN(JOptionPane.WARNING_MESSAGE),
+	QUESTION(JOptionPane.QUESTION_MESSAGE),
+	INFO(JOptionPane.INFORMATION_MESSAGE),
 }
 
 actual sealed interface AlertButton {
