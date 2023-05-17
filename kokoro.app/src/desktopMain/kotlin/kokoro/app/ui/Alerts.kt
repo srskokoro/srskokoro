@@ -27,21 +27,17 @@ import kotlin.math.max
 //region
 
 actual suspend fun Alerts.await(handler: AlertHandler, spec: AlertSpec): AlertButton? {
-	return suspendCancellableCoroutine(AlertAwaitImpl(handler, spec))
+	return suspendCancellableCoroutine { continuation ->
+		val impl = AlertAwaitImpl(handler, spec, continuation)
+		if (EventQueue.isDispatchThread()) impl.run()
+		else EventQueue.invokeLater(impl)
+	}
 }
 
 private class AlertAwaitImpl(
 	private val client: AlertHandler, private val spec: AlertSpec,
-) : AlertHandler, Runnable, (CancellableContinuation<AlertButton?>) -> Unit {
-	private lateinit var continuation: CancellableContinuation<AlertButton?>
-
-	override fun invoke(continuation: CancellableContinuation<AlertButton?>) {
-		// The following 'write' is guaranteed to *happen before* the
-		// `invokeLater()`, even if the field isn't marked volatile.
-		this.continuation = continuation
-		if (EventQueue.isDispatchThread()) run()
-		else EventQueue.invokeLater(this)
-	}
+	private val continuation: CancellableContinuation<AlertButton?>,
+) : AlertHandler, Runnable {
 
 	override fun run() {
 		val continuation = continuation
