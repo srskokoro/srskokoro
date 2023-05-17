@@ -36,7 +36,7 @@ interface AlertToken {
 
 //endregion
 
-//region Type-safe builders
+//region Type-safe builder
 
 @DslMarker
 private annotation class AlertSpecDsl
@@ -85,6 +85,10 @@ class AlertSpec {
 		buttons = block(AlertButtonsSetup)
 	}
 }
+
+//endregion
+
+//region Style
 
 @AlertSpecDsl
 object AlertStyles {
