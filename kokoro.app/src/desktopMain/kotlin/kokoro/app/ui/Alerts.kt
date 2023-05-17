@@ -7,6 +7,7 @@ import kokoro.internal.ui.ensureBounded
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.suspendCancellableCoroutine
+import java.awt.Component
 import java.awt.Dimension
 import java.awt.EventQueue
 import java.awt.Toolkit
@@ -90,11 +91,9 @@ fun Alerts.swing(handler: AlertHandler, spec: AlertSpec): AlertButton? {
 	)
 	inflater.paneRef.value = pane
 
-	val parent = spec.context
-		?: BaseAppWindow.lastActive
-		?: JOptionPane.getRootFrame()
-
-	pane.componentOrientation = parent.componentOrientation
+	// Nullable, so that the dialog may have its own system taskbar entry.
+	val parent: Component? = spec.context ?: BaseAppWindow.lastActive
+	pane.componentOrientation = (parent ?: JOptionPane.getRootFrame()).componentOrientation
 
 	val dialog = pane.createDialog(parent, spec.title)
 	if (!isNonCancellable) {
