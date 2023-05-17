@@ -1,17 +1,167 @@
 package kokoro.app.ui
 
 import kokoro.app.i18n.Locale
+import kokoro.internal.ui.assertThreadSwing
+import kokoro.internal.ui.checkThreadSwing
+import kokoro.internal.ui.ensureBounded
 import java.awt.Dimension
+import java.awt.EventQueue
+import java.awt.Toolkit
 import java.awt.event.ActionEvent
+import javax.swing.AbstractAction
 import javax.swing.Icon
 import javax.swing.JButton
 import javax.swing.JComponent
+import javax.swing.JDialog
 import javax.swing.JOptionPane
 import javax.swing.UIDefaults
 import javax.swing.UIManager
+import javax.swing.WindowConstants
 import kotlin.math.max
 
 actual suspend fun Alerts.await(handler: AlertHandler, spec: AlertSpec): AlertButton? = TODO("Not yet implemented")
+
+// --
+
+inline fun Alerts.swing(spec: AlertSpec.() -> Unit) = swing(AlertHandler.DEFAULT, spec)
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun Alerts.swing(spec: AlertSpec) = swing(AlertHandler.DEFAULT, spec)
+
+inline fun Alerts.swing(handler: AlertHandler, spec: AlertSpec.() -> Unit) = swing(handler, AlertSpec().apply(spec))
+
+fun Alerts.swing(handler: AlertHandler, spec: AlertSpec): AlertButton? {
+	checkThreadSwing()
+	ensureAppLaf()
+
+	val inflater = AlertButtonInflater()
+	val buttons = spec.buttons
+	val components: Array<JButton> = buttons.mapToTypedArray(inflater::inflate)
+	val defaultComponent = spec.defaultButton.let {
+		if (it >= 0 && it < components.size)
+			components[it] else null
+	}
+	val isNonCancellable = buttons.isNonCancellable
+
+	val messageType = spec.style.value
+	val pane = JOptionPane(
+		spec.message,
+		messageType,
+		JOptionPane.DEFAULT_OPTION,
+		null,
+		components,
+		defaultComponent,
+	)
+	inflater.paneRef.value = pane
+
+	val parent = spec.context
+		?: BaseAppWindow.lastActive
+		?: JOptionPane.getRootFrame()
+
+	pane.componentOrientation = parent.componentOrientation
+
+	val dialog = pane.createDialog(parent, spec.title)
+	if (!isNonCancellable) {
+		// We're cancellable/closeable
+		WindowConstants.HIDE_ON_CLOSE
+	} else {
+		// Necessary to prevent `Esc` key "close" action (which is otherwise
+		// still enabled even if `defaultCloseOperation` is configured).
+		pane.actionMap.put("close", NopCloseAction)
+		// We're NOT cancellable/closeable
+		WindowConstants.DO_NOTHING_ON_CLOSE
+	}.let {
+		dialog.defaultCloseOperation = it
+	}
+
+	dialog.ensureBounded(2)
+	dialog.isResizable = true
+	dialog.setLocationRelativeTo(parent)
+
+	// NOTE: The following not only gives the client code an opportunity to
+	// dismiss the dialog, but also, to dismiss it before it could be shown.
+	handler.onShow(AlertTokenImpl(dialog, pane))
+
+	// Before we proceed, check that we're not disposed yet (since the last
+	// operation above may have triggered an early disposal).
+	if (dialog.isDisplayable) {
+		playSystemSound(messageType)
+		dialog.isVisible = true // Will block and spawn a secondary event loop
+		dialog.dispose() // Done!
+	}
+
+	// NOTE: The `value` below can be an `Int`, a `String`, or null, as the
+	// dialog can be dismissed by means other than our custom button components,
+	// and there may be internal code beyond our grasp that could set it to
+	// something else.
+	return pane.value as? AlertButton
+}
+
+private fun playSystemSound(messageType: Int) {
+	val soundProp = when (messageType) {
+		JOptionPane.PLAIN_MESSAGE -> return // Skip. No sound requested.
+
+		// Only Windows is supported (for now). See, https://bugs.openjdk.org/browse/JDK-8149630
+		// - See also, https://www.autohotkey.com/docs/v2/lib/MsgBox.htm#Group_2_Icon
+		JOptionPane.ERROR_MESSAGE -> "win.sound.hand"
+		JOptionPane.WARNING_MESSAGE -> "win.sound.exclamation"
+		JOptionPane.QUESTION_MESSAGE -> "win.sound.question"
+		JOptionPane.INFORMATION_MESSAGE -> "win.sound.asterisk"
+
+		else -> throw AssertionError(messageType)
+	}
+
+	val toolkit = Toolkit.getDefaultToolkit()
+
+	toolkit.getDesktopProperty(soundProp).let {
+		if (it is Runnable) {
+			it.run() // Will play the system sound for us
+			return // Done!
+		}
+	}
+
+	// Fallback (and for other desktop platforms)
+	toolkit.beep()
+}
+
+private class AlertTokenImpl(
+	private val dialog: JDialog,
+	private val pane: JOptionPane,
+) : AlertToken, Runnable {
+	private var deferredValue: AlertButton? = null
+
+	override fun dismiss() = dismiss(null)
+
+	override fun dismiss(choice: AlertButton?) {
+		// The following 'write' is guaranteed to *happen before* the
+		// `invokeLater()`, even if the field isn't marked volatile.
+		deferredValue = choice
+		if (EventQueue.isDispatchThread()) run()
+		else EventQueue.invokeLater(this)
+	}
+
+	override fun run() {
+		assertThreadSwing()
+		// Now before we proceed, check that we're not disposed yet, since
+		// someone else might have already disposed us. Also, the following
+		// should be done only once; thus, we must check.
+		if (dialog.isDisplayable) {
+			pane.value = deferredValue
+			dialog.dispose()
+		}
+	}
+}
+
+private object NopCloseAction : AbstractAction("close") {
+	init {
+		enabled = false
+	}
+
+	override fun setEnabled(newValue: Boolean) = Unit
+	override fun actionPerformed(e: ActionEvent) = Unit
+}
+
+// --
 
 actual enum class AlertStyle(internal val value: Int) {
 	PLAIN(JOptionPane.PLAIN_MESSAGE),
