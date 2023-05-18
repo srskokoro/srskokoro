@@ -167,9 +167,7 @@ private class AlertTokenImpl(
 ) : AlertToken, Runnable, CompletionHandler {
 	private var deferredValue: AlertButton? = null
 
-	override fun invoke(cause: Throwable?) = dismiss(null)
-
-	override fun dismiss() = dismiss(null)
+	override fun invoke(cause: Throwable?) = dismiss()
 
 	override fun dismiss(choice: AlertButton?) {
 		// The following 'write' is guaranteed to *happen before* the

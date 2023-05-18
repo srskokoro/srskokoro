@@ -29,10 +29,11 @@ fun interface AlertHandler {
 
 interface AlertToken {
 
-	fun dismiss()
-
 	fun dismiss(choice: AlertButton?)
 }
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun AlertToken.dismiss() = dismiss(null)
 
 //endregion
 
