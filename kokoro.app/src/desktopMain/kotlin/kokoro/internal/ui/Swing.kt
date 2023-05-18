@@ -29,13 +29,18 @@ inline fun <C : Component, R> C.ifVisible(block: (component: C) -> R): R? {
  *
  * @see Window.ensureBounded
  */
-fun Window.boundedPack(maxDiv: Int = 1) {
+@Suppress("NOTHING_TO_INLINE")
+inline fun Window.boundedPack(maxDiv: Int = 1) {
 	pack()
 	ensureBounded(maxDiv)
 }
 
 /** @see Window.boundedPack */
-fun Window.ensureBounded(maxDiv: Int = 1) {
+@Suppress("NOTHING_TO_INLINE")
+inline fun Window.ensureBounded() = ensureBounded(1)
+
+/** @see Window.boundedPack */
+fun Window.ensureBounded(maxDiv: Int) {
 	require(maxDiv > 0) { "Positive integer required" }
 
 	var shouldResize = false
