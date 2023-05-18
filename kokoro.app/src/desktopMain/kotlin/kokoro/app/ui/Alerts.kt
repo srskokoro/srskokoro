@@ -1,6 +1,8 @@
 package kokoro.app.ui
 
+import com.formdev.flatlaf.FlatLaf
 import kokoro.app.i18n.Locale
+import kokoro.internal.ui.DummyComponent
 import kokoro.internal.ui.assertThreadSwing
 import kokoro.internal.ui.checkThreadSwing
 import kokoro.internal.ui.ensureBounded
@@ -10,17 +12,19 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.EventQueue
-import java.awt.Point
 import java.awt.Toolkit
+import java.awt.Window
 import java.awt.event.ActionEvent
 import java.awt.event.KeyEvent
-import java.awt.event.MouseEvent
+import java.util.LinkedList
 import javax.swing.Icon
 import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JDialog
+import javax.swing.JLabel
+import javax.swing.JLayeredPane
 import javax.swing.JOptionPane
-import javax.swing.JToolTip
+import javax.swing.JWindow
 import javax.swing.LayoutStyle
 import javax.swing.UIDefaults
 import javax.swing.UIManager
@@ -95,7 +99,6 @@ fun Alerts.swing(handler: AlertHandler, parent: Component?, spec: AlertSpec): Al
 		components,
 		defaultComponent,
 	)
-	inflater.paneRef.value = pane
 
 	val relative = parent ?: BaseAppWindow.lastActive
 	pane.componentOrientation = (relative ?: JOptionPane.getRootFrame()).componentOrientation
@@ -103,6 +106,8 @@ fun Alerts.swing(handler: AlertHandler, parent: Component?, spec: AlertSpec): Al
 	val dialog =
 		if (parent != null) pane.createDialog(parent, spec.title)
 		else pane.createDialog(spec.title) // Will have its own system taskbar entry
+
+	inflater.setPaneRef(pane, dialog)
 
 	if (!isNonCancellable) {
 		// We're cancellable/closeable
@@ -248,11 +253,23 @@ actual enum class AlertChoice : AlertButton {
 }
 
 internal class AlertButtonInflater {
-	class OptionPaneRef {
-		@JvmField var value: JOptionPane? = null
+	private class OptionPaneRef {
+		@JvmField var pane: JOptionPane? = null
+		@JvmField var dialog: JDialog? = null
 	}
 
-	@JvmField val paneRef = OptionPaneRef()
+	private val paneRef = OptionPaneRef()
+	private val componentsWithMnemonicTips = LinkedList<OptionPaneButton>()
+
+	fun setPaneRef(pane: JOptionPane, dialog: JDialog) {
+		paneRef.pane = pane
+		paneRef.dialog = dialog
+		componentsWithMnemonicTips.takeIf { it.isNotEmpty() }?.let { MnemonicTipsDispatcher(it) }?.let {
+			dialog.rootPane.layeredPane.add(it, JLayeredPane.FRAME_CONTENT_LAYER as Any)
+		}
+	}
+
+	// --
 
 	@JvmField val locale: Locale = JComponent.getDefaultLocale()
 	@JvmField val uiManager: UIDefaults = UIManager.getDefaults()
@@ -293,7 +310,7 @@ internal class AlertButtonInflater {
 				component.mnemonic = mnemonic
 				if (textOverride != null) {
 					component.displayedMnemonicIndex = -1
-					component.toolTipText = KeyEvent.getKeyText(mnemonic)
+					componentsWithMnemonicTips.addLast(component)
 				}
 			}
 		}
@@ -329,56 +346,100 @@ internal class AlertButtonInflater {
 		}
 
 		override fun fireActionPerformed(event: ActionEvent) {
-			paneRef.value?.value = template
+			paneRef.pane?.value = template
 		}
 
 		// --
 
-		private var tip: JToolTip? = null
-		private var tipGap = 0
+		private var mnemonicTip: JWindow? = null
+		private var mnemonicTipGap = 0
 
-		override fun createToolTip(): JToolTip {
-			var tip = tip
-			if (tip == null) {
-				tip = JToolTip()
-				tip.component = this
+		fun onShowMnemonicTip(show: Boolean) {
+			var tip = mnemonicTip
+			if (!show) {
+				tip?.isVisible = false
+				return // Skip everything below
+			} else if (tip == null) {
+				val tipLabel = JLabel(KeyEvent.getKeyText(mnemonic))
+				tipLabel.isOpaque = true
 
-				// Necessary in order to get the tooltip's preferred size early
-				tip.tipText = toolTipText
+				val uiManager = UIManager.getDefaults()
+				tipLabel.foreground = uiManager.getColor("ToolTip.foreground")
+				tipLabel.background = uiManager.getColor("ToolTip.background")
+				tipLabel.font = uiManager.getFont("ToolTip.font")
+				tipLabel.border = uiManager.getBorder("ToolTip.border")
+
+				// `parent` must not be null, since we'll rely on it to dispose
+				// the popup window for us.
+				val parent = paneRef.dialog!!
 
 				// Get the gap size used by `GroupLayout` -- see, https://stackoverflow.com/a/29167736
-				tipGap = LayoutStyle.getInstance().getPreferredGap(this, tip,
-					LayoutStyle.ComponentPlacement.RELATED, SOUTH, null)
-			}
-			return tip
-		}
+				mnemonicTipGap = LayoutStyle.getInstance().getPreferredGap(this, tipLabel,
+					LayoutStyle.ComponentPlacement.RELATED, SOUTH, parent)
 
-		override fun getToolTipLocation(event: MouseEvent?): Point {
-			val tip = createToolTip()
-			val tipPrefSize = tip.preferredSize
+				tip = JWindow(parent)
+				mnemonicTip = tip
 
-			val tipGap = tipGap
-			var y = height + tipGap
-
-			if (isShowing) graphicsConfiguration?.let { gc ->
-				val edgeY = gc.bounds.let {
-					// Take into account screen insets; decrease viewport.
-					it.y + it.height - toolkit.getScreenInsets(gc).bottom
-				}
-				val tipHeight = tipPrefSize.height
-				if (locationOnScreen.y + y + tipHeight > edgeY) {
-					y = -(tipHeight + tipGap)
-				}
+				tip.type = Window.Type.POPUP
+				tip.focusableWindowState = false
+				tip.contentPane.add(tipLabel)
+				tip.pack()
 			}
 
 			// From `(n + 1) >> 1`; from `floor((n + 1) / 2.0)`; from `floor(n / 2.0 + 0.5)`; from `round(n / 2.0)`
-			val x = ((width - tipPrefSize.width) + 1) shr 1
+			var x = ((width - tip.width) + 1) shr 1
 			// ^ WARNING: An arithmetic shift performs a 'floor', while an
 			// integer division performs a truncation. Thus, DO NOT change the
 			// above to its "integer division" counterpart.
 
-			return Point(x, y)
+			val tipGap = mnemonicTipGap
+			var y = height + tipGap
+
+			if (isShowing) {
+				val loc = locationOnScreen
+				x += loc.x
+				y += loc.y
+
+				graphicsConfiguration?.let { gc ->
+					val sb = gc.bounds // Screen bounds
+					val si = toolkit.getScreenInsets(gc)
+
+					if ((y + tip.height) > (sb.y + sb.height - si.bottom)) {
+						y = loc.y - tip.height - tipGap
+					}
+				}
+			}
+
+			tip.setLocation(x, y)
+			tip.isVisible = true
 		}
+	}
+
+	private class MnemonicTipsDispatcher(
+		private val registered: LinkedList<OptionPaneButton>
+	) : DummyComponent(), Runnable {
+		private var prevIsShowMnemonics = false
+
+		override fun run() {
+			val oldIsShowMnemonics = prevIsShowMnemonics
+			val newIsShowMnemonics = FlatLaf.isShowMnemonics()
+			if (oldIsShowMnemonics != newIsShowMnemonics) {
+				this.prevIsShowMnemonics = newIsShowMnemonics
+				for (it in registered) {
+					it.onShowMnemonicTip(newIsShowMnemonics)
+				}
+			}
+		}
+
+		override fun repaint() {
+			if (EventQueue.isDispatchThread()) run()
+			else EventQueue.invokeLater(this)
+		}
+
+		// Must be non-negative to force FlatLaf to call `repaint()` on mnemonic display trigger
+		override fun getDisplayedMnemonicIndex() = 0
+
+		override fun setDisplayedMnemonicIndex(index: Int) {}
 	}
 }
 
