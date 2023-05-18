@@ -10,13 +10,18 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.EventQueue
+import java.awt.Point
 import java.awt.Toolkit
 import java.awt.event.ActionEvent
+import java.awt.event.KeyEvent
+import java.awt.event.MouseEvent
 import javax.swing.Icon
 import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JDialog
 import javax.swing.JOptionPane
+import javax.swing.JToolTip
+import javax.swing.LayoutStyle
 import javax.swing.UIDefaults
 import javax.swing.UIManager
 import javax.swing.WindowConstants
@@ -288,6 +293,7 @@ internal class AlertButtonInflater {
 				component.mnemonic = mnemonic
 				if (textOverride != null) {
 					component.displayedMnemonicIndex = -1
+					component.toolTipText = KeyEvent.getKeyText(mnemonic)
 				}
 			}
 		}
@@ -324,6 +330,49 @@ internal class AlertButtonInflater {
 
 		override fun fireActionPerformed(event: ActionEvent) {
 			paneRef.value?.value = template
+		}
+
+		// --
+
+		private var tip: JToolTip? = null
+		private var tipGap = 0
+
+		override fun createToolTip(): JToolTip {
+			var tip = tip
+			if (tip == null) {
+				tip = JToolTip()
+				tip.component = this
+
+				// Necessary in order to get the tooltip's preferred size early
+				tip.tipText = toolTipText
+
+				tipGap = LayoutStyle.getInstance().getPreferredGap(this, tip,
+					LayoutStyle.ComponentPlacement.RELATED, SOUTH, null)
+			}
+			return tip
+		}
+
+		override fun getToolTipLocation(event: MouseEvent?): Point {
+			val tip = createToolTip()
+			val tipPrefSize = tip.preferredSize
+
+			val tipGap = tipGap
+			var y = height + tipGap
+
+			if (isShowing) graphicsConfiguration?.let { gc ->
+				val edgeY = gc.bounds.let {
+					// Take into account screen insets; decrease viewport.
+					it.y + it.height - toolkit.getScreenInsets(gc).bottom
+				}
+				val tipHeight = tipPrefSize.height
+				if (locationOnScreen.y + y + tipHeight > edgeY) {
+					y = -(tipHeight + tipGap)
+				}
+			}
+
+			@Suppress("ReplaceJavaStaticMethodWithKotlinAnalog")
+			val x = Math.round((width - tipPrefSize.width) / 2.0).toInt()
+			return Point(x, y)
 		}
 	}
 }
