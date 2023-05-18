@@ -189,12 +189,11 @@ private class AlertTokenImpl(
 	}
 }
 
-internal object NopCloseAction : AppUIAction("close") {
-	const val NAME = "close"
+internal object NopCloseAction : AppUIAction(CLOSE) {
 
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun addTo(actionMap: ActionMap) {
-		actionMap.put(NAME, this)
+		actionMap.put(CLOSE, this)
 	}
 
 	// --

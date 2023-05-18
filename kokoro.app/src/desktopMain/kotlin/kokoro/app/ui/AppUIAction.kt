@@ -7,6 +7,9 @@ import javax.swing.Action
  * @see sun.swing.UIAction
  */
 abstract class AppUIAction(val name: String?) : Action {
+	companion object {
+		const val CLOSE = "close"
+	}
 
 	override fun getValue(key: String?): Any? =
 		@Suppress("ReplaceCallWithBinaryOperator")
