@@ -112,7 +112,7 @@ fun Alerts.swing(handler: AlertHandler, parent: Component?, spec: AlertSpec): Al
 	}
 
 	dialog.ensureBounded(2)
-	dialog.isResizable = true
+	dialog.isResizable = spec.isResizable
 	dialog.setLocationRelativeTo(relative)
 
 	// NOTE: The following not only gives the client code an opportunity to

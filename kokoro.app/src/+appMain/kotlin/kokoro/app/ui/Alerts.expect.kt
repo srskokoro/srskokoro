@@ -55,6 +55,8 @@ class AlertSpec {
 	var buttons: AlertButtonsSetup = AlertButtonsSetup.OK
 	var defaultButton: Int = 0
 
+	var isResizable = false
+
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun init(
 		message: Any? = null,
