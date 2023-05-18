@@ -360,6 +360,9 @@ internal class AlertButtonInflater {
 				tip?.isVisible = false
 				return // Skip everything below
 			} else if (tip == null) {
+				// Inspired by, https://stackoverflow.com/a/65744432
+				// --
+
 				val tipLabel = JLabel(KeyEvent.getKeyText(mnemonic))
 				tipLabel.isOpaque = true
 
