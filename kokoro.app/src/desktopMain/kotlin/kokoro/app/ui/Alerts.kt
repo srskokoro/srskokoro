@@ -122,8 +122,11 @@ fun Alerts.swing(handler: AlertHandler, parent: Component?, spec: AlertSpec): Al
 		dialog.defaultCloseOperation = it
 	}
 
-	dialog.ensureBounded(spec.ensureBoundedByMaxDiv)
+	// Set this first, since on some platforms, changing the resizable state
+	// affects the insets of the dialog.
 	if (spec.isResizable) dialog.isResizable = true
+
+	dialog.ensureBounded(spec.ensureBoundedByMaxDiv)
 	dialog.setLocationRelativeTo(relative)
 
 	// NOTE: The following not only gives the client code an opportunity to

@@ -287,8 +287,11 @@ private object StackTraceModalImpl {
 			defaultCloseOperation = WindowConstants.DO_NOTHING_ON_CLOSE
 			modalityType = Dialog.ModalityType.TOOLKIT_MODAL
 
-			ensureBounded(2)
+			// Set this first, since on some platforms, changing the resizable
+			// state affects the insets of the dialog.
 			isResizable = true
+
+			ensureBounded(2)
 			setLocationRelativeTo(parent)
 
 			playSystemSound()
