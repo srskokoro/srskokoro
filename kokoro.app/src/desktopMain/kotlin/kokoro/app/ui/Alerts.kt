@@ -370,8 +370,7 @@ internal class AlertButtonInflater {
 				}
 			}
 
-			@Suppress("ReplaceJavaStaticMethodWithKotlinAnalog")
-			val x = Math.round((width - tipPrefSize.width) / 2.0).toInt()
+			val x = ((width - tipPrefSize.width) + 1) shr 1
 			return Point(x, y)
 		}
 	}
