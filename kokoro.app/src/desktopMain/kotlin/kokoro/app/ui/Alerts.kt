@@ -12,7 +12,6 @@ import java.awt.Dimension
 import java.awt.EventQueue
 import java.awt.Toolkit
 import java.awt.event.ActionEvent
-import javax.swing.AbstractAction
 import javax.swing.ActionMap
 import javax.swing.Icon
 import javax.swing.JButton
@@ -190,7 +189,7 @@ private class AlertTokenImpl(
 	}
 }
 
-internal object NopCloseAction : AbstractAction("close") {
+internal object NopCloseAction : AppUIAction("close") {
 	const val NAME = "close"
 
 	@Suppress("NOTHING_TO_INLINE")
@@ -200,11 +199,8 @@ internal object NopCloseAction : AbstractAction("close") {
 
 	// --
 
-	init {
-		enabled = false
-	}
+	override fun isEnabled() = false
 
-	override fun setEnabled(newValue: Boolean) = Unit
 	override fun actionPerformed(e: ActionEvent) = Unit
 }
 
