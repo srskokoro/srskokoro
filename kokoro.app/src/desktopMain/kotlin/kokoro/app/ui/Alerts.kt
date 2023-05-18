@@ -103,7 +103,7 @@ fun Alerts.swing(handler: AlertHandler, parent: Component?, spec: AlertSpec): Al
 	} else {
 		// Necessary to prevent `Esc` key "close" action (which is otherwise
 		// still enabled even if `defaultCloseOperation` is configured).
-		NopCloseAction.addTo(pane.actionMap)
+		NopCloseUiAction.addTo(pane.actionMap)
 		// We're NOT cancellable/closeable
 		WindowConstants.DO_NOTHING_ON_CLOSE
 	}.let {

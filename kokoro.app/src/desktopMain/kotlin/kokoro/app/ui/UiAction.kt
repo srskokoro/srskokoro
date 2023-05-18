@@ -6,7 +6,7 @@ import javax.swing.Action
 /**
  * @see sun.swing.UIAction
  */
-abstract class AppUIAction(val name: String?) : Action {
+abstract class UiAction(val name: String?) : Action {
 	companion object {
 		const val CLOSE = "close"
 	}

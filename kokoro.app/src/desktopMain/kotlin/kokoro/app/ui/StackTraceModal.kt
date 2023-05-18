@@ -279,7 +279,7 @@ private object StackTraceModalImpl {
 
 		// Necessary to prevent `Esc` key "close" action (which is otherwise
 		// still enabled even if `defaultCloseOperation` is configured).
-		NopCloseAction.addTo(pane.actionMap)
+		NopCloseUiAction.addTo(pane.actionMap)
 
 		// NOTE: Deliberately not parented to anyone, so that it gets its own
 		// entry in the system taskbar.
