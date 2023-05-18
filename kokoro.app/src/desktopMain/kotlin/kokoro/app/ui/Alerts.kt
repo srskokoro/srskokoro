@@ -192,9 +192,7 @@ private class AlertTokenImpl(
 internal object NopCloseAction : AppUIAction(CLOSE) {
 
 	@Suppress("NOTHING_TO_INLINE")
-	inline fun addTo(actionMap: ActionMap) {
-		actionMap.put(CLOSE, this)
-	}
+	inline fun addTo(actionMap: ActionMap) = actionMap.put(CLOSE, this)
 
 	// --
 
