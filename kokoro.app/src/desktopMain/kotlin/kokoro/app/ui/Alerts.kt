@@ -13,6 +13,7 @@ import java.awt.EventQueue
 import java.awt.Toolkit
 import java.awt.event.ActionEvent
 import javax.swing.AbstractAction
+import javax.swing.ActionMap
 import javax.swing.Icon
 import javax.swing.JButton
 import javax.swing.JComponent
@@ -104,7 +105,7 @@ fun Alerts.swing(handler: AlertHandler, parent: Component?, spec: AlertSpec): Al
 	} else {
 		// Necessary to prevent `Esc` key "close" action (which is otherwise
 		// still enabled even if `defaultCloseOperation` is configured).
-		pane.actionMap.put(NopCloseAction.NAME, NopCloseAction)
+		NopCloseAction.addTo(pane.actionMap)
 		// We're NOT cancellable/closeable
 		WindowConstants.DO_NOTHING_ON_CLOSE
 	}.let {
@@ -191,6 +192,13 @@ private class AlertTokenImpl(
 
 internal object NopCloseAction : AbstractAction("close") {
 	const val NAME = "close"
+
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun addTo(actionMap: ActionMap) {
+		actionMap.put(NAME, this)
+	}
+
+	// --
 
 	init {
 		enabled = false
