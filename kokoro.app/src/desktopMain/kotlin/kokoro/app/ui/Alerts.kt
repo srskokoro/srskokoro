@@ -67,6 +67,7 @@ inline fun Alerts.swing(parent: Component?, spec: AlertSpec) = swing(AlertHandle
 
 inline fun Alerts.swing(handler: AlertHandler, parent: Component?, spec: AlertSpec.() -> Unit) = swing(handler, parent, AlertSpec().apply(spec))
 
+@Suppress("UnusedReceiverParameter")
 fun Alerts.swing(handler: AlertHandler, parent: Component?, spec: AlertSpec): AlertButton? {
 	checkThreadSwing()
 	ensureAppLaf()
