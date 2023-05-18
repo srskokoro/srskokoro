@@ -346,6 +346,7 @@ internal class AlertButtonInflater {
 				// Necessary in order to get the tooltip's preferred size early
 				tip.tipText = toolTipText
 
+				// Get the gap size used by `GroupLayout` -- see, https://stackoverflow.com/a/29167736
 				tipGap = LayoutStyle.getInstance().getPreferredGap(this, tip,
 					LayoutStyle.ComponentPlacement.RELATED, SOUTH, null)
 			}
@@ -370,7 +371,12 @@ internal class AlertButtonInflater {
 				}
 			}
 
+			// From `(n + 1) >> 1`; from `floor((n + 1) / 2.0)`; from `floor(n / 2.0 + 0.5)`; from `round(n / 2.0)`
 			val x = ((width - tipPrefSize.width) + 1) shr 1
+			// ^ WARNING: An arithmetic shift performs a 'floor', while an
+			// integer division performs a truncation. Thus, DO NOT change the
+			// above to its "integer division" counterpart.
+
 			return Point(x, y)
 		}
 	}
