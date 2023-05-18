@@ -95,9 +95,10 @@ fun Alerts.swing(handler: AlertHandler, parent: Component?, spec: AlertSpec): Al
 	val relative = parent ?: BaseAppWindow.lastActive
 	pane.componentOrientation = (relative ?: JOptionPane.getRootFrame()).componentOrientation
 
-	// NOTE: Let `parent` be null, so that the dialog may have its own entry in
-	// the system taskbar.
-	val dialog = pane.createDialog(parent, spec.title)
+	val dialog =
+		if (parent != null) pane.createDialog(parent, spec.title)
+		else pane.createDialog(spec.title) // Will have its own system taskbar entry
+
 	if (!isNonCancellable) {
 		// We're cancellable/closeable
 		WindowConstants.HIDE_ON_CLOSE
