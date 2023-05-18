@@ -290,6 +290,7 @@ private object StackTraceModalImpl {
 			// Set this first, since on some platforms, changing the resizable
 			// state affects the insets of the dialog.
 			isResizable = true
+			pack() // Necessary in case the insets changed
 
 			ensureBounded(2)
 			setLocationRelativeTo(parent)

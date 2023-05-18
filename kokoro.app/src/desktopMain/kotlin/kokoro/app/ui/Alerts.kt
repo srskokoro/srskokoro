@@ -124,7 +124,10 @@ fun Alerts.swing(handler: AlertHandler, parent: Component?, spec: AlertSpec): Al
 
 	// Set this first, since on some platforms, changing the resizable state
 	// affects the insets of the dialog.
-	if (spec.isResizable) dialog.isResizable = true
+	if (spec.isResizable) {
+		dialog.isResizable = true
+		dialog.pack() // Necessary in case the insets changed
+	}
 
 	dialog.ensureBounded(spec.ensureBoundedByMaxDiv)
 	dialog.setLocationRelativeTo(relative)
