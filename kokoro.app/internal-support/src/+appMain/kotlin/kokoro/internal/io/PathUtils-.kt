@@ -1,9 +1,11 @@
 package kokoro.internal.io
 
+import kokoro.internal.SPECIAL_USE_DEPRECATION
 import okio.FileSystem
 import okio.IOException
 import okio.Path
 
+@Deprecated(SPECIAL_USE_DEPRECATION)
 internal fun `-ensureDirs-fallback`(dir: Path): Path {
 	val fs = FileSystem.SYSTEM
 	try {

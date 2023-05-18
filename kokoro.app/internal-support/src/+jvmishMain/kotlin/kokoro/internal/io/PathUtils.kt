@@ -11,5 +11,6 @@ actual inline val Path.isDirectory get() = toFile().isDirectory
 actual fun Path.ensureDirs(): Path {
 	val f = toFile()
 	if (f.isDirectory || f.mkdirs()) return this
+	@Suppress("DEPRECATION")
 	return `-ensureDirs-fallback`(this)
 }

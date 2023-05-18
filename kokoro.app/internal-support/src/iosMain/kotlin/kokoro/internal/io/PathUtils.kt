@@ -13,5 +13,6 @@ actual fun Path.ensureDirs(): Path {
 	val fs = FileSystem.SYSTEM
 	fs.createDirectories(this, mustCreate = false)
 	if (fs.metadataOrNull(this)?.isDirectory == true) return this
+	@Suppress("DEPRECATION")
 	return `-ensureDirs-fallback`(this)
 }
