@@ -12,7 +12,6 @@ import java.awt.Dimension
 import java.awt.EventQueue
 import java.awt.Toolkit
 import java.awt.event.ActionEvent
-import javax.swing.ActionMap
 import javax.swing.Icon
 import javax.swing.JButton
 import javax.swing.JComponent
@@ -187,18 +186,6 @@ private class AlertTokenImpl(
 			dialog.dispose()
 		}
 	}
-}
-
-internal object NopCloseAction : AppUIAction(CLOSE) {
-
-	@Suppress("NOTHING_TO_INLINE")
-	inline fun addTo(actionMap: ActionMap) = actionMap.put(CLOSE, this)
-
-	// --
-
-	override fun isEnabled() = false
-
-	override fun actionPerformed(e: ActionEvent) = Unit
 }
 
 //endregion
