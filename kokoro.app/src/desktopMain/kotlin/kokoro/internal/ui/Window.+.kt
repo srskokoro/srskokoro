@@ -47,9 +47,9 @@ fun Window.ensureBounded(maxDiv: Int) {
 	require(maxDiv > 0) { "Positive integer required" }
 
 	var shouldResize = false
-	val screenSize = graphicsConfiguration.bounds.size
+	val screenBounds = graphicsConfiguration.bounds
 
-	val maxWidth = screenSize.width / maxDiv
+	val maxWidth = screenBounds.width / maxDiv
 	val windowWidth = width
 
 	val newWidth = if (maxWidth < windowWidth) {
@@ -59,7 +59,7 @@ fun Window.ensureBounded(maxDiv: Int) {
 		windowWidth
 	}
 
-	val maxHeight = screenSize.height / maxDiv
+	val maxHeight = screenBounds.height / maxDiv
 	val windowHeight = height
 
 	val newHeight = if (maxHeight < windowHeight) {
@@ -73,13 +73,13 @@ fun Window.ensureBounded(maxDiv: Int) {
 
 	// ---===--- ---===--- ---===---
 
-	var minWidth = screenSize.width / 4
+	var minWidth = screenBounds.width / 4
 	if (minWidth < 100) minWidth *= 2
 
 	val curWidth = width
 	if (curWidth < minWidth) minWidth = curWidth
 
-	var minHeight = screenSize.height / 4
+	var minHeight = screenBounds.height / 4
 	if (minHeight < 100) minHeight *= 2
 
 	val curHeight = height
