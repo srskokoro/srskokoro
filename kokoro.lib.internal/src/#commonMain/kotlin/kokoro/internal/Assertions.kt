@@ -46,3 +46,21 @@ inline fun <T : Any> assertNotNull(value: T?, lazyMessage: () -> Any) {
 		throw AssertionError(message)
 	}
 }
+
+/**
+ * Throws an [AssertionError] if the value produced by [lazyValue] is null.
+ */
+@Suppress("NOTHING_TO_INLINE")
+inline fun <T : Any> assertNotNull(lazyValue: () -> T?) =
+	assertNotNull({ "Required value was null." }, lazyValue)
+
+/**
+ * Throws an [AssertionError] with the result of calling [lazyMessage] if the
+ * value produced by [lazyValue] is null.
+ */
+inline fun <T : Any> assertNotNull(lazyMessage: () -> Any, lazyValue: () -> T?) {
+	if (ASSERTIONS_ENABLED && lazyValue() == null) {
+		val message = lazyMessage()
+		throw AssertionError(message)
+	}
+}
