@@ -1,7 +1,6 @@
 package kokoro.internal.ui
 
 import java.awt.Dimension
-import java.awt.Frame
 import java.awt.Window
 
 /**
@@ -87,57 +86,4 @@ fun Window.ensureBounded(maxDiv: Int) {
 	if (curHeight < minHeight) minHeight = curHeight
 
 	this.minimumSize = Dimension(minWidth, minHeight)
-}
-
-@Suppress("NOTHING_TO_INLINE")
-@JvmName("setLocationCascade_nullable")
-inline fun Window.setLocationCascade(lastFrame: Frame?) {
-	if (lastFrame == null || !lastFrame.isDisplayable) {
-		isLocationByPlatform = true
-	} else setLocationCascade(lastFrame)
-}
-
-@Suppress("NOTHING_TO_INLINE")
-inline fun Window.setLocationCascadeOrCenter(lastFrame: Frame?) {
-	if (lastFrame == null || !lastFrame.isDisplayable) {
-		setLocationRelativeTo(null)
-	} else setLocationCascade(lastFrame)
-}
-
-fun Window.setLocationCascade(lastFrame: Frame) {
-	kotlin.run {
-		val lastFrameState = lastFrame.extendedState
-		if (!lastFrame.isShowing || (lastFrameState and Frame.MAXIMIZED_BOTH) != 0) return@run
-
-		val lastLoc = if ((lastFrameState and Frame.ICONIFIED) == 0) {
-			// Case: It's currently NOT minimized
-			lastFrame.locationOnScreen // ASSUMPTION: More reliable than `getLocation()`
-		} else {
-			// Case: It's currently minimized
-			lastFrame.location
-		}
-
-		val gc = graphicsConfiguration
-		val sb = gc.bounds
-		val si = toolkit.getScreenInsets(gc)
-
-		val insets = insets
-
-		// Use the title bar height as offset
-		val cascadeOffset = lastFrame.insets.top
-
-		val y = lastLoc.y + cascadeOffset
-		if ((y + (insets.top + insets.bottom) * 2) > (sb.y + sb.height - si.bottom)) return@run
-
-		var x = lastLoc.x + cascadeOffset - insets.left
-		val excessX = (x + width) - (sb.x + sb.width - si.right)
-		if (excessX > 0) x -= excessX
-
-		val sx = sb.x + si.left
-		if (sx > x) x = sx
-
-		setLocation(x, y)
-		return // Skip code below
-	}
-	isLocationByPlatform = true
 }
