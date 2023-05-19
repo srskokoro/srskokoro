@@ -1,4 +1,4 @@
-package kokoro.app.ui
+package kokoro.internal.ui
 
 import java.awt.event.ActionEvent
 import javax.swing.ActionMap

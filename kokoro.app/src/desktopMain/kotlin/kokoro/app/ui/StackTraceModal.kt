@@ -10,6 +10,7 @@ import kokoro.internal.getSafeStackTrace
 import kokoro.internal.io.UnsafeCharArrayWriter
 import kokoro.internal.io.writeln
 import kokoro.internal.printSafeStackTrace
+import kokoro.internal.ui.NopCloseUiAction
 import kokoro.internal.ui.ensureBounded
 import kokoro.internal.ui.repack
 import kotlinx.coroutines.CoroutineExceptionHandler

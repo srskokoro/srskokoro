@@ -1,4 +1,4 @@
-package kokoro.app.ui
+package kokoro.internal.ui
 
 import java.beans.PropertyChangeListener
 import javax.swing.Action

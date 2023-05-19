@@ -3,6 +3,7 @@ package kokoro.app.ui
 import com.formdev.flatlaf.FlatLaf
 import kokoro.app.i18n.Locale
 import kokoro.internal.ui.DummyComponent
+import kokoro.internal.ui.NopCloseUiAction
 import kokoro.internal.ui.assertThreadSwing
 import kokoro.internal.ui.checkThreadSwing
 import kokoro.internal.ui.ensureBounded
