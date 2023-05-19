@@ -57,7 +57,11 @@ class AlertSpec {
 
 	var isResizable = false
 
-	/** @see kokoro.internal.ui.ensureBounded */
+	/**
+	 * NOTE: Applicable only if [isResizable] is `true`.
+	 *
+	 * @see kokoro.internal.ui.ensureBounded
+	 */
 	var ensureBoundedByMaxDiv = 1
 
 	@Suppress("NOTHING_TO_INLINE")
