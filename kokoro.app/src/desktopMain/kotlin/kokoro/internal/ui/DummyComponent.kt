@@ -9,13 +9,13 @@ import javax.swing.plaf.ComponentUI
 import javax.swing.plaf.LabelUI
 
 open class DummyComponent(
-	text: String? = null, icon: Icon? = null,
-	horizontalAlignment: Int = CENTER,
+	isFocusable: Boolean = false, isEnabled: Boolean = false,
+	text: String? = null, icon: Icon? = null, horizontalAlignment: Int = CENTER,
 ) : JLabel(text, icon, horizontalAlignment) {
 
 	init {
-		isFocusable = false
-		isEnabled = false
+		super.setFocusable(isFocusable)
+		super.setEnabled(isEnabled)
 	}
 
 	// --
