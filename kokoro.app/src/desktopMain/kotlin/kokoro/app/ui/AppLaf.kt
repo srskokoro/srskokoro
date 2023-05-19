@@ -158,7 +158,7 @@ internal object AppLafSetup :
 		if (thrown != null) {
 			assert(lazyMessage = { thrown }) {
 				thrown is UnsupportedLookAndFeelException &&
-				thrown.cause.let { it != null && it === nonInitStatus }
+					thrown.cause.let { it != null && it === nonInitStatus }
 			}
 			throw wrapThrown() // So that we get the correct stacktrace
 		}
