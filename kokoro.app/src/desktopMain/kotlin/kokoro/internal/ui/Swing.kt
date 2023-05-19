@@ -25,13 +25,37 @@ inline fun <C : Component, R> C.ifVisible(block: (component: C) -> R): R? {
 }
 
 /**
+ * Similar to [Window.pack]`()` but without causing the `Window` to be validated
+ * again. It also doesn't cause it to be displayable (if not displayable yet).
+ *
+ * This method is intended to be called after [Window.pack]`()` has already been
+ * called.
+ */
+fun Window.repack() {
+	val d = preferredSize
+	setSize(d.width, d.height)
+}
+
+/**
  * Calls [pack][Window.pack]`()`, followed by [ensureBounded]`()`
  *
- * @see Window.ensureBounded
+ * @see Window.boundedRepack
  */
 @Suppress("NOTHING_TO_INLINE")
 inline fun Window.boundedPack(maxDiv: Int = 1) {
 	pack()
+	ensureBounded(maxDiv)
+}
+
+/**
+ * Similar to [Window.boundedPack]`()` but calls [repack]`()` instead.
+ *
+ * This method is intended to be called after [Window.pack]`()` has already been
+ * called.
+ */
+@Suppress("NOTHING_TO_INLINE")
+inline fun Window.boundedRepack(maxDiv: Int = 1) {
+	repack()
 	ensureBounded(maxDiv)
 }
 

@@ -11,6 +11,7 @@ import kokoro.internal.io.UnsafeCharArrayWriter
 import kokoro.internal.io.writeln
 import kokoro.internal.printSafeStackTrace
 import kokoro.internal.ui.ensureBounded
+import kokoro.internal.ui.repack
 import kotlinx.coroutines.CoroutineExceptionHandler
 import java.awt.Component
 import java.awt.Dialog
@@ -290,7 +291,7 @@ private object StackTraceModalImpl {
 			// Set this first, since on some platforms, changing the resizable
 			// state affects the insets of the dialog.
 			isResizable = true
-			pack() // Necessary in case the insets changed
+			repack() // Necessary in case the insets changed
 
 			ensureBounded(2)
 			setLocationRelativeTo(parent)

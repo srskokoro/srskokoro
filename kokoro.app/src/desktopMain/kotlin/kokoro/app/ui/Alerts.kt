@@ -6,6 +6,7 @@ import kokoro.internal.ui.DummyComponent
 import kokoro.internal.ui.assertThreadSwing
 import kokoro.internal.ui.checkThreadSwing
 import kokoro.internal.ui.ensureBounded
+import kokoro.internal.ui.repack
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.CompletionHandler
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -125,7 +126,7 @@ fun Alerts.swing(handler: AlertHandler, parent: Component?, spec: AlertSpec): Al
 	// affects the insets of the dialog.
 	if (spec.isResizable) {
 		dialog.isResizable = true
-		dialog.pack() // Necessary in case the insets changed
+		dialog.repack() // Necessary in case the insets changed
 	}
 
 	dialog.ensureBounded(spec.ensureBoundedByMaxDiv)
