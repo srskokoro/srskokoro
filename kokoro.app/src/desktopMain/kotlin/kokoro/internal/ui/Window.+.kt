@@ -92,14 +92,16 @@ fun Window.ensureBounded(maxDiv: Int) {
 @Suppress("NOTHING_TO_INLINE")
 @JvmName("setLocationCascade_nullable")
 inline fun Window.setLocationCascade(lastFrame: Frame?) {
-	if (lastFrame == null) isLocationByPlatform = true
-	else setLocationCascade(lastFrame)
+	if (lastFrame == null || !lastFrame.isDisplayable) {
+		isLocationByPlatform = true
+	} else setLocationCascade(lastFrame)
 }
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun Window.setLocationCascadeOrCenter(lastFrame: Frame?) {
-	if (lastFrame == null) setLocationRelativeTo(null)
-	else setLocationCascade(lastFrame)
+	if (lastFrame == null || !lastFrame.isDisplayable) {
+		setLocationRelativeTo(null)
+	} else setLocationCascade(lastFrame)
 }
 
 fun Window.setLocationCascade(lastFrame: Frame) {
