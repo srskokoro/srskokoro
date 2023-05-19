@@ -55,8 +55,7 @@ open class DummyComponent(
 	// --
 
 	/** Overridden for performance reasons. */
-	final override fun firePropertyChange(propertyName: String?, oldValue: Any?, newValue: Any?) =
-		super.firePropertyChange(propertyName, oldValue, newValue)
+	final override fun firePropertyChange(propertyName: String?, oldValue: Any?, newValue: Any?) {}
 
 	/** Overridden for performance reasons. */
 	final override fun firePropertyChange(propertyName: String?, oldValue: Byte, newValue: Byte) {}
