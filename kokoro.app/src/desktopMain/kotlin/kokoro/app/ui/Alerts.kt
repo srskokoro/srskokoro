@@ -22,7 +22,6 @@ import javax.swing.JButton
 import javax.swing.JComponent
 import javax.swing.JDialog
 import javax.swing.JLabel
-import javax.swing.JLayeredPane
 import javax.swing.JOptionPane
 import javax.swing.JWindow
 import javax.swing.LayoutStyle
@@ -270,8 +269,11 @@ internal class AlertButtonInflater {
 	fun setPaneRef(pane: JOptionPane, dialog: JDialog) {
 		paneRef.pane = pane
 		paneRef.dialog = dialog
-		componentsWithMnemonicTips.takeIf { it.isNotEmpty() }?.let { MnemonicTipsDispatcher(it) }?.let {
-			dialog.rootPane.layeredPane.add(it, JLayeredPane.FRAME_CONTENT_LAYER as Any)
+
+		componentsWithMnemonicTips.let {
+			if (it.isEmpty()) return // Done. There's nothing to do.
+
+			MnemonicTipsDispatcher(it).addTo(dialog.rootPane)
 		}
 	}
 

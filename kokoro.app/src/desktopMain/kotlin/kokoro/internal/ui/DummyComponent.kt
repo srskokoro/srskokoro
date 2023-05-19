@@ -5,6 +5,8 @@ import java.awt.Rectangle
 import java.beans.PropertyChangeListener
 import javax.swing.Icon
 import javax.swing.JLabel
+import javax.swing.JLayeredPane
+import javax.swing.JRootPane
 import javax.swing.plaf.ComponentUI
 import javax.swing.plaf.LabelUI
 
@@ -17,6 +19,9 @@ open class DummyComponent(
 		super.setFocusable(isFocusable)
 		super.setEnabled(isEnabled)
 	}
+
+	fun addTo(root: JRootPane): Unit =
+		root.layeredPane.add(this, JLayeredPane.FRAME_CONTENT_LAYER as Any)
 
 	// --
 
