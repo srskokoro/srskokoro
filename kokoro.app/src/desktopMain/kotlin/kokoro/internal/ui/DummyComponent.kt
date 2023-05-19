@@ -2,8 +2,11 @@ package kokoro.internal.ui
 
 import java.awt.Graphics
 import java.awt.Rectangle
+import java.beans.PropertyChangeListener
 import javax.swing.Icon
 import javax.swing.JLabel
+import javax.swing.plaf.ComponentUI
+import javax.swing.plaf.LabelUI
 
 open class DummyComponent(
 	text: String? = null, icon: Icon? = null,
@@ -26,6 +29,28 @@ open class DummyComponent(
 
 	override fun paint(g: Graphics?) {}
 	override fun getAccessibleContext() = null
+
+	// --
+
+	/** Overridden for performance reasons. */
+	final override fun getUI(): Nothing? = null
+
+	/** Overridden for performance reasons. */
+	final override fun setUI(newUI: ComponentUI?) {}
+
+	/** Overridden for performance reasons. */
+	final override fun setUI(ui: LabelUI?) {}
+
+	/** Overridden for performance reasons. */
+	final override fun updateUI() {}
+
+	// --
+
+	/** Overridden for performance reasons. */
+	final override fun addPropertyChangeListener(listener: PropertyChangeListener?) {}
+
+	/** Overridden for performance reasons. */
+	final override fun addPropertyChangeListener(propertyName: String?, listener: PropertyChangeListener?) {}
 
 	// --
 
