@@ -1,6 +1,4 @@
-@file:Suppress("FunctionName", "unused", "NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
-
-package kokoro.internal.kotlin
+@file:Suppress("PackageDirectoryMismatch", "FunctionName", "unused", "NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
 
 @DslMarker
 internal annotation class TODOMarker

@@ -1,11 +1,11 @@
 ﻿package main
 
+import TODO
 import kokoro.app.AppBuild
 import kokoro.app.AppData
 import kokoro.app.cli.Main
 import kokoro.app.ui.StackTraceModal
 import kokoro.internal.DEBUG
-import kokoro.internal.kotlin.TODO
 import kotlinx.coroutines.*
 import kotlinx.coroutines.swing.Swing
 import okio.BufferedSource

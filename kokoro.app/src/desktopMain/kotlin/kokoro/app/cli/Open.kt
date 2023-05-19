@@ -1,6 +1,6 @@
 package kokoro.app.cli
 
-import kokoro.internal.kotlin.TODO
+import TODO
 import kotlinx.coroutines.CoroutineScope
 
 class Open : BaseCommand(name = "open") {
