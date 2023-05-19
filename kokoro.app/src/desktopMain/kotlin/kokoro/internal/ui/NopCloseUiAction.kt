@@ -6,7 +6,7 @@ import javax.swing.ActionMap
 object NopCloseUiAction : UiAction(CLOSE) {
 
 	@Suppress("NOTHING_TO_INLINE")
-	inline fun addTo(actionMap: ActionMap) = actionMap.put(CLOSE, this)
+	inline fun addTo(actionMap: ActionMap): Unit = actionMap.put(CLOSE, this)
 
 	// --
 
