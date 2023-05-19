@@ -55,12 +55,14 @@ class AlertSpec {
 	var buttons: AlertButtonsSetup = AlertButtonsSetup.OK
 	var defaultButton: Int = 0
 
+	/** @see AlertSpec.resizableAndBounded */
 	var isResizable = false
 
 	/**
 	 * NOTE: Applicable only if [isResizable] is `true`.
 	 *
 	 * @see kokoro.internal.ui.ensureBounded
+	 * @see AlertSpec.resizableAndBounded
 	 */
 	var ensureBoundedByMaxDiv = 1
 
@@ -87,6 +89,16 @@ class AlertSpec {
 
 	inline fun buttons(block: AlertButtonsSetup.Companion.() -> AlertButtonsSetup) {
 		buttons = block(AlertButtonsSetup)
+	}
+
+	/**
+	 * @see AlertSpec.isResizable
+	 * @see AlertSpec.ensureBoundedByMaxDiv
+	 */
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun resizableAndBounded(ensureBoundedByMaxDiv: Int = 2) {
+		this.isResizable = true
+		this.ensureBoundedByMaxDiv = ensureBoundedByMaxDiv
 	}
 }
 
