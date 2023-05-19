@@ -1,10 +1,10 @@
 package kokoro.app.ui
 
+import assert
 import com.formdev.flatlaf.FlatDarkLaf
 import com.formdev.flatlaf.FlatLightLaf
 import com.formdev.flatlaf.extras.FlatAnimatedLafChange
 import com.jthemedetecor.OsThemeDetector
-import kokoro.internal.assert
 import java.awt.EventQueue
 import java.awt.Toolkit
 import java.awt.Window

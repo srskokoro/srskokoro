@@ -1,5 +1,6 @@
-package kokoro.internal
+@file:Suppress("PackageDirectoryMismatch")
 
+import kokoro.internal.IS_RELEASING
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 

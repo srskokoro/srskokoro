@@ -1,7 +1,7 @@
 package kokoro.internal.ui
 
+import assert
 import kokoro.internal.SPECIAL_USE_DEPRECATION
-import kokoro.internal.assert
 import java.awt.EventQueue
 import javax.swing.SwingUtilities
 

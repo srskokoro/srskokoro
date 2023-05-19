@@ -1,4 +1,4 @@
-package kokoro.internal
+@file:Suppress("PackageDirectoryMismatch")
 
 inline fun assertSucceeds(lazyMessage: () -> Any = { "Assertion failed!" }, lazyCheck: () -> Unit) {
 	if (ASSERTIONS_ENABLED) try {
