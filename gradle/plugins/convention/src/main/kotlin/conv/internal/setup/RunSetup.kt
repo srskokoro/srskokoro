@@ -9,5 +9,9 @@ internal fun setUp(task: JavaExec): Unit = with(task) {
 }
 
 internal fun setUpForDebug(options: JavaForkOptions) = with(options) {
-	jvmArgs("-ea") // Also enables stacktrace recovery for kotlinx coroutines
+	jvmArgs(mutableListOf<String>().apply(::setUpJvmArgsForDebug))
+}
+
+internal fun setUpJvmArgsForDebug(jvmArgs: MutableList<String>) {
+	jvmArgs.add("-ea") // Also enables stacktrace recovery for kotlinx coroutines
 }
