@@ -4,7 +4,10 @@ import TODO
 import kokoro.app.AppBuild
 import kokoro.app.AppData
 import kokoro.app.cli.Main
+import kokoro.app.ui.Alerts
+import kokoro.app.ui.ExitProcessNonZeroViaSwing
 import kokoro.app.ui.StackTraceModal
+import kokoro.app.ui.swing
 import kokoro.internal.DEBUG
 import kotlinx.coroutines.*
 import kotlinx.coroutines.swing.Swing
@@ -30,7 +33,6 @@ import java.nio.file.StandardCopyOption.ATOMIC_MOVE
 import java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import java.nio.file.StandardOpenOption.*
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.system.exitProcess
 import java.nio.file.Path as NioPath
 
 /**
@@ -517,10 +519,29 @@ private class AppRelay(sockDir: String) {
 		}
 
 		EventQueue.invokeLater {
-			// TODO Display error dialog for incompatible version or service
-			//  halt. Also, interpret 0 as unknown error.
-			// TODO Display stacktrace dialog for `thrownByClose` if nonnull
-			exitProcess(1)
+			Alerts.swing(null) {
+				style { ERROR }
+				message = when (versionOrErrorCode) {
+					E_SERVICE_HALT -> "Service halt. The application terminated " +
+						"before it could process the request.\n\n" +
+
+						"This may happen either because the system terminated " +
+						"the application abruptly or the client process was not " +
+						"implemented properly to hold the necessary locks needed " +
+						"to prevent the application from terminating."
+
+					0 -> "Service request failed. Unknown error."
+
+					else -> "Version conflict. Cannot proceed while a different " +
+						"version of the app is already running."
+				}
+			}
+
+			thrownByClose?.let {
+				StackTraceModal.print(it)
+			}
+
+			ExitProcessNonZeroViaSwing.install()
 		}
 
 		// Done!
