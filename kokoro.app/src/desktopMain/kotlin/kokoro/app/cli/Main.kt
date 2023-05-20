@@ -12,6 +12,7 @@ class Main : BaseCommand(invokeWithoutSubcommand = true) {
 	}
 
 	override suspend fun CoroutineScope.execute() {
+		if (currentContext.invokedSubcommand != null) return
 		TODO { IMPLEMENT("Display 'collection selection' window") }
 	}
 }
