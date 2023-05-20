@@ -97,11 +97,7 @@ abstract class BaseCommand(
 			echo(currentContext.localization.aborted(), err = true)
 			return // Exit
 		} finally {
-			try {
-				console.consumeMessages()
-			} catch (ex: Throwable) {
-				throw AssertionError("Shouldn't fail", ex)
-			}
+			console.consumeMessages()
 		}
 
 		for (cmd in console.pendingExecutions) with(cmd) {
@@ -126,14 +122,18 @@ abstract class BaseCommand(
 		override val lineSeparator = "\n"
 
 		fun consumeMessages() {
-			val errorMessage = err!!.trim(); err = null
-			if (errorMessage.isNotEmpty()) {
-				Alerts.swing(null) { message = errorMessage; style { ERROR }; }
-			}
+			try {
+				val errorMessage = err!!.trim(); err = null
+				if (errorMessage.isNotEmpty()) {
+					Alerts.swing(null) { message = errorMessage; style { ERROR }; }
+				}
 
-			val printMessage = out!!.trim(); out = null
-			if (printMessage.isNotEmpty()) {
-				Alerts.swing(null) { message = printMessage; }
+				val printMessage = out!!.trim(); out = null
+				if (printMessage.isNotEmpty()) {
+					Alerts.swing(null) { message = printMessage; }
+				}
+			} catch (ex: Throwable) {
+				throw AssertionError("Shouldn't fail", ex)
 			}
 		}
 	}
