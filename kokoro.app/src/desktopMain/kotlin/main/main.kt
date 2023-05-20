@@ -486,7 +486,7 @@ private class AppRelay(sockDir: String) {
 				sink.write(buffer, size) // Send it!
 			} catch (_: IOException) {
 				// Will close the client connection for us
-				showErrorThenExit(versionOrErrorCode = E_SERVICE_HALT)
+				showErrorThenExit(E_SERVICE_HALT)
 				return // Skip everything below
 			}
 			// Deliberately closing outside of any `try` or `use`, as `close()`
@@ -497,7 +497,6 @@ private class AppRelay(sockDir: String) {
 			client.closeInCatch(ex)
 			throw ex
 		} else showErrorThenExit(
-			versionOrErrorCode =
 			if (version >= 0) version
 			else E_VERSION_BEYOND
 		)
