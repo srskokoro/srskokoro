@@ -67,6 +67,11 @@ fun main(args: Array<out String>) {
 	// without first seeing, https://stackoverflow.com/a/39298690
 	val lockRaf = RandomAccessFile(lockFile, "rw") // May throw; let it!
 	val lockChannel = lockRaf.channel
+	// ^ WARNING: Do NOT close the above `FileChannel` nor the `RandomAccessFile`;
+	// let the process exit WITHOUT closing them; let the operating system deal
+	// with them on process exit. Any thread may release any of the following
+	// `FileLock` objects, and doing so would throw if the `FileChannel` that
+	// created the `FileLock` is already closed.
 
 	val instanceChangeLock = lockChannel.lock(INSTANCE_CHANGE_LOCK_BYTE, /*size=*/1, /*shared=*/false)
 	try {
