@@ -13,6 +13,7 @@ import okio.EOFException
 import okio.buffer
 import okio.sink
 import okio.source
+import java.awt.EventQueue
 import java.io.File
 import java.io.IOException
 import java.io.RandomAccessFile
@@ -29,7 +30,6 @@ import java.nio.file.StandardCopyOption.ATOMIC_MOVE
 import java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import java.nio.file.StandardOpenOption.*
 import java.util.concurrent.atomic.AtomicInteger
-import javax.swing.SwingUtilities
 import kotlin.system.exitProcess
 import java.nio.file.Path as NioPath
 
@@ -516,7 +516,7 @@ private class AppRelay(sockDir: String) {
 			thrownByClose = ex
 		}
 
-		SwingUtilities.invokeLater {
+		EventQueue.invokeLater {
 			// TODO Display error dialog for incompatible version or service
 			//  halt. Also, interpret 0 as unknown error.
 			// TODO Display stacktrace dialog for `thrownByClose` if nonnull
