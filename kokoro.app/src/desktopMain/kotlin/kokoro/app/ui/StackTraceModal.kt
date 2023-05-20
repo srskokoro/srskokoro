@@ -185,6 +185,8 @@ private class StackTraceModalEvent(target: Throwable, extra: (Writer) -> Unit) :
 			} finally {
 				exitProcess(NONZERO_STATUS)
 			}
+		} finally {
+			mostRecent = null
 		} else {
 			prev.next = this
 		}
