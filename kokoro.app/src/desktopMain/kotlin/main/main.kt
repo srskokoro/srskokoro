@@ -522,13 +522,8 @@ private class AppRelay(sockDir: String) {
 			Alerts.swing(null) {
 				style { ERROR }
 				message = when (versionOrErrorCode) {
-					E_SERVICE_HALT -> "Service halt. The application terminated " +
-						"before it could process the request.\n\n" +
-
-						"This may happen either because the system terminated " +
-						"the application abruptly or the client process was not " +
-						"implemented properly to hold the necessary locks needed " +
-						"to prevent the application from terminating."
+					E_SERVICE_HALT -> "Service halt. The application service " +
+						"terminated before it could process the request."
 
 					0 -> "Service request failed. Unknown error."
 
