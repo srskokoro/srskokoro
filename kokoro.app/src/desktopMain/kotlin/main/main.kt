@@ -92,6 +92,9 @@ fun main(args: Array<out String>) {
 			relay.doForward(args)
 		}
 		return // Done!
+	} catch (ex: AppRelay.ExitMain) {
+		instanceChangeLock.close()
+		// Done. Do nothing else.
 	} catch (ex: Throwable) {
 		instanceChangeLock.closeInCatch(ex)
 		throw ex
@@ -488,7 +491,6 @@ private class AppRelay(sockDir: String) {
 			} catch (_: IOException) {
 				// Will close the client connection for us
 				showErrorThenExit(E_SERVICE_HALT)
-				return // Skip everything below
 			}
 			// Deliberately closing outside of any `try` or `use`, as `close()`
 			// may throw and interfere with our custom error handling.
@@ -503,25 +505,31 @@ private class AppRelay(sockDir: String) {
 		)
 	}
 
-	private fun showErrorThenExit(versionOrErrorCode: Int) {
+	private fun showErrorThenExit(versionOrErrorCode: Int): Nothing {
 		var thrownByClose: Throwable? = null
 		try {
 			client.close()
 		} catch (ex: Throwable) {
 			thrownByClose = ex
 		}
+
 		SwingUtilities.invokeLater {
 			// TODO Display error dialog for incompatible version or service
 			//  halt. Also, interpret 0 as unknown error.
 			// TODO Display stacktrace dialog for `thrownByClose` if nonnull
 			exitProcess(1)
 		}
+
+		// Done!
+		throw ExitMain()
 	}
 
 	private companion object {
 		const val E_VERSION_BEYOND = -1
 		const val E_SERVICE_HALT = -2
 	}
+
+	class ExitMain : Throwable(null, null, false, false)
 }
 
 // --
