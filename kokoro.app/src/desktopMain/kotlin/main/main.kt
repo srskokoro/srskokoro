@@ -362,7 +362,7 @@ private class AppDaemon(
 			// Kill any enclosing coroutine.
 			throw CancellationException("Daemon already shut down")
 		} else if (observedCount == 0 || observedCount == Int.MIN_VALUE) {
-			throw Error("Maximum app instance count exceeded")
+			throw Error("Overflow: maximum app instance count exceeded")
 		} else
 			throw AssertionError("Unreachable")
 	}
