@@ -2,8 +2,8 @@
 
 import assert
 import kokoro.app.AppBuild
+import kokoro.app.ui.StackTraceModal.NONZERO_STATUS
 import kokoro.app.ui.StackTraceModalImpl.HEADLESS_NOTICE_FATAL_ERROR_ENCOUNTERED_TERMINATING
-import kokoro.app.ui.StackTraceModalImpl.NONZERO_STATUS
 import kokoro.app.ui.StackTraceModalImpl.awaitDismiss
 import kokoro.internal.anyError
 import kokoro.internal.getSafeStackTrace
@@ -35,6 +35,7 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.system.exitProcess
 
 object StackTraceModal : CoroutineExceptionHandler, Thread.UncaughtExceptionHandler {
+	const val NONZERO_STATUS = 1
 
 	/**
 	 * Eventually, prints the stacktrace of the given [throwable] to the
@@ -194,9 +195,6 @@ private class StackTraceModalEvent(target: Throwable, extra: (Writer) -> Unit) :
 }
 
 private object StackTraceModalImpl {
-	const val NONZERO_STATUS = 1
-
-	// --
 
 	private const val TITLE_SUFFIX_UNHANDLED_EXCEPTION = " - Unhandled exception!"
 	private const val TITLE_SUFFIX_FATAL_ERROR = " - Fatal error!"
