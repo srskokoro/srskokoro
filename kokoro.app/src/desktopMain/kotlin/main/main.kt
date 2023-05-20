@@ -91,6 +91,7 @@ fun main(args: Array<out String>) {
 
 			relay.doForward(args)
 		}
+		return // Done!
 	} catch (ex: Throwable) {
 		instanceChangeLock.closeInCatch(ex)
 		throw ex
@@ -492,7 +493,7 @@ private class AppRelay(sockDir: String) {
 			// Deliberately closing outside of any `try` or `use`, as `close()`
 			// may throw and interfere with our custom error handling.
 			sink.close() // May throw; let it!
-			// Done!
+			return // Done!
 		} catch (ex: Throwable) {
 			client.closeInCatch(ex)
 			throw ex
