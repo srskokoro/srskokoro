@@ -428,7 +428,7 @@ private class AppRelay(sockDir: String) {
 
 	fun doForward(args: Array<out String>) {
 		val version = serverVersionCode
-		if (version == AppBuild.VERSION_CODE) {
+		if (version == AppBuild.VERSION_CODE) try {
 			val buffer = okio.Buffer()
 			if (CLI_PROTOCOL_DEFAULT > Byte.MAX_VALUE) throw AssertionError(
 				"Should be implemented as a varint at this point"
@@ -493,6 +493,9 @@ private class AppRelay(sockDir: String) {
 			// may throw and interfere with our custom error handling.
 			sink.close() // May throw; let it!
 			// Done!
+		} catch (ex: Throwable) {
+			client.closeInCatch(ex)
+			throw ex
 		} else showErrorThenExit(
 			versionOrErrorCode =
 			if (version >= 0) version
