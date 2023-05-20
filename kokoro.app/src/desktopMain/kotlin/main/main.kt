@@ -424,6 +424,9 @@ private class AppRelay(sockDir: String) {
 				// We don't support versions > 127, for now -- we'll use a varint later.
 				bb.get().toInt() // Also, 0 is reserved as a special value.
 			} else 0
+		} catch (_: IOException) {
+			// Will close the client connection for us
+			showErrorThenExit(E_SERVICE_HALT)
 		} catch (ex: Throwable) {
 			client.closeInCatch(ex)
 			throw ex
