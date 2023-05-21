@@ -629,8 +629,8 @@ private fun readInetPortFile(target: NioPath): Int {
 private inline fun isLikelyUnixSock(target: NioPath): Boolean = try {
 	Files.readAttributes(target, BasicFileAttributes::class.java).isOther
 } catch (_: IOException) {
-	// The file likely doesn't exist. Let other part of the code discover the
-	// actual error. For now, assume that it simply doesn't exist.
+	// The file likely doesn't exist. Let other parts of the codebase discover
+	// the actual error. For now, assume that it simply doesn't exist.
 	false
 }
 
