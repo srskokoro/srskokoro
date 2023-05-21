@@ -558,7 +558,7 @@ private class AppRelay(sockDir: String) {
 							"This error can be avoided by either re-enabling " +
 							"unix domain sockets support or killing all " +
 							"instances of the app \u2013 simply restart them as " +
-							"necessary."
+							"needed."
 
 						0 -> "Unknown error" to "Service request failed due to " +
 							"an unknown error."
