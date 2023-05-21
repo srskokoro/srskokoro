@@ -104,7 +104,6 @@ fun Alerts.swing(handler: AlertHandler, parent: Component?, spec: AlertSpec): Al
 	val relative = parent ?: BaseAppWindow.lastActive
 	pane.componentOrientation = (relative ?: JOptionPane.getRootFrame()).componentOrientation
 
-
 	val title = kotlin.run {
 		val base = spec.titleBase
 		val main = spec.title
