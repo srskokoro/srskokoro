@@ -566,7 +566,7 @@ private class AppRelay(sockDir: String) {
 							"request."
 
 						0 -> "Unknown error" to "Service request failed due to " +
-							"unknown error."
+							"an unknown error."
 
 						else -> "Version conflict" to "Cannot proceed while a " +
 							"different version of the app is already running."
