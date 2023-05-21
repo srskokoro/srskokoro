@@ -45,17 +45,28 @@ private annotation class AlertSpecDsl
 @AlertSpecDsl
 class AlertSpec {
 	companion object {
-		const val DEFAULT_TITLE = AppBuild.TITLE
+		const val DEFAULT_TITLE_BASE = AppBuild.TITLE
 	}
 
 	var message: Any? = null
-	var title: String = DEFAULT_TITLE
+	var title: String? = null
 	var style: AlertStyle = AlertStyle.PLAIN
 
 	var buttons: AlertButtonsSetup = AlertButtonsSetup.OK
 	var defaultButton: Int = 0
 
 	// --
+
+	/**
+	 * An extra string to accompany the provided [title] string. Depending on
+	 * the platform, it may be prepended to the [title] with a delimiter or be
+	 * displayed as an overline (a small text or caption) above the [title]. The
+	 * implementation may even ignore this completely.
+	 *
+	 * If [title] is `null`, this will be used instead. If this is `null`, only
+	 * [title] is used.
+	 */
+	var titleBase: String? = DEFAULT_TITLE_BASE
 
 	/** @see AlertSpec.resizableAndBounded */
 	var isResizable = false

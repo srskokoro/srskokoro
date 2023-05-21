@@ -104,9 +104,18 @@ fun Alerts.swing(handler: AlertHandler, parent: Component?, spec: AlertSpec): Al
 	val relative = parent ?: BaseAppWindow.lastActive
 	pane.componentOrientation = (relative ?: JOptionPane.getRootFrame()).componentOrientation
 
+
+	val title = kotlin.run {
+		val base = spec.titleBase
+		val main = spec.title
+
+		if (base == null) main
+		else if (main == null) base
+		else "$base - $main"
+	}
 	val dialog =
-		if (parent != null) pane.createDialog(parent, spec.title)
-		else pane.createDialog(spec.title) // Will have its own system taskbar entry
+		if (parent != null) pane.createDialog(parent, title)
+		else pane.createDialog(title) // Will have its own system taskbar entry
 
 	inflater.setPaneRef(pane, dialog)
 
