@@ -15,4 +15,4 @@ package kokoro.internal
  *
  * @see Deprecated
  */
-const val SPECIAL_USE_DEPRECATION = "Should not be used"
+const val SPECIAL_USE_DEPRECATION = "Should not be used directly"
