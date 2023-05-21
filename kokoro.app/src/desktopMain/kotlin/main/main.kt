@@ -521,14 +521,18 @@ private class AppRelay(sockDir: String) {
 		EventQueue.invokeLater {
 			Alerts.swing(null) {
 				style { ERROR }
-				message = when (versionOrErrorCode) {
-					E_SERVICE_HALT -> "Service halt. The application service " +
+				when (versionOrErrorCode) {
+					E_SERVICE_HALT -> "Service halt" to "The application service " +
 						"terminated before it could process the request."
 
-					0 -> "Service request failed. Unknown error."
+					0 -> "Unknown error" to "Service request failed due to " +
+						"unknown error."
 
-					else -> "Version conflict. Cannot proceed while a different " +
+					else -> "Version conflict" to "Cannot proceed while a different " +
 						"version of the app is already running."
+				}.let { (title, message) ->
+					this.title = title
+					this.message = message
 				}
 			}
 
