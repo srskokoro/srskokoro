@@ -49,7 +49,10 @@ class AlertSpec {
 	}
 
 	var message: Any? = null
+
+	/** @see titleBase */
 	var title: String? = null
+
 	var style: AlertStyle = AlertStyle.PLAIN
 
 	var buttons: AlertButtonsSetup = AlertButtonsSetup.OK
