@@ -25,7 +25,7 @@ class ExitProcessNonZeroViaSwing private constructor(private val toolkit: Toolki
 			assertThreadSwing()
 			val toolkit = Toolkit.getDefaultToolkit()
 			val listener = ExitProcessNonZeroViaSwing(toolkit)
-			if (listener.openedWindows.isEmpty()) exitNow()
+			if (listener.openedWindows.isEmpty()) listener.tryExitSoon()
 			toolkit.addAWTEventListener(listener, AWTEvent.WINDOW_EVENT_MASK)
 		}
 
