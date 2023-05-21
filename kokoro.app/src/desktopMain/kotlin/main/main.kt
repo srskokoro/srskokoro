@@ -518,21 +518,15 @@ private class AppRelay(sockDir: String) {
 		} catch (ex: Throwable) {
 			client.closeInCatch(ex)
 			throw ex
-		} else showErrorThenExit(client,
-			if (version >= 0) version
-			else E_VERSION_BEYOND
-		)
+		} else {
+			showErrorThenExit(client, if (version >= 0) version else E_VERSION_BEYOND, null)
+		}
 	}
 
 	private companion object {
 		const val E_VERSION_BEYOND = -1
 		const val E_SERVICE_HALT = -2
 		const val E_UNIX_SOCK_REQUIRED = -3
-
-		// Inline for zero-overhead principle :P
-		@Suppress("NOTHING_TO_INLINE")
-		private inline fun showErrorThenExit(client: AutoCloseable?, versionOrErrorCode: Int): Nothing =
-			showErrorThenExit(client, versionOrErrorCode, null)
 
 		private fun showErrorThenExit(client: AutoCloseable?, versionOrErrorCode: Int, cause: Throwable?): Nothing {
 			var thrownByClose: Throwable? = null
