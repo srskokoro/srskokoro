@@ -32,6 +32,7 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption.ATOMIC_MOVE
 import java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import java.nio.file.StandardOpenOption.*
+import java.nio.file.attribute.BasicFileAttributes
 import java.util.concurrent.atomic.AtomicInteger
 import java.nio.file.Path as NioPath
 
@@ -131,7 +132,7 @@ private class AppDaemon(
 
 	init {
 		val server: ServerSocketChannel
-		val bindPath: NioPath
+		val bindPath = NioPath.of(sockDir, ".sock")
 		val bindAddress: SocketAddress
 
 		val serverUnix = try {
@@ -141,11 +142,9 @@ private class AppDaemon(
 		}
 		if (serverUnix != null) {
 			server = serverUnix
-			bindPath = NioPath.of(sockDir, ".sock")
 			bindAddress = UnixDomainSocketAddress.of(bindPath)
 		} else {
 			server = ServerSocketChannel.open()
-			bindPath = NioPath.of(sockDir, ".port")
 			bindAddress = InetSocketAddress(InetAddress.getLoopbackAddress(), 0)
 		}
 		this.server = server
@@ -403,18 +402,41 @@ private class AppRelay(sockDir: String) {
 	init {
 		val client: SocketChannel
 		val connectAddress: SocketAddress
+		val sockPath = NioPath.of(sockDir, ".sock")
 
-		val clientUnix = try {
-			SocketChannel.open(StandardProtocolFamily.UNIX)
-		} catch (_: UnsupportedOperationException) {
+		val clientUnix = kotlin.run {
+			kotlin.run check@{
+				// EDGE CASE: The feature to create unix domain sockets could be
+				// disabled when our app daemon was started, and yet, the said
+				// feature could be enabled now :P
+				try {
+					if (Files.readAttributes(sockPath, BasicFileAttributes::class.java).isOther.not()) {
+						// The file is definitely NOT an unix domain socket.
+						return@check
+					}
+				} catch (_: UnsupportedOperationException) { // Paranoia
+					// Ignore. Assume unix domain socket file.
+				} catch (_: IOException) { // The file likely doesn't exist.
+					// Ignore. Let the 'connection' routine throw instead.
+				}
+				try {
+					return@run SocketChannel.open(StandardProtocolFamily.UNIX)
+				} catch (_: UnsupportedOperationException) {
+					// Ignore.
+				}
+			}
+			// Either, the app daemon was configured to not use unix domain
+			// sockets, or unix domain sockets are not supported at the moment
+			// -- we'll throw later if the app daemon really was configured to
+			// use unix domain sockets.
 			null
 		}
 		if (clientUnix != null) {
 			client = clientUnix
-			connectAddress = UnixDomainSocketAddress.of(NioPath.of(sockDir, ".sock"))
+			connectAddress = UnixDomainSocketAddress.of(sockPath)
 		} else {
 			client = SocketChannel.open()
-			val port = readInetPortFile(NioPath.of(sockDir, ".port"), client)
+			val port = readInetPortFile(sockPath, client) // Throws if the file really is an unix domain socket
 			connectAddress = InetSocketAddress(InetAddress.getLoopbackAddress(), port)
 		}
 
