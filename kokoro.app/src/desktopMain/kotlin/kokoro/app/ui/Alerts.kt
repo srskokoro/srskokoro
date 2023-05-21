@@ -299,9 +299,15 @@ internal class AlertButtonInflater {
 	@JvmField val locale: Locale = JComponent.getDefaultLocale()
 	@JvmField val uiManager: UIDefaults = UIManager.getDefaults()
 
-	private val buttonMinimumWidth = uiManager.getInt("OptionPane.buttonMinimumWidth", locale)
-	private val buttonClickThreshhold = uiManager.getInt("OptionPane.buttonClickThreshhold", locale)
+	private val buttonMinimumWidth = uiManager.getNumberToInt("OptionPane.buttonMinimumWidth", locale)
+	private val buttonClickThreshhold = uiManager.getNumberToInt("OptionPane.buttonClickThreshhold", locale)
 	private val buttonFont: Font? = uiManager.getFont("OptionPane.buttonFont", locale)
+
+	@Suppress("NOTHING_TO_INLINE")
+	private inline fun UIDefaults.getNumberToInt(key: String, locale: Locale): Int =
+		get(key, locale).let { if (it is Number) it.toInt() else 0 }
+
+	// --
 
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun getString(key: String): String? = uiManager.getString(key, locale)
