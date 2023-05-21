@@ -20,6 +20,7 @@ import kotlin.system.exitProcess
 class ExitProcessNonZeroViaSwing private constructor(private val toolkit: Toolkit) : AWTEventListener, Runnable {
 	companion object {
 
+		/** WARNING: Must be called on the Swing EDT. */
 		fun install() {
 			assertThreadSwing()
 			val toolkit = Toolkit.getDefaultToolkit()
