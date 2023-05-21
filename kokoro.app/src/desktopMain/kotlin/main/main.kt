@@ -426,9 +426,9 @@ private class AppRelay(sockDir: String) {
 				// We don't support versions > 127, for now -- we'll use a varint later.
 				bb.get().toInt() // Also, 0 is reserved as a special value.
 			} else 0
-		} catch (_: IOException) {
+		} catch (ex: IOException) {
 			// Will close the client connection for us
-			showErrorThenExit(E_SERVICE_HALT)
+			showErrorThenExit(E_SERVICE_HALT, if (DEBUG) ex else null)
 		} catch (ex: Throwable) {
 			client.closeInCatch(ex)
 			throw ex
@@ -493,9 +493,9 @@ private class AppRelay(sockDir: String) {
 			val sink = Channels.newOutputStream(client).sink()
 			try {
 				sink.write(buffer, size) // Send it!
-			} catch (_: IOException) {
+			} catch (ex: IOException) {
 				// Will close the client connection for us
-				showErrorThenExit(E_SERVICE_HALT)
+				showErrorThenExit(E_SERVICE_HALT, if (DEBUG) ex else null)
 			}
 			// Deliberately closing outside of any `try` or `use`, as `close()`
 			// may throw and interfere with our custom error handling.
@@ -510,7 +510,12 @@ private class AppRelay(sockDir: String) {
 		)
 	}
 
-	private fun showErrorThenExit(versionOrErrorCode: Int): Nothing {
+	// Inline for zero-overhead principle :P
+	@Suppress("NOTHING_TO_INLINE")
+	private inline fun showErrorThenExit(versionOrErrorCode: Int): Nothing =
+		showErrorThenExit(versionOrErrorCode, null)
+
+	private fun showErrorThenExit(versionOrErrorCode: Int, cause: Throwable?): Nothing {
 		var thrownByClose: Throwable? = null
 		try {
 			client.close()
@@ -536,6 +541,9 @@ private class AppRelay(sockDir: String) {
 				style { ERROR }
 			}
 
+			cause?.let {
+				StackTraceModal.print(it)
+			}
 			thrownByClose?.let {
 				StackTraceModal.print(it)
 			}
