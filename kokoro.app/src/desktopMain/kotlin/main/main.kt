@@ -414,8 +414,7 @@ private class AppRelay(sockDir: String) {
 						// The file is definitely NOT an unix domain socket.
 						return@check
 					}
-				} catch (ex: IOException) { // The file likely doesn't exist
-					if (DEBUG) throw ex
+				} catch (_: IOException) { // The file likely doesn't exist.
 					// Ignore. Let later code throw for us instead.
 				}
 				try {
