@@ -56,6 +56,7 @@ private const val INSTANCE_CHANGE_LOCK_BYTE = 0L
  */
 private const val MASTER_INSTANCE_LOCK_BYTE = 1L
 
+/** @see kokoro.app.cli.Main */
 fun main(args: Array<out String>) {
 	Thread.setDefaultUncaughtExceptionHandler(StackTraceModal) // Installed early to help with debugging
 
