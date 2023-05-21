@@ -62,12 +62,14 @@ class AlertSpec {
 
 	/**
 	 * An extra string to accompany the provided [title] string. Depending on
-	 * the platform, it may be prepended to the [title] with a delimiter or be
-	 * displayed as an overline (a small text or caption) above the [title]. The
-	 * implementation may even ignore this completely.
+	 * the platform, it may be prepended to the [title] (separated by an
+	 * implementation-defined delimiter) or be displayed as an overline (a small
+	 * text or caption) above the [title]. The implementation may even ignore
+	 * this completely, unless [title] is `null`.
 	 *
-	 * If [title] is `null`, this will be used instead. If this is `null`, only
-	 * [title] is used.
+	 * If [title] is `null`, [titleBase] will be used instead. If [titleBase] is
+	 * `null`, only [title] is used. By default, [titleBase] is non-null &ndash;
+	 * its default value is [DEFAULT_TITLE_BASE].
 	 */
 	var titleBase: String? = DEFAULT_TITLE_BASE
 
