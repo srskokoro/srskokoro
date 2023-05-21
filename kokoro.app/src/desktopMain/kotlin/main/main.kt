@@ -417,9 +417,8 @@ private class AppRelay(sockDir: String) {
 		} else {
 			// Either the daemon didn't use unix domain sockets or the file
 			// doesn't exist (or no longer exists). Assume the former, for now.
-			client = SocketChannel.open()
 			val port = try {
-				readInetPortFile(sockPath, client) // Throws if the file doesn't exist
+				readInetPortFile(sockPath) // Throws if the file doesn't exist
 			} catch (ex: IOException) {
 				if (Files.exists(sockPath)) throw ex
 				// Either the app daemon has (properly) shut down, or someone
@@ -427,6 +426,7 @@ private class AppRelay(sockDir: String) {
 				showErrorThenExit(null, E_SERVICE_HALT, if (DEBUG) ex else null)
 			}
 			connectAddress = InetSocketAddress(InetAddress.getLoopbackAddress(), port)
+			client = SocketChannel.open()
 		}
 
 		this.client = client
@@ -614,18 +614,13 @@ private fun generateInetPortFile(target: NioPath, boundServer: ServerSocketChann
 	// ^ Same as in `okio.NioSystemFileSystem.atomicMove()`
 }
 
-private fun readInetPortFile(target: NioPath, client: SocketChannel): Int {
-	try {
-		val bb = ByteBuffer.allocate(2)
-		FileChannel.open(target, READ).use {
-			it.read(bb)
-		}
-		// Flip then get, to throw if not enough bytes read.
-		return bb.flip().short.toInt() and 0xFFFF
-	} catch (ex: Throwable) {
-		client.closeInCatch(ex)
-		throw ex
+private fun readInetPortFile(target: NioPath): Int {
+	val bb = ByteBuffer.allocate(2)
+	FileChannel.open(target, READ).use {
+		it.read(bb)
 	}
+	// Flip then get, to throw if not enough bytes read.
+	return bb.flip().short.toInt() and 0xFFFF
 }
 
 @Suppress("NOTHING_TO_INLINE")
