@@ -168,7 +168,10 @@ private class StackTraceModalEvent(target: Throwable, extra: (Writer) -> Unit) :
 
 					val deferredFailure = current.deferredFailures.poll()
 					if (deferredFailure == null) {
-						current = current.next ?: return
+						current = current.next ?: kotlin.run {
+							mostRecent = null
+							return
+						}
 						continue@outer
 					}
 
@@ -186,8 +189,6 @@ private class StackTraceModalEvent(target: Throwable, extra: (Writer) -> Unit) :
 			} finally {
 				exitProcess(NONZERO_STATUS)
 			}
-		} finally {
-			mostRecent = null
 		} else {
 			prev.next = this
 		}
