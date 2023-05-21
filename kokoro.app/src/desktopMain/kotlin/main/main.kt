@@ -520,7 +520,6 @@ private class AppRelay(sockDir: String) {
 
 		EventQueue.invokeLater {
 			Alerts.swing(null) {
-				style { ERROR }
 				when (versionOrErrorCode) {
 					E_SERVICE_HALT -> "Service halt" to "The application service " +
 						"terminated before it could process the request."
@@ -534,6 +533,7 @@ private class AppRelay(sockDir: String) {
 					this.title = title
 					this.message = message
 				}
+				style { ERROR }
 			}
 
 			thrownByClose?.let {
