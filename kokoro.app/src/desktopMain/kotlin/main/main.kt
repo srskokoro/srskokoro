@@ -416,7 +416,7 @@ private class AppRelay(sockDir: String) {
 					}
 				} catch (ex: IOException) { // The file likely doesn't exist
 					if (DEBUG) throw ex
-					// Ignore. Let the 'connection' routine throw instead.
+					// Ignore. Let later code throw for us instead.
 				}
 				try {
 					return@run SocketChannel.open(StandardProtocolFamily.UNIX)
@@ -435,7 +435,16 @@ private class AppRelay(sockDir: String) {
 			connectAddress = UnixDomainSocketAddress.of(sockPath)
 		} else {
 			client = SocketChannel.open()
-			val port = readInetPortFile(sockPath, client) // Throws if the file really is an unix domain socket
+			val port = try {
+				// Throws if either, the file really is an unix domain socket,
+				// or the file simply doesn't exist.
+				readInetPortFile(sockPath, client)
+			} catch (ex: IOException) {
+				if (Files.exists(sockPath)) throw ex
+				// Either the app daemon has (properly) shut down, or someone
+				// deleted the file. Show an error assuming the former case.
+				showErrorThenExit(null, E_SERVICE_HALT, if (DEBUG) ex else null)
+			}
 			connectAddress = InetSocketAddress(InetAddress.getLoopbackAddress(), port)
 		}
 
@@ -450,7 +459,7 @@ private class AppRelay(sockDir: String) {
 			} else 0
 		} catch (ex: IOException) {
 			// Will close the client connection for us
-			showErrorThenExit(E_SERVICE_HALT, if (DEBUG) ex else null)
+			showErrorThenExit(client, E_SERVICE_HALT, if (DEBUG) ex else null)
 		} catch (ex: Throwable) {
 			client.closeInCatch(ex)
 			throw ex
@@ -517,7 +526,7 @@ private class AppRelay(sockDir: String) {
 				sink.write(buffer, size) // Send it!
 			} catch (ex: IOException) {
 				// Will close the client connection for us
-				showErrorThenExit(E_SERVICE_HALT, if (DEBUG) ex else null)
+				showErrorThenExit(sink, E_SERVICE_HALT, if (DEBUG) ex else null)
 			}
 			// Deliberately closing outside of any `try` or `use`, as `close()`
 			// may throw and interfere with our custom error handling.
@@ -526,60 +535,60 @@ private class AppRelay(sockDir: String) {
 		} catch (ex: Throwable) {
 			client.closeInCatch(ex)
 			throw ex
-		} else showErrorThenExit(
+		} else showErrorThenExit(client,
 			if (version >= 0) version
 			else E_VERSION_BEYOND
 		)
 	}
 
-	// Inline for zero-overhead principle :P
-	@Suppress("NOTHING_TO_INLINE")
-	private inline fun showErrorThenExit(versionOrErrorCode: Int): Nothing =
-		showErrorThenExit(versionOrErrorCode, null)
-
-	private fun showErrorThenExit(versionOrErrorCode: Int, cause: Throwable?): Nothing {
-		var thrownByClose: Throwable? = null
-		try {
-			client.close()
-		} catch (ex: Throwable) {
-			thrownByClose = ex
-		}
-
-		EventQueue.invokeLater {
-			Alerts.swing(null) {
-				when (versionOrErrorCode) {
-					E_SERVICE_HALT -> "Service halt" to "The application service " +
-						"terminated before it could process the request."
-
-					0 -> "Unknown error" to "Service request failed due to " +
-						"unknown error."
-
-					else -> "Version conflict" to "Cannot proceed while a different " +
-						"version of the app is already running."
-				}.let { (title, message) ->
-					this.title = title
-					this.message = message
-				}
-				style { ERROR }
-			}
-
-			cause?.let {
-				StackTraceModal.print(it)
-			}
-			thrownByClose?.let {
-				StackTraceModal.print(it)
-			}
-
-			ExitProcessNonZeroViaSwing.install()
-		}
-
-		// Done!
-		throw ExitMain()
-	}
-
 	private companion object {
 		const val E_VERSION_BEYOND = -1
 		const val E_SERVICE_HALT = -2
+
+		// Inline for zero-overhead principle :P
+		@Suppress("NOTHING_TO_INLINE")
+		private inline fun showErrorThenExit(client: AutoCloseable?, versionOrErrorCode: Int): Nothing =
+			showErrorThenExit(client, versionOrErrorCode, null)
+
+		private fun showErrorThenExit(client: AutoCloseable?, versionOrErrorCode: Int, cause: Throwable?): Nothing {
+			var thrownByClose: Throwable? = null
+			try {
+				client?.close()
+			} catch (ex: Throwable) {
+				thrownByClose = ex
+			}
+
+			EventQueue.invokeLater {
+				Alerts.swing(null) {
+					when (versionOrErrorCode) {
+						E_SERVICE_HALT -> "Service halt" to "The application service " +
+							"terminated before it could process the request."
+
+						0 -> "Unknown error" to "Service request failed due to " +
+							"unknown error."
+
+						else -> "Version conflict" to "Cannot proceed while a different " +
+							"version of the app is already running."
+					}.let { (title, message) ->
+						this.title = title
+						this.message = message
+					}
+					style { ERROR }
+				}
+
+				cause?.let {
+					StackTraceModal.print(it)
+				}
+				thrownByClose?.let {
+					StackTraceModal.print(it)
+				}
+
+				ExitProcessNonZeroViaSwing.install()
+			}
+
+			// Done!
+			throw ExitMain()
+		}
 	}
 
 	class ExitMain : Throwable(null, null, false, false)
