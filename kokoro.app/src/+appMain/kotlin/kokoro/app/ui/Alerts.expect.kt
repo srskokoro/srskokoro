@@ -55,6 +55,8 @@ class AlertSpec {
 	var buttons: AlertButtonsSetup = AlertButtonsSetup.OK
 	var defaultButton: Int = 0
 
+	// --
+
 	/** @see AlertSpec.resizableAndBounded */
 	var isResizable = false
 
