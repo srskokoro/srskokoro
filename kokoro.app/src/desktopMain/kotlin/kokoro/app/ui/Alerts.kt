@@ -15,6 +15,7 @@ import java.awt.Component
 import java.awt.Dialog
 import java.awt.Dimension
 import java.awt.EventQueue
+import java.awt.Font
 import java.awt.Toolkit
 import java.awt.Window
 import java.awt.event.ActionEvent
@@ -299,6 +300,8 @@ internal class AlertButtonInflater {
 	@JvmField val uiManager: UIDefaults = UIManager.getDefaults()
 
 	private val buttonMinimumWidth = uiManager.getInt("OptionPane.buttonMinimumWidth", locale)
+	private val buttonClickThreshhold = uiManager.getInt("OptionPane.buttonClickThreshhold", locale)
+	private val buttonFont: Font? = uiManager.getFont("OptionPane.buttonFont", locale)
 
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun getString(key: String): String? = uiManager.getString(key, locale)
@@ -340,10 +343,8 @@ internal class AlertButtonInflater {
 		}
 
 		component.name = "OptionPane.button"
-		component.multiClickThreshhold = uiManager.getInt("OptionPane.buttonClickThreshhold", locale).toLong()
-
-		uiManager.getFont("OptionPane.buttonFont", locale)
-			?.let { component.font = it }
+		component.multiClickThreshhold = buttonClickThreshhold.toLong()
+		buttonFont?.let { component.font = it }
 
 		return component
 	}
