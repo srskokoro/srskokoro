@@ -317,8 +317,8 @@ internal class AlertButtonInflater {
 
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun getMnemonic(key: String): Int {
-		val s = uiManager.getString(key, locale)
-		if (s != null) try {
+		val s = uiManager.get(key, locale)
+		if (s is String) try {
 			return s.toInt()
 		} catch (_: NumberFormatException) {
 			// Ignore.
