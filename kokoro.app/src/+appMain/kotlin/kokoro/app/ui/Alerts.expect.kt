@@ -66,23 +66,6 @@ class AlertSpec {
 	 */
 	var ensureBoundedByMaxDiv = 1
 
-	@Suppress("NOTHING_TO_INLINE")
-	inline fun init(
-		message: Any? = null,
-		title: String = DEFAULT_TITLE,
-		style: AlertStyle = AlertStyle.PLAIN,
-
-		buttons: AlertButtonsSetup = AlertButtonsSetup.OK,
-		defaultButton: Int = 0,
-	) {
-		this.message = message
-		this.title = title
-		this.style = style
-
-		this.buttons = buttons
-		this.defaultButton = defaultButton
-	}
-
 	inline fun style(block: AlertStyles.() -> AlertStyle) {
 		style = block(AlertStyles)
 	}
