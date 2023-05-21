@@ -402,42 +402,24 @@ private class AppRelay(sockDir: String) {
 	init {
 		val client: SocketChannel
 		val connectAddress: SocketAddress
-		val sockPath = NioPath.of(sockDir, ".sock")
 
-		val clientUnix = kotlin.run {
-			kotlin.run check@{
+		val sockPath = NioPath.of(sockDir, ".sock")
+		if (isLikelyUnixSock(sockPath)) {
+			try {
+				client = SocketChannel.open(StandardProtocolFamily.UNIX)
+			} catch (ex: UnsupportedOperationException) {
 				// EDGE CASE: The feature to create unix domain sockets could be
-				// disabled when our app daemon was started, and yet, the said
-				// feature could be enabled now :P
-				try {
-					if (Files.readAttributes(sockPath, BasicFileAttributes::class.java).isOther.not()) {
-						// The file is definitely NOT an unix domain socket.
-						return@check
-					}
-				} catch (_: IOException) { // The file likely doesn't exist.
-					// Ignore. Let later code throw for us instead.
-				}
-				try {
-					return@run SocketChannel.open(StandardProtocolFamily.UNIX)
-				} catch (_: UnsupportedOperationException) {
-					// Ignore.
-				}
+				// disabled, and yet, the said feature was enabled when the app
+				// daemon was run :P
+				showErrorThenExit(null, E_UNIX_SOCK_REQUIRED, if (DEBUG) ex else null)
 			}
-			// Either, the app daemon was configured to not use unix domain
-			// sockets, or unix domain sockets are not supported at the moment
-			// -- we'll throw later if the app daemon really was configured to
-			// use unix domain sockets.
-			null
-		}
-		if (clientUnix != null) {
-			client = clientUnix
 			connectAddress = UnixDomainSocketAddress.of(sockPath)
 		} else {
+			// Either the daemon didn't use unix domain sockets or the file
+			// doesn't exist (or no longer exists). Assume the former, for now.
 			client = SocketChannel.open()
 			val port = try {
-				// Throws if either, the file really is an unix domain socket,
-				// or the file simply doesn't exist.
-				readInetPortFile(sockPath, client)
+				readInetPortFile(sockPath, client) // Throws if the file doesn't exist
 			} catch (ex: IOException) {
 				if (Files.exists(sockPath)) throw ex
 				// Either the app daemon has (properly) shut down, or someone
@@ -543,6 +525,7 @@ private class AppRelay(sockDir: String) {
 	private companion object {
 		const val E_VERSION_BEYOND = -1
 		const val E_SERVICE_HALT = -2
+		const val E_UNIX_SOCK_REQUIRED = -3
 
 		// Inline for zero-overhead principle :P
 		@Suppress("NOTHING_TO_INLINE")
@@ -563,6 +546,17 @@ private class AppRelay(sockDir: String) {
 						E_SERVICE_HALT -> "Service halt" to "The application " +
 							"service terminated before it could process the " +
 							"request."
+
+						E_UNIX_SOCK_REQUIRED -> "Incompatible IPC protocol" to
+
+							"Unix domain socket support is required, since the " +
+							"first instance of the app was run with it enabled " +
+							"(for IPC).\n\n" +
+
+							"This error can be avoided by either re-enabling " +
+							"unix domain sockets support or killing all " +
+							"instances of the app \u2013 simply restart them as " +
+							"necessary."
 
 						0 -> "Unknown error" to "Service request failed due to " +
 							"an unknown error."
@@ -632,6 +626,15 @@ private fun readInetPortFile(target: NioPath, client: SocketChannel): Int {
 		client.closeInCatch(ex)
 		throw ex
 	}
+}
+
+@Suppress("NOTHING_TO_INLINE")
+private inline fun isLikelyUnixSock(target: NioPath): Boolean = try {
+	Files.readAttributes(target, BasicFileAttributes::class.java).isOther
+} catch (_: IOException) {
+	// The file likely doesn't exist. Let other part of the code discover the
+	// actual error. For now, assume that it simply doesn't exist.
+	false
 }
 
 private fun AutoCloseable.closeInCatch(ex: Throwable) {
