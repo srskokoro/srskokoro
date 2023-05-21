@@ -111,7 +111,7 @@ fun Alerts.swing(handler: AlertHandler, parent: Component?, spec: AlertSpec): Al
 
 		if (base == null) main
 		else if (main == null) base
-		else "$base - $main"
+		else "$base \u2013 $main"
 	}
 
 	val dialog: JDialog
