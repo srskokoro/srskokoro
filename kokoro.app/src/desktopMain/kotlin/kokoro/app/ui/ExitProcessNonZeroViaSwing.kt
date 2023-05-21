@@ -19,11 +19,18 @@ import kotlin.system.exitProcess
  */
 class ExitProcessNonZeroViaSwing private constructor(private val toolkit: Toolkit) : AWTEventListener, Runnable {
 	companion object {
+
 		fun install() {
 			assertThreadSwing()
 			val toolkit = Toolkit.getDefaultToolkit()
 			val listener = ExitProcessNonZeroViaSwing(toolkit)
+			if (listener.openedWindows.isEmpty()) exitNow()
 			toolkit.addAWTEventListener(listener, AWTEvent.WINDOW_EVENT_MASK)
+		}
+
+		@Suppress("NOTHING_TO_INLINE") // Why not? It's `private` code anyway :P
+		private inline fun exitNow(): Nothing {
+			exitProcess(StackTraceModal.NONZERO_STATUS)
 		}
 	}
 
@@ -66,7 +73,7 @@ class ExitProcessNonZeroViaSwing private constructor(private val toolkit: Toolki
 				EventQueue.invokeLater(this)
 			} else {
 				// Done! Exit now!
-				exitProcess(StackTraceModal.NONZERO_STATUS)
+				exitNow()
 			}
 		}
 	}
