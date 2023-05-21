@@ -435,7 +435,9 @@ private class AppRelay(sockDir: String) {
 			val bb = ByteBuffer.allocate(1)
 			if (client.read(bb) > 0) {
 				bb.rewind()
-				// We don't support versions > 127, for now -- we'll use a varint later.
+				// We don't support versions > 127, for now -- we'll use a
+				// varint later, where the first byte is always > 127 to
+				// indicate the start of a multi-byte varint sequence.
 				bb.get().toInt() // Also, 0 is reserved as a special value.
 			} else 0
 		} catch (ex: IOException) {
