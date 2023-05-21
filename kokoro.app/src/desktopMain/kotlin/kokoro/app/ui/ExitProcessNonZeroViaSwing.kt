@@ -13,7 +13,8 @@ import kotlin.system.exitProcess
 
 /**
  * A mechanism that can be installed to ensure that the process will exit with a
- * non-zero status code after all opened windows are closed.
+ * non-zero status code after all opened windows are closed and all events have
+ * been processed by the Swing EDT.
  *
  * @see install
  */
