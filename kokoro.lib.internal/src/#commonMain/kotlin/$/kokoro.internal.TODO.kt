@@ -1,10 +1,10 @@
 @file:Suppress("PackageDirectoryMismatch", "FunctionName", "unused", "NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
 
 @DslMarker
-internal annotation class TODOMarker
+private annotation class TODOMarker
 
 @TODOMarker
-internal object TODO {
+object TODO {
 
 	inline val IMPLEMENT: Nothing get() = IMPLEMENT()
 
@@ -26,4 +26,4 @@ internal object TODO {
 	inline fun <R> PLACEHOLDER(block: TODO.() -> R) = block(TODO)
 }
 
-internal inline fun <R> TODO(placeholder: TODO.() -> R) = placeholder(TODO)
+inline fun <R> TODO(placeholder: TODO.() -> R) = placeholder(TODO)
