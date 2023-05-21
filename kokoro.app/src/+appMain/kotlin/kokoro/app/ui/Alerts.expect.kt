@@ -68,6 +68,16 @@ class AlertSpec {
 	 */
 	var titleBase: String? = DEFAULT_TITLE_BASE
 
+	inline fun style(block: AlertStyles.() -> AlertStyle) {
+		style = block(AlertStyles)
+	}
+
+	inline fun buttons(block: AlertButtonsSetup.Companion.() -> AlertButtonsSetup) {
+		buttons = block(AlertButtonsSetup)
+	}
+
+	// --
+
 	/** @see AlertSpec.resizableAndBounded */
 	var isResizable = false
 
@@ -78,14 +88,6 @@ class AlertSpec {
 	 * @see AlertSpec.resizableAndBounded
 	 */
 	var ensureBoundedByMaxDiv = 1
-
-	inline fun style(block: AlertStyles.() -> AlertStyle) {
-		style = block(AlertStyles)
-	}
-
-	inline fun buttons(block: AlertButtonsSetup.Companion.() -> AlertButtonsSetup) {
-		buttons = block(AlertButtonsSetup)
-	}
 
 	/**
 	 * @see AlertSpec.isResizable
