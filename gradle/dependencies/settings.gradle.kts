@@ -17,7 +17,7 @@ dependencyVersions {
 		vendor { ADOPTIUM }
 	}
 
-	val kotlin = "1.8.21"
+	val kotlin = "1.8.21" // https://kotlinlang.org/docs/releases.html
 	"org.jetbrains.kotlin".let {
 		plugin("$it.*", kotlin)
 		module("$it:*", kotlin)
@@ -29,7 +29,7 @@ dependencyVersions {
 	plugin("com.android.*", android)
 	module("com.android.tools.build:gradle", android)
 
-	val kotest = "5.5.4"
+	val kotest = "5.5.4" // https://github.com/kotest/kotest/releases
 	plugin("io.kotest.multiplatform", kotest)
 	module("io.kotest:kotest-framework-multiplatform-plugin-gradle", kotest)
 	module("io.kotest:kotest-runner-junit5", kotest)
