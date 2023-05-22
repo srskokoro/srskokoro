@@ -17,7 +17,7 @@ dependencyVersions {
 		vendor { ADOPTIUM }
 	}
 
-	val kotlin = "1.8.10"
+	val kotlin = "1.8.21"
 	"org.jetbrains.kotlin".let {
 		plugin("$it.*", kotlin)
 		module("$it:*", kotlin)
@@ -38,7 +38,7 @@ dependencyVersions {
 	module("io.kotest:kotest-assertions-core", kotest)
 	module("io.kotest:kotest-property", kotest)
 
-	val kotlinx_coroutines = "1.6.4"
+	val kotlinx_coroutines = "1.7.1"
 	module("org.jetbrains.kotlinx:kotlinx-coroutines-test", kotlinx_coroutines)
 	module("org.jetbrains.kotlinx:kotlinx-coroutines-core", kotlinx_coroutines)
 	module("org.jetbrains.kotlinx:kotlinx-coroutines-swing", kotlinx_coroutines)
