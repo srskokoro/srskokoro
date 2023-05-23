@@ -50,7 +50,7 @@ open class DependencyVersionsFileException(val path: String, cause: Throwable?) 
 		internal fun wrapJudiciously(path: String, cause: Throwable?): Throwable =
 			if (shouldNotWrap(cause)) cause else DependencyVersionsFileException(path, cause)
 
-		@Suppress("OPT_IN_IS_NOT_ENABLED", "NOTHING_TO_INLINE")
+		@Suppress("NOTHING_TO_INLINE")
 		@OptIn(ExperimentalContracts::class)
 		private inline fun shouldNotWrap(cause: Throwable?): Boolean {
 			contract { returns(true) implies (cause is Error) }

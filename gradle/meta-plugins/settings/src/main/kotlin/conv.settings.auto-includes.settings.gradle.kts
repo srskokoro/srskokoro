@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 pluginManagement {
 	// Include our own custom plugins
 	relativize(File(gitRootDir!!, "gradle/plugins")).let {

@@ -8,7 +8,7 @@ import org.gradle.jvm.toolchain.JvmVendorSpec as V
 class JvmSetupVendor private constructor(val value: V, internal val id: String) {
 	override fun toString() = id
 
-	@Suppress("UnstableApiUsage", "SpellCheckingInspection")
+	@Suppress("SpellCheckingInspection")
 	companion object {
 		private const val PREFIX_MATCHING = "matching:"
 		private const val PREFIX_MATCHING_len = PREFIX_MATCHING.length
@@ -29,7 +29,6 @@ class JvmSetupVendor private constructor(val value: V, internal val id: String) 
 		/** @see JvmVendorSpec.GRAAL_VM */ val GRAAL_VM = registerKnown(V::GRAAL_VM)
 		/** @see JvmVendorSpec.HEWLETT_PACKARD */ val HEWLETT_PACKARD = registerKnown(V::HEWLETT_PACKARD)
 		/** @see JvmVendorSpec.IBM */ val IBM = registerKnown(V::IBM)
-		/** @see JvmVendorSpec.IBM_SEMERU */ val IBM_SEMERU = registerKnown(V::IBM_SEMERU)
 		/** @see JvmVendorSpec.MICROSOFT */ val MICROSOFT = registerKnown(V::MICROSOFT)
 		/** @see JvmVendorSpec.ORACLE */ val ORACLE = registerKnown(V::ORACLE)
 		/** @see JvmVendorSpec.SAP */ val SAP = registerKnown(V::SAP)
