@@ -1,4 +1,4 @@
-@file:Suppress("PackageDirectoryMismatch", "FunctionName", "unused", "NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
+@file:Suppress("PackageDirectoryMismatch", "unused", "NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
 
 @DslMarker
 private annotation class TODOMarker
