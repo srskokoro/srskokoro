@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 pluginManagement {
+	includeBuild("../meta-plugins/#plugins-root")
 	includeBuild("../meta-plugins")
 }
 plugins {
