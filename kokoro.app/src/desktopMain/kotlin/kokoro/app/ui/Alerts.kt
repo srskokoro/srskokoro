@@ -118,10 +118,10 @@ fun Alerts.swing(handler: AlertHandler, parent: Component?, spec: AlertSpec): Al
 	val dialog: JDialog
 	if (parent != null) {
 		dialog = pane.createDialog(parent, title)
-		dialog.modalityType = Dialog.ModalityType.DOCUMENT_MODAL // Not set automatically for us :P
 	} else {
 		dialog = pane.createDialog(title) // Will have its own system taskbar entry
 	}
+	dialog.modalityType = Dialog.ModalityType.DOCUMENT_MODAL // Won't be set automatically for us :P
 
 	inflater.setPaneRef(pane, dialog)
 
