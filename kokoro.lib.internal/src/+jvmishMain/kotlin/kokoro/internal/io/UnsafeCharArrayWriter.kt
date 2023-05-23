@@ -72,9 +72,9 @@ class UnsafeCharArrayWriter : CharArrayWriter {
 		count = min(size, count)
 	}
 
-	fun getUnsafeCharArray() = buf
+	fun getUnsafeCharArray(): CharArray = buf
 
-	fun getUnsafeCharBuffer() = CharBuffer.wrap(buf, 0, count)
+	fun getUnsafeCharBuffer(): CharBuffer = CharBuffer.wrap(buf, 0, count)
 
 	override fun toCharArray(): CharArray = Arrays.copyOf(buf, count)
 

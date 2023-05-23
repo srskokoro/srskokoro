@@ -14,7 +14,7 @@ data class AppDataOverrides(
 	companion object {
 		private val ref = AtomicReference(AppDataOverrides().apply { isPlaceholder = true })
 
-		fun get() = ref.get()
+		fun get(): AppDataOverrides = ref.get()
 	}
 
 	fun install() {
