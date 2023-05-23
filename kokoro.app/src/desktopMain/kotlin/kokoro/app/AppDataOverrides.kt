@@ -28,7 +28,6 @@ data class AppDataOverrides(
 		} while (!ref.weakCompareAndSetVolatile(prev, this))
 	}
 
-	@Suppress("unused")
 	open class InstallConflictException : IllegalStateException {
 		constructor()
 		constructor(message: String?) : super(message)
