@@ -15,7 +15,6 @@ android {
 
 	buildTypes {
 		release {
-			@Suppress("UnstableApiUsage")
 			isMinifyEnabled = false
 		}
 	}
