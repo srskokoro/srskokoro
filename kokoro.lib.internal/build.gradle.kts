@@ -30,9 +30,11 @@ android {
 
 buildConfig {
 	publicTopLevel() inPackage NAMESPACE
+	val isReleasing = isReleasing
 	buildConfigField("boolean", "IS_RELEASING", "$isReleasing")
-	require(!isReleasing == isDebug) { throw AssertionError() }
-	buildConfigField("boolean", "DEBUG", "!IS_RELEASING")
+	val isDebug = isDebug
+	require(isDebug == !isReleasing) { throw AssertionError() }
+	buildConfigField("boolean", "DEBUG", "$isDebug")
 }
 
 dependencies {
