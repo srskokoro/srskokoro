@@ -2,6 +2,9 @@ package kokoro.internal.test.support
 
 import kotlin.random.Random
 
+/** @see io.kotest.property.arbitrary.printableAscii */
+val PRINTABLE_ASCII_CHARS = (' '..'~').toList()
+
 /** @see io.kotest.property.arbitrary.ascii */
 val ASCII_CHARS = ('\u0000'..'\u007F').toList()
 

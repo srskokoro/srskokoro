@@ -41,7 +41,8 @@ class ThrowableArb(
 		)
 
 		private val THROWABLE_MESSAGE_EDGECASES = listOf(null, "", "a", "\u0000")
-		private const val THROWABLE_MESSAGE_SAMPLES_COUNT = 5
+		private const val THROWABLE_MESSAGE_OF_RANDOM_ASCII_COUNT = 2
+		private const val THROWABLE_MESSAGE_OF_RANDOM_PRINTABLE_ASCII_COUNT = 3
 
 		private val EMPTY_STACKTRACE = emptyArray<StackTraceElement>()
 
@@ -65,7 +66,7 @@ class ThrowableArb(
 	}
 
 	private val throwableFactories = ArrayDeque<ThrowableFactory>(initialCapacity = THROWABLE_FACTORIES.size)
-	private val messages = ArrayDeque<String?>(initialCapacity = THROWABLE_MESSAGE_EDGECASES.size + THROWABLE_MESSAGE_SAMPLES_COUNT)
+	private val messages = ArrayDeque<String?>(initialCapacity = THROWABLE_MESSAGE_EDGECASES.size + THROWABLE_MESSAGE_OF_RANDOM_PRINTABLE_ASCII_COUNT)
 	private val stackTraceSizeHints = ArrayDeque<Int>(initialCapacity = STACKTRACE_ARRAY_SIZE_HINTS.size)
 
 	private fun Random.nextSimpleThrowable(): Throwable {
@@ -75,10 +76,12 @@ class ThrowableArb(
 		}
 		if (messages.isEmpty()) {
 			messages.addAll(THROWABLE_MESSAGE_EDGECASES)
-			var n = THROWABLE_MESSAGE_SAMPLES_COUNT
-			while (--n >= 0) {
-				messages.add(nextString(nextIntFavorSmall(100) + 1))
-			}
+			var n = THROWABLE_MESSAGE_OF_RANDOM_PRINTABLE_ASCII_COUNT + THROWABLE_MESSAGE_OF_RANDOM_ASCII_COUNT
+			while (--n >= 0) messages.add(nextString(
+				if (n >= THROWABLE_MESSAGE_OF_RANDOM_PRINTABLE_ASCII_COUNT) ASCII_CHARS
+				else PRINTABLE_ASCII_CHARS,
+				nextIntFavorSmall(100) + 1,
+			))
 			messages.shuffle(this)
 		}
 		if (stackTraceSizeHints.isEmpty()) {
