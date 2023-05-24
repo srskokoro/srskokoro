@@ -12,9 +12,4 @@ buildConfig.let {
 
 // Automatically generate build config files on "gradle sync" (via IntelliJ IDEA
 // or Android Studio) -- https://twitter.com/Sellmair/status/1619308362881187840
-tasks.let {
-	val prepareKotlinIdeaImport = it.maybeCreate("prepareKotlinIdeaImport")
-	it.withType<BuildConfigTask> {
-		prepareKotlinIdeaImport.dependsOn(this)
-	}
-}
+tasks.maybeCreate("prepareKotlinIdeaImport").dependsOn(tasks.withType<BuildConfigTask>())
