@@ -2,7 +2,7 @@ package kokoro.internal.test.support
 
 import kotlin.random.Random
 
-val ASCII_CHARS = (' '..'z').toList()
+val ASCII_CHARS = ('\u0000'..'\u007F').toList()
 val DIGIT_CHARS = ('0'..'9').toList()
 
 @Suppress("NOTHING_TO_INLINE")
