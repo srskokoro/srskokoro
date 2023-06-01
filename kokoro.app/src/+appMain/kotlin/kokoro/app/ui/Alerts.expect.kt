@@ -1,6 +1,8 @@
 package kokoro.app.ui
 
 import kokoro.app.AppBuild
+import kokoro.internal.SPECIAL_USE_DEPRECATION
+import kotlin.math.max
 
 //region
 
@@ -149,6 +151,7 @@ object AlertChoices {
 	inline val Cancel get() = AlertChoice.Cancel
 	inline val Yes get() = AlertChoice.Yes
 	inline val No get() = AlertChoice.No
+	inline val CustomAction get() = AlertChoice.CustomAction
 }
 
 expect enum class AlertChoice : AlertButton {
@@ -156,6 +159,7 @@ expect enum class AlertChoice : AlertButton {
 	Cancel,
 	Yes,
 	No,
+	CustomAction,
 	;
 
 	override val choice: AlertChoice
@@ -166,6 +170,11 @@ data class AlertButtonOverride(
 	override val choice: AlertChoice,
 	override val textOverride: Any,
 ) : AlertButton
+
+@Deprecated(SPECIAL_USE_DEPRECATION)
+internal object AlertButtonImplCommon {
+	const val TEXT_DEFAULT_CustomAction = "\u2026" // Ellipsis
+}
 
 // --
 
@@ -194,11 +203,15 @@ class AlertButtonsSetup(
 
 	operator fun invoke(vararg textOverrides: Any?): AlertButtonsSetup {
 		val buttons = buttons
+		val buttons_size = buttons.size
 		val textOverrides_size = textOverrides.size
-		return AlertButtonsSetup(isNonCancellable, Array(buttons.size) { i ->
-			val button = buttons[i]
-			if (i < textOverrides_size) textOverrides[i]?.let {
-				return@Array AlertButtonOverride(button.choice, it)
+		return AlertButtonsSetup(isNonCancellable, Array(max(buttons_size, textOverrides_size)) { i ->
+			val button = if (i < buttons_size) buttons[i] else AlertChoice.CustomAction
+			if (i < textOverrides_size) {
+				val override = textOverrides[i]
+				if (override != null) {
+					return@Array AlertButtonOverride(button.choice, override)
+				}
 			}
 			button
 		})

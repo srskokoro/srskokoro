@@ -30,6 +30,7 @@ actual enum class AlertChoice : AlertButton {
 	Cancel,
 	Yes,
 	No,
+	CustomAction,
 	;
 
 	actual override val choice: AlertChoice get() = this

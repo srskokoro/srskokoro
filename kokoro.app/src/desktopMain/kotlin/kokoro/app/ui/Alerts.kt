@@ -264,6 +264,11 @@ actual enum class AlertChoice : AlertButton {
 		override fun AlertButtonInflater.getIcon(): Icon? = getIcon("OptionPane.noIcon")
 		override fun AlertButtonInflater.getMnemonic(): Int = getMnemonic("OptionPane.noButtonMnemonic")
 	},
+	CustomAction {
+		override fun AlertButtonInflater.getText(): String = @Suppress("DEPRECATION") AlertButtonImplCommon.TEXT_DEFAULT_CustomAction
+		override fun AlertButtonInflater.getIcon(): Icon? = null
+		override fun AlertButtonInflater.getMnemonic(): Int = 0
+	},
 	;
 
 	actual override val choice: AlertChoice get() = this
