@@ -173,7 +173,7 @@ data class AlertButtonOverride(
 
 @Deprecated(SPECIAL_USE_DEPRECATION)
 internal object AlertButtonImplCommon {
-	const val TEXT_DEFAULT_CustomAction = "\u2026" // Ellipsis
+	const val TEXT_DEFAULT_CustomAction = "\u22EF" // Midline horizontal ellipsis
 }
 
 // --
