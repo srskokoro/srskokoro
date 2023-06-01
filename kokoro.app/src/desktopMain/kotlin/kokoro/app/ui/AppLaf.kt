@@ -5,6 +5,7 @@ import com.formdev.flatlaf.FlatDarkLaf
 import com.formdev.flatlaf.FlatLightLaf
 import com.formdev.flatlaf.extras.FlatAnimatedLafChange
 import com.jthemedetecor.OsThemeDetector
+import kokoro.internal.SPECIAL_USE_DEPRECATION
 import java.awt.EventQueue
 import java.awt.Toolkit
 import java.awt.Window
@@ -16,10 +17,11 @@ import javax.swing.UIManager
 import javax.swing.UnsupportedLookAndFeelException
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun ensureAppLaf() = AppLafSetup.maybeInit()
+internal inline fun ensureAppLaf() = @Suppress("DEPRECATION") AppLafSetup.maybeInit()
 
 // --
 
+@Deprecated(SPECIAL_USE_DEPRECATION)
 internal object AppLafSetup :
 	Throwable(null, null, false, false),
 	Consumer<Boolean>, Runnable {
