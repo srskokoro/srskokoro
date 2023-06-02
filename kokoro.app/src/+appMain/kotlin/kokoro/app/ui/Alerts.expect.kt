@@ -145,10 +145,6 @@ inline operator fun AlertButton.invoke(textOverride: Any?): AlertButton {
 	return this
 }
 
-inline fun AlertButton?.matches(lazyValue: AlertChoices.() -> AlertChoice): Boolean {
-	return this?.choice.matches(lazyValue)
-}
-
 @AlertSpecDsl
 object AlertChoices {
 	inline val OK get() = AlertChoice.OK
@@ -170,10 +166,6 @@ expect enum class AlertChoice : AlertButton {
 	override val textOverride: Nothing?
 }
 
-inline fun AlertChoice?.matches(lazyValue: AlertChoices.() -> AlertChoice): Boolean {
-	return this == lazyValue(AlertChoices)
-}
-
 data class AlertButtonOverride(
 	override val choice: AlertChoice,
 	override val textOverride: Any,
@@ -182,6 +174,20 @@ data class AlertButtonOverride(
 @Deprecated(SPECIAL_USE_DEPRECATION)
 internal object AlertButtonImplCommon {
 	const val TEXT_DEFAULT_CustomAction = "\u22EF" // Midline horizontal ellipsis
+}
+
+inline fun AlertButton?.matches(lazyValue: AlertChoices.() -> AlertChoice) = this?.choice == lazyValue(AlertChoices)
+
+inline fun AlertChoice?.matches(lazyValue: AlertChoices.() -> AlertChoice) = this == lazyValue(AlertChoices)
+
+inline fun <B : AlertButton> B?.ifChoiceMatches(lazyValue: AlertChoices.() -> AlertChoice, block: (B) -> Unit) {
+	val value = lazyValue(AlertChoices)
+	if (this?.choice == value) block(this)
+}
+
+inline fun AlertChoice?.ifMatches(lazyValue: AlertChoices.() -> AlertChoice, block: (AlertChoice) -> Unit) {
+	val value = lazyValue(AlertChoices)
+	if (this == value) block(this)
 }
 
 // --

@@ -8,7 +8,7 @@ import kokoro.app.cli.Main
 import kokoro.app.ui.Alerts
 import kokoro.app.ui.ExitProcessNonZeroViaSwing
 import kokoro.app.ui.StackTraceModal
-import kokoro.app.ui.matches
+import kokoro.app.ui.ifChoiceMatches
 import kokoro.app.ui.swing
 import kokoro.internal.DEBUG
 import kotlinx.coroutines.*
@@ -567,13 +567,11 @@ private class AppRelay(sockDir: String) {
 					}
 					style { ERROR }
 					buttons { if (cause != null) OK(null, "Details") else OK }
-				}?.let {
-					if (it.choice.matches { CustomAction }) {
-						if (cause != null) {
-							StackTraceModal.print(cause)
-						} else {
-							assertUnreachable()
-						}
+				}.ifChoiceMatches({ CustomAction }) {
+					if (cause != null) {
+						StackTraceModal.print(cause)
+					} else {
+						assertUnreachable()
 					}
 				}
 
