@@ -145,6 +145,10 @@ inline operator fun AlertButton.invoke(textOverride: Any?): AlertButton {
 	return this
 }
 
+inline fun AlertButton?.matches(lazyValue: AlertChoices.() -> AlertChoice): Boolean {
+	return this?.choice.matches(lazyValue)
+}
+
 @AlertSpecDsl
 object AlertChoices {
 	inline val OK get() = AlertChoice.OK
@@ -164,6 +168,10 @@ expect enum class AlertChoice : AlertButton {
 
 	override val choice: AlertChoice
 	override val textOverride: Nothing?
+}
+
+inline fun AlertChoice?.matches(lazyValue: AlertChoices.() -> AlertChoice): Boolean {
+	return this == lazyValue(AlertChoices)
 }
 
 data class AlertButtonOverride(
