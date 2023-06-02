@@ -201,6 +201,9 @@ class AlertButtonsSetup(
 		val Yes_No_Cancel = with(AlertChoices) { AlertButtonsSetup(Yes, No, Cancel) }
 	}
 
+	@Suppress("NOTHING_TO_INLINE")
+	inline operator fun invoke() = this
+
 	operator fun invoke(vararg textOverrides: Any?): AlertButtonsSetup {
 		val buttons = buttons
 		val buttons_size = buttons.size
