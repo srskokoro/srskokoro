@@ -1,9 +1,11 @@
 ﻿package main
 
 import TODO
+import assertUnreachable
 import kokoro.app.AppBuild
 import kokoro.app.AppData
 import kokoro.app.cli.Main
+import kokoro.app.ui.AlertChoice
 import kokoro.app.ui.Alerts
 import kokoro.app.ui.ExitProcessNonZeroViaSwing
 import kokoro.app.ui.StackTraceModal
@@ -411,7 +413,7 @@ private class AppRelay(sockDir: String) {
 				// EDGE CASE: The feature to create unix domain sockets could be
 				// disabled, and yet, the said feature was enabled when the app
 				// daemon was run :P
-				showErrorThenExit(null, E_UNIX_SOCK_REQUIRED, if (DEBUG) ex else null)
+				showErrorThenExit(null, E_UNIX_SOCK_REQUIRED, ex)
 			}
 			connectAddress = UnixDomainSocketAddress.of(sockPath)
 		} else {
@@ -423,7 +425,7 @@ private class AppRelay(sockDir: String) {
 				if (Files.exists(sockPath)) throw ex
 				// Either the app daemon has (properly) shut down, or someone
 				// deleted the file. Show an error assuming the former case.
-				showErrorThenExit(null, E_SERVICE_HALT, if (DEBUG) ex else null)
+				showErrorThenExit(null, E_SERVICE_HALT, ex)
 			}
 			connectAddress = InetSocketAddress(InetAddress.getLoopbackAddress(), port)
 			client = SocketChannel.open()
@@ -442,7 +444,7 @@ private class AppRelay(sockDir: String) {
 			} else 0
 		} catch (ex: IOException) {
 			// Will close the client connection for us
-			showErrorThenExit(client, E_SERVICE_HALT, if (DEBUG) ex else null)
+			showErrorThenExit(client, E_SERVICE_HALT, ex)
 		} catch (ex: Throwable) {
 			client.closeInCatch(ex)
 			throw ex
@@ -509,7 +511,7 @@ private class AppRelay(sockDir: String) {
 				sink.write(buffer, size) // Send it!
 			} catch (ex: IOException) {
 				// Will close the client connection for us
-				showErrorThenExit(sink, E_SERVICE_HALT, if (DEBUG) ex else null)
+				showErrorThenExit(sink, E_SERVICE_HALT, ex)
 			}
 			// Deliberately closing outside of any `try` or `use`, as `close()`
 			// may throw and interfere with our custom error handling.
@@ -564,11 +566,17 @@ private class AppRelay(sockDir: String) {
 						this.message = message
 					}
 					style { ERROR }
+					buttons { if (cause != null) OK(null, "Details") else OK }
+				}?.let {
+					if (it.choice == AlertChoice.CustomAction) {
+						if (cause != null) {
+							StackTraceModal.print(cause)
+						} else {
+							assertUnreachable()
+						}
+					}
 				}
 
-				cause?.let {
-					StackTraceModal.print(it)
-				}
 				thrownByClose?.let {
 					StackTraceModal.print(it)
 				}
