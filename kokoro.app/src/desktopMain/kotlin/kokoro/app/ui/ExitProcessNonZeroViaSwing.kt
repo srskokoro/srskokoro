@@ -19,6 +19,12 @@ import kotlin.system.exitProcess
  * @see install
  */
 class ExitProcessNonZeroViaSwing private constructor(private val toolkit: Toolkit) : AWTEventListener, Runnable {
+
+	private val openedWindows = IdentityHashMap<Window, Unit>().also {
+		for (w in Window.getWindows())
+			if (w.isShowing) it[w] = Unit
+	}
+
 	companion object {
 
 		/** WARNING: Must be called on the Swing EDT. */
@@ -34,11 +40,6 @@ class ExitProcessNonZeroViaSwing private constructor(private val toolkit: Toolki
 		private inline fun exitNow(): Nothing {
 			exitProcess(StackTraceModal.NONZERO_STATUS)
 		}
-	}
-
-	private val openedWindows = IdentityHashMap<Window, Unit>().also {
-		for (w in Window.getWindows())
-			if (w.isShowing) it[w] = Unit
 	}
 
 	override fun eventDispatched(e: AWTEvent) {
