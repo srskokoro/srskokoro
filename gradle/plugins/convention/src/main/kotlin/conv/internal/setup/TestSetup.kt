@@ -33,6 +33,10 @@ internal fun setUpTestFrameworkDeps_jvm(consume: DependencyConsumer) {
 	consume("io.kotest:kotest-runner-junit5")
 }
 
+internal fun setUpTestFrameworkDeps_js(consume: DependencyConsumer) {
+	consume("io.kotest:kotest-framework-engine")
+}
+
 internal fun setUpTestFrameworkDeps_kmp_common(consume: DependencyConsumer) {
 	consume("io.kotest:kotest-framework-engine")
 }
