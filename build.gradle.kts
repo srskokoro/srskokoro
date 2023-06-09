@@ -3,9 +3,9 @@ plugins {
 
 	// Avoid the plugins to be loaded multiple times in each subproject's
 	// classloader. See also, https://youtrack.jetbrains.com/issue/KT-46200
-	kotlin("jvm") apply false
 	kotlin("multiplatform") apply false
 	kotlin("android") apply false
+	kotlin("jvm") apply false
 	id("com.android.application") apply false
 	id("com.android.library") apply false
 	id("io.kotest.multiplatform") apply false
