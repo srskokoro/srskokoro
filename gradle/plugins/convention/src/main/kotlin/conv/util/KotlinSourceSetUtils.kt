@@ -26,8 +26,10 @@ fun NamedDomainObjectContainer<out KotlinSourceSet>.derive(
 	// tried to wire the newly created test source set to the newly created main
 	// source set, but that made things worse: it introduced some hard-to-
 	// describe build errors.
-	for (it in parentMain.dependsOn) newMain.dependsOn(it)
-	for (it in parentTest.dependsOn) newTest.dependsOn(it)
+	if (parentMain.name != KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
+		for (it in parentMain.dependsOn) newMain.dependsOn(it)
+	if (parentTest.name != KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
+		for (it in parentTest.dependsOn) newTest.dependsOn(it)
 
 	newMain to newTest
 }
