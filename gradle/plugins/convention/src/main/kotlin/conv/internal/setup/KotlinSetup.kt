@@ -37,10 +37,9 @@ internal fun Project.setUpTargetsExtensions(kotlin: KotlinMultiplatformExtension
 // --
 
 private fun Project.setUpProject(kotlin: KotlinProjectExtension) {
-	kotlinSourceSets = getSourceSets(kotlin)
-	afterEvaluate {
-		setUpAltSrcDirs(kotlinSourceSets)
-	}
+	val kotlinSourceSets = getSourceSets(kotlin)
+	this.kotlinSourceSets = kotlinSourceSets
+	setUpAltSrcDirs(kotlinSourceSets)
 }
 
 private fun Project.setUpAltSrcDirs(kotlinSourceSets: NamedDomainObjectContainer<KotlinSourceSet>) {

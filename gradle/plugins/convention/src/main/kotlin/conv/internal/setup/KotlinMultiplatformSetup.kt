@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 internal fun Project.setUp(kotlin: KotlinMultiplatformExtension) {
-	setUpAssetsDir(this, kotlin)
+	setUpAssetsDir(this, kotlin) // Must be done first, so that the following subsequent setup may see it.
 	setUp(kotlin as KotlinProjectExtension)
 }
 
