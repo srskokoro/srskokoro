@@ -3,6 +3,7 @@ import conv.internal.util.*
 import conv.util.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
 	id("conv.base")
@@ -17,6 +18,10 @@ withAndroid {
 internal val localKotlin = kotlin.apply {
 	setUp(this)
 	setUpTargetsExtensions(this)
+}
+
+tasks.withType<KotlinJvmCompile>().configureEach {
+	setUp(compilerOptions)
 }
 
 localKotlin.targets.apply {
