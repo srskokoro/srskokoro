@@ -8,6 +8,7 @@ plugins {
 	id("conv.base")
 	kotlin("multiplatform")
 	id("io.kotest.multiplatform")
+	id("conv.assets.kt.mpp")
 }
 
 withAndroid {

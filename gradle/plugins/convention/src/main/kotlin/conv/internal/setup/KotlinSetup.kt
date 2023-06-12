@@ -1,5 +1,6 @@
 package conv.internal.setup
 
+import assets
 import conv.internal.KotlinTargetsConfigLoader
 import conv.internal.skipPlaceholderGenerationForKotlinTargetsConfigLoader
 import conv.internal.support.removeFirst
@@ -36,9 +37,10 @@ internal fun Project.setUpTargetsExtensions(kotlin: KotlinMultiplatformExtension
 // --
 
 private fun Project.setUpProject(kotlin: KotlinProjectExtension) {
-	val kotlinSourceSets = getSourceSets(kotlin)
-	this.kotlinSourceSets = kotlinSourceSets
-	setUpAltSrcDirs(kotlinSourceSets)
+	kotlinSourceSets = getSourceSets(kotlin)
+	afterEvaluate {
+		setUpAltSrcDirs(kotlinSourceSets)
+	}
 }
 
 private fun Project.setUpAltSrcDirs(kotlinSourceSets: NamedDomainObjectContainer<KotlinSourceSet>) {
@@ -48,6 +50,7 @@ private fun Project.setUpAltSrcDirs(kotlinSourceSets: NamedDomainObjectContainer
 		val isTestSourceSet = isTestSourceSet(name)
 		kotlin.setUpAltSrcDirs(defaultSrcPath, isTestSourceSet)
 		resources.setUpAltSrcDirs(defaultSrcPath, isTestSourceSet)
+		assets?.setUpAltSrcDirs(defaultSrcPath, isTestSourceSet)
 	}
 
 	// Also set up for `org.gradle.api.tasks.SourceSet` (if any).
