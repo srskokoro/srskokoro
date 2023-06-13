@@ -41,7 +41,7 @@ private fun setUpAssetsDir(project: Project, kotlin: KotlinMultiplatformExtensio
 	val kotlinTargets = kotlin.targets
 	kotlinTargets.withType<KotlinJvmTarget> {
 		compilations.all {
-			initAssetsAsResources(allKotlinSourceSets, project)
+			initAssetsAsResources(allKotlinSourceSets, this.project)
 		}
 	}
 	project.ifAndroidProject {
@@ -53,7 +53,7 @@ private fun setUpAssetsDir(project: Project, kotlin: KotlinMultiplatformExtensio
 				val outputDir = initConvAssetsProcessingTask()
 					?: return // Skip (task already set up for this compilation, or task name conflict)
 
-				initAssetsAsResources(allKotlinSourceSets, project)
+				initAssetsAsResources(allKotlinSourceSets, this.project)
 				androidAssets.srcDir(outputDir) // Link output as Android-style "assets"
 			})
 		}
