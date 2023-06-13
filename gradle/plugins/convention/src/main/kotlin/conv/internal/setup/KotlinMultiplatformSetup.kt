@@ -1,14 +1,24 @@
-package conv.internal.setup
+﻿package conv.internal.setup
 
+import XS_assets
+import assets
 import getAndroidAssets
-import initAssetsAsResources
-import initConvAssetsProcessingTask
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
+import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.provider.Provider
+import org.gradle.kotlin.dsl.add
 import org.gradle.kotlin.dsl.withType
+import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
+import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOrNull
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import java.util.concurrent.Callable
 
 internal fun Project.setUp(kotlin: KotlinMultiplatformExtension) {
 	setUpAssetsDir(this, kotlin) // Must be done first, so that the following subsequent setup may see it.
@@ -41,4 +51,35 @@ private fun setUpAssetsDir(project: Project, kotlin: KotlinMultiplatformExtensio
 			}
 		}
 	}
+}
+
+private fun KotlinSourceSet.initAssetsAsResources(project: Project) {
+	@Suppress("OPT_IN_USAGE")
+	if (androidSourceSetInfoOrNull != null) return // Skip (for Android)
+
+	val extensions = (this as ExtensionAware).extensions
+	if (extensions.findByName(XS_assets) != null) return // Skip. Already defined.
+
+	val assetsDisplayName = "$name assets (conv)"
+	val assets = project.objects.sourceDirectorySet(assetsDisplayName, assetsDisplayName)
+
+	extensions.add<SourceDirectorySet>(XS_assets, assets)
+	assets.srcDir(project.file("src/${this.name}/assets"))
+
+	// Set up as an additional resources directory of the current source set
+	resources.srcDir(assets)
+}
+
+private fun KotlinJvmAndroidCompilation.initConvAssetsProcessingTask(): Provider<Directory>? {
+	val outputDirName = "${target.targetName}${compilationName.replaceFirstChar { it.uppercaseChar() }}"
+	val taskName = "${outputDirName}ProcessConvAssets"
+	if (taskName in project.tasks.names) return null // Skip. Already defined.
+
+	val outputDir: Provider<Directory> = project.layout.buildDirectory.dir("processedConvAssets/$outputDirName")
+	project.tasks.register(taskName, @Suppress("UnstableApiUsage") ProcessResources::class.java) {
+		description = "Processes assets (conv)"
+		from(project.files(Callable { allKotlinSourceSets.mapNotNull { it.assets } }))
+		into(outputDir)
+	}
+	return outputDir
 }
