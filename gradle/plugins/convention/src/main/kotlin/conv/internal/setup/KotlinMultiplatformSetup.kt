@@ -28,6 +28,13 @@ internal fun Project.setUp(kotlin: KotlinMultiplatformExtension) {
 /**
  * Provides the ability to have common assets, as "resources" in JVM, but as
  * "assets" in Android.
+ *
+ * NOTE: While Java-style resources can be used in Android, it's generally
+ * avoided for performance reasons. See the following:
+ * - [Don't call Class.getResourceAsStream in firebase-iid · Issue #1601 · firebase/firebase-android-sdk | GitHub](https://github.com/firebase/firebase-android-sdk/issues/1601)
+ * - [Tracking getResourceAsStream() performance · Issue #5369 · open-telemetry/opentelemetry-java | GitHub](https://github.com/open-telemetry/opentelemetry-java/issues/5369)
+ * - [Strict mode violation · Issue #507 · signalfx/splunk-otel-android | GitHub](https://github.com/signalfx/splunk-otel-android/issues/507)
+ * - [Why Is ClassLoader.getResourceAsStream So Slow in Android? - nimbledroid : r/androiddev | Reddit](https://www.reddit.com/r/androiddev/comments/4dmflo/why_is_classloadergetresourceasstream_so_slow_in/)
  */
 private fun setUpAssetsDir(project: Project, kotlin: KotlinMultiplatformExtension) {
 	val kotlinTargets = kotlin.targets
@@ -61,7 +68,7 @@ private fun KotlinSourceSet.initAssetsAsResources(project: Project) {
 	if (extensions.findByName(XS_assets) != null) return // Skip. Already defined.
 
 	val assetsDisplayName = "$name assets (conv)"
-	val assets = project.objects.sourceDirectorySet(assetsDisplayName, assetsDisplayName)
+	val assets: SourceDirectorySet = project.objects.sourceDirectorySet(assetsDisplayName, assetsDisplayName)
 
 	extensions.add<SourceDirectorySet>(XS_assets, assets)
 	assets.srcDir(project.file("src/${this.name}/assets"))
