@@ -34,22 +34,20 @@ fun KotlinSourceSet.getAndroidSourceSet(android: AndroidExtension): AndroidSourc
 // --
 
 internal fun KotlinSourceSet.initAssetsAsResources(project: Project) {
-	initAssets(project)?.let { resources.srcDir(it) }
-}
-
-internal fun KotlinSourceSet.initAssets(project: Project): SourceDirectorySet? {
 	@Suppress("OPT_IN_USAGE")
-	if (androidSourceSetInfoOrNull != null) return null
+	if (androidSourceSetInfoOrNull != null) return // Skip (for Android)
 
 	val extensions = (this as ExtensionAware).extensions
-	if (extensions.findByName(this::assets.name) != null) return null
+	if (extensions.findByName(this::assets.name) != null) return // Skip. Already defined.
 
 	val assetsDisplayName = "$name assets (conv)"
 	val assets = project.objects.sourceDirectorySet(assetsDisplayName, assetsDisplayName)
 
 	extensions.add<SourceDirectorySet>(this::assets.name, assets)
 	assets.srcDir(project.file("src/${this.name}/assets"))
-	return assets
+
+	// Set up as an additional resources directory of the current source set
+	resources.srcDir(assets)
 }
 
 internal fun KotlinJvmAndroidCompilation.initConvAssetsProcessingTask(): Provider<Directory>? {
