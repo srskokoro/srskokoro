@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.gradle.utils.ObservableSet
 import java.util.concurrent.Callable
 
 internal fun Project.setUp(kotlin: KotlinMultiplatformExtension) {
-	setUpAssetsDir(this, kotlin) // Must be done first, so that the following subsequent setup may see it.
+	setUpAssetsDir(kotlin) // Must be done first, so that the following subsequent setup may see it.
 	setUp(kotlin as KotlinProjectExtension)
 }
 
@@ -37,15 +37,15 @@ internal fun Project.setUp(kotlin: KotlinMultiplatformExtension) {
  * - [Strict mode violation · Issue #507 · signalfx/splunk-otel-android | GitHub](https://github.com/signalfx/splunk-otel-android/issues/507)
  * - [Why Is ClassLoader.getResourceAsStream So Slow in Android? - nimbledroid : r/androiddev | Reddit](https://www.reddit.com/r/androiddev/comments/4dmflo/why_is_classloadergetresourceasstream_so_slow_in/)
  */
-private fun setUpAssetsDir(project: Project, kotlin: KotlinMultiplatformExtension) {
+private fun Project.setUpAssetsDir(kotlin: KotlinMultiplatformExtension) {
 	val kotlinTargets = kotlin.targets
 	kotlinTargets.withType<KotlinJvmTarget> {
 		compilations.all {
 			initAssetsAsResources(allKotlinSourceSets, this.project)
 		}
 	}
-	project.ifAndroidProject {
-		val android = project.androidExt
+	ifAndroidProject {
+		val android = androidExt
 		kotlinTargets.withType<KotlinAndroidTarget> {
 			compilations.all(fun KotlinJvmAndroidCompilation.() {
 				val androidAssets = defaultSourceSet.getAndroidAssets(android)
@@ -81,6 +81,8 @@ private fun initAssetsAsResources(
 })
 
 private fun KotlinJvmAndroidCompilation.initConvAssetsProcessingTask(): Provider<Directory>? {
+	val project = project
+
 	val outputDirName = "${target.targetName}${compilationName.replaceFirstChar { it.uppercaseChar() }}"
 	val taskName = "${outputDirName}ProcessConvAssets"
 	if (taskName in project.tasks.names) return null // Skip. Already defined.
@@ -88,7 +90,7 @@ private fun KotlinJvmAndroidCompilation.initConvAssetsProcessingTask(): Provider
 	val outputDir: Provider<Directory> = project.layout.buildDirectory.dir("processedConvAssets/$outputDirName")
 	project.tasks.register(taskName, @Suppress("UnstableApiUsage") ProcessResources::class.java) {
 		description = "Processes assets (conv)"
-		from(project.files(Callable { allKotlinSourceSets.mapNotNull { it.assets } }))
+		from(this.project.files(Callable { allKotlinSourceSets.mapNotNull { it.assets } }))
 		into(outputDir)
 	}
 	return outputDir
