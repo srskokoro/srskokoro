@@ -34,8 +34,8 @@ internal fun Project.setUp(kotlin: KotlinMultiplatformExtension) {
 }
 
 /**
- * Provides the ability to have common assets, as "resources" in JVM, but as
- * "assets" in Android.
+ * Provides the ability to have common assets, as "resources" on JVM, but as
+ * "assets" on Android.
  *
  * NOTE: While Java-style resources can be used in Android, it's generally
  * avoided for performance reasons. See the following:
