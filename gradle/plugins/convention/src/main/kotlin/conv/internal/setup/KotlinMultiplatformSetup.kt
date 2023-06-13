@@ -8,6 +8,7 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.add
 import org.gradle.kotlin.dsl.withType
 import org.gradle.language.jvm.tasks.ProcessResources
@@ -51,12 +52,20 @@ private fun Project.setUpAssetsDir(kotlin: KotlinMultiplatformExtension) {
 				val androidAssets = defaultSourceSet.getAndroidAssets(android)
 					?: return // Skip (not for Android, or metadata/info not linked)
 
+				val mergeAssetsTask = try {
+					androidVariant.mergeAssetsProvider
+				} catch (_: Exception) { // NOTE: Deliberately not `Throwable`
+					return // Skip -- assume no "assets"
+				}
+
 				val project = this.project
-				val outputDir = initConvAssetsProcessingTask(project)
+				val (task, outputDir) = initConvAssetsProcessingTask(project)
 					?: return // Skip (task already set up for this compilation, or task name conflict)
 
 				initAssetsAsResources(allKotlinSourceSets, project)
 				androidAssets.srcDir(outputDir) // Link output as Android-style "assets"
+
+				mergeAssetsTask.configure { dependsOn(task) }
 			})
 		}
 	}
@@ -82,7 +91,7 @@ private fun initAssetsAsResources(
 	resources.source(assets)
 })
 
-private fun KotlinJvmAndroidCompilation.initConvAssetsProcessingTask(project: Project): Provider<Directory>? {
+private fun KotlinJvmAndroidCompilation.initConvAssetsProcessingTask(project: Project): Pair<TaskProvider<*>, Provider<Directory>>? {
 	// NOTE: We should ensure that the task's name is unique per compilation.
 	// And thus, we can't use the compilation's default source set name (to be
 	// the task's name), since (at the moment), it's possible for the default
@@ -92,10 +101,10 @@ private fun KotlinJvmAndroidCompilation.initConvAssetsProcessingTask(project: Pr
 	if (taskName in project.tasks.names) return null // Skip. Already defined.
 
 	val outputDir: Provider<Directory> = project.layout.buildDirectory.dir("processedConvAssets/$outputDirName")
-	project.tasks.register(taskName, @Suppress("UnstableApiUsage") ProcessResources::class.java) {
+	val task = project.tasks.register(taskName, @Suppress("UnstableApiUsage") ProcessResources::class.java) {
 		description = "Processes assets (conv)"
 		from(this.project.files(Callable { allKotlinSourceSets.mapNotNull { it.assets } }))
 		into(outputDir)
 	}
-	return outputDir
+	return task to outputDir
 }
