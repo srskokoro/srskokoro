@@ -48,9 +48,11 @@ private fun setUpAssetsDir(project: Project, kotlin: KotlinMultiplatformExtensio
 		val android = project.androidExt
 		kotlinTargets.withType<KotlinAndroidTarget> {
 			compilations.all {
-				initAssetsAsResources(allKotlinSourceSets, project)
-				initConvAssetsProcessingTask()?.let { outputDir ->
-					defaultSourceSet.getAndroidAssets(android)?.srcDir(outputDir)
+				defaultSourceSet.getAndroidAssets(android)?.let { androidAssets ->
+					initAssetsAsResources(allKotlinSourceSets, project)
+					initConvAssetsProcessingTask()?.let { outputDir ->
+						androidAssets.srcDir(outputDir)
+					}
 				}
 			}
 		}
