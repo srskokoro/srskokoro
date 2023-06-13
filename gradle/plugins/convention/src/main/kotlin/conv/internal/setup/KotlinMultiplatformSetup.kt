@@ -57,11 +57,7 @@ private fun setUpAssetsDir(project: Project, kotlin: KotlinMultiplatformExtensio
 	}
 }
 
-private fun ObservableSet<KotlinSourceSet>.initAssetsAsResources(project: Project): Unit = forAll { sourceSet ->
-	sourceSet.initAssetsAsResources(project)
-}
-
-private fun KotlinSourceSet.initAssetsAsResources(project: Project) {
+private fun ObservableSet<KotlinSourceSet>.initAssetsAsResources(project: Project): Unit = forAll(fun KotlinSourceSet.() {
 	@Suppress("OPT_IN_USAGE")
 	if (androidSourceSetInfoOrNull != null) return // Skip (for Android)
 
@@ -76,7 +72,7 @@ private fun KotlinSourceSet.initAssetsAsResources(project: Project) {
 
 	// Set up as an additional resources directory of the current source set
 	resources.source(assets)
-}
+})
 
 private fun KotlinJvmAndroidCompilation.initConvAssetsProcessingTask(): Provider<Directory>? {
 	val outputDirName = "${target.targetName}${compilationName.replaceFirstChar { it.uppercaseChar() }}"
