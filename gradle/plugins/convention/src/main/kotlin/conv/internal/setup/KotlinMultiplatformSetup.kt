@@ -50,10 +50,12 @@ private fun Project.setUpAssetsDir(kotlin: KotlinMultiplatformExtension) {
 			compilations.all(fun KotlinJvmAndroidCompilation.() {
 				val androidAssets = defaultSourceSet.getAndroidAssets(android)
 					?: return // Skip (not for Android, or metadata/info not linked)
-				val outputDir = initConvAssetsProcessingTask()
+
+				val project = this.project
+				val outputDir = initConvAssetsProcessingTask(project)
 					?: return // Skip (task already set up for this compilation, or task name conflict)
 
-				initAssetsAsResources(allKotlinSourceSets, this.project)
+				initAssetsAsResources(allKotlinSourceSets, project)
 				androidAssets.srcDir(outputDir) // Link output as Android-style "assets"
 			})
 		}
@@ -80,9 +82,7 @@ private fun initAssetsAsResources(
 	resources.source(assets)
 })
 
-private fun KotlinJvmAndroidCompilation.initConvAssetsProcessingTask(): Provider<Directory>? {
-	val project = project
-
+private fun KotlinJvmAndroidCompilation.initConvAssetsProcessingTask(project: Project): Provider<Directory>? {
 	// NOTE: We should ensure that the task's name is unique per compilation.
 	// And thus, we can't use the compilation's default source set name (to be
 	// the task's name), since (at the moment), it's possible for the default
