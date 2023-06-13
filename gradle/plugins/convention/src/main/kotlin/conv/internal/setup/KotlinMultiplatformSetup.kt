@@ -67,7 +67,7 @@ private fun KotlinSourceSet.initAssetsAsResources(project: Project) {
 	assets.srcDir(project.file("src/${this.name}/assets"))
 
 	// Set up as an additional resources directory of the current source set
-	resources.srcDir(assets)
+	resources.source(assets)
 }
 
 private fun KotlinJvmAndroidCompilation.initConvAssetsProcessingTask(): Provider<Directory>? {
