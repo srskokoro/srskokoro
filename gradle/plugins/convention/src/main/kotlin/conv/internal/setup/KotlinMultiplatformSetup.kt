@@ -71,7 +71,7 @@ private fun initAssetsAsResources(
 	val assets: SourceDirectorySet = project.objects.sourceDirectorySet(assetsDisplayName, assetsDisplayName)
 
 	extensions.add<SourceDirectorySet>(XS_assets, assets)
-	assets.srcDir(project.file("src/${this.name}/assets"))
+	assets.srcDir(project.file("src/$name/assets"))
 
 	// Set up as an additional resources directory of the current source set
 	resources.source(assets)
