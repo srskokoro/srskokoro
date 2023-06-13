@@ -41,14 +41,14 @@ private fun setUpAssetsDir(project: Project, kotlin: KotlinMultiplatformExtensio
 	val kotlinTargets = kotlin.targets
 	kotlinTargets.withType<KotlinJvmTarget> {
 		compilations.all {
-			allKotlinSourceSets.initAssetsAsResources(project)
+			initAssetsAsResources(allKotlinSourceSets, project)
 		}
 	}
 	project.ifAndroidProject {
 		val android = project.androidExt
 		kotlinTargets.withType<KotlinAndroidTarget> {
 			compilations.all {
-				allKotlinSourceSets.initAssetsAsResources(project)
+				initAssetsAsResources(allKotlinSourceSets, project)
 				initConvAssetsProcessingTask()?.let { outputDir ->
 					defaultSourceSet.getAndroidAssets(android)?.srcDir(outputDir)
 				}
@@ -57,7 +57,10 @@ private fun setUpAssetsDir(project: Project, kotlin: KotlinMultiplatformExtensio
 	}
 }
 
-private fun ObservableSet<KotlinSourceSet>.initAssetsAsResources(project: Project): Unit = forAll(fun KotlinSourceSet.() {
+private fun initAssetsAsResources(
+	allKotlinSourceSets: ObservableSet<KotlinSourceSet>,
+	project: Project,
+): Unit = allKotlinSourceSets.forAll(fun KotlinSourceSet.() {
 	@Suppress("OPT_IN_USAGE")
 	if (androidSourceSetInfoOrNull != null) return // Skip (for Android)
 
