@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOrNull
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
+import org.jetbrains.kotlin.gradle.utils.ObservableSet
 import java.util.concurrent.Callable
 
 internal fun Project.setUp(kotlin: KotlinMultiplatformExtension) {
@@ -40,24 +41,24 @@ private fun setUpAssetsDir(project: Project, kotlin: KotlinMultiplatformExtensio
 	val kotlinTargets = kotlin.targets
 	kotlinTargets.withType<KotlinJvmTarget> {
 		compilations.all {
-			allKotlinSourceSets.forAll { sourceSet ->
-				sourceSet.initAssetsAsResources(project)
-			}
+			allKotlinSourceSets.initAssetsAsResources(project)
 		}
 	}
 	project.ifAndroidProject {
 		val android = project.androidExt
 		kotlinTargets.withType<KotlinAndroidTarget> {
 			compilations.all {
-				allKotlinSourceSets.forAll { sourceSet ->
-					sourceSet.initAssetsAsResources(project)
-				}
+				allKotlinSourceSets.initAssetsAsResources(project)
 				initConvAssetsProcessingTask()?.let { outputDir ->
 					defaultSourceSet.getAndroidAssets(android)?.srcDir(outputDir)
 				}
 			}
 		}
 	}
+}
+
+private fun ObservableSet<KotlinSourceSet>.initAssetsAsResources(project: Project): Unit = forAll { sourceSet ->
+	sourceSet.initAssetsAsResources(project)
 }
 
 private fun KotlinSourceSet.initAssetsAsResources(project: Project) {
