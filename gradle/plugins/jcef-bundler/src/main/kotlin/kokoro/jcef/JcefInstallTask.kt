@@ -1,8 +1,8 @@
 package kokoro.jcef
 
 import me.friwi.jcefmaven.CefBuildInfo
+import me.friwi.jcefmaven.CefNativeBundle
 import me.friwi.jcefmaven.impl.util.macos.UnquarantineUtil
-import org.cef.CefApp
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DirectoryProperty
@@ -41,7 +41,7 @@ private fun JcefInstallTask.installJcef(outputDir: File) {
 	if (!outputDir.mkdirs()) throw IOException("Directory creation failed: $outputDir")
 
 	val tmpTarFile = File(outputDir, "jcef.tar.gz")
-	(CefApp::class.java.classLoader.getResourceAsStream(jcefBuildRes)
+	(CefNativeBundle::class.java.classLoader.getResourceAsStream(jcefBuildRes)
 		?: throw MissingResourceException("Expected classpath resource not found: $jcefBuildRes")).use { input ->
 		FileOutputStream(tmpTarFile).use { output -> input.transferTo(output) }
 	}
