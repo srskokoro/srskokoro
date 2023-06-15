@@ -20,7 +20,7 @@ abstract class JcefInstallTask @Inject constructor() : DefaultTask() {
 
 	@get:OutputDirectory
 	val outputDir: DirectoryProperty = project.objects.directoryProperty()
-		.convention(project.layout.buildDirectory.dir("generated/$name"))
+		.convention(project.layout.buildDirectory.dir(project.provider { "generated/$name" }))
 
 	@get:Inject internal abstract val fsOps: FileSystemOperations
 	@get:Inject internal abstract val archiveOps: ArchiveOperations
