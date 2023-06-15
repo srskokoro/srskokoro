@@ -69,6 +69,7 @@ private fun Project.setUpAssetsDir(kotlin: KotlinMultiplatformExtension) {
 				val androidAssets = defaultSourceSet.getAndroidAssets(android)
 					?: return // Skip (not for Android, or metadata/info not linked)
 
+				val androidVariant = this.androidVariant
 				val mergeAssetsTask = try {
 					androidVariant.mergeAssetsProvider
 				} catch (_: Exception) { // NOTE: Deliberately not `Throwable`
