@@ -91,10 +91,14 @@ private fun SourceDirectorySet.setUpAltSrcDirs(
 			srcDir("test" + File.separatorChar + subPath)
 			srcDir("test" + File.separatorChar + "#" + subPath)
 			srcDir("test" + File.separatorChar + "+" + subPath)
-			if (isTestSourceSet == 1) srcDir(subPath)
+			if (isTestSourceSet == 1 && subPath.startsWith(TEST_PLUS_FILE_SEP)) {
+				srcDir(subPath)
+			}
 		}
 	}
 }
+
+private val TEST_PLUS_FILE_SEP = "test" + File.separatorChar
 
 private fun isTestSourceSet(name: String): Int {
 	// Either it's suffixed with "Test" or it's named "test" -- and not because
