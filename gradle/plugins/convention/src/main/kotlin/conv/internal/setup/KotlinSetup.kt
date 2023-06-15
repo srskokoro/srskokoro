@@ -47,8 +47,11 @@ private fun Project.setUpAltSrcDirs(kotlinSourceSets: NamedDomainObjectContainer
 	kotlinSourceSets.configureEach {
 		val isTestSourceSet = isTestSourceSet(name)
 		kotlin.setUpAltSrcDirs(defaultSrcPath, isTestSourceSet)
-		resources.setUpAltSrcDirs(defaultSrcPath, isTestSourceSet)
+		// Must process `assets` first before `resources`, since `resources` may
+		// include `assets` as a nested source directory set. That way, the
+		// alternative directories would be associated to `assets` first.
 		assets?.setUpAltSrcDirs(defaultSrcPath, isTestSourceSet)
+		resources.setUpAltSrcDirs(defaultSrcPath, isTestSourceSet)
 	}
 
 	// Also set up for `org.gradle.api.tasks.SourceSet` (if any).
@@ -72,12 +75,18 @@ private fun Project.setUpAltSrcDirs(kotlinSourceSets: NamedDomainObjectContainer
 private fun SourceDirectorySet.setUpAltSrcDirs(
 	defaultSrcPath: String,
 	isTestSourceSet: Int,
-): Unit = srcDirs.forEach { srcDir ->
-	val path = srcDir.path
-	if (path.startsWith(defaultSrcPath)) {
+) {
+	val srcDirs = srcDirs
+	for (srcDir in srcDirs) {
+		val path = srcDir.path
+		if (!path.startsWith(defaultSrcPath)) continue
+
 		val subPath = path.removeFirst(defaultSrcPath.length)
+		if (File(defaultSrcPath, "#$subPath") in srcDirs) continue // Already processed before
+
 		srcDir("src" + File.separatorChar + "#" + subPath)
 		srcDir("src" + File.separatorChar + "+" + subPath)
+
 		if (isTestSourceSet != 0) {
 			srcDir("test" + File.separatorChar + subPath)
 			srcDir("test" + File.separatorChar + "#" + subPath)
