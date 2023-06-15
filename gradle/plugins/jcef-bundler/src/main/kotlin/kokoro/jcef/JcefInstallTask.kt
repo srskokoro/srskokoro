@@ -7,10 +7,12 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.resources.MissingResourceException
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
 
@@ -35,24 +37,38 @@ abstract class JcefInstallTask @Inject constructor() : DefaultTask() {
 
 private const val installLock = "install.lock"
 
-private fun JcefInstallTask.installJcef(installDir: File) {
+private fun JcefInstallTask.installJcef(outputDir: File) {
+	if (!outputDir.mkdirs()) throw IOException("Directory creation failed: $outputDir")
+
+	val tmpTarFile = File(outputDir, "jcef.tar.gz")
+	(CefApp::class.java.classLoader.getResourceAsStream(jcefBuildRes)
+		?: throw MissingResourceException("Expected classpath resource not found: $jcefBuildRes")).use { input ->
+		FileOutputStream(tmpTarFile).use { output -> input.transferTo(output) }
+	}
+
+	val installDir = File(outputDir, "jcef")
 	fsOps.copy {
-		from(archiveOps.tarTree(JavaClassLoaderResource(CefApp::class.java.classLoader, jcefBuildRes)))
+		from(archiveOps.tarTree(tmpTarFile))
 		into(installDir)
 	}.run {
 		check(didWork) { "Unexpected: nothing copied." }
 	}
+
+	tmpTarFile.delete()
+
 	if (platform.os.isMacOSX) {
 		// Remove quarantine on macOS
 		// TODO Not sure if this is actually needed. Perhaps quarantine is never set. Need a Mac to confirm.
 		UnquarantineUtil.unquarantine(installDir)
 	}
+
 	// Marks installation as complete -- note: JCEF Maven expects this.
 	File(installDir, installLock).also {
 		it.delete()
 		if (!it.createNewFile())
 			throw IOException("Could not create `$installLock` to complete installation")
 	}
+
 	// Verifies that the installed version is correct
 	requireInstallInfo(installDir)?.let {
 		error(
