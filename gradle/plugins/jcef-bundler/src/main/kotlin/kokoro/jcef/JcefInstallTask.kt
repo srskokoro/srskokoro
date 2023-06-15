@@ -37,7 +37,7 @@ private const val installLock = "install.lock"
 
 private fun JcefInstallTask.installJcef(installDir: File) {
 	fsOps.copy {
-		from(archiveOps.tarTree(JavaClassResource(CefApp::class.java, jcefBuildRes)))
+		from(archiveOps.tarTree(JavaClassLoaderResource(CefApp::class.java.classLoader, jcefBuildRes)))
 		into(installDir)
 	}.run {
 		check(didWork) { "Unexpected: nothing copied." }

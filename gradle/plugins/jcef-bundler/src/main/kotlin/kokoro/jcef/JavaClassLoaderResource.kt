@@ -6,13 +6,13 @@ import java.io.InputStream
 import java.net.URI
 import java.net.URL
 
-internal data class JavaClassResource(
-	val ref: Class<*>,
+internal data class JavaClassLoaderResource(
+	val classLoader: ClassLoader,
 	val name: String,
 ) : ReadableResource {
 	@Suppress("MemberVisibilityCanBePrivate")
 	val url: URL
-		get() = ref.getResource(name) ?: errorNotFound()
+		get() = classLoader.getResource(name) ?: errorNotFound()
 
 	override fun getURI(): URI = url.toURI()
 
@@ -20,11 +20,11 @@ internal data class JavaClassResource(
 
 	override fun getBaseName(): String = name
 
-	override fun read(): InputStream = ref.getResourceAsStream(name) ?: errorNotFound()
+	override fun read(): InputStream = classLoader.getResourceAsStream(name) ?: errorNotFound()
 
 	private fun errorNotFound(): Nothing = throw MissingResourceException(
 		"Expected classpath resource not found:\n$this"
 	)
 
-	override fun toString() = "[$ref] $name"
+	override fun toString() = "[$classLoader] $name"
 }
