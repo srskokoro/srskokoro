@@ -43,7 +43,8 @@ dependencyVersions {
 
 	// --
 
-	module("org.slf4j:*", "2.0.7")
+	val slf4j = "2.0.7"
+	module("org.slf4j:*", slf4j)
 
 	val grgit = "5.0.0"
 	plugin("org.ajoberstar.grgit", grgit)
