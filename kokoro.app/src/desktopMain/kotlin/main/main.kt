@@ -165,7 +165,7 @@ private class AppDaemon(
 		ClientHandlingSwingScope.launch {
 			handleAppInstance {
 				coroutineScope {
-					launchMain(System.getProperty("user.dir"), initialArgs)
+					launchMain(System.getProperty("user.dir"), initialArgs, isInit = true)
 				}
 			}
 		}
@@ -336,8 +336,8 @@ private class AppDaemon(
 
 	// --
 
-	private suspend inline fun CoroutineScope.launchMain(workingDir: String, args: Array<out String>) {
-		Main().feed(workingDir, args, this)
+	private suspend inline fun CoroutineScope.launchMain(workingDir: String, args: Array<out String>, isInit: Boolean = false) {
+		Main(isInit).feed(workingDir, args, this)
 	}
 
 	private inline fun handleAppInstance(block: () -> Unit) {

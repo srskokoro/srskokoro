@@ -4,7 +4,9 @@ import TODO
 import com.github.ajalt.clikt.core.subcommands
 import kotlinx.coroutines.CoroutineScope
 
-class Main : BaseCommand(invokeWithoutSubcommand = true) {
+class Main constructor(
+	val isInitialMain: Boolean,
+) : BaseCommand(invokeWithoutSubcommand = true) {
 	init {
 		subcommands(
 			Open(),
