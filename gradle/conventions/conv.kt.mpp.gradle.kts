@@ -17,7 +17,6 @@ withAndroid {
 
 internal val localKotlin = kotlin.apply {
 	setUp(this)
-	setUpTargetsExtensions(this)
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {

@@ -2,6 +2,8 @@
 
 import XS_assets
 import assets
+import conv.internal.KotlinTargetsConfigLoader
+import conv.internal.skipPlaceholderGenerationForKotlinTargetsConfigLoader
 import getAndroidAssets
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
@@ -13,6 +15,7 @@ import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import org.gradle.kotlin.dsl.add
 import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.typeOf
 import org.gradle.kotlin.dsl.withType
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -30,6 +33,21 @@ import java.util.concurrent.Callable
 internal fun Project.setUp(kotlin: KotlinMultiplatformExtension) {
 	setUpAssetsDir(kotlin) // Must be done first, so that the following subsequent setup may see it.
 	setUp(kotlin as KotlinProjectExtension)
+
+	// The following makes sure that the type-safe accessors for extensions
+	// added to `targets` are generated. See also, "Understanding when type-safe
+	// model accessors are available | Gradle Kotlin DSL Primer | 7.5.1" --
+	// https://docs.gradle.org/7.5.1/userguide/kotlin_dsl.html#kotdsl:accessor_applicability
+	//
+	// NOTE: If one day, this would cause an exception due to "targets" already
+	// existing, simply remove the following. It's likely that it's already
+	// implemented for us, and if so, we shouldn't need to do anything.
+	(kotlin as ExtensionAware).extensions.add(typeOf(), "targets", kotlin.targets)
+}
+
+internal fun Project.setUpTargetsExtensions(kotlin: KotlinMultiplatformExtension) {
+	val config = layout.projectDirectory.file("build.targets.txt")
+	KotlinTargetsConfigLoader(providers, config).loadInto(kotlin, skipPlaceholderGenerationForKotlinTargetsConfigLoader)
 }
 
 /**

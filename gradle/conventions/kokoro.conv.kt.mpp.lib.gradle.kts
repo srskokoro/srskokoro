@@ -2,6 +2,7 @@ import conv.util.*
 
 plugins {
 	id("conv.kt.mpp.lib")
+	id("conv.kt.mpp.targets")
 }
 
 kotlin {
