@@ -15,7 +15,7 @@ dependencyVersions {
 		vendor { ADOPTIUM }
 	}
 
-	val kotlin = "1.8.21" // https://kotlinlang.org/docs/releases.html
+	val kotlin = "1.8.20" // https://kotlinlang.org/docs/releases.html
 	"org.jetbrains.kotlin".let {
 		plugin("$it.*", kotlin)
 		module("$it:*", kotlin)
