@@ -115,7 +115,7 @@ private fun KotlinJvmAndroidCompilation.setUpConvAssets(android: AndroidExtensio
 	val outputDirName = "${target.targetName}${compilationName.replaceFirstChar { it.uppercaseChar() }}"
 	val taskName = "${outputDirName}ProcessConvAssets"
 
-	val project = this.project
+	val project = project
 	if (taskName in project.tasks.names) return // Skip (task already set up for this compilation, or task name conflict)
 
 	val outputDir: Provider<Directory> = project.layout.buildDirectory.dir("processedConvAssets/$outputDirName")
