@@ -11,7 +11,6 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.add
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.withType
