@@ -45,12 +45,9 @@ internal fun Project.setUp(kotlin: KotlinMultiplatformExtension) {
  * - [Why Is ClassLoader.getResourceAsStream So Slow in Android? - nimbledroid : r/androiddev | Reddit](https://www.reddit.com/r/androiddev/comments/4dmflo/why_is_classloadergetresourceasstream_so_slow_in/)
  */
 private fun Project.setUpAssetsDir(kotlin: KotlinMultiplatformExtension) {
-	// The following sets up a dummy directory as an additional "resources"
-	// directory of `commonMain`. This dummy directory contains a dummy file,
-	// which we'll later exclude on JVM targets, but we'll throw if found on
-	// Android targets. The purpose of this setup is to assert that our common
-	// "assets" won't become Java-style "resources" on Android.
-	val dummyName = setUpConvAssetsDummy(kotlin)
+	// The name of the dummy file in our dummy directory; Exclude on JVM but
+	// throw if found on Android; Look out later below for further details.
+	var dummyName: String? = null // Value will be set eventually (if needed)
 
 	val kotlinTargets = kotlin.targets
 	kotlinTargets.withType<KotlinJvmTarget> {
@@ -62,40 +59,21 @@ private fun Project.setUpAssetsDir(kotlin: KotlinMultiplatformExtension) {
 			}
 		}
 	}
+
 	ifAndroidProject {
+		// The following sets up a dummy directory as an additional "resources"
+		// directory of `commonMain`. This dummy directory contains a dummy
+		// file, which we exclude on JVM targets but throw if found on Android
+		// targets. The purpose of this setup is to assert that our common
+		// "assets" won't become Java-style "resources" on Android.
+		dummyName = setUpConvAssetsDummy(kotlin)
+
 		val android = androidExt
 		kotlinTargets.withType<KotlinAndroidTarget> {
 			compilations.all(fun KotlinJvmAndroidCompilation.() {
-				val androidAssets = defaultSourceSet.getAndroidAssets(android)
-					?: return // Skip (not for Android, or metadata/info not linked)
-
-				val androidVariant = this.androidVariant
-				val mergeAssetsTask = try {
-					androidVariant.mergeAssetsProvider
-				} catch (_: Exception) { // NOTE: Deliberately not `Throwable`
-					return // Skip -- assume no "assets"
-				}
-
-				val project = this.project
-				val (task, outputDir) = initConvAssetsProcessingTask(project)
-					?: return // Skip (task already set up for this compilation, or task name conflict)
-
-				initAssetsAsResources(allKotlinSourceSets, project)
-				androidAssets.srcDir(outputDir) // Link output as Android-style "assets"
-
-				mergeAssetsTask.configure { dependsOn(task) }
+				setUpConvAssets(android)
+				setUpConvAssetsDummyAssertion(dummyName)
 			})
-		}
-		tasks.withType<com.android.build.gradle.internal.tasks.ProcessJavaResTask>().configureEach {
-			eachFile {
-				if (name == dummyName && relativePath.segments.size <= 1) throw AssertionError(
-					"""
-					Common "assets" may have been included as Java-style "resources" on Android.
-					This should not happen unless the Kotlin plugin now causes that to happen.
-					Revision of build logic is thus necessary.
-					""".trimIndent()
-				)
-			}
 		}
 	}
 }
@@ -119,6 +97,44 @@ private fun initAssetsAsResources(
 	// Set up as an additional resources directory of the current source set
 	resources.source(assets)
 })
+
+private fun KotlinJvmAndroidCompilation.setUpConvAssets(android: AndroidExtension) {
+	val androidAssets = defaultSourceSet.getAndroidAssets(android)
+		?: return // Skip (not for Android, or metadata/info not linked)
+
+	val mergeAssetsTask = try {
+		androidVariant.mergeAssetsProvider
+	} catch (_: Exception) { // NOTE: Deliberately not `Throwable`
+		return // Skip -- assume no "assets"
+	}
+
+	val project = this.project
+	val (task, outputDir) = initConvAssetsProcessingTask(project)
+		?: return // Skip (task already set up for this compilation, or task name conflict)
+
+	initAssetsAsResources(allKotlinSourceSets, project)
+	androidAssets.srcDir(outputDir) // Link output as Android-style "assets"
+
+	mergeAssetsTask.configure { dependsOn(task) }
+}
+
+private fun KotlinJvmAndroidCompilation.setUpConvAssetsDummyAssertion(dummyName: String?) {
+	try {
+		androidVariant.processJavaResourcesProvider
+	} catch (_: Exception) { // NOTE: Deliberately not `Throwable`
+		return // Skip -- task not available
+	}.configure {
+		eachFile {
+			if (name == dummyName && relativePath.segments.size <= 1) throw AssertionError(
+				"""
+				Common "assets" may have been included as Java-style "resources" on Android.
+				This should not happen unless the Kotlin plugin now causes that to happen.
+				Revision of build logic is thus necessary.
+				""".trimIndent()
+			)
+		}
+	}
+}
 
 private fun KotlinJvmAndroidCompilation.initConvAssetsProcessingTask(project: Project): Pair<TaskProvider<*>, Provider<Directory>>? {
 	// NOTE: We should ensure that the task's name is unique per compilation.
