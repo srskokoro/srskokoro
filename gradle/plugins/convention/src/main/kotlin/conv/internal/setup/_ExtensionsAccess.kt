@@ -17,12 +17,12 @@ internal val Project.baseExt
 internal val Project.androidExt
 	get() = extensions.getByName("android") as AndroidExtension
 
-/** @see kotlinMultiplatformExt */
+/** @see kotlinMppExt */
 internal val Project.kotlinExt
 	get() = extensions.getByName("kotlin") as KotlinProjectExtension
 
 /** @see kotlinExt */
-internal val Project.kotlinMultiplatformExt
+internal val Project.kotlinMppExt
 	get() = extensions.getByName("kotlin") as KotlinMultiplatformExtension
 
 
