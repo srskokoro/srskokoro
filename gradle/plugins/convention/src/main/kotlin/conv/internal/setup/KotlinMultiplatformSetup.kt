@@ -119,15 +119,16 @@ private fun KotlinJvmAndroidCompilation.setUpConvAssets(android: AndroidExtensio
 	if (taskName in project.tasks.names) return // Skip (task already set up for this compilation, or task name conflict)
 
 	val outputDir: Provider<Directory> = project.layout.buildDirectory.dir("processedConvAssets/$outputDirName")
+	androidAssets.srcDir(outputDir) // Link output as Android-style "assets"
+
+	val allKotlinSourceSets = allKotlinSourceSets
+	initAssetsAsResources(allKotlinSourceSets, project)
+
 	val task = project.tasks.register(taskName, @Suppress("UnstableApiUsage") ProcessResources::class.java) {
 		description = "Processes assets (conv)"
 		from(this.project.files(Callable { allKotlinSourceSets.mapNotNull { it.assets } }))
 		into(outputDir)
 	}
-
-	initAssetsAsResources(allKotlinSourceSets, project)
-	androidAssets.srcDir(outputDir) // Link output as Android-style "assets"
-
 	mergeAssetsTask.configure { dependsOn(task) }
 }
 
