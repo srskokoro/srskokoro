@@ -16,9 +16,14 @@ run<Unit> {
 		throw ex
 	}.archivesName
 
-	val projectName = name
+	// NOTE: We'll use the project directory's name, instead of the project
+	// name, so that we have more freedom in changing the project name into
+	// something more complex, e.g., to avoid the issue described in,
+	// https://github.com/gradle/gradle/issues/847#issuecomment-1205001575
+	val projectDirName = projectDir.name
+
 	// Prevents conflicts when generating the archives, especially for tasks
 	// that output an installation distribution where all the archives are
 	// placed under the same directory.
-	base.archivesName.convention(parentBaseArchivesName.map { "$it!$projectName" })
+	base.archivesName.convention(parentBaseArchivesName.map { "$it!$projectDirName" })
 }
