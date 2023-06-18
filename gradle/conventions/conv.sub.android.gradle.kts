@@ -11,9 +11,10 @@ ifAndroidProject {
 
 	// NOTE: The cast below throws on non-null incompatible types (as intended).
 	val parentNamespace = (parent.extensions.findByName("android") as AndroidExtension?)?.namespace
+		?: return@ifAndroidProject // Skip
 
 	androidExt.namespace = buildString {
-		if (!parentNamespace.isNullOrEmpty()) {
+		if (parentNamespace.isNotEmpty()) {
 			append(parentNamespace)
 			append(".")
 		}
