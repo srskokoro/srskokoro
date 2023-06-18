@@ -108,9 +108,22 @@ private fun KotlinJvmAndroidCompilation.setUpConvAssets(android: AndroidExtensio
 		return // Skip -- assume no "assets"
 	}
 
+	// NOTE: We should ensure that the task's name is unique per compilation.
+	// And thus, we can't use the compilation's default source set name (to be
+	// the task's name), since (at the moment), it's possible for the default
+	// source set to be reused across several compilations.
+	val outputDirName = "${target.targetName}${compilationName.replaceFirstChar { it.uppercaseChar() }}"
+	val taskName = "${outputDirName}ProcessConvAssets"
+
 	val project = this.project
-	val (task, outputDir) = initConvAssetsProcessingTask(project)
-		?: return // Skip (task already set up for this compilation, or task name conflict)
+	if (taskName in project.tasks.names) return // Skip (task already set up for this compilation, or task name conflict)
+
+	val outputDir: Provider<Directory> = project.layout.buildDirectory.dir("processedConvAssets/$outputDirName")
+	val task = project.tasks.register(taskName, @Suppress("UnstableApiUsage") ProcessResources::class.java) {
+		description = "Processes assets (conv)"
+		from(this.project.files(Callable { allKotlinSourceSets.mapNotNull { it.assets } }))
+		into(outputDir)
+	}
 
 	initAssetsAsResources(allKotlinSourceSets, project)
 	androidAssets.srcDir(outputDir) // Link output as Android-style "assets"
@@ -134,24 +147,6 @@ private fun KotlinJvmAndroidCompilation.setUpConvAssetsDummyAssertion(dummyName:
 			)
 		}
 	}
-}
-
-private fun KotlinJvmAndroidCompilation.initConvAssetsProcessingTask(project: Project): Pair<TaskProvider<*>, Provider<Directory>>? {
-	// NOTE: We should ensure that the task's name is unique per compilation.
-	// And thus, we can't use the compilation's default source set name (to be
-	// the task's name), since (at the moment), it's possible for the default
-	// source set to be reused across several compilations.
-	val outputDirName = "${target.targetName}${compilationName.replaceFirstChar { it.uppercaseChar() }}"
-	val taskName = "${outputDirName}ProcessConvAssets"
-	if (taskName in project.tasks.names) return null // Skip. Already defined.
-
-	val outputDir: Provider<Directory> = project.layout.buildDirectory.dir("processedConvAssets/$outputDirName")
-	val task = project.tasks.register(taskName, @Suppress("UnstableApiUsage") ProcessResources::class.java) {
-		description = "Processes assets (conv)"
-		from(this.project.files(Callable { allKotlinSourceSets.mapNotNull { it.assets } }))
-		into(outputDir)
-	}
-	return task to outputDir
 }
 
 private fun Project.setUpConvAssetsDummy(kotlin: KotlinMultiplatformExtension): String {
