@@ -6,6 +6,8 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.tasks.SourceSetContainer
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 
@@ -14,6 +16,14 @@ internal val Project.baseExt
 
 internal val Project.androidExt
 	get() = extensions.getByName("android") as AndroidExtension
+
+/** @see kotlinMultiplatformExt */
+internal val Project.kotlinExt
+	get() = extensions.getByName("kotlin") as KotlinProjectExtension
+
+/** @see kotlinExt */
+internal val Project.kotlinMultiplatformExt
+	get() = extensions.getByName("kotlin") as KotlinMultiplatformExtension
 
 
 internal val Project.deps

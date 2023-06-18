@@ -1,9 +1,5 @@
 import conv.internal.setup.*
 
-plugins {
-	kotlin("multiplatform")
-}
-
-kotlin {
-	setUpTargetsExtensions(this)
+pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
+	setUpTargetsExtensions(kotlinMultiplatformExt)
 }
