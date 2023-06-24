@@ -31,7 +31,6 @@ import java.util.UUID
 import java.util.concurrent.Callable
 
 internal fun Project.setUp(kotlin: KotlinMultiplatformExtension) {
-	setUpAssetsDir(kotlin) // Must be done first, so that the following subsequent setup may see it.
 	setUp(kotlin as KotlinProjectExtension)
 
 	// The following makes sure that the type-safe accessors for extensions
@@ -61,7 +60,7 @@ internal fun Project.setUpTargetsExtensions(kotlin: KotlinMultiplatformExtension
  * - [Strict mode violation · Issue #507 · signalfx/splunk-otel-android | GitHub](https://github.com/signalfx/splunk-otel-android/issues/507)
  * - [Why Is ClassLoader.getResourceAsStream So Slow in Android? - nimbledroid : r/androiddev | Reddit](https://www.reddit.com/r/androiddev/comments/4dmflo/why_is_classloadergetresourceasstream_so_slow_in/)
  */
-private fun Project.setUpAssetsDir(kotlin: KotlinMultiplatformExtension) {
+internal fun Project.setUpAssetsDir(kotlin: KotlinMultiplatformExtension) {
 	// The name of the dummy file in our dummy directory; Exclude on JVM but
 	// throw if found on Android; Look out later below for further details.
 	var dummyName: String? = null // Value will be set eventually (if needed)
