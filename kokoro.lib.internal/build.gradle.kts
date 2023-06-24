@@ -41,4 +41,6 @@ dependencies {
 	deps.bundles.testExtras *= {
 		commonTestImplementation(it)
 	}
+
+	appMainImplementation("com.squareup.okio:okio")
 }
