@@ -592,6 +592,10 @@ private class AppRelay(sockDir: String) {
 
 // --
 
+/**
+ * Atomically generates a file containing the INET port number as a 2-byte
+ * sequence in big-endian byte order.
+ */
 private fun generateInetPortFile(target: NioPath, boundServer: ServerSocketChannel) {
 	val address = boundServer.localAddress // May throw `ClosedChannelException`
 		as InetSocketAddress // Cast throws NPE if the server is not bound
