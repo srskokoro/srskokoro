@@ -67,6 +67,10 @@ private fun SourceDirectorySet.setUpAltSrcDirs(
 		if (!path.startsWith(defaultSrcPath)) continue
 
 		val subPath = path.removeFirst(defaultSrcPath.length)
+		if (subPath.isNotEmpty()) when (subPath[0]) {
+			'#', '+' -> continue
+		}
+
 		if (File(defaultSrcPath, "#$subPath") in srcDirs) continue // Already processed before
 
 		srcDir("src" + File.separatorChar + "#" + subPath)
