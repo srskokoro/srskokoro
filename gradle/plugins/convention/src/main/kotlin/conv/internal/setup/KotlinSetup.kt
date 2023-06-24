@@ -72,10 +72,19 @@ private fun SourceDirectorySet.setUpAltSrcDirs(
 		srcDir("src" + File.separatorChar + "#" + subPath)
 		srcDir("src" + File.separatorChar + "+" + subPath)
 
+		srcDir("~src" + File.separatorChar + subPath)
+		srcDir("~src" + File.separatorChar + "#" + subPath)
+		srcDir("~src" + File.separatorChar + "+" + subPath)
+
 		if (isTestSourceSet != 0) {
 			srcDir("test" + File.separatorChar + subPath)
 			srcDir("test" + File.separatorChar + "#" + subPath)
 			srcDir("test" + File.separatorChar + "+" + subPath)
+
+			srcDir("~test" + File.separatorChar + subPath)
+			srcDir("~test" + File.separatorChar + "#" + subPath)
+			srcDir("~test" + File.separatorChar + "+" + subPath)
+
 			if (isTestSourceSet == 1 && subPath.startsWith(TEST_PLUS_FILE_SEP)) {
 				srcDir(subPath)
 			}
