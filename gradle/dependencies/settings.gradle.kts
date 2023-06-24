@@ -74,6 +74,12 @@ dependencyVersions {
 	module("com.formdev:flatlaf", flatlaf) // https://github.com/JFormDesigner/FlatLaf
 	module("com.formdev:flatlaf-extras", flatlaf) // https://github.com/JFormDesigner/FlatLaf/tree/main/flatlaf-extras
 	module("com.github.Dansoftowner:jSystemThemeDetector", "3.8") // https://github.com/Dansoftowner/jSystemThemeDetector
+
+	val redwood = "0.4.0"
+	module("app.cash.redwood:*", redwood)
+	plugin("app.cash.redwood", redwood)
+	plugin("app.cash.redwood.*", redwood)
+	plugin("app.cash.redwood.generator.*", redwood)
 }
 
 dependencyBundles {
