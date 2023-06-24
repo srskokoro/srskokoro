@@ -1,15 +1,10 @@
 package conv.internal.setup
 
 import assets
-import conv.internal.KotlinTargetsConfigLoader
-import conv.internal.skipPlaceholderGenerationForKotlinTargetsConfigLoader
 import conv.internal.support.removeFirst
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.plugins.ExtensionAware
-import org.gradle.kotlin.dsl.typeOf
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import java.io.File
