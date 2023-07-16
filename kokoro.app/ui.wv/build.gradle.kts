@@ -12,4 +12,6 @@ dependencies {
 
 	commonMainImplementation(parent.project("redwood:compose"))
 	commonMainImplementation(parent.project("redwood:widget"))
+
+	commonMainImplementation("com.soywiz.korlibs.kds:kds")
 }

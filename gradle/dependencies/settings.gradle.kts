@@ -85,6 +85,9 @@ dependencyVersions {
 	plugin("app.cash.redwood", redwood)
 	plugin("app.cash.redwood.*", redwood)
 	plugin("app.cash.redwood.generator.*", redwood)
+
+	val korge = "4.0.9" // https://github.com/korlibs/korge/releases
+	module("com.soywiz.korlibs.kds:kds", korge)
 }
 
 dependencyBundles {
