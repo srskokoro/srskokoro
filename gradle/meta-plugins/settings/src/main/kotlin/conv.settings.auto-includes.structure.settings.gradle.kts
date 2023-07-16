@@ -12,6 +12,8 @@ fun Settings.autoIncludeSubProjects(parentProjectDir: File, parentProjectId: Str
 		}
 
 		val childProjectName = run<String> {
+			// Incorporate convenient project directory name prefixes to affect
+			// file system sorting in the IDE's project view.
 			if (name.isNotEmpty()) when (name[0]) {
 				'#', '+', '~' -> return@run name.substring(1)
 			}
