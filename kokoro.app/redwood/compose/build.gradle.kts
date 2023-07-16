@@ -6,8 +6,11 @@ plugins {
 }
 
 val parent = project.parent!!
-val client = parent.parent!!
-android.autoNamespace(client)
+
+android {
+	val client = parent.parent!!
+	autoNamespace(client)
+}
 
 redwoodSchema {
 	source.set(parent)
