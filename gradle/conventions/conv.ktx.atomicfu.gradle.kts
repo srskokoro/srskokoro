@@ -9,6 +9,6 @@ check(
 ) {
 	"""
 	Proper setup of IR transformation mode is required.
-	- See, https://github.com/Kotlin/kotlinx-atomicfu/blob/version-0.20.2/README.md#atomicfu-compiler-plugin
+	- See, https://github.com/Kotlin/kotlinx-atomicfu/blob/0.21.0/README.md#atomicfu-compiler-plugin
 	""".trimIndent()
 }

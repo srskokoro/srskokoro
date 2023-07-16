@@ -15,7 +15,7 @@ dependencyVersions {
 		vendor { ADOPTIUM }
 	}
 
-	val kotlin = "1.8.20" // https://kotlinlang.org/docs/releases.html
+	val kotlin = "1.8.22" // https://kotlinlang.org/docs/releases.html
 	"org.jetbrains.kotlin".let {
 		plugin("$it.*", kotlin)
 		module("$it:*", kotlin)
@@ -36,12 +36,12 @@ dependencyVersions {
 	module("io.kotest:kotest-assertions-core", kotest)
 	module("io.kotest:kotest-property", kotest)
 
-	val kotlinx_coroutines = "1.7.1"
+	val kotlinx_coroutines = "1.7.2" // https://github.com/Kotlin/kotlinx.coroutines/releases
 	module("org.jetbrains.kotlinx:kotlinx-coroutines-test", kotlinx_coroutines)
 	module("org.jetbrains.kotlinx:kotlinx-coroutines-core", kotlinx_coroutines)
 	module("org.jetbrains.kotlinx:kotlinx-coroutines-swing", kotlinx_coroutines)
 
-	val atomicfu = "0.20.2"
+	val atomicfu = "0.21.0" // https://github.com/Kotlin/kotlinx-atomicfu/releases
 	module("org.jetbrains.kotlinx:atomicfu-gradle-plugin", atomicfu)
 
 	// --
@@ -80,7 +80,7 @@ dependencyVersions {
 	module("com.formdev:flatlaf-extras", flatlaf) // https://github.com/JFormDesigner/FlatLaf/tree/main/flatlaf-extras
 	module("com.github.Dansoftowner:jSystemThemeDetector", "3.8") // https://github.com/Dansoftowner/jSystemThemeDetector
 
-	val redwood = "0.4.0"
+	val redwood = "0.5.0" // https://github.com/cashapp/redwood/releases
 	module("app.cash.redwood:*", redwood)
 	plugin("app.cash.redwood", redwood)
 	plugin("app.cash.redwood.*", redwood)
