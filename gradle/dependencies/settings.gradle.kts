@@ -41,6 +41,9 @@ dependencyVersions {
 	module("org.jetbrains.kotlinx:kotlinx-coroutines-core", kotlinx_coroutines)
 	module("org.jetbrains.kotlinx:kotlinx-coroutines-swing", kotlinx_coroutines)
 
+	val atomicfu = "0.20.2"
+	module("org.jetbrains.kotlinx:atomicfu-gradle-plugin", atomicfu)
+
 	// --
 
 	val slf4j = "2.0.7"
@@ -55,8 +58,6 @@ dependencyVersions {
 	val gmazzo_buildConfig = "4.0.4" // https://github.com/gmazzo/gradle-buildconfig-plugin
 	plugin("com.github.gmazzo.buildconfig", gmazzo_buildConfig)
 	module("com.github.gmazzo.buildconfig:plugin", gmazzo_buildConfig)
-
-	module("org.jetbrains.kotlinx:atomicfu-gradle-plugin", "0.20.2")
 
 	module("androidx.core:core-ktx", "1.10.1")
 	module("androidx.activity:activity-ktx", "1.7.2")
