@@ -59,12 +59,16 @@ dependencyVersions {
 	plugin("com.github.gmazzo.buildconfig", gmazzo_buildConfig)
 	module("com.github.gmazzo.buildconfig:plugin", gmazzo_buildConfig)
 
+	// --
+
 	module("androidx.core:core-ktx", "1.10.1")
 	module("androidx.activity:activity-ktx", "1.7.2")
 
 	val appcompat_version = "1.6.1" // https://developer.android.com/jetpack/androidx/releases/appcompat
 	module("androidx.appcompat:appcompat", appcompat_version)
 	module("androidx.appcompat:appcompat-resources", appcompat_version) // For loading and tinting drawables on older versions of the platform
+
+	// --
 
 	module("com.squareup.okio:okio", "3.3.0")
 	module("net.harawata:appdirs", "1.2.1") // https://github.com/harawata/appdirs
