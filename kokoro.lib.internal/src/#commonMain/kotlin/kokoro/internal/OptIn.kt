@@ -14,5 +14,14 @@ package kokoro.internal
  * ```
  *
  * @see Deprecated
+ * @see SPECIAL_USE_IN_TESTS_DEPRECATION
  */
 const val SPECIAL_USE_DEPRECATION = "Should not be used directly"
+
+/**
+ * Similar to [SPECIAL_USE_DEPRECATION] but with an extra clause explaining that
+ * the deprecated symbol is exposed only for access in tests.
+ *
+ * @see SPECIAL_USE_DEPRECATION
+ */
+const val SPECIAL_USE_IN_TESTS_DEPRECATION = "$SPECIAL_USE_DEPRECATION: exposed only for access in tests"
