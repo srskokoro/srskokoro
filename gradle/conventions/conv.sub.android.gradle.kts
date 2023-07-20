@@ -11,14 +11,8 @@ ifAndroidProject {
 	// forced the parent project to be evaluated and that it's non-null.
 	val parent = parent ?: throw AssertionError("Shouldn't throw here")
 
-	// NOTE: We'll use the project directory's name, instead of the project
-	// name, so that we have more freedom in changing the project name into
-	// something more complex, e.g., to avoid the issue described in,
-	// https://github.com/gradle/gradle/issues/847#issuecomment-1205001575
-	val projectDirName = projectDir.name
-
 	// Converts invalid identifier characters into underscores
-	val autoNamespaceSuffix = projectDirName.let { name ->
+	val autoNamespaceSuffix = name.let { name ->
 		if (name.isEmpty()) "_"
 		else name.replace(Regex("\\W"), "_").let {
 			if (Character.isJavaIdentifierStart(it[0])) it
