@@ -17,8 +17,14 @@ ifAndroidProject {
 	// https://github.com/gradle/gradle/issues/847#issuecomment-1205001575
 	val projectDirName = projectDir.name
 
-	// Converts from kebab case to snake case
-	val autoNamespaceSuffix = projectDirName.replace('-', '_')
+	// Converts invalid identifier characters into underscores
+	val autoNamespaceSuffix = projectDirName.let { name ->
+		if (name.isEmpty()) "_"
+		else name.replace(Regex("\\W"), "_").let {
+			if (Character.isJavaIdentifierStart(it[0])) it
+			else "_$it"
+		}
+	}
 
 	val android = androidExt
 	(android as ExtensionAware).extra.let { extra ->
