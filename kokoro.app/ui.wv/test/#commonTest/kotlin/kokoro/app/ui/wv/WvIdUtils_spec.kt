@@ -7,9 +7,10 @@ import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.ints.shouldBeLessThan
 import io.kotest.matchers.string.shouldHaveMaxLength
 import io.kotest.matchers.string.shouldHaveMinLength
-import io.kotest.property.Arb
 import io.kotest.property.Exhaustive
-import io.kotest.property.arbitrary.int
+import io.kotest.property.arbitrary.ArbitraryBuilder
+import io.kotest.property.arbitrary.IntShrinker
+import io.kotest.property.arbitrary.numbers.IntClassifier
 import io.kotest.property.checkAll
 import io.kotest.property.exhaustive.ints
 import io.kotest.property.forAll
@@ -44,7 +45,18 @@ class WvIdUtils_spec : FunSpec({
 		}
 	}
 	test("Output of `appendWvElemId` is as expected") {
-		checkAll(Arb.int()) { elemId ->
+		// Use a custom `Arb<Int>` that favors values close to zero
+		val intRange = Int.MIN_VALUE..Int.MAX_VALUE
+		val intArb = ArbitraryBuilder.create { rs ->
+			val rn = rs.random
+			val mask = -1 ushr rn.nextInt(Int.SIZE_BITS)
+			rn.nextInt() and mask
+		}.withEdgecases(listOf(Int.MIN_VALUE, -1, 0, 1, Int.MAX_VALUE))
+			.withShrinker(IntShrinker(intRange))
+			.withClassifier(IntClassifier(intRange))
+			.build()
+
+		checkAll(intArb) { elemId ->
 			val elemIdStr = buildString {
 				appendWvElemId(this, elemId)
 			}
