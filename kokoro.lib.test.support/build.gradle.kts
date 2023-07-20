@@ -1,7 +1,5 @@
 plugins {
-	id("kokoro.conv.kt.mpp.lib")
-	id("conv.gmazzo.buildconfig")
-	id("conv.version")
+	id("kokoro.conv.kt.mpp.lib.test")
 }
 
 kotestConfigClass = "KotestConfig"
@@ -22,26 +20,14 @@ kotlin {
 	}
 }
 
-val NAMESPACE = extra["kokoro.internal.ns"] as String
+val NAMESPACE = extra["kokoro.internal.test.support.ns"] as String
 
 android {
 	namespace = NAMESPACE
-}
-
-buildConfig {
-	publicTopLevel() inPackage NAMESPACE
-	val isReleasing = isReleasing
-	buildConfigField("boolean", "IS_RELEASING", "$isReleasing")
-	val isDebug = isDebug
-	require(isDebug == !isReleasing) { throw AssertionError() }
-	buildConfigField("boolean", "DEBUG", "$isDebug")
 }
 
 dependencies {
 	deps.bundles.testExtras *= {
 		commonTestImplementation(it)
 	}
-	commonTestImplementation(project(":kokoro.lib.test.support"))
-
-	appMainImplementation("com.squareup.okio:okio")
 }
