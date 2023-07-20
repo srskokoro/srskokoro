@@ -5,10 +5,17 @@ plugins {
 	id("jcef-bundler-dependency")
 }
 
+kotestConfigClass = "KotestConfig"
+
 val parent = project.parent!!
 android.autoNamespace(parent)
 
 dependencies {
+	deps.bundles.testExtras *= {
+		commonTestImplementation(it)
+	}
+	commonTestImplementation(project(":kokoro.lib.test.support"))
+
 	commonMainImplementation(project(":kokoro.lib.internal"))
 
 	commonMainImplementation(parent.project("redwood:compose"))

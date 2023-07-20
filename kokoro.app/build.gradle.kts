@@ -7,6 +7,8 @@ plugins {
 	id("conv.ktx.atomicfu")
 }
 
+kotestConfigClass = "KotestConfig"
+
 kotlin {
 	/**
 	 * See 'build.targets.txt' to declare build targets, then use
@@ -57,6 +59,7 @@ dependencies {
 	deps.bundles.testExtras *= {
 		commonTestImplementation(it)
 	}
+	commonTestImplementation(project(":kokoro.lib.test.support"))
 
 	commonMainImplementation(project(":kokoro.lib.internal"))
 

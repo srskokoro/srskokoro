@@ -3,6 +3,8 @@ plugins {
 	id("jcef-bundler")
 }
 
+kotestConfigClass = "KotestConfig"
+
 application {
 	mainClass.set("main.MainKt")
 }
@@ -33,6 +35,8 @@ dependencies {
 	deps.bundles.testExtras *= {
 		testImplementation(it)
 	}
+	testImplementation(project(":kokoro.lib.test.support"))
+
 	implementation(project(":kokoro.app"))
 	implementation(jcef.dependency)
 }
