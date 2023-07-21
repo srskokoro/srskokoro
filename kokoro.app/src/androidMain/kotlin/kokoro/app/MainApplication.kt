@@ -1,13 +1,16 @@
 package kokoro.app
 
 import android.app.Application
+import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import java.util.Locale
 import kokoro.app.MainApplication.Singleton.instance as mainApplication
 
 class MainApplication : Application() {
-	init {
+
+	override fun attachBaseContext(base: Context?) {
+		super.attachBaseContext(base)
 		instance = this
 	}
 
