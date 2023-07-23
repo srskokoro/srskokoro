@@ -19,7 +19,9 @@ run<Unit> {
 		outputDir.set(project.layout.buildDirectory.dir("generated/redwoodWvSetupConv"))
 	}
 	afterEvaluate {
-		if (!pluginManager.hasPlugin("org.jetbrains.kotlin.multiplatform")) return@afterEvaluate
+		if (!pluginManager.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+			return@afterEvaluate // Redwood should already throw for us
+		}
 
 		val kotlin: KotlinMultiplatformExtension by extensions
 		val commonMain = getSourceSets(kotlin).getByName(COMMON_MAIN_SOURCE_SET_NAME)
