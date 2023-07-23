@@ -14,6 +14,7 @@ internal fun getSourceSets(kotlin: KotlinProjectExtension): NamedDomainObjectCon
 	return getKotlinSourceSets((kotlin as ExtensionAware).extensions)
 }
 
-internal fun getKotlinSourceSets(kotlinExtensions: ExtensionContainer): NamedDomainObjectContainer<KotlinSourceSet> {
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun getKotlinSourceSets(kotlinExtensions: ExtensionContainer): NamedDomainObjectContainer<KotlinSourceSet> {
 	return kotlinExtensions.getByName("sourceSets").unsafeCast()
 }
