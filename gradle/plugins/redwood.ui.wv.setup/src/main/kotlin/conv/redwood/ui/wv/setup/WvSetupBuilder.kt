@@ -35,6 +35,7 @@ internal class WvSetupBuilder(
 	private val setupEpilogs = ArrayList<SetupEntry>()
 
 	abstract class SetupEntry(val id: Int, val file: File) {
+		abstract val setupType: Char
 
 		open fun appendToKtSetup(sb: StringBuilder): Unit =
 			throw UnsupportedOperationException()
@@ -112,7 +113,8 @@ internal class WvSetupBuilder(
 		}
 
 		val file = visit.file
-		val intro = when (name[0]) {
+		val setupType = name[0]
+		val intro = when (setupType) {
 			't' -> "T$("
 			'm' -> "M$("
 			's' -> {
@@ -123,6 +125,7 @@ internal class WvSetupBuilder(
 				} else {
 					throw E_NonHeadNorTailJsSetup(name)
 				} += object : SetupEntry(id, file) {
+					override val setupType get() = 's'
 					override fun appendToJsSetup(sb: StringBuilder) {
 						appendJsSetupContentHeaderLine(sb, relativePath)
 						appendJsSetupContent(sb, this.file)
@@ -139,6 +142,8 @@ internal class WvSetupBuilder(
 			.replace('.', '_')
 
 		setupBodies += object : SetupEntry(id, file) {
+			override val setupType get() = setupType
+
 			override fun appendToKtSetup(sb: StringBuilder) {
 				sb.append("\tconst val ")
 				sb.append(ktEntryName)
@@ -201,7 +206,10 @@ private fun processWvSetupEntries(entries: ArrayList<SetupEntry>, action: (Setup
 	if (entries.isEmpty()) return
 
 	val array = entries.toTypedArray()
-	Arrays.sort(array) { a, b -> a.id.compareTo(b.id) }
+	Arrays.sort(array) { a, b ->
+		a.id.compareTo(b.id).let { if (it != 0) return@sort it }
+		a.setupType.compareTo(b.setupType)
+	}
 
 	val n = array.size
 	var i = 0
@@ -211,7 +219,7 @@ private fun processWvSetupEntries(entries: ArrayList<SetupEntry>, action: (Setup
 		action(setup)
 		if (++i >= n) break
 		val next = array[i]
-		if (next.id == setup.id) {
+		if (next.id == setup.id && next.setupType == setup.setupType) {
 			throw E_DuplicateSetupId(setup.file, next.file)
 		}
 		setup = next
