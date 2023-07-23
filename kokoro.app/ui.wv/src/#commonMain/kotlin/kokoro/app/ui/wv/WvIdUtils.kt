@@ -2,8 +2,7 @@ package kokoro.app.ui.wv
 
 import kokoro.internal.SPECIAL_USE_IN_TESTS_DEPRECATION
 
-@Deprecated(SPECIAL_USE_IN_TESTS_DEPRECATION)
-internal val wvIdEncodeMap = charArrayOf(
+private val wvIdEncodeMap = charArrayOf(
 	'A', 'B', 'C', 'D', /**/ 'E', 'F', 'G', 'H', /**/ 'I', 'J', 'K', 'L', /**/ 'M',
 	'N', 'O', 'P', 'Q', /**/ 'R', 'S', 'T', 'U', /**/ 'V', 'W', 'X', 'Y', /**/ 'Z',
 
@@ -16,6 +15,9 @@ internal val wvIdEncodeMap = charArrayOf(
 private const val SLOT_BITS = 5
 internal const val MAX_SLOT = (1 shl SLOT_BITS) - 1 // 31
 
+@Deprecated(SPECIAL_USE_IN_TESTS_DEPRECATION)
+internal fun `-TestAccess-wvIdEncodeMap`() = wvIdEncodeMap
+
 internal fun appendWvElemId(dst: StringBuilder, elemId: Int) {
 	var rem = elemId ushr SLOT_BITS
 	val slot = elemId and MAX_SLOT
@@ -23,7 +25,6 @@ internal fun appendWvElemId(dst: StringBuilder, elemId: Int) {
 	// TODO Benchmark whether filling a `CharArray` first then appending would
 	//  be more performant than appending each `Char` individually as below.
 
-	@Suppress("DEPRECATION")
 	val ecm = wvIdEncodeMap
 	dst.append(ecm[slot])
 

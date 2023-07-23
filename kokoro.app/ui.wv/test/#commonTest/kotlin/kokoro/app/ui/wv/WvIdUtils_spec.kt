@@ -17,19 +17,15 @@ import io.kotest.property.forAll
 
 class WvIdUtils_spec : FunSpec({
 	test("The encoding map is exactly $wvIdEncodeMap_size in size") {
-		@Suppress("DEPRECATION") val ecm = wvIdEncodeMap
-		ecm.size.shouldBeExactly(wvIdEncodeMap_size)
+		wvIdEncodeMap.size.shouldBeExactly(wvIdEncodeMap_size)
 	}
 	test("All characters in the encoding map are ASCII characters") {
 		checkAll(Exhaustive.ints(0 until wvIdEncodeMap_size)) { i ->
-			@Suppress("DEPRECATION")
-			val c = wvIdEncodeMap[i]
-			c.code.shouldBeLessThan(ASCII_TABLE_SIZE)
+			wvIdEncodeMap[i].code.shouldBeLessThan(ASCII_TABLE_SIZE)
 		}
 	}
 	test("The first characters of the encoding map, up to $MAX_SLOT inclusive, are valid starting characters in a dot notation property access in JS") {
 		forAll(Exhaustive.ints(0..MAX_SLOT)) { i ->
-			@Suppress("DEPRECATION")
 			val c = wvIdEncodeMap[i]
 
 			// Quote:
@@ -75,9 +71,11 @@ private const val wvIdEncodeMap_size = 64
 
 private const val ASCII_TABLE_SIZE = 128
 
+@Suppress("DEPRECATION")
+private val wvIdEncodeMap = `-TestAccess-wvIdEncodeMap`()
+
 private val wvIdDecodeMap = ByteArray(ASCII_TABLE_SIZE) { -1 }.also { dcm ->
-	@Suppress("DEPRECATION") val ecm = wvIdEncodeMap
-	for ((i, c) in ecm.withIndex()) {
+	for ((i, c) in wvIdEncodeMap.withIndex()) {
 		val cc = c.code
 		if (cc < ASCII_TABLE_SIZE) {
 			dcm[cc] = i.toByte()
