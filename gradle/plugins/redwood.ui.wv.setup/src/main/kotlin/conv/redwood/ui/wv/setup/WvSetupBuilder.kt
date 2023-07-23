@@ -35,8 +35,8 @@ internal class WvSetupBuilder(
 	private val setupEpilogs = ArrayList<SetupEntry>()
 
 	abstract class SetupEntry(
-		val id: Int, private val setupType: Char,
-		val file: File,
+		@JvmField val id: Int, @JvmField val setupType: Char,
+		@JvmField val file: File,
 	) : Comparable<SetupEntry> {
 
 		final override fun compareTo(other: SetupEntry): Int {
