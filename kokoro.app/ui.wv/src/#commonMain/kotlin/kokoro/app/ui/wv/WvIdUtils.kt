@@ -19,15 +19,14 @@ internal const val MAX_SLOT = (1 shl SLOT_BITS) - 1 // 31
 internal fun `-TestAccess-wvIdEncodeMap`() = wvIdEncodeMap
 
 internal fun appendWvElemId(dst: StringBuilder, elemId: Int) {
-	var rem = elemId ushr SLOT_BITS
-	val slot = elemId and MAX_SLOT
-
 	// TODO Benchmark whether filling a `CharArray` first then appending would
 	//  be more performant than appending each `Char` individually as below.
 
+	val slot = elemId and MAX_SLOT
 	val ecm = wvIdEncodeMap
 	dst.append(ecm[slot])
 
+	var rem = elemId ushr SLOT_BITS
 	do {
 		dst.append(ecm[rem and 63])
 		rem = rem ushr 6
