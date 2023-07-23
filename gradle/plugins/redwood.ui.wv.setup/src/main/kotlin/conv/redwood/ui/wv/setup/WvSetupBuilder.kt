@@ -39,6 +39,9 @@ internal class WvSetupBuilder(
 		@JvmField val file: File,
 	) : Comparable<SetupEntry> {
 
+		fun entryEquals(other: SetupEntry) =
+			id == other.id && type == other.type
+
 		final override fun compareTo(other: SetupEntry): Int {
 			id.compareTo(other.id).let { if (it != 0) return it }
 			return type.compareTo(other.type)
@@ -221,7 +224,7 @@ private fun processWvSetupEntries(entries: ArrayList<SetupEntry>, action: (Setup
 		action(setup)
 		if (++i >= n) break
 		val next = array[i]
-		if (next.compareTo(setup) == 0) {
+		if (next.entryEquals(setup)) {
 			throw E_DuplicateSetupId(setup.file, next.file)
 		}
 		setup = next
