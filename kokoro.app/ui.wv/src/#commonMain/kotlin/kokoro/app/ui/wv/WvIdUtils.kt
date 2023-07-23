@@ -32,3 +32,9 @@ internal fun appendWvElemId(sb: StringBuilder, elemId: Int) {
 		rem = rem ushr 6
 	} while (rem != 0)
 }
+
+internal fun appendWvElemId_quoted(sb: StringBuilder, elemId: Int) {
+	sb.append('"')
+	appendWvElemId(sb, elemId)
+	sb.append('"')
+}
