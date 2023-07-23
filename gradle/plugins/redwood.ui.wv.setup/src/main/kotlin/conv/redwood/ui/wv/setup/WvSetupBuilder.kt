@@ -3,6 +3,7 @@ package conv.redwood.ui.wv.setup
 import conv.redwood.ui.wv.setup.WvSetupBuilder.Companion.HEAD_NAME
 import conv.redwood.ui.wv.setup.WvSetupBuilder.Companion.TAIL_NAME
 import conv.redwood.ui.wv.setup.WvSetupBuilder.SetupEntry
+import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.Directory
 import org.gradle.api.file.EmptyFileVisitor
@@ -45,7 +46,19 @@ internal class WvSetupBuilder(
 	val jsSetup: String
 
 	init {
-		classpathUnion.visit(this)
+		try {
+			classpathUnion.visit(this)
+		} catch (ex: GradleException) {
+			// Need to do this. Otherwise, build failures won't be meaningful
+			// unless the build was run with the `--stacktrace` option.
+			if (ex.javaClass == GradleException::class.java) ex.cause?.let { cause ->
+				val origin = cause.stackTrace.firstOrNull() ?: return@let
+				if (origin.className.startsWith("${WvSetupBuilder::class.java.packageName}.")) {
+					throw cause
+				}
+			}
+			throw ex
+		}
 
 		val kt = StringBuilder("package ")
 		kt.append(schemaPackage)
