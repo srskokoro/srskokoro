@@ -3,23 +3,27 @@ package conv.internal.setup
 import XS_assets
 import assets
 import getAndroidAssets
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileTreeElement
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
+import org.gradle.api.specs.Spec
 import org.gradle.kotlin.dsl.add
-import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.withType
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOrNull
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
 import java.io.File
@@ -38,36 +42,78 @@ import java.util.concurrent.Callable
  * - [Why Is ClassLoader.getResourceAsStream So Slow in Android? - nimbledroid : r/androiddev | Reddit](https://www.reddit.com/r/androiddev/comments/4dmflo/why_is_classloadergetresourceasstream_so_slow_in/)
  */
 internal fun Project.setUpAssetsDir(kotlin: KotlinMultiplatformExtension) {
-	// The name of the dummy file in our dummy directory; Exclude on JVM but
-	// throw if found on Android; Look out later below for further details.
-	var dummyName: String? = null // Value will be set eventually (if needed)
+	// The name of the dummy file in our dummy directory. Throw if found on
+	// Android. Exclude if found on non-Android targets, e.g., JVM, JS, etc.
+	// Look out later below for further details.
+	val dummyName = DummyName() // Actual value will be set eventually (if needed)
 
 	val kotlinTargets = kotlin.targets
-	kotlinTargets.withType<KotlinJvmTarget> {
-		compilations.all {
-			val project = this.project
-			initAssetsAsResources(allKotlinSourceSets, project)
-			project.tasks.named<@Suppress("UnstableApiUsage") ProcessResources>(processResourcesTaskName) {
-				exclude { it.name == dummyName && it.relativePath.segments.size <= 1 }
-			}
-		}
-	}
+	kotlinTargets.withType(fun KotlinJvmTarget.(): Unit = compilations.all(SetupToInitAssetsAsResourcesExcludingDummy(
+		dummyName,
+		getAllKotlinSourceSetsAsObservable = { allKotlinSourceSets },
+		getProcessResourcesTaskName = { processResourcesTaskName },
+	)))
+	kotlinTargets.withType(fun KotlinJsTargetDsl.(): Unit = compilations.all(SetupToInitAssetsAsResourcesExcludingDummy(
+		dummyName,
+		getAllKotlinSourceSetsAsObservable = { allKotlinSourceSets },
+		getProcessResourcesTaskName = { processResourcesTaskName },
+	)))
 
 	ifAndroidProject {
 		// The following sets up a dummy directory as an additional "resources"
 		// directory of `commonMain`. This dummy directory contains a dummy
-		// file, which we exclude on JVM targets but throw if found on Android
-		// targets. The purpose of this setup is to assert that our common
-		// "assets" won't become Java-style "resources" on Android.
-		dummyName = setUpConvAssetsDummy(kotlin)
+		// file, which we exclude on non-Android targets but throw if found on
+		// Android targets. The purpose of this setup is to assert that our
+		// common "assets" won't become Java-style "resources" on Android.
+		dummyName.value = setUpConvAssetsDummy(kotlin)
 
 		val android = androidExt
 		kotlinTargets.withType<KotlinAndroidTarget> {
 			compilations.all(fun KotlinJvmAndroidCompilation.() {
 				setUpConvAssets(android)
-				setUpConvAssetsDummyAssertion(dummyName)
+				setUpConvAssetsDummyAssertion(dummyName.value)
 			})
 		}
+	}
+}
+
+private class DummyName : Action<@Suppress("UnstableApiUsage") ProcessResources>, Spec<FileTreeElement> {
+	var value: String? = null
+
+	override fun execute(task: @Suppress("UnstableApiUsage") ProcessResources) {
+		task.exclude(this)
+	}
+
+	override fun isSatisfiedBy(elem: FileTreeElement) =
+		elem.name == value && elem.relativePath.segments.size <= 1
+}
+
+private abstract class SetupToInitAssetsAsResourcesExcludingDummy<T : KotlinCompilation<*>>(val dummyName: DummyName) : Action<T> {
+
+	companion object {
+		inline operator fun <T : KotlinCompilation<*>> invoke(
+			dummyName: DummyName,
+			crossinline getAllKotlinSourceSetsAsObservable: T.() -> ObservableSet<KotlinSourceSet>,
+			crossinline getProcessResourcesTaskName: T.() -> String,
+		) = object : SetupToInitAssetsAsResourcesExcludingDummy<T>(dummyName) {
+			override fun getAllKotlinSourceSetsAsObservable(compilation: T) = getAllKotlinSourceSetsAsObservable(compilation)
+			override fun getProcessResourcesTaskName(compilation: T) = getProcessResourcesTaskName(compilation)
+		}
+	}
+
+	protected abstract fun getAllKotlinSourceSetsAsObservable(compilation: T): ObservableSet<KotlinSourceSet>
+
+	protected abstract fun getProcessResourcesTaskName(compilation: T): String
+
+	override fun execute(compilation: T) {
+		val project = compilation.project
+		initAssetsAsResources(getAllKotlinSourceSetsAsObservable(compilation), project)
+
+		project.tasks.named(
+			getProcessResourcesTaskName(compilation),
+			@Suppress("UnstableApiUsage") ProcessResources::class.java,
+			dummyName,
+		)
 	}
 }
 
