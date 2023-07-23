@@ -101,7 +101,7 @@ internal class WvSetupBuilder(
 		val idLeadDotIdx = name.lastIndexOf('.', name.length - 4) // Excludes the ".js" file extension
 		val id = run<Int> {
 			if (idLeadDotIdx >= 0) {
-				val digits = name.substring(idLeadDotIdx + 1)
+				val digits = name.substring(idLeadDotIdx + 1, name.length - 3) // Excludes the ".js" file extension
 				try {
 					return@run digits.toInt()
 				} catch (_: NumberFormatException) {
