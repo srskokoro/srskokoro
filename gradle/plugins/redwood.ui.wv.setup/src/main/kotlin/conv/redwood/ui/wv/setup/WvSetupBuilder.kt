@@ -18,6 +18,7 @@ internal class WvSetupBuilder(
 ) : EmptyFileVisitor() {
 	companion object {
 		const val OBJECT_NAME = "WvSetup"
+		const val JS_BASE_NAME = OBJECT_NAME
 
 		const val HEAD_NAME = "head"
 		const val HEAD_NAME_len = HEAD_NAME.length

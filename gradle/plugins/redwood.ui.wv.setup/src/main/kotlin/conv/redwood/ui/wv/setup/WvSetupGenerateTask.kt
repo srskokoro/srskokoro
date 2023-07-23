@@ -62,7 +62,7 @@ abstract class WvSetupGenerateTask @Inject constructor(
 			.writeText(wvSetupBuilder.ktSetup) // NOTE: Truncates if file already exists.
 
 		val wvSetupJs = wvSetupBuilder.jsSetup
-		val wvSetupJsFile = wvSetupBuilder.resolveOutputFile(assetsOutput.get(), "${WvSetupBuilder.OBJECT_NAME}.js")
+		val wvSetupJsFile = wvSetupBuilder.resolveOutputFile(assetsOutput.get(), "${WvSetupBuilder.JS_BASE_NAME}.js")
 		wvSetupJsFile.writeText(wvSetupJs)
 
 		val wvSetupJsDir = wvSetupJsFile.parentFile
