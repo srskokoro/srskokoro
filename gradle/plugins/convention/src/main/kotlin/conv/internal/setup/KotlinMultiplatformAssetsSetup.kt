@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOrNull
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
@@ -53,7 +55,17 @@ internal fun Project.setUpAssetsDir(kotlin: KotlinMultiplatformExtension) {
 		getAllKotlinSourceSetsAsObservable = { allKotlinSourceSets },
 		getProcessResourcesTaskName = { processResourcesTaskName },
 	)))
+	kotlinTargets.withType(fun KotlinWithJavaTarget<*, *>.(): Unit = compilations.all(SetupToInitAssetsAsResourcesExcludingDummy(
+		dummyName,
+		getAllKotlinSourceSetsAsObservable = { allKotlinSourceSets },
+		getProcessResourcesTaskName = { processResourcesTaskName },
+	)))
 	kotlinTargets.withType(fun KotlinJsTargetDsl.(): Unit = compilations.all(SetupToInitAssetsAsResourcesExcludingDummy(
+		dummyName,
+		getAllKotlinSourceSetsAsObservable = { allKotlinSourceSets },
+		getProcessResourcesTaskName = { processResourcesTaskName },
+	)))
+	kotlinTargets.withType(fun KotlinNativeTarget.(): Unit = compilations.all(SetupToInitAssetsAsResourcesExcludingDummy(
 		dummyName,
 		getAllKotlinSourceSetsAsObservable = { allKotlinSourceSets },
 		getProcessResourcesTaskName = { processResourcesTaskName },
