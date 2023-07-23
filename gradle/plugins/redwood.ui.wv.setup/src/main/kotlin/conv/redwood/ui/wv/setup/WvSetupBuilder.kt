@@ -71,8 +71,11 @@ internal class WvSetupBuilder(
 			throw ex
 		}
 
-		val kt = StringBuilder("package ")
-		kt.append(schemaPackage)
+		val kt = StringBuilder()
+		if (schemaPackage.isNotEmpty()) {
+			kt.append("package ")
+			kt.append(schemaPackage)
+		}
 		kt.append("\n\npublic object $OBJECT_NAME {\n")
 
 		val js = StringBuilder()
