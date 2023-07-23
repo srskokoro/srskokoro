@@ -10,10 +10,10 @@ actual object AppAssets {
 }
 
 actual fun AppAssets.open(path: String): Source =
-	(resourceLoader.getResourceAsStream(path) ?: throw errorForMissingAsset(path))
+	(resourceLoader.getResourceAsStream(path) ?: throw errorMissingAsset(path))
 		.source()
 
 actual fun AppAssets.openStream(path: String): InputStream =
-	resourceLoader.getResourceAsStream(path) ?: throw errorForMissingAsset(path)
+	resourceLoader.getResourceAsStream(path) ?: throw errorMissingAsset(path)
 
-private fun errorForMissingAsset(path: String) = FileNotFoundException("Asset file: $path")
+private fun errorMissingAsset(path: String) = FileNotFoundException("Asset file: $path")
