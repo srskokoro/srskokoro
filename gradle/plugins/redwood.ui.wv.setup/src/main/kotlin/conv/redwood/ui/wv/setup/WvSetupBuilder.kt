@@ -193,7 +193,7 @@ private fun appendJsSetupContent(sb: StringBuilder, file: File) {
 		}
 	}
 	var i = sb.length - 1
-	while (i >= 0 && sb[i--].isWhitespace()) continue
+	while (i >= 0 && sb[i].isWhitespace()) i--
 	sb.delete(i + 1, sb.length)
 }
 
