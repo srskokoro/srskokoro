@@ -35,13 +35,13 @@ internal class WvSetupBuilder(
 	private val setupEpilogs = ArrayList<SetupEntry>()
 
 	abstract class SetupEntry(
-		@JvmField val id: Int, @JvmField val setupType: Char,
+		@JvmField val id: Int, @JvmField val type: Char,
 		@JvmField val file: File,
 	) : Comparable<SetupEntry> {
 
 		final override fun compareTo(other: SetupEntry): Int {
 			id.compareTo(other.id).let { if (it != 0) return it }
-			return setupType.compareTo(other.setupType)
+			return type.compareTo(other.type)
 		}
 
 		open fun appendToKtSetup(sb: StringBuilder): Unit =
@@ -120,8 +120,8 @@ internal class WvSetupBuilder(
 		}
 
 		val file = visit.file
-		val setupType = name[0]
-		val intro = when (setupType) {
+		val type = name[0]
+		val intro = when (type) {
 			't' -> "T$("
 			'm' -> "M$("
 			's' -> {
@@ -147,7 +147,7 @@ internal class WvSetupBuilder(
 			.substring(0, idLeadDotIdx)
 			.replace('.', '_')
 
-		setupBodies += object : SetupEntry(id, setupType, file) {
+		setupBodies += object : SetupEntry(id, type, file) {
 
 			override fun appendToKtSetup(sb: StringBuilder) {
 				sb.append("\tconst val ")
