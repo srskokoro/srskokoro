@@ -34,8 +34,15 @@ internal class WvSetupBuilder(
 	private val setupBodies = ArrayList<SetupEntry>()
 	private val setupEpilogs = ArrayList<SetupEntry>()
 
-	abstract class SetupEntry(val id: Int, val file: File) {
-		abstract val setupType: Char
+	abstract class SetupEntry(
+		val id: Int, private val setupType: Char,
+		val file: File,
+	) : Comparable<SetupEntry> {
+
+		final override fun compareTo(other: SetupEntry): Int {
+			id.compareTo(other.id).let { if (it != 0) return it }
+			return setupType.compareTo(other.setupType)
+		}
 
 		open fun appendToKtSetup(sb: StringBuilder): Unit =
 			throw UnsupportedOperationException()
@@ -124,8 +131,7 @@ internal class WvSetupBuilder(
 					setupEpilogs
 				} else {
 					throw E_NonHeadNorTailJsSetup(name)
-				} += object : SetupEntry(id, file) {
-					override val setupType get() = 's'
+				} += object : SetupEntry(id, 's', file) {
 					override fun appendToJsSetup(sb: StringBuilder) {
 						appendJsSetupContentHeaderLine(sb, relativePath)
 						appendJsSetupContent(sb, this.file)
@@ -141,8 +147,7 @@ internal class WvSetupBuilder(
 			.substring(0, idLeadDotIdx)
 			.replace('.', '_')
 
-		setupBodies += object : SetupEntry(id, file) {
-			override val setupType get() = setupType
+		setupBodies += object : SetupEntry(id, setupType, file) {
 
 			override fun appendToKtSetup(sb: StringBuilder) {
 				sb.append("\tconst val ")
@@ -206,10 +211,7 @@ private fun processWvSetupEntries(entries: ArrayList<SetupEntry>, action: (Setup
 	if (entries.isEmpty()) return
 
 	val array = entries.toTypedArray()
-	Arrays.sort(array) { a, b ->
-		a.id.compareTo(b.id).let { if (it != 0) return@sort it }
-		a.setupType.compareTo(b.setupType)
-	}
+	Arrays.sort(array)
 
 	val n = array.size
 	var i = 0
@@ -219,7 +221,7 @@ private fun processWvSetupEntries(entries: ArrayList<SetupEntry>, action: (Setup
 		action(setup)
 		if (++i >= n) break
 		val next = array[i]
-		if (next.id == setup.id && next.setupType == setup.setupType) {
+		if (next.compareTo(setup) == 0) {
 			throw E_DuplicateSetupId(setup.file, next.file)
 		}
 		setup = next
