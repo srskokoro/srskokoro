@@ -8,18 +8,25 @@ import org.gradle.api.provider.ProviderFactory
  * otherwise.
  *
  * @see Project.isReleasing
+ * @see ProviderFactory.isDebug
  */
 val ProviderFactory.isReleasing: Boolean
 	get() = @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN", "KotlinConstantConditions")
 	("true" as java.lang.String).equalsIgnoreCase(systemProperty("IS_RELEASING").orNull)
 
 /**
- * `true` if all debugging facilities should be fully enabled. The return value
- * is expected to be always the same as the following:
+ * `true` if all debugging facilities should be fully enabled.
+ *
+ * **Implementation:**
+ *
+ * `false` if the system property `IS_RELEASING=true` is defined; `true`
+ * otherwise. Equivalent to the following:
  * ```
  * !this.isReleasing
  * ```
+ *
  * @see Project.isDebug
+ * @see ProviderFactory.isReleasing
  */
 val ProviderFactory.isDebug: Boolean
 	inline get() = !isReleasing
@@ -35,11 +42,18 @@ val Project.isReleasing: Boolean
 	inline get() = providers.isReleasing
 
 /**
- * `true` if all debugging facilities should be fully enabled. The return value
- * is expected to be always the same as the following:
+ * `true` if all debugging facilities should be fully enabled. Same as
+ * [`providers.isDebug`][ProviderFactory.isDebug]
+ *
+ * **Implementation:**
+ *
+ * `false` if the system property `IS_RELEASING=true` is defined; `true`
+ * otherwise. Equivalent to the following:
  * ```
- * !project.isReleasing
+ * !this.isReleasing
  * ```
+ *
+ * @see ProviderFactory.isDebug
  * @see Project.isReleasing
  */
 val Project.isDebug: Boolean
