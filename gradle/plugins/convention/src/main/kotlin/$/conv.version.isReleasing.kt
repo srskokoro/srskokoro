@@ -14,6 +14,17 @@ val ProviderFactory.isReleasing: Boolean
 	("true" as java.lang.String).equalsIgnoreCase(systemProperty("IS_RELEASING").orNull)
 
 /**
+ * `true` if all debugging facilities should be fully enabled. The return value
+ * is expected to be always the same as the following:
+ * ```
+ * !this.isReleasing
+ * ```
+ * @see Project.isDebug
+ */
+val ProviderFactory.isDebug: Boolean
+	inline get() = !isReleasing
+
+/**
  * `true` if the system property `IS_RELEASING=true` is defined; `false`
  * otherwise. Same as [`providers.isReleasing`][ProviderFactory.isReleasing]
  *
@@ -32,4 +43,4 @@ val Project.isReleasing: Boolean
  * @see Project.isReleasing
  */
 val Project.isDebug: Boolean
-	inline get() = !isReleasing
+	inline get() = providers.isDebug
