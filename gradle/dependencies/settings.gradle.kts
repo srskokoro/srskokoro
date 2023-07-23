@@ -86,6 +86,10 @@ dependencyVersions {
 	plugin("app.cash.redwood.*", redwood)
 	plugin("app.cash.redwood.generator.*", redwood)
 
+	val closure_compiler = "v20230502" // https://github.com/google/closure-compiler/tags
+	// - See also, https://github.com/gradle-webtools/gradle-minify-plugin
+	module("com.google.javascript:closure-compiler", closure_compiler)
+
 	val korge = "4.0.9" // https://github.com/korlibs/korge/releases
 	module("com.soywiz.korlibs.kds:kds", korge)
 }
