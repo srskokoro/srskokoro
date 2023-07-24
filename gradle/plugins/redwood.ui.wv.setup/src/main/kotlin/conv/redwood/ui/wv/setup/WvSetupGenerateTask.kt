@@ -1,9 +1,15 @@
 package conv.redwood.ui.wv.setup
 
+import com.google.javascript.jscomp.CommandLineRunner
+import com.google.javascript.jscomp.CompilationLevel
 import com.google.javascript.jscomp.Compiler
 import com.google.javascript.jscomp.CompilerOptions
+import com.google.javascript.jscomp.PropertyRenamingPolicy
 import com.google.javascript.jscomp.SourceFile
 import com.google.javascript.jscomp.SourceMap
+import com.google.javascript.jscomp.VariableRenamingPolicy
+import com.google.javascript.jscomp.WarningLevel
+import com.google.javascript.jscomp.parsing.parser.FeatureSet
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.ConfigurableFileCollection
@@ -84,17 +90,17 @@ abstract class WvSetupGenerateTask @Inject constructor(
 		val wvSetupMinJsMapFile = File(wvSetupJsDir, "${WvSetupBuilder.JS_BASE_NAME}.min.js.map")
 
 		val jsCompilerOptions = CompilerOptions()
+		setUpJsCompilerOptions(jsCompilerOptions)
+
 		jsCompilerOptions.sourceMapOutputPath = wvSetupMinJsMapFile.absolutePath
 		jsCompilerOptions.sourceMapLocationMappings = listOf(SourceMap.LocationMapping { loc ->
 			// The original JS source should be relative to the output source map file
 			loc.substringAfterLast('/').takeIf { it.isNotEmpty() }
 		})
 
-		// TODO Properly set up the compiler options
-
 		val jsCompiler = Compiler()
 		val result = jsCompiler.compile(
-			listOf(), // TODO Don't know what this is for just yet
+			CommandLineRunner.getBuiltinExterns(jsCompilerOptions.environment),
 			listOf(wvSetupJsSourceFile),
 			jsCompilerOptions,
 		)
@@ -113,4 +119,24 @@ abstract class WvSetupGenerateTask @Inject constructor(
 
 		// TODO Report errors and warnings (if any)
 	}
+}
+
+private fun setUpJsCompilerOptions(options: CompilerOptions) {
+	with(CompilationLevel.ADVANCED_OPTIMIZATIONS) {
+		setOptionsForCompilationLevel(options)
+		setTypeBasedOptimizationOptions(options)
+	}
+
+	WarningLevel.VERBOSE.setOptionsForWarningLevel(options)
+
+	options.setRenamingPolicy(VariableRenamingPolicy.LOCAL, PropertyRenamingPolicy.OFF)
+	options.setOutputCharset(Charsets.UTF_8)
+
+	// Injects polyfills for ES2015+ library classes and methods used in source.
+	// See also,
+	// - https://github.com/google/closure-compiler/wiki/Polyfills
+	// - [com.google.javascript.jscomp.CommandLineRunner.Flags.rewritePolyfills]
+	//
+	// TODO Properly assess this option.
+	options.rewritePolyfills = options.languageIn.toFeatureSet().contains(FeatureSet.ES2015)
 }
