@@ -118,19 +118,18 @@ abstract class WvSetupGenerateTask @Inject constructor(
 				logger.warn("w: ${formatter.formatWarning(error)}")
 		}
 
-		if (result.success) {
-			val wvSetupMinJs = jsCompiler.toSource()
+		if (!result.success) throw GradleException(
+			"JS minification error. See log for more details.")
 
-			// Output the minified JS
-			wvSetupMinJsFile.writeText(wvSetupMinJs) // NOTE: Truncates if file already exists.
+		val wvSetupMinJs = jsCompiler.toSource()
 
-			// Output the source map for the minified JS
-			wvSetupMinJsMapFile.writeText(buildString {
-				result.sourceMap.appendTo(this, wvSetupMinJsFilename)
-			})
-		} else {
-			throw GradleException("JS minification error. See log for more details.")
-		}
+		// Output the minified JS
+		wvSetupMinJsFile.writeText(wvSetupMinJs) // NOTE: Truncates if file already exists.
+
+		// Output the source map for the minified JS
+		wvSetupMinJsMapFile.writeText(buildString {
+			result.sourceMap.appendTo(this, wvSetupMinJsFilename)
+		})
 	}
 }
 
