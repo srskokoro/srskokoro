@@ -49,8 +49,8 @@ internal class WvSetupBuilder(
 			id == other.id && type == other.type
 
 		final override fun compareTo(other: SetupEntry): Int {
-			id.compareTo(other.id).let { if (it != 0) return it }
-			return type.compareTo(other.type)
+			type.compareTo(other.type).let { if (it != 0) return it }
+			return id.compareTo(other.id)
 		}
 
 		open fun appendToKtSetup(sb: StringBuilder): Unit =
