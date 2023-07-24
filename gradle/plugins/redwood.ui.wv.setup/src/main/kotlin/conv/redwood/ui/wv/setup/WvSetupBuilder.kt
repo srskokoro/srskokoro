@@ -78,7 +78,8 @@ internal class WvSetupBuilder(
 		}
 		kt.append("\n\npublic object $OBJECT_NAME {\n")
 
-		val js = StringBuilder()
+		val js = StringBuilder("(() => {\n")
+
 		processWvSetupEntries(setupPrologs) {
 			it.appendToJsSetup(js)
 		}
@@ -90,6 +91,7 @@ internal class WvSetupBuilder(
 			it.appendToJsSetup(js)
 		}
 
+		js.append("})()\n")
 		kt.append("}\n")
 
 		this.ktSetup = kt.toString()
