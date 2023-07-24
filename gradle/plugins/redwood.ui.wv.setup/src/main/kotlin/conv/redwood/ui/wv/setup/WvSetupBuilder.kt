@@ -78,7 +78,7 @@ internal class WvSetupBuilder(
 		}
 		kt.append("\n\npublic object $OBJECT_NAME {\n")
 
-		val js = StringBuilder("(() => {\n")
+		val js = StringBuilder("'use strict';(() => {\n")
 
 		processWvSetupEntries(setupPrologs) {
 			it.appendToJsSetup(js)
