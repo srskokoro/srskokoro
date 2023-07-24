@@ -2,6 +2,7 @@ package conv.redwood.ui.wv.setup
 
 import conv.redwood.ui.wv.setup.WvSetupBuilder.Companion.HEAD_NAME
 import conv.redwood.ui.wv.setup.WvSetupBuilder.Companion.TAIL_NAME
+import conv.redwood.ui.wv.setup.WvSetupBuilder.Companion.TYPE_s
 import conv.redwood.ui.wv.setup.WvSetupBuilder.SetupEntry
 import org.gradle.api.GradleException
 import org.gradle.api.InvalidUserDataException
@@ -27,6 +28,10 @@ internal class WvSetupBuilder(
 
 		const val TAIL_NAME = "tail"
 		const val TAIL_NAME_len = TAIL_NAME.length
+
+		const val TYPE_t = 't'
+		const val TYPE_m = 'm'
+		const val TYPE_s = 's'
 	}
 
 	private val schemaPackageSegments = schemaPackage.split('.')
@@ -133,9 +138,9 @@ internal class WvSetupBuilder(
 		val file = visit.file
 		val type = name[0]
 		val intro = when (type) {
-			't' -> "T$("
-			'm' -> "M$("
-			's' -> {
+			TYPE_t -> "T$("
+			TYPE_m -> "M$("
+			TYPE_s -> {
 				// NOTE: Needs parentheses for some unknown reason in order for
 				// `+=` to work as expected. The alternative is to use the
 				// `add()` method directly, but we prefer the `+=` syntax here.
@@ -145,7 +150,7 @@ internal class WvSetupBuilder(
 					setupEpilogs
 				} else {
 					throw E_NonHeadNorTailJsSetup(name)
-				}) += object : SetupEntry(id, 's', file) {
+				}) += object : SetupEntry(id, type, file) {
 					override fun appendToJsSetup(sb: StringBuilder) {
 						appendJsSetupContentHeaderLine(sb, relativePath)
 						appendJsSetupContent(sb, this.file)
@@ -196,7 +201,7 @@ internal class WvSetupBuilder(
 }
 
 private fun E_UnsupportedJsSetupNameInitial(filename: String) = InvalidUserDataException("Invalid JS setup filename. Unsupported initial character: $filename")
-private fun E_NonHeadNorTailJsSetup(filename: String) = InvalidUserDataException("Invalid JS setup filename. Expected \"s.$HEAD_NAME.*.js\" or \"s.$TAIL_NAME.*.js\" but got instead name: $filename")
+private fun E_NonHeadNorTailJsSetup(filename: String) = InvalidUserDataException("Invalid JS setup filename. Expected \"$TYPE_s.$HEAD_NAME.*.js\" or \"$TYPE_s.$TAIL_NAME.*.js\" but got instead name: $filename")
 private fun E_MissingJsSetupId(filename: String) = InvalidUserDataException("Invalid JS setup filename. Digits expected right before \".js\" but got instead name: $filename")
 private fun E_DuplicateSetupId(first: File, second: File) = InvalidUserDataException("Duplicate setup IDs found for the following files:\n- $first\n- $second")
 
