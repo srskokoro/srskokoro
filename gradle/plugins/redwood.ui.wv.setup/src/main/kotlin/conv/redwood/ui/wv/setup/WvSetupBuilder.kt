@@ -170,7 +170,7 @@ internal class WvSetupBuilder(
 		setupBodies += object : SetupEntry(id, type, file) {
 
 			override fun appendToKtSetup(sb: StringBuilder) {
-				sb.append("\tconst val ")
+				sb.append("\tpublic const val ")
 				sb.append(ktEntryName)
 				sb.append(" = ")
 				appendWvSetupId_quoted(sb, this.id)
