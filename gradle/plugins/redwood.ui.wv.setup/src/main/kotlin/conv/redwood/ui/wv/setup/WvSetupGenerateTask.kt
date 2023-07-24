@@ -18,6 +18,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.property
 import java.io.File
 import javax.inject.Inject
 
@@ -43,6 +44,10 @@ abstract class WvSetupGenerateTask @Inject constructor(
 	@get:Internal
 	val assetsOutput: Provider<Directory> = outputDir.dir("assets")
 
+	@get:Input
+	@get:JvmName("getIsDebugBuild")
+	val isDebugBuild: Property<Boolean> = objects.property()
+
 	@TaskAction
 	fun execute() {
 		fsOps.delete { delete(outputDir) }
@@ -61,7 +66,8 @@ abstract class WvSetupGenerateTask @Inject constructor(
 			}
 			.reduce { acc, next -> acc + next }
 
-		val wvSetupBuilder = WvSetupBuilder(schemaPackage.get(), classpathUnion)
+		val isDebugBuild = isDebugBuild.get()
+		val wvSetupBuilder = WvSetupBuilder(isDebugBuild, schemaPackage.get(), classpathUnion)
 
 		wvSetupBuilder.resolveOutputFile(kotlinOutput.get(), "${WvSetupBuilder.OBJECT_NAME}.kt")
 			.writeText(wvSetupBuilder.ktSetup) // NOTE: Truncates if file already exists.

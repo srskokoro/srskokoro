@@ -17,6 +17,8 @@ run<Unit> {
 		schemaPackage.set(project.redwoodSchema.type.map { it.substringBeforeLast('.', "") })
 
 		outputDir.set(project.layout.buildDirectory.dir("generated/redwoodWvSetupConv"))
+
+		isDebugBuild.set(project.isDebug)
 	}
 	afterEvaluate {
 		if (!pluginManager.hasPlugin("org.jetbrains.kotlin.multiplatform")) {

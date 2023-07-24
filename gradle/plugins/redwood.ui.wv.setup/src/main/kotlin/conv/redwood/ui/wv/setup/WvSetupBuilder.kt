@@ -14,6 +14,7 @@ import java.io.File
 import java.util.Arrays
 
 internal class WvSetupBuilder(
+	isDebugBuild: Boolean,
 	schemaPackage: String,
 	classpathUnion: FileTree,
 ) : EmptyFileVisitor() {
@@ -79,6 +80,8 @@ internal class WvSetupBuilder(
 		kt.append("\n\npublic object $OBJECT_NAME {\n")
 
 		val js = StringBuilder("'use strict';(() => {\n")
+		js.append("const IS_DEBUG_BUILD =")
+		js.append(if (isDebugBuild) "true\n" else "false\n")
 
 		processWvSetupEntries(setupPrologs) {
 			it.appendToJsSetup(js)
