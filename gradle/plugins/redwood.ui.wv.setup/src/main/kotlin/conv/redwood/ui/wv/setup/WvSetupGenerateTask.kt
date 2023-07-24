@@ -111,6 +111,10 @@ abstract class WvSetupGenerateTask @Inject constructor(
 			val formatter = jsCompilerOptions.errorFormat.toFormatter(
 				jsCompiler, jsCompilerOptions.shouldColorizeErrorOutput())
 
+			// NOTE: The "e:" and "w:" prefixes are necessary for IntelliJ IDEA
+			// (or Android Studio) to mark each log entry as a separate error or
+			// warning node in the IDE's build tool window.
+
 			val logger = logger
 			if (logger.isErrorEnabled) for (error in result.errors)
 				logger.error("e: ${formatter.formatError(error)}")
