@@ -31,7 +31,7 @@ internal class WvSetupBuilder(
 
 		const val TYPE_t = 't'
 		const val TYPE_m = 'm'
-		const val TYPE_s = 's'
+		const val TYPE_s = '$'
 	}
 
 	private val schemaPackageSegments = schemaPackage.split('.')
