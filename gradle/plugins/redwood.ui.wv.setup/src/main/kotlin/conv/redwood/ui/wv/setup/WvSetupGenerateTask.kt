@@ -109,8 +109,8 @@ abstract class WvSetupGenerateTask @Inject constructor(
 			wvSetupMinJsMapFile.writeText(buildString {
 				result.sourceMap.appendTo(this, wvSetupMinJsFilename)
 			})
-		} else {
-			// TODO Report errors and warnings
 		}
+
+		// TODO Report errors and warnings (if any)
 	}
 }
