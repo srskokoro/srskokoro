@@ -1,5 +1,6 @@
 package conv.redwood.ui.wv.setup
 
+import com.google.javascript.jscomp.BlackHoleErrorManager
 import com.google.javascript.jscomp.CommandLineRunner
 import com.google.javascript.jscomp.CompilationLevel
 import com.google.javascript.jscomp.Compiler
@@ -11,6 +12,7 @@ import com.google.javascript.jscomp.VariableRenamingPolicy
 import com.google.javascript.jscomp.WarningLevel
 import com.google.javascript.jscomp.parsing.parser.FeatureSet
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
@@ -98,12 +100,23 @@ abstract class WvSetupGenerateTask @Inject constructor(
 			loc.substringAfterLast('/').takeIf { it.isNotEmpty() }
 		})
 
-		val jsCompiler = Compiler()
+		val jsCompiler = Compiler(BlackHoleErrorManager())
 		val result = jsCompiler.compile(
 			CommandLineRunner.getBuiltinExterns(jsCompilerOptions.environment),
 			listOf(wvSetupJsSourceFile),
 			jsCompilerOptions,
 		)
+
+		if (result.errors.size + result.warnings.size > 0) {
+			val formatter = jsCompilerOptions.errorFormat.toFormatter(
+				jsCompiler, jsCompilerOptions.shouldColorizeErrorOutput())
+
+			val logger = logger
+			if (logger.isErrorEnabled) for (error in result.errors)
+				logger.error("e: ${formatter.formatError(error)}")
+			if (logger.isWarnEnabled) for (error in result.warnings)
+				logger.warn("w: ${formatter.formatWarning(error)}")
+		}
 
 		if (result.success) {
 			val wvSetupMinJs = jsCompiler.toSource()
@@ -115,9 +128,9 @@ abstract class WvSetupGenerateTask @Inject constructor(
 			wvSetupMinJsMapFile.writeText(buildString {
 				result.sourceMap.appendTo(this, wvSetupMinJsFilename)
 			})
+		} else {
+			throw GradleException("JS minification error. See log for more details.")
 		}
-
-		// TODO Report errors and warnings (if any)
 	}
 }
 
