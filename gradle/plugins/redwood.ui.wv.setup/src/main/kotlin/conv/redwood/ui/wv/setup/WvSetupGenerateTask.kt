@@ -119,7 +119,7 @@ abstract class WvSetupGenerateTask @Inject constructor(
 		}
 
 		if (!result.success) throw GradleException(
-			"JS minification error. See log for more details.")
+			"JS minification failure. See log for more details.")
 
 		val wvSetupMinJs = jsCompiler.toSource()
 
