@@ -46,7 +46,7 @@ internal class WvSetupBuilder(
 	) : Comparable<SetupEntry> {
 
 		fun entryEquals(other: SetupEntry) =
-			id == other.id && type == other.type
+			type == other.type && id == other.id
 
 		final override fun compareTo(other: SetupEntry): Int {
 			type.compareTo(other.type).let { if (it != 0) return it }
