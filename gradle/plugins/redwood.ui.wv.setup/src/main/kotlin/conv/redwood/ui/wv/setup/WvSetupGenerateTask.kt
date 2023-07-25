@@ -1,10 +1,12 @@
 package conv.redwood.ui.wv.setup
 
 import com.google.javascript.jscomp.BlackHoleErrorManager
+import com.google.javascript.jscomp.CheckLevel
 import com.google.javascript.jscomp.CommandLineRunner
 import com.google.javascript.jscomp.CompilationLevel
 import com.google.javascript.jscomp.Compiler
 import com.google.javascript.jscomp.CompilerOptions
+import com.google.javascript.jscomp.DiagnosticGroups
 import com.google.javascript.jscomp.PropertyRenamingPolicy
 import com.google.javascript.jscomp.SourceFile
 import com.google.javascript.jscomp.SourceMap
@@ -144,6 +146,9 @@ private fun setUpJsCompilerOptions(options: CompilerOptions) {
 	}
 
 	WarningLevel.VERBOSE.setOptionsForWarningLevel(options)
+
+	options.checkSymbols = false
+	options.setWarningLevel(DiagnosticGroups.MISSING_PROPERTIES, CheckLevel.OFF)
 
 	options.setRenamingPolicy(VariableRenamingPolicy.LOCAL, PropertyRenamingPolicy.OFF)
 	options.setOutputCharset(Charsets.UTF_8)
