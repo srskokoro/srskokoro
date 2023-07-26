@@ -29,6 +29,11 @@ internal value class WvIdPool private constructor(private val pool: WvIdPoolStat
 		pool.addLast(id)
 	}
 
+	fun forceReverseObtainId(id: Int) {
+		pool.addFirst(id)
+		pool.recycled++
+	}
+
 	fun onClusterRetiredIdsForRecycling(): Boolean {
 		val retired = pool.size - (pool.recycling + pool.recycled)
 		if (retired > 0) {
