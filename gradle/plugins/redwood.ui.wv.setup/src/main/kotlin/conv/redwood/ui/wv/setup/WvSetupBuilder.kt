@@ -218,7 +218,7 @@ private fun appendJsSetupContent(sb: StringBuilder, file: File) {
 		while (true) {
 			val n = it.read(buffer)
 			if (n > 0) {
-				sb.append(buffer, 0, n)
+				sb.appendRange(buffer, 0, n)
 			} else break
 		}
 	}
