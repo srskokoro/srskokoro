@@ -12,7 +12,7 @@ private val wvIdEncodeMap = charArrayOf(
 	'0', '1', '2', '3', /**/ '4', '5', '6', '7', /**/ '8', '9', '$', '_', /**/
 )
 
-private const val SLOT_BITS = 5
+internal const val SLOT_BITS = 5
 internal const val MAX_SLOT = (1 shl SLOT_BITS) - 1 // 31
 
 @Deprecated(SPECIAL_USE_IN_TESTS_DEPRECATION)
