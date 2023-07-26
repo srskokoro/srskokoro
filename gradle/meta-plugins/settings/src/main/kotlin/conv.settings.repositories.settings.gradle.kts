@@ -16,6 +16,10 @@ dependencyResolutionManagement {
 	repositories {
 		mavenCentral()
 		google()
-		maven("https://jitpack.io")
+		maven("https://jitpack.io").content {
+			// KLUDGE Work around gmazzo's `buildconfig` plugin being downloaded
+			//  from `jitpack` which fails.
+			excludeGroup("com.github.gmazzo.buildconfig")
+		}
 	}
 }
