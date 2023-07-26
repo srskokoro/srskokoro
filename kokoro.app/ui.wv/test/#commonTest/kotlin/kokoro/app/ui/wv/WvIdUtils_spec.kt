@@ -24,8 +24,8 @@ class WvIdUtils_spec : FunSpec({
 			wvIdEncodeMap[i].code.shouldBeLessThan(ASCII_TABLE_SIZE)
 		}
 	}
-	test("The first characters of the encoding map, up to $MAX_SLOT inclusive, are valid starting characters in a dot notation property access in JS") {
-		forAll(Exhaustive.ints(0..MAX_SLOT)) { i ->
+	test("The first characters of the encoding map, up to $WV_ELEM_ID_MAX_SLOT inclusive, are valid starting characters in a dot notation property access in JS") {
+		forAll(Exhaustive.ints(0..WV_ELEM_ID_MAX_SLOT)) { i ->
 			val c = wvIdEncodeMap[i]
 
 			// Quote:
