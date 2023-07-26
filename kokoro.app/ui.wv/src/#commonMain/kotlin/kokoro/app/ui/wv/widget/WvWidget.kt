@@ -44,7 +44,7 @@ abstract class WvWidget(private val factory: BaseWvWidgetFactory) : Widget<WvWid
 		factory.widgetIdPool.forceReverseObtainId(widgetId)
 		_elemId = 0
 
-		// TODO Somehow rethrow the caught exception at a later time after `commandOut` has been fed to the web view
+		factory.deferException(ex)
 	}
 
 	open fun preUnbind(commandOut: StringBuilder) {
