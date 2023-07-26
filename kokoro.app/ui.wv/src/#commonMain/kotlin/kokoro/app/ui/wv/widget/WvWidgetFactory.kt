@@ -5,4 +5,8 @@ import kokoro.app.ui.wv.WvIdPool
 
 abstract class BaseWvWidgetFactory : SchemaWidgetFactory<WvWidget> {
 	internal val widgetIdPool = WvIdPool()
+
+	fun concludeChanges() {
+		// TODO Implementation
+	}
 }
