@@ -1,5 +1,9 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
+plugins {
+	`lifecycle-base`
+}
+
 // The following ensures that our convention plugins are always compiled with a
 // consistent JVM bytecode target version. Otherwise, the compiled output would
 // vary depending on the current JDK running Gradle. Now, we don't want to alter

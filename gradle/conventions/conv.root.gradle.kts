@@ -1,1 +1,3 @@
-// Nothing (for now)
+plugins {
+	`lifecycle-base`
+}
