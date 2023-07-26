@@ -19,5 +19,5 @@ run<Unit> {
 	// Prevents conflicts when generating the archives, especially for tasks
 	// that output an installation distribution where all the archives are
 	// placed under the same directory. See also, https://github.com/gradle/gradle/issues/847#issuecomment-1205001575
-	base.archivesName.convention(parentBaseArchivesName.map { "$it!$name" })
+	base.archivesName.convention(parentBaseArchivesName.map { "$it\$$name" })
 }
