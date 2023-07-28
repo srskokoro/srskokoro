@@ -33,7 +33,7 @@ abstract class WvWidget(private val binder: WvWidgetBinder) : Widget<WvWidget> {
 			preBind_fail(commandOut, commandOutMark, ex)
 			return 0
 		}
-		commandOut.append(")")
+		commandOut.append(')')
 
 		return elemId
 	}
