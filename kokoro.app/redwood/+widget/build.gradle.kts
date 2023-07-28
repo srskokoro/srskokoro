@@ -16,7 +16,7 @@ android {
 
 redwoodSchema {
 	source.set(parent)
-	type.set("kokoro.app.ui.Schema")
+	type.set("kokoro.app.ui.wv.Schema")
 }
 
 dependencies {

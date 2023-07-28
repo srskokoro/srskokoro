@@ -1,4 +1,4 @@
-package kokoro.app.ui
+package kokoro.app.ui.wv
 
 import app.cash.redwood.layout.RedwoodLayout
 import app.cash.redwood.schema.Schema

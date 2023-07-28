@@ -5,7 +5,7 @@ plugins {
 }
 
 redwoodSchema {
-	type.set("kokoro.app.ui.Schema")
+	type.set("kokoro.app.ui.wv.Schema")
 }
 
 dependencies {
