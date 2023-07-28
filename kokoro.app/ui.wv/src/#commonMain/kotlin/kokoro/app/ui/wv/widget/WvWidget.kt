@@ -31,6 +31,7 @@ abstract class WvWidget(private val binder: WvWidgetBinder) : Widget<WvWidget> {
 			//  - Introduce each argument with a comma (',') prepended.
 		} catch (ex: Throwable) {
 			preBind_fail(commandOut, commandOutMark, ex)
+			return 0
 		}
 		commandOut.append(")")
 
