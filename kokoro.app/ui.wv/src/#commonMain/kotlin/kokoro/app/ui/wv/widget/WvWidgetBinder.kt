@@ -2,7 +2,7 @@ package kokoro.app.ui.wv.widget
 
 import kokoro.app.ui.wv.WvIdPool
 
-abstract class BaseWvWidgetFactory : SchemaWidgetFactory<WvWidget> {
+class WvWidgetBinder {
 	internal val widgetIdPool = WvIdPool()
 
 	private var deferredException: Throwable? = null

@@ -6,13 +6,13 @@ import kokoro.app.ui.wv.WV_ELEM_ID_SLOT_BITS
 import kokoro.app.ui.wv.appendWvElemId
 import kotlin.jvm.JvmField
 
-abstract class WvWidget(private val factory: BaseWvWidgetFactory) : Widget<WvWidget> {
+abstract class WvWidget(private val binder: WvWidgetBinder) : Widget<WvWidget> {
 	@JvmField @PublishedApi internal var _elemId: Int = 0
 
 	inline val isBound get() = _elemId != 0
 
 	open fun preBind(commandOut: StringBuilder): Int {
-		val widgetId = factory.widgetIdPool.obtainId()
+		val widgetId = binder.widgetIdPool.obtainId()
 
 		val elemId = widgetId shl WV_ELEM_ID_SLOT_BITS // Reserves some bits
 		if (elemId ushr WV_ELEM_ID_SLOT_BITS != widgetId) {
@@ -41,10 +41,10 @@ abstract class WvWidget(private val factory: BaseWvWidgetFactory) : Widget<WvWid
 		commandOut.setLength(commandOutMark) // Reset command
 
 		val widgetId = _elemId ushr WV_ELEM_ID_SLOT_BITS
-		factory.widgetIdPool.forceReverseObtainId(widgetId)
+		binder.widgetIdPool.forceReverseObtainId(widgetId)
 		_elemId = 0
 
-		factory.deferException(ex)
+		binder.deferException(ex)
 	}
 
 	open fun preUnbind(commandOut: StringBuilder) {
@@ -53,7 +53,7 @@ abstract class WvWidget(private val factory: BaseWvWidgetFactory) : Widget<WvWid
 		_elemId = 0
 
 		val widgetId = elemId ushr WV_ELEM_ID_SLOT_BITS
-		factory.widgetIdPool.retireId(widgetId)
+		binder.widgetIdPool.retireId(widgetId)
 
 		commandOut.append("D$(\"")
 		appendWvElemId(commandOut, elemId)
