@@ -139,8 +139,8 @@ internal class WvSetupBuilder(
 		val file = visit.file
 		val type = name[0]
 		val intro = when (type) {
-			TYPE_t -> "T$("
-			TYPE_m -> "M$("
+			TYPE_t -> "t$("
+			TYPE_m -> "m$("
 			TYPE_s -> {
 				// NOTE: Needs parentheses for some unknown reason in order for
 				// `+=` to work as expected. The alternative is to use the
