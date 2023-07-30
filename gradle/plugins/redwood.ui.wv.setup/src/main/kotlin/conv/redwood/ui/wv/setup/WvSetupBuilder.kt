@@ -142,22 +142,19 @@ internal class WvSetupBuilder(
 			TYPE_t -> "t$("
 			TYPE_m -> "m$("
 			TYPE_s -> {
-				// NOTE: Needs parentheses for some unknown reason in order for
-				// `+=` to work as expected. The alternative is to use the
-				// `add()` method directly, but we prefer the `+=` syntax here.
-				(if (name.regionMatches(2, "$HEAD_NAME.", 0, length = HEAD_NAME_len + 1, ignoreCase = true)) {
+				if (name.regionMatches(2, "$HEAD_NAME.", 0, length = HEAD_NAME_len + 1, ignoreCase = true)) {
 					setupPrologs
 				} else if (name.regionMatches(2, "$TAIL_NAME.", 0, length = TAIL_NAME_len + 1, ignoreCase = true)) {
 					setupEpilogs
 				} else {
 					throw E_NonHeadNorTailJsSetup(name)
-				}) += object : SetupEntry(id, type, file) {
+				}.add(object : SetupEntry(id, type, file) {
 					override fun appendToJsSetup(sb: StringBuilder) {
 						appendJsSetupContentHeaderLine(sb, relativePath)
 						appendJsSetupContent(sb, this.file)
 						sb.appendLine()
 					}
-				}
+				})
 				return // Done
 			}
 			else -> throw E_UnsupportedJsSetupNameInitial(name)
