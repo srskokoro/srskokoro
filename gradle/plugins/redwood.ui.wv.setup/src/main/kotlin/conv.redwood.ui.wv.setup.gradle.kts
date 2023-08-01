@@ -22,7 +22,7 @@ run<Unit> {
 	}
 	afterEvaluate {
 		if (!pluginManager.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
-			return@afterEvaluate // Redwood should've already thrown for us
+			throw AssertionError("Redwood should've already thrown for us")
 		}
 
 		val kotlin: KotlinMultiplatformExtension by extensions
