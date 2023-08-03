@@ -86,7 +86,7 @@ internal class WvSetupBuilder(
 		kt.append("\n\npublic object $OBJECT_NAME {\n")
 
 		val js = StringBuilder("'use strict';(() => {\n")
-		js.append("const IS_DEBUG_BUILD =")
+		js.append("const IS_DEBUG_BUILD = ")
 		js.append(if (isDebugBuild) "true\n" else "false\n")
 
 		processWvSetupEntries(setupPrologs) {
