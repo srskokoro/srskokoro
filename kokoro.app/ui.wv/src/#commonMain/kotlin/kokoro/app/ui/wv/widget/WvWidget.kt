@@ -2,63 +2,45 @@ package kokoro.app.ui.wv.widget
 
 import app.cash.redwood.Modifier
 import app.cash.redwood.widget.Widget
-import kokoro.app.ui.wv.WV_ELEM_ID_SLOT_BITS
-import kokoro.app.ui.wv.appendWvElemId
+import kokoro.app.ui.wv.E_IdGenOverflow
+import kokoro.app.ui.wv.WIDGET_ID_INC
+import kokoro.app.ui.wv.WS_GARBAGE
+import kokoro.app.ui.wv.WS_UPDATE
+import kokoro.app.ui.wv.WvBinder
 import kotlin.jvm.JvmField
 
-abstract class WvWidget(private val binder: WvWidgetBinder) : Widget<WvWidget> {
-	@JvmField @PublishedApi internal var _elemId: Int = 0
+abstract class WvWidget(templateId: Int, private val binder: WvBinder) : Widget<WvWidget> {
+	@JvmField internal var _widgetId: Int
+	@JvmField internal var _widgetStatus: Int
 
-	inline val isBound get() = _elemId != 0
+	init {
+		val binder = binder
 
-	open fun preBind(commandOut: StringBuilder): Int {
-		val widgetId = binder.widgetIdPool.obtainId()
-
-		val elemId = widgetId shl WV_ELEM_ID_SLOT_BITS // Reserves some bits
-		if (elemId ushr WV_ELEM_ID_SLOT_BITS != widgetId) {
-			throw Error("Overflow: ID generation already exhausted")
+		val idPool = binder.widgetIdPool
+		val widgetId: Int
+		if (idPool.isEmpty()) {
+			widgetId = binder.widgetIdLastGen + WIDGET_ID_INC
+			if (widgetId <= 0) throw E_IdGenOverflow()
+			binder.widgetIdLastGen = widgetId
+		} else {
+			widgetId = idPool.removeFirst()
 		}
 
-		if (_elemId != 0) throw IllegalStateException("Already bound")
-		_elemId = elemId
+		_widgetId = widgetId
+		_widgetStatus = WS_GARBAGE
+		binder.widgetStatusChanges.add(@Suppress("LeakingThis") this)
 
-		val commandOutMark = commandOut.length
-		commandOut.append("C$(\"")
-		appendWvElemId(commandOut, elemId)
-		commandOut.append('"')
-		try {
-			// TODO Bind construction/update arguments
-			//  - Introduce each argument with a comma (',') prepended.
-		} catch (ex: Throwable) {
-			preBind_fail(commandOut, commandOutMark, ex)
-			return 0
-		}
-		commandOut.append(')')
-
-		return elemId
+		val cmd = binder.bindingCommand
+		cmd.append("C$(")
+		cmd.append(templateId)
+		cmd.append(',')
+		cmd.append(widgetId)
+		cmd.append(")\n")
 	}
 
-	private fun preBind_fail(commandOut: StringBuilder, commandOutMark: Int, ex: Throwable) {
-		commandOut.setLength(commandOutMark) // Reset command
-
-		val widgetId = _elemId ushr WV_ELEM_ID_SLOT_BITS
-		binder.widgetIdPool.forceReverseObtainId(widgetId)
-		_elemId = 0
-
-		binder.deferException(ex)
-	}
-
-	open fun preUnbind(commandOut: StringBuilder) {
-		val elemId = _elemId
-		if (elemId == 0) throw IllegalStateException("Already unbound")
-		_elemId = 0
-
-		val widgetId = elemId ushr WV_ELEM_ID_SLOT_BITS
-		binder.widgetIdPool.retireId(widgetId)
-
-		commandOut.append("D$(\"")
-		appendWvElemId(commandOut, elemId)
-		commandOut.append("\")")
+	protected fun postUpdate() {
+		_widgetStatus = _widgetStatus or WS_UPDATE
+		binder.widgetStatusChanges.add(this)
 	}
 
 	// --
