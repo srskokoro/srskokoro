@@ -170,14 +170,14 @@ internal class WvSetupBuilder(
 				sb.append("\tpublic const val ")
 				sb.append(ktEntryName)
 				sb.append(" = ")
-				appendWvSetupId_quoted(sb, this.id)
+				sb.append(this.id)
 				sb.appendLine()
 			}
 
 			override fun appendToJsSetup(sb: StringBuilder) {
 				appendJsSetupContentHeaderLine(sb, relativePath)
 				sb.append(intro)
-				appendWvSetupId_quoted(sb, this.id)
+				sb.append(this.id)
 				sb.append(", ")
 				appendJsSetupContent(sb, this.file)
 				sb.append(")\n")
