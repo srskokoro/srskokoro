@@ -42,6 +42,10 @@ value class ArgumentsBuilder(@PublishedApi internal val out: StringBuilder) {
 		return this
 	}
 
+	fun arg(callback: CallbackId) = arg {
+		+"F\$(" + callback.id + ')'
+	}
+
 	// --
 
 	internal fun conclude() {
