@@ -148,9 +148,9 @@ private fun setUpJsCompilerOptions(options: CompilerOptions) {
 	WarningLevel.VERBOSE.setOptionsForWarningLevel(options)
 
 	options.checkSymbols = false
-	options.setWarningLevel(DiagnosticGroups.MISSING_PROPERTIES, CheckLevel.OFF)
+//	options.setWarningLevel(DiagnosticGroups.MISSING_PROPERTIES, CheckLevel.OFF)
 
-	options.setRenamingPolicy(VariableRenamingPolicy.LOCAL, PropertyRenamingPolicy.OFF)
+	options.setRenamingPolicy(VariableRenamingPolicy.LOCAL, PropertyRenamingPolicy.ALL_UNQUOTED)
 	options.setOutputCharset(Charsets.UTF_8)
 
 	// Injects polyfills for ES2015+ library classes and methods used in source.
