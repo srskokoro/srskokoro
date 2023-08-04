@@ -162,7 +162,7 @@ internal class WvSetupBuilder(
 					// Fall through
 				}
 			}
-			throw E_MissingJsSetupId(name)
+			throw E_NonIntegerJsSetupId(name)
 		}
 
 		val file = visit.file
@@ -240,7 +240,7 @@ internal class WvSetupBuilder(
 private fun E_TypeShouldNotHaveGroupId(filename: String) = InvalidUserDataException("Invalid JS setup filename. Current setup type should not have a group ID: $filename")
 private fun E_UnsupportedJsSetupNameInitial(filename: String) = InvalidUserDataException("Invalid JS setup filename. Unsupported initial character: $filename")
 private fun E_NonHeadNorTailJsSetup(filename: String) = InvalidUserDataException("Invalid JS setup filename. Expected \"$TYPE_s.$HEAD_NAME.*.js\" or \"$TYPE_s.$TAIL_NAME.*.js\" but got instead name: $filename")
-private fun E_MissingJsSetupId(filename: String) = InvalidUserDataException("Invalid JS setup filename. Digits expected right before \".js\" but got instead name: $filename")
+private fun E_NonIntegerJsSetupId(filename: String) = InvalidUserDataException("Invalid JS setup filename. Integer expected right before \".js\" but got instead name: $filename")
 private fun E_DuplicateSetupId(first: File, second: File) = InvalidUserDataException("Duplicate setup IDs found for the following files:\n- $first\n- $second")
 
 private fun appendJsSetupContentHeaderLine(sb: StringBuilder, relativePath: RelativePath) {
