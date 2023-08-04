@@ -175,6 +175,14 @@ internal class WvSetupBuilder(
 				"t$("
 			}
 			TYPE_m -> {
+				if (introArgsCommaIdx >= 0) {
+					val digits = introArgs.substring(introArgsCommaIdx + 1)
+					try {
+						digits.toInt()
+					} catch (_: NumberFormatException) {
+						throw E_NonIntegerJsSetupId(name)
+					}
+				}
 				"m$("
 			}
 			TYPE_s -> {
