@@ -2,6 +2,7 @@ package kokoro.app.ui.wv.widget
 
 import app.cash.redwood.Modifier
 import app.cash.redwood.widget.Widget
+import kokoro.app.ui.wv.ArgumentsBuilder
 import kokoro.app.ui.wv.WS_GARBAGE
 import kokoro.app.ui.wv.WS_UPDATE
 import kokoro.app.ui.wv.WvBinder
@@ -31,6 +32,14 @@ abstract class WvWidget(templateId: Int, private val binder: WvBinder) : Widget<
 		_widgetStatus = _widgetStatus or WS_UPDATE
 		binder.widgetStatusChanges.add(this)
 	}
+
+	internal fun bindUpdates(cmd: StringBuilder) {
+		val args = ArgumentsBuilder(cmd)
+		args.onBindUpdates()
+		args.conclude()
+	}
+
+	protected abstract fun ArgumentsBuilder.onBindUpdates()
 
 	// --
 

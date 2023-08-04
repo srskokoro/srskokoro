@@ -1,6 +1,5 @@
 package kokoro.app.ui.wv
 
-import TODO
 import assertUnreachable
 import kokoro.app.ui.wv.widget.WvWidget
 import kokoro.internal.collections.MapComputeFunction
@@ -96,7 +95,12 @@ class WvBinder {
 			}
 
 			if (status and WS_UPDATE != 0) {
-				TODO { IMPLEMENT }
+				cmd.append("U$(")
+				cmd.append(widget._widgetId)
+				cmd.append(",[")
+				widget.bindUpdates(cmd)
+				// TODO Bind modifier updates
+				cmd.append("])\n")
 			}
 		}
 
