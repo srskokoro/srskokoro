@@ -6,9 +6,10 @@ import kokoro.internal.collections.MapComputeFunction
 import kokoro.internal.collections.computeIfAbsent
 import korlibs.datastructure.FastIntMap
 import korlibs.datastructure.IntDeque
+import kotlin.jvm.JvmField
 
 class WvBinder {
-	internal val bindingCommand = StringBuilder()
+	@JvmField internal val bindingCommand = StringBuilder()
 
 	private var deferredException: Throwable? = null
 
@@ -61,7 +62,7 @@ class WvBinder {
 
 	//region Widget Binding
 
-	internal val widgetStatusChanges = ArrayList<WvWidget>()
+	@JvmField internal val widgetStatusChanges = ArrayList<WvWidget>()
 
 	fun concludeChanges() {
 		val cmd = bindingCommand
