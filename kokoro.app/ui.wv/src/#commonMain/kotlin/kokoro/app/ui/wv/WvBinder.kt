@@ -100,7 +100,9 @@ class WvBinder {
 				cmd.append(widget._widgetId)
 				cmd.append(",[")
 				widget.bindUpdates(cmd)
-				// TODO Bind modifier updates
+				widget._modifier.forEach {
+					// TODO Bind modifier updates
+				}
 				cmd.append("])\n")
 			}
 		}

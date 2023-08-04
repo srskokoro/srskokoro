@@ -47,5 +47,11 @@ abstract class WvWidget(templateId: Int, private val binder: WvBinder) : Widget<
 	final override val value: WvWidget
 		inline get() = this
 
-	final override var modifier: Modifier = Modifier
+	@JvmField internal var _modifier: Modifier = Modifier
+	final override var modifier: Modifier
+		get() = _modifier
+		set(v) {
+			postUpdate()
+			_modifier = v
+		}
 }
