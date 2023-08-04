@@ -123,6 +123,25 @@ internal class WvSetupBuilder(
 					return
 		}
 
+		/*
+		 * Expected naming conventions:
+		 *
+		 * - $.head.<id>.js
+		 * - $.tail.<id>.js
+		 *
+		 * - t.<WidgetName>.<tId>.js
+		 *
+		 * - m.<WidgetName>.<modifierName>.<mId>.js
+		 * - m.<WidgetName>.<ScopeName>.<modifierName>.<mId>.js
+		 * - m.<ScopeName>.<modifierName>.<mId>.js
+		 * - m.<modifierName>.<mId>.js
+		 *
+		 * Further notes:
+		 * - `<mId>` is expected to be of the form `<id>` or `<id>@<tId>`.
+		 * - `<tId>` is expected to be of the form `<id>`.
+		 * - `<id>` is expected to be an integer (which may also be negative).
+		 */
+
 		val idLeadDotIdx = name.lastIndexOf('.', name.length - 4) // Excludes the ".js" file extension
 
 		val introArgs: String
