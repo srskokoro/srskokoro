@@ -124,9 +124,19 @@ internal class WvSetupBuilder(
 		}
 
 		val idLeadDotIdx = name.lastIndexOf('.', name.length - 4) // Excludes the ".js" file extension
+
+		val introArgs: String
+		val introArgsCommaIdx: Int
+
 		val id = run<Int> {
 			if (idLeadDotIdx >= 0) {
-				val digits = name.substring(idLeadDotIdx + 1, name.length - 3) // Excludes the ".js" file extension
+				introArgs = name.substring(idLeadDotIdx + 1, name.length - 3) // Excludes the ".js" file extension
+					.replace('@', ',')
+
+				introArgsCommaIdx = introArgs.indexOf(',')
+				val digits = if (introArgsCommaIdx < 0) introArgs else
+					introArgs.substring(0, introArgsCommaIdx)
+
 				try {
 					return@run digits.toInt()
 				} catch (_: NumberFormatException) {
@@ -139,9 +149,19 @@ internal class WvSetupBuilder(
 		val file = visit.file
 		val type = name[0]
 		val intro = when (type) {
-			TYPE_t -> "t$("
-			TYPE_m -> "m$("
+			TYPE_t -> {
+				if (introArgsCommaIdx >= 0) {
+					throw E_TypeShouldNotHaveGroupId(name)
+				}
+				"t$("
+			}
+			TYPE_m -> {
+				"m$("
+			}
 			TYPE_s -> {
+				if (introArgsCommaIdx >= 0) {
+					throw E_TypeShouldNotHaveGroupId(name)
+				}
 				if (name.regionMatches(2, "$HEAD_NAME.", 0, length = HEAD_NAME_len + 1, ignoreCase = true)) {
 					setupPrologs
 				} else if (name.regionMatches(2, "$TAIL_NAME.", 0, length = TAIL_NAME_len + 1, ignoreCase = true)) {
@@ -177,7 +197,7 @@ internal class WvSetupBuilder(
 			override fun appendToJsSetup(sb: StringBuilder) {
 				appendJsSetupContentHeaderLine(sb, relativePath)
 				sb.append(intro)
-				sb.append(this.id)
+				sb.append(introArgs)
 				sb.append(", ")
 				appendJsSetupContent(sb, this.file)
 				sb.append(")\n")
@@ -198,6 +218,7 @@ internal class WvSetupBuilder(
 	}
 }
 
+private fun E_TypeShouldNotHaveGroupId(filename: String) = InvalidUserDataException("Invalid JS setup filename. Current setup type should not have a group ID: $filename")
 private fun E_UnsupportedJsSetupNameInitial(filename: String) = InvalidUserDataException("Invalid JS setup filename. Unsupported initial character: $filename")
 private fun E_NonHeadNorTailJsSetup(filename: String) = InvalidUserDataException("Invalid JS setup filename. Expected \"$TYPE_s.$HEAD_NAME.*.js\" or \"$TYPE_s.$TAIL_NAME.*.js\" but got instead name: $filename")
 private fun E_MissingJsSetupId(filename: String) = InvalidUserDataException("Invalid JS setup filename. Digits expected right before \".js\" but got instead name: $filename")
