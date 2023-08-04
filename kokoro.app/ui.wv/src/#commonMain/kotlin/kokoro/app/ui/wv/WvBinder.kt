@@ -22,10 +22,45 @@ class WvBinder {
 		}
 	}
 
-	//region Widget Binding
+	//region ID Binding
 
-	internal val widgetIdPool = IntDeque()
-	internal var widgetIdLastGen = 0
+	private val widgetIdPool = IntDeque()
+	private var widgetIdLastGen = 0
+
+	private val callbackIdPool = IntDeque()
+	private var callbackIdLastGen = 0
+
+	internal fun obtainWidgetId_inline(): Int {
+		val idPool = widgetIdPool
+		if (idPool.isEmpty()) {
+			val newId = widgetIdLastGen + WIDGET_ID_INC
+			if (newId <= 0) throw E_IdGenOverflow()
+			widgetIdLastGen = newId
+			return newId
+		}
+		return idPool.removeFirst()
+	}
+
+	private inline fun recycleWidgetId(id: Int): Unit =
+		widgetIdPool.addLast(id)
+
+	private fun obtainCallbackId_inline(): Int {
+		val idPool = callbackIdPool
+		if (idPool.isEmpty()) {
+			val newId = callbackIdLastGen + 1
+			if (newId <= 0) throw E_IdGenOverflow()
+			callbackIdLastGen = newId
+			return newId
+		}
+		return idPool.removeFirst()
+	}
+
+	private inline fun recycleCallbackId(id: Int): Unit =
+		callbackIdPool.addLast(id)
+
+	//endregion
+
+	//region Widget Binding
 
 	internal val widgetStatusChanges = ArrayList<WvWidget>()
 
@@ -56,7 +91,7 @@ class WvBinder {
 				// widget IDs to the API clients, i.e., the widget updaters, the
 				// modifier binders, etc., so that they may not accidentally
 				// manipulate a stale ID.
-				widgetIdPool.addLast(widgetId) // Recycle ID
+				recycleWidgetId(widgetId)
 				continue // Already unbound. Nothing to do.
 			}
 
@@ -78,31 +113,20 @@ class WvBinder {
 
 	//region Callback Binding
 
-	private val callbackIdPool = IntDeque()
-	private var callbackIdLastGen = 0
-
 	private val boundCallbackIds = HashMap<CallbackRouter, Int>()
 	private val boundCallbacks = FastIntMap<CallbackRouter>()
 
 	private val callbackBinder = MapComputeFunction<CallbackRouter, Int> { callback ->
-		val idPool = callbackIdPool
-		val newId: Int
-		if (idPool.isEmpty()) {
-			newId = callbackIdLastGen + 1
-			if (newId <= 0) throw E_IdGenOverflow()
-			callbackIdLastGen = newId
-		} else {
-			newId = idPool.removeFirst()
+		obtainCallbackId_inline().also { newId ->
+			boundCallbacks[newId] = callback
 		}
-		boundCallbacks[newId] = callback
-		newId
 	}
 
 	internal fun forceUnbindCallback(callbackId: Int) {
 		val callback = boundCallbacks.set(callbackId, null)
 		if (callback != null) {
 			boundCallbackIds.remove(callback)
-			callbackIdPool.addLast(callbackId) // Recycle ID
+			recycleCallbackId(callbackId)
 			return
 		}
 		throw AssertionError("Callback already unbound")
@@ -136,4 +160,4 @@ class WvBinder {
 	//endregion
 }
 
-internal fun E_IdGenOverflow() = Error("Overflow: ID generation already exhausted")
+private fun E_IdGenOverflow() = Error("Overflow: ID generation already exhausted")

@@ -2,8 +2,6 @@ package kokoro.app.ui.wv.widget
 
 import app.cash.redwood.Modifier
 import app.cash.redwood.widget.Widget
-import kokoro.app.ui.wv.E_IdGenOverflow
-import kokoro.app.ui.wv.WIDGET_ID_INC
 import kokoro.app.ui.wv.WS_GARBAGE
 import kokoro.app.ui.wv.WS_UPDATE
 import kokoro.app.ui.wv.WvBinder
@@ -15,16 +13,7 @@ abstract class WvWidget(templateId: Int, private val binder: WvBinder) : Widget<
 
 	init {
 		val binder = binder
-
-		val idPool = binder.widgetIdPool
-		val widgetId: Int
-		if (idPool.isEmpty()) {
-			widgetId = binder.widgetIdLastGen + WIDGET_ID_INC
-			if (widgetId <= 0) throw E_IdGenOverflow()
-			binder.widgetIdLastGen = widgetId
-		} else {
-			widgetId = idPool.removeFirst()
-		}
+		val widgetId = binder.obtainWidgetId_inline()
 
 		_widgetId = widgetId
 		_widgetStatus = WS_GARBAGE
