@@ -1,5 +1,6 @@
 package kokoro.app.ui.wv
 
+@PublishedApi
 internal fun ArgumentsBuilder.conclude() {
 	if (out.isNotEmpty()) {
 		val lastIndex = out.length - 1
@@ -11,6 +12,7 @@ internal fun ArgumentsBuilder.conclude() {
 	throw E_AlreadyConcluded()
 }
 
+@PublishedApi
 internal fun ArgumentsBuilder.conclude(closing: Char) {
 	if (out.isNotEmpty()) {
 		val lastIndex = out.length - 1
@@ -22,6 +24,7 @@ internal fun ArgumentsBuilder.conclude(closing: Char) {
 	throw E_AlreadyConcluded()
 }
 
+@PublishedApi
 internal fun ArgumentsBuilder.conclude(closing: String) {
 	if (out.isNotEmpty()) {
 		val lastIndex = out.length - 1
