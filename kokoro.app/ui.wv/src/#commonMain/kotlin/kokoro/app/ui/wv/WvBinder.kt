@@ -1,7 +1,11 @@
 package kokoro.app.ui.wv
 
+import app.cash.redwood.Modifier
 import assertUnreachable
+import kokoro.app.ui.wv.modifier.GlobalModifier
+import kokoro.app.ui.wv.modifier.ModifierBinder
 import kokoro.app.ui.wv.widget.WvWidget
+import kokoro.app.ui.wv.widget.WvWidgetChildren
 import kokoro.internal.collections.MapComputeFunction
 import kokoro.internal.collections.computeIfAbsent
 import korlibs.datastructure.FastIntMap
@@ -10,6 +14,7 @@ import kotlin.jvm.JvmField
 
 class WvBinder {
 	@JvmField internal val bindingCommand = StringBuilder()
+	private val modifierBindingAction = ModifierBindingAction(ModifierBinder(bindingCommand))
 
 	private var deferredException: Throwable? = null
 
@@ -67,6 +72,7 @@ class WvBinder {
 	fun concludeChanges() {
 		val cmd = bindingCommand
 		val statusChanges = widgetStatusChanges
+		val modifierBindingAction = modifierBindingAction
 
 		for (i in statusChanges.indices) {
 			val widget = statusChanges[i]
@@ -99,17 +105,17 @@ class WvBinder {
 				cmd.append("U$(")
 				cmd.append(widget._widgetId)
 
-				cmd.append(",[")
+				cmd.append(',')
 				widget.bindUpdates(cmd)
-				cmd.append(']')
 
-				// TODO Optimize `forEach` by avoiding the lambda object creation
-				widget._modifier.forEach {
-					// TODO Bind modifier updates
-				}
+				modifierBindingAction.parent = widget.parent
+				widget._modifier.forEach(modifierBindingAction)
+
 				cmd.append(")\n")
 			}
 		}
+
+		modifierBindingAction.parent = null // To allow GC
 
 		// Done. Everything already processed.
 		statusChanges.clear()
@@ -117,6 +123,20 @@ class WvBinder {
 		deferredException?.let { ex ->
 			deferredException = null
 			throw ex
+		}
+	}
+
+	private class ModifierBindingAction(
+		private val binder: ModifierBinder,
+	) : (Modifier) -> Unit {
+		@JvmField var parent: WvWidgetChildren? = null
+
+		override fun invoke(modifier: Modifier) {
+			if (modifier is GlobalModifier) with(modifier) {
+				binder.onBind()
+			} else parent?.run {
+				binder.onBindScopedModifier(modifier)
+			}
 		}
 	}
 

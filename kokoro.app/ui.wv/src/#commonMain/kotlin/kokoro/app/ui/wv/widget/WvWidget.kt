@@ -43,9 +43,10 @@ abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widge
 	}
 
 	internal inline fun bindUpdates(cmd: StringBuilder) {
+		cmd.append('[')
 		val args = ArgumentsBuilder(cmd)
 		args.onBindUpdates()
-		args.conclude()
+		args.conclude(']')
 	}
 
 	abstract fun ArgumentsBuilder.onBindUpdates()

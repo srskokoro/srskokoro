@@ -1,6 +1,8 @@
 package kokoro.app.ui.wv.widget
 
+import app.cash.redwood.Modifier
 import app.cash.redwood.widget.Widget
+import kokoro.app.ui.wv.modifier.ModifierBinder
 import kotlin.jvm.JvmField
 
 open class WvWidgetChildren(@JvmField val parent: WvWidget) : Widget.Children<WvWidget> {
@@ -50,4 +52,6 @@ open class WvWidgetChildren(@JvmField val parent: WvWidget) : Widget.Children<Wv
 	}
 
 	override fun onModifierUpdated() = Unit
+
+	open fun ModifierBinder.onBindScopedModifier(modifier: Modifier) = Unit
 }
