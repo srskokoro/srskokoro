@@ -98,5 +98,13 @@ open class WvWidgetChildren(@JvmField val parent: WvWidget) : Widget.Children<Wv
 		}
 
 		abstract override fun ModifierBinder.onBindScopedModifier(modifier: Modifier)
+
+		companion object {
+			inline operator fun invoke(
+				parent: WvWidget, crossinline onBindScopedModifier: ModifierBinder.(modifier: Modifier) -> Unit,
+			) = object : WithScopedModifier(parent) {
+				override fun ModifierBinder.onBindScopedModifier(modifier: Modifier) = onBindScopedModifier(modifier)
+			}
+		}
 	}
 }
