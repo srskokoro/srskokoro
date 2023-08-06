@@ -2,6 +2,8 @@ package kokoro.app.ui.wv.widget
 
 import app.cash.redwood.Modifier
 import app.cash.redwood.widget.Widget
+import kokoro.app.ui.wv.WS_GARBAGE
+import kokoro.app.ui.wv.WS_GARBAGE_INV
 import kokoro.app.ui.wv.modifier.ModifierBinder
 import kokoro.internal.collections.move
 import kokoro.internal.collections.remove
@@ -14,6 +16,10 @@ open class WvWidgetChildren(@JvmField val parent: WvWidget) : Widget.Children<Wv
 
 	override fun insert(index: Int, widget: Widget<WvWidget>) {
 		val child = widget as WvWidget
+
+		// Unflag widget as "garbage" (if flagged before)
+		child._widgetStatus = child._widgetStatus and WS_GARBAGE_INV
+
 		child.parent = this
 		_widgets.add(index, child)
 
@@ -46,7 +52,10 @@ open class WvWidgetChildren(@JvmField val parent: WvWidget) : Widget.Children<Wv
 	}
 
 	override fun remove(index: Int, count: Int) {
-		_widgets.remove(index, count)
+		_widgets.remove(index, count) { child ->
+			// Flag widget as potential "garbage"
+			child.postStatus { it or WS_GARBAGE }
+		}
 
 		val parent = parent
 		val cmd = parent.binder.bindingCommand
