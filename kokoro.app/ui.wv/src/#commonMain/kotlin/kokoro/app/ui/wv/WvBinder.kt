@@ -152,6 +152,8 @@ class WvBinder {
 		val thrown = deferredException
 			?: AssertionError("Required value was null.")
 
+		deferredException = null // Consume
+
 		bindingCommand_lengthBackup.let {
 			bindingCommand_lengthBackup = 0
 			bindingCommand.setLength(it)
