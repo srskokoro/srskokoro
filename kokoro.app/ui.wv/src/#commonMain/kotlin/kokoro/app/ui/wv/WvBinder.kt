@@ -14,6 +14,8 @@ import kotlin.jvm.JvmField
 
 class WvBinder {
 	@JvmField internal val bindingCommand = StringBuilder()
+	private var bindingCommand_lengthBackup: Int = 0
+
 	private val modifierBindingAction = ModifierBindingAction(ModifierBinder(bindingCommand))
 
 	private var deferredException: Throwable? = null
@@ -68,8 +70,6 @@ class WvBinder {
 	//region Widget Binding
 
 	@JvmField internal val widgetStatusChanges = ArrayList<WvWidget>()
-
-	private var bindingCommand_lengthBackup: Int = 0
 
 	var onConcludeChangesError: (ex: Throwable) -> Unit = { ex -> throw ex }
 
