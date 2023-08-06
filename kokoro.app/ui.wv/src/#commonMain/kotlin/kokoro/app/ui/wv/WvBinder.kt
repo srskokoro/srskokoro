@@ -69,56 +69,66 @@ class WvBinder {
 
 	@JvmField internal val widgetStatusChanges = ArrayList<WvWidget>()
 
+	private var bindingCommand_lengthBackup: Int = 0
+
+	var onConcludeChangesError: (ex: Throwable) -> Unit = { ex -> throw ex }
+
 	fun concludeChanges() {
 		val cmd = bindingCommand
+		bindingCommand_lengthBackup = cmd.length
+
 		val statusChanges = widgetStatusChanges
 		val modifierBindingAction = modifierBindingAction
 
-		for (i in statusChanges.indices) {
-			val widget = statusChanges[i]
+		try {
+			for (i in statusChanges.indices) {
+				val widget = statusChanges[i]
 
-			val status = widget._widgetStatus
-			widget._widgetStatus = 0 // Consume
+				val status = widget._widgetStatus
+				widget._widgetStatus = 0 // Consume
 
-			if (status and WS_GARBAGE != 0) {
-				val widgetId = widget._widgetId
-				widget._widgetId = 0
+				if (status and WS_GARBAGE != 0) {
+					val widgetId = widget._widgetId
+					widget._widgetId = 0
 
-				if (widgetId == 0) {
-					assertUnreachable { "Widget already unbound" }
-					continue
+					if (widgetId == 0) {
+						assertUnreachable { "Widget already unbound" }
+						continue
+					}
+
+					cmd.append("D$(")
+					cmd.append(widgetId)
+					cmd.appendLine(')')
+
+					// NOTE: The fact that we recycle the widget IDs right away,
+					// without even waiting for the "unbind" command to be evaluated
+					// by the `WebView`, is the reason we shouldn't expose those
+					// widget IDs to the API clients, i.e., the widget updaters, the
+					// modifier binders, etc., so that they may not accidentally
+					// manipulate a stale ID.
+					recycleWidgetId(widgetId)
+					continue // Already unbound. Nothing to do.
 				}
 
-				cmd.append("D$(")
-				cmd.append(widgetId)
-				cmd.appendLine(')')
+				if (status and WS_UPDATE != 0) {
+					cmd.append("U$(")
+					cmd.append(widget._widgetId)
 
-				// NOTE: The fact that we recycle the widget IDs right away,
-				// without even waiting for the "unbind" command to be evaluated
-				// by the `WebView`, is the reason we shouldn't expose those
-				// widget IDs to the API clients, i.e., the widget updaters, the
-				// modifier binders, etc., so that they may not accidentally
-				// manipulate a stale ID.
-				recycleWidgetId(widgetId)
-				continue // Already unbound. Nothing to do.
-			}
+					cmd.append(',')
+					if (status and WS_MODEL_UPDATE != 0) {
+						widget.bindUpdates(cmd)
+					} else {
+						cmd.append("null")
+					}
 
-			if (status and WS_UPDATE != 0) {
-				cmd.append("U$(")
-				cmd.append(widget._widgetId)
+					modifierBindingAction.parent = widget.parent
+					widget._modifier.forEach(modifierBindingAction)
 
-				cmd.append(',')
-				if (status and WS_MODEL_UPDATE != 0) {
-					widget.bindUpdates(cmd)
-				} else {
-					cmd.append("null")
+					cmd.appendLine(')')
 				}
-
-				modifierBindingAction.parent = widget.parent
-				widget._modifier.forEach(modifierBindingAction)
-
-				cmd.appendLine(')')
 			}
+		} catch (ex: Throwable) {
+			deferException(ex)
 		}
 
 		modifierBindingAction.parent = null // To allow GC
@@ -126,10 +136,34 @@ class WvBinder {
 		// Done. Everything already processed.
 		statusChanges.clear()
 
-		deferredException?.let { ex ->
-			deferredException = null
-			throw ex
+		val thrown = deferredException
+		if (thrown == null) {
+			bindingCommand_lengthBackup = 0
+			executeBindingCommand()
+			return // Early exit
 		}
+
+		// --
+		// Error handling
+
+		concludeChanges_fail(thrown)
+	}
+
+	private fun concludeChanges_fail(thrown: Throwable) {
+		bindingCommand_lengthBackup.let {
+			bindingCommand_lengthBackup = 0
+			bindingCommand.setLength(it)
+		}
+		try {
+			executeBindingCommand()
+		} catch (ex: Throwable) {
+			thrown.addSuppressed(ex)
+		}
+		onConcludeChangesError.invoke(thrown)
+	}
+
+	private fun executeBindingCommand() {
+		// TODO Send binding command to `WebView`
 	}
 
 	private class ModifierBindingAction(
