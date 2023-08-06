@@ -34,13 +34,13 @@ abstract class WvWidget(templateId: Int, private val binder: WvBinder) : Widget<
 		binder.widgetStatusChanges.add(this)
 	}
 
-	internal fun bindUpdates(cmd: StringBuilder) {
+	internal inline fun bindUpdates(cmd: StringBuilder) {
 		val args = ArgumentsBuilder(cmd)
 		args.onBindUpdates()
 		args.conclude()
 	}
 
-	protected abstract fun ArgumentsBuilder.onBindUpdates()
+	abstract fun ArgumentsBuilder.onBindUpdates()
 
 	// --
 
