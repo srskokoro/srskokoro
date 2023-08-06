@@ -10,8 +10,8 @@ import kokoro.app.ui.wv.conclude
 import kotlin.jvm.JvmField
 
 abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widget<WvWidget> {
-	@JvmField internal var _widgetId: Int
-	@JvmField internal var _widgetStatus: Int
+	@PublishedApi @JvmField internal var _widgetId: Int
+	@PublishedApi @JvmField internal var _widgetStatus: Int
 
 	/**
 	 * NOTE: This field should be interpreted as holding the last known parent
