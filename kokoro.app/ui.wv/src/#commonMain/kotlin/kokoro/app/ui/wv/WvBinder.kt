@@ -118,11 +118,11 @@ class WvBinder {
 					cmd.appendLine(')')
 
 					// NOTE: The fact that we recycle the widget IDs right away,
-					// without even waiting for the "unbind" command to be evaluated
-					// by the `WebView`, is the reason we shouldn't expose those
-					// widget IDs to the API clients, i.e., the widget updaters, the
-					// modifier binders, etc., so that they may not accidentally
-					// manipulate a stale ID.
+					// without even waiting for the "unbind" command to be
+					// evaluated by the `WebView`, is the reason we shouldn't
+					// expose those widget IDs to the API clients, i.e., the
+					// widget updaters, the modifier binders, etc., so that they
+					// may not accidentally manipulate a stale ID.
 					recycleWidgetId(widgetId)
 					continue // Already unbound. Nothing to do.
 				}
