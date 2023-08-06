@@ -72,4 +72,31 @@ open class WvWidgetChildren(@JvmField val parent: WvWidget) : Widget.Children<Wv
 	override fun onModifierUpdated() = Unit
 
 	open fun ModifierBinder.onBindScopedModifier(modifier: Modifier) = Unit
+
+	// --
+
+	abstract class WithScopedModifier(parent: WvWidget) : WvWidgetChildren(parent) {
+
+		override fun insert(index: Int, widget: Widget<WvWidget>) {
+			(widget as WvWidget).postModifierUpdate()
+			super.insert(index, widget)
+			parent.requestLayout()
+		}
+
+		override fun move(fromIndex: Int, toIndex: Int, count: Int) {
+			super.move(fromIndex, toIndex, count)
+			parent.requestLayout()
+		}
+
+		override fun remove(index: Int, count: Int) {
+			super.remove(index, count)
+			parent.requestLayout()
+		}
+
+		override fun onModifierUpdated() {
+			parent.requestLayout()
+		}
+
+		abstract override fun ModifierBinder.onBindScopedModifier(modifier: Modifier)
+	}
 }
