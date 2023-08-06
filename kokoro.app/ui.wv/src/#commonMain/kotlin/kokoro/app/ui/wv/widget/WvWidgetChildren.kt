@@ -20,7 +20,7 @@ open class WvWidgetChildren(@JvmField val parent: WvWidget) : Widget.Children<Wv
 		// Unflag widget as "garbage" (if flagged before)
 		child._widgetStatus = child._widgetStatus and WS_GARBAGE_INV
 
-		child.parent = this
+		child._parent = this
 		_widgets.add(index, child)
 
 		val parent = parent

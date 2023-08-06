@@ -83,7 +83,7 @@ class WvBinder {
 			// ancestor of any widget in the list is guaranteed to be processed
 			// last.
 
-			widget.parent?.let {
+			widget._parent?.let {
 				layoutStackPush(it.parent)
 			}
 
@@ -138,7 +138,7 @@ class WvBinder {
 						cmd.append("null")
 					}
 
-					modifierBindingAction.parent = widget.parent
+					modifierBindingAction.parent = widget._parent
 					widget._modifier.forEach(modifierBindingAction)
 
 					cmd.appendLine(')')

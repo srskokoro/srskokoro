@@ -22,7 +22,8 @@ abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widge
 	 * anymore, but should the widget be parented to another, this field must
 	 * reflect that new state.
 	 */
-	@JvmField internal var parent: WvWidgetChildren? = null
+	@PublishedApi @JvmField internal var _parent: WvWidgetChildren? = null
+	inline val parent get() = _parent
 
 	init {
 		val binder = binder
