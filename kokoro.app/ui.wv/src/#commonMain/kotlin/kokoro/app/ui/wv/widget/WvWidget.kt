@@ -5,6 +5,7 @@ import app.cash.redwood.widget.Widget
 import kokoro.app.ui.wv.ArgumentsBuilder
 import kokoro.app.ui.wv.WS_GARBAGE
 import kokoro.app.ui.wv.WS_MODIFIER_UPDATE
+import kokoro.app.ui.wv.WS_TRACKED
 import kokoro.app.ui.wv.WS_UPDATE
 import kokoro.app.ui.wv.WvBinder
 import kokoro.app.ui.wv.conclude
@@ -38,16 +39,22 @@ abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widge
 		cmd.appendLine(')')
 	}
 
+	internal inline fun postStatus(mutation: (oldStatus: Int) -> Int) {
+		val oldStatus = _widgetStatus
+		_widgetStatus = mutation(oldStatus)
+
+		if (oldStatus and WS_TRACKED == 0)
+			binder.widgetStatusChanges.add(this)
+	}
+
 	fun postUpdate() {
 		// NOTE: Modifier updates must be rebound on top of widget model
 		// updates, even if there are only widget model updates.
-		_widgetStatus = _widgetStatus or WS_UPDATE
-		binder.widgetStatusChanges.add(this)
+		postStatus { it or WS_UPDATE }
 	}
 
 	fun postModifierUpdate() {
-		_widgetStatus = _widgetStatus or WS_MODIFIER_UPDATE
-		binder.widgetStatusChanges.add(this)
+		postStatus { it or WS_MODIFIER_UPDATE }
 	}
 
 	internal inline fun bindUpdates(cmd: StringBuilder) {
