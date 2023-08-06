@@ -77,10 +77,9 @@ class WvBinder {
 		val cmd = bindingCommand
 		bindingCommand_lengthBackup = cmd.length
 
-		val statusChanges = widgetStatusChanges
-		val modifierBindingAction = modifierBindingAction
-
 		try {
+			val modifierBindingAction = modifierBindingAction
+			val statusChanges = widgetStatusChanges
 			for (i in statusChanges.indices) {
 				val widget = statusChanges[i]
 
@@ -127,14 +126,13 @@ class WvBinder {
 					cmd.appendLine(')')
 				}
 			}
+			statusChanges.clear()
+			modifierBindingAction.parent = null // To allow GC
+
+			// --
 		} catch (ex: Throwable) {
 			deferException(ex)
 		}
-
-		modifierBindingAction.parent = null // To allow GC
-
-		// Done. Everything already processed.
-		statusChanges.clear()
 
 		if (deferredException == null) {
 			bindingCommand_lengthBackup = 0
@@ -157,6 +155,13 @@ class WvBinder {
 		bindingCommand_lengthBackup.let {
 			bindingCommand_lengthBackup = 0
 			bindingCommand.setLength(it)
+		}
+
+		modifierBindingAction.parent = null // To allow GC
+
+		widgetStatusChanges.let { widgets ->
+			for (widget in widgets) widget._widgetStatus = 0 // Consume
+			widgets.clear()
 		}
 
 		try {
