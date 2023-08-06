@@ -1,7 +1,6 @@
 package kokoro.app.ui.wv
 
 import app.cash.redwood.Modifier
-import assertNotNull
 import assertUnreachable
 import kokoro.app.ui.wv.modifier.GlobalModifier
 import kokoro.app.ui.wv.modifier.ModifierBinder
@@ -151,17 +150,19 @@ class WvBinder {
 
 	private fun concludeChanges_fail() {
 		val thrown = deferredException
-		assertNotNull(thrown)
+			?: AssertionError("Required value was null.")
 
 		bindingCommand_lengthBackup.let {
 			bindingCommand_lengthBackup = 0
 			bindingCommand.setLength(it)
 		}
+
 		try {
 			executeBindingCommand()
 		} catch (ex: Throwable) {
 			thrown.addSuppressed(ex)
 		}
+
 		onConcludeChangesError.invoke(thrown)
 	}
 
