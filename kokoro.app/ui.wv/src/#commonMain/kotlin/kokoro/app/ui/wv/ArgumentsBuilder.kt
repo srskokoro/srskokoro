@@ -48,41 +48,6 @@ value class ArgumentsBuilder(@PublishedApi internal val out: StringBuilder) {
 
 	// --
 
-	internal fun conclude() {
-		if (out.isNotEmpty()) {
-			val lastIndex = out.length - 1
-			if (out[lastIndex] == ',') {
-				out.setLength(lastIndex)
-				return
-			}
-		}
-		throw E_AlreadyConcluded()
-	}
-
-	internal fun conclude(closing: Char) {
-		if (out.isNotEmpty()) {
-			val lastIndex = out.length - 1
-			if (out[lastIndex] == ',') {
-				out[lastIndex] = closing
-				return
-			}
-		}
-		throw E_AlreadyConcluded()
-	}
-
-	internal fun conclude(closing: String) {
-		if (out.isNotEmpty()) {
-			val lastIndex = out.length - 1
-			if (out[lastIndex] == ',') {
-				out.setRange(lastIndex, lastIndex + 1, closing)
-				return
-			}
-		}
-		throw E_AlreadyConcluded()
-	}
-
-	// --
-
 	@ArgumentsBuilderDsl
 	@JvmInline
 	value class Arg(@PublishedApi internal val out: StringBuilder) {
@@ -187,5 +152,3 @@ value class ArgumentsBuilder(@PublishedApi internal val out: StringBuilder) {
 		inline operator fun plus(value: String) = append(value)
 	}
 }
-
-private fun E_AlreadyConcluded() = IllegalStateException("Already concluded")

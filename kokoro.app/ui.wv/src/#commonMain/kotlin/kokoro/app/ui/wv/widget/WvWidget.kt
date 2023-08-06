@@ -6,6 +6,7 @@ import kokoro.app.ui.wv.ArgumentsBuilder
 import kokoro.app.ui.wv.WS_GARBAGE
 import kokoro.app.ui.wv.WS_UPDATE
 import kokoro.app.ui.wv.WvBinder
+import kokoro.app.ui.wv.conclude
 import kotlin.jvm.JvmField
 
 abstract class WvWidget(templateId: Int, private val binder: WvBinder) : Widget<WvWidget> {
