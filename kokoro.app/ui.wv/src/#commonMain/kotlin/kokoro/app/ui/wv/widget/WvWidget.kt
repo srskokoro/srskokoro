@@ -38,7 +38,7 @@ abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widge
 		cmd.appendLine(')')
 	}
 
-	protected fun postUpdate() {
+	fun postUpdate() {
 		// NOTE: Modifier updates must be rebound on top of widget model
 		// updates, even if there are only widget model updates.
 		_widgetStatus = _widgetStatus or WS_UPDATE
