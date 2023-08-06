@@ -21,7 +21,7 @@ open class WvWidgetChildren(@JvmField val parent: WvWidget) : Widget.Children<Wv
 		child.parent = this
 		cmd.append(child._widgetId)
 
-		cmd.append(")\n")
+		cmd.appendLine(')')
 	}
 
 	override fun move(fromIndex: Int, toIndex: Int, count: Int) {
@@ -35,7 +35,7 @@ open class WvWidgetChildren(@JvmField val parent: WvWidget) : Widget.Children<Wv
 		cmd.append(','); cmd.append(toIndex)
 		cmd.append(','); cmd.append(count)
 
-		cmd.append(")\n")
+		cmd.appendLine(')')
 	}
 
 	override fun remove(index: Int, count: Int) {
@@ -48,7 +48,7 @@ open class WvWidgetChildren(@JvmField val parent: WvWidget) : Widget.Children<Wv
 		cmd.append(','); cmd.append(index)
 		cmd.append(','); cmd.append(count)
 
-		cmd.append(")\n")
+		cmd.appendLine(')')
 	}
 
 	override fun onModifierUpdated() = Unit

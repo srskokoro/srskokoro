@@ -34,7 +34,7 @@ abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widge
 		cmd.append(templateId)
 		cmd.append(',')
 		cmd.append(widgetId)
-		cmd.append(")\n")
+		cmd.appendLine(')')
 	}
 
 	protected fun postUpdate() {

@@ -89,7 +89,7 @@ class WvBinder {
 
 				cmd.append("D$(")
 				cmd.append(widgetId)
-				cmd.append(")\n")
+				cmd.appendLine(')')
 
 				// NOTE: The fact that we recycle the widget IDs right away,
 				// without even waiting for the "unbind" command to be evaluated
@@ -111,7 +111,7 @@ class WvBinder {
 				modifierBindingAction.parent = widget.parent
 				widget._modifier.forEach(modifierBindingAction)
 
-				cmd.append(")\n")
+				cmd.appendLine(')')
 			}
 		}
 
