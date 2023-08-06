@@ -40,11 +40,12 @@ abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widge
 	}
 
 	internal inline fun postStatus(mutation: (oldStatus: Int) -> Int) {
-		val oldStatus = _widgetStatus
-		_widgetStatus = mutation(oldStatus)
-
-		if (oldStatus and WS_TRACKED == 0)
+		var status = mutation(_widgetStatus)
+		if (status and WS_TRACKED == 0) {
+			status = status or WS_TRACKED
 			binder.widgetStatusChanges.add(this)
+		}
+		_widgetStatus = status
 	}
 
 	fun postUpdate() {
