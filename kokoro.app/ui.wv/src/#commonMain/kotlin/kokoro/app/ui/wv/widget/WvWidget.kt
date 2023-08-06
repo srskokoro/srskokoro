@@ -39,23 +39,22 @@ abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widge
 		cmd.appendLine(')')
 	}
 
-	internal inline fun postStatus(mutation: (oldStatus: Int) -> Int) {
-		var status = mutation(_widgetStatus)
-		if (status and WS_TRACKED == 0) {
-			status = status or WS_TRACKED
+	internal inline fun flagStatus(flags: Int) {
+		val oldStatus = _widgetStatus
+		if (oldStatus and WS_TRACKED == 0) {
 			binder.widgetStatusChanges.add(this)
 		}
-		_widgetStatus = status
+		_widgetStatus = oldStatus or (flags or WS_TRACKED)
 	}
 
 	fun postUpdate() {
 		// NOTE: Modifier updates must be rebound on top of widget model
 		// updates, even if there are only widget model updates.
-		postStatus { it or WS_UPDATE }
+		flagStatus(WS_UPDATE)
 	}
 
 	fun postModifierUpdate() {
-		postStatus { it or WS_MODIFIER_UPDATE }
+		flagStatus(WS_MODIFIER_UPDATE)
 	}
 
 	internal inline fun bindUpdates(cmd: StringBuilder) {

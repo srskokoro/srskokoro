@@ -54,7 +54,7 @@ open class WvWidgetChildren(@JvmField val parent: WvWidget) : Widget.Children<Wv
 	override fun remove(index: Int, count: Int) {
 		_widgets.remove(index, count) { child ->
 			// Flag widget as potential "garbage"
-			child.postStatus { it or WS_GARBAGE }
+			child.flagStatus(WS_GARBAGE)
 		}
 
 		val parent = parent
