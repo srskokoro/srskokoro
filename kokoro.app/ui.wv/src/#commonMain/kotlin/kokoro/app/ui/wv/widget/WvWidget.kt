@@ -4,6 +4,7 @@ import app.cash.redwood.Modifier
 import app.cash.redwood.widget.Widget
 import kokoro.app.ui.wv.ArgumentsBuilder
 import kokoro.app.ui.wv.WS_GARBAGE
+import kokoro.app.ui.wv.WS_MODIFIER_UPDATE
 import kokoro.app.ui.wv.WS_UPDATE
 import kokoro.app.ui.wv.WvBinder
 import kokoro.app.ui.wv.conclude
@@ -38,7 +39,14 @@ abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widge
 	}
 
 	protected fun postUpdate() {
+		// NOTE: Modifier updates must be rebound on top of widget model
+		// updates, even if there are only widget model updates.
 		_widgetStatus = _widgetStatus or WS_UPDATE
+		binder.widgetStatusChanges.add(this)
+	}
+
+	fun postModifierUpdate() {
+		_widgetStatus = _widgetStatus or WS_MODIFIER_UPDATE
 		binder.widgetStatusChanges.add(this)
 	}
 
@@ -61,7 +69,7 @@ abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widge
 	final override var modifier: Modifier
 		get() = _modifier
 		set(v) {
-			postUpdate()
+			postModifierUpdate()
 			_modifier = v
 		}
 }

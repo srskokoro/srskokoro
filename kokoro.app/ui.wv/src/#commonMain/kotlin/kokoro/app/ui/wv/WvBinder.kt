@@ -106,7 +106,11 @@ class WvBinder {
 				cmd.append(widget._widgetId)
 
 				cmd.append(',')
-				widget.bindUpdates(cmd)
+				if (status and WS_MODEL_UPDATE != 0) {
+					widget.bindUpdates(cmd)
+				} else {
+					cmd.append("null")
+				}
 
 				modifierBindingAction.parent = widget.parent
 				widget._modifier.forEach(modifierBindingAction)
