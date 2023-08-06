@@ -82,6 +82,8 @@ class WvBinder {
 
 			if (status and WS_GARBAGE != 0) {
 				val widgetId = widget._widgetId
+				widget._widgetId = 0
+
 				if (widgetId == 0) {
 					assertUnreachable { "Widget already unbound" }
 					continue
