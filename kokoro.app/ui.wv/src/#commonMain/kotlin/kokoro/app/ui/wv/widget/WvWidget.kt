@@ -9,7 +9,7 @@ import kokoro.app.ui.wv.WvBinder
 import kokoro.app.ui.wv.conclude
 import kotlin.jvm.JvmField
 
-abstract class WvWidget(templateId: Int, private val binder: WvBinder) : Widget<WvWidget> {
+abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widget<WvWidget> {
 	@JvmField internal var _widgetId: Int
 	@JvmField internal var _widgetStatus: Int
 
