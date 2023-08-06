@@ -15,7 +15,9 @@ open class WvWidgetChildren(@JvmField val parent: WvWidget) : Widget.Children<Wv
 		cmd.append(','); cmd.append(index)
 
 		cmd.append(',')
-		cmd.append((widget as WvWidget)._widgetId)
+		val child = widget as WvWidget
+		child.parent = this
+		cmd.append(child._widgetId)
 
 		cmd.append(")\n")
 	}

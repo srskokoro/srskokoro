@@ -13,6 +13,14 @@ abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widge
 	@JvmField internal var _widgetId: Int
 	@JvmField internal var _widgetStatus: Int
 
+	/**
+	 * NOTE: This field should be interpreted as holding the last known parent
+	 * of this widget. The widget may not necessarily be the parent's child
+	 * anymore, but should the widget be parented to another, this field must
+	 * reflect that new state.
+	 */
+	@JvmField internal var parent: WvWidgetChildren? = null
+
 	init {
 		val binder = binder
 		val widgetId = binder.obtainWidgetId_inline()
