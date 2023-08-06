@@ -5,6 +5,7 @@ import app.cash.redwood.widget.Widget
 import kokoro.app.ui.wv.ArgumentsBuilder
 import kokoro.app.ui.wv.WS_GARBAGE
 import kokoro.app.ui.wv.WS_MODIFIER_UPDATE
+import kokoro.app.ui.wv.WS_REQUESTED_LAYOUT
 import kokoro.app.ui.wv.WS_TRACKED
 import kokoro.app.ui.wv.WS_UPDATE
 import kokoro.app.ui.wv.WvBinder
@@ -55,6 +56,10 @@ abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widge
 
 	fun postModifierUpdate() {
 		flagStatus(WS_MODIFIER_UPDATE)
+	}
+
+	fun requestLayout() {
+		flagStatus(WS_REQUESTED_LAYOUT)
 	}
 
 	internal inline fun bindUpdates(cmd: StringBuilder) {

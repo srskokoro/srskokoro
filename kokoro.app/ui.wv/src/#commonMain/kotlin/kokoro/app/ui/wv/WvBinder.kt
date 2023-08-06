@@ -71,6 +71,26 @@ class WvBinder {
 
 	@JvmField internal val widgetStatusChanges = ArrayList<WvWidget>()
 
+	private val layoutStack = ArrayList<WvWidget>()
+
+	private fun layoutStackPush(widget: WvWidget) {
+		val status = widget._widgetStatus
+		if (status and WS_TRACKED_IN_LAYOUT_STACK == 0) {
+			widget._widgetStatus = status or WS_TRACKED_IN_LAYOUT_STACK
+
+			// NOTE: We're pushing the ancestors first before the widget, so
+			// that later on, we may process the list in reverse, and the
+			// ancestor of any widget in the list is guaranteed to be processed
+			// last.
+
+			widget.parent?.let {
+				layoutStackPush(it.parent)
+			}
+
+			layoutStack.add(widget)
+		}
+	}
+
 	var onConcludeChangesError: (ex: Throwable) -> Unit = { ex -> throw ex }
 
 	fun concludeChanges() {
@@ -82,9 +102,7 @@ class WvBinder {
 			val statusChanges = widgetStatusChanges
 			for (i in statusChanges.indices) {
 				val widget = statusChanges[i]
-
 				val status = widget._widgetStatus
-				widget._widgetStatus = 0 // Consume
 
 				if (status and WS_GARBAGE != 0) {
 					val widgetId = widget._widgetId
@@ -125,9 +143,31 @@ class WvBinder {
 
 					cmd.appendLine(')')
 				}
+
+				if (status and WS_TREE_REQUESTED_LAYOUT != 0) {
+					layoutStackPush(widget)
+					// NOTE: Widget status will be consumed later instead.
+				} else {
+					widget._widgetStatus = 0 // Consume
+				}
 			}
 			statusChanges.clear()
 			modifierBindingAction.parent = null // To allow GC
+
+			val layoutStack = layoutStack
+			for (i in layoutStack.indices.reversed()) {
+				val widget = layoutStack[i]
+
+				val status = widget._widgetStatus
+				widget._widgetStatus = 0 // Consume
+
+				if (status and (WS_REQUESTED_LAYOUT or WS_GARBAGE) == WS_REQUESTED_LAYOUT) {
+					cmd.append("L$(")
+					cmd.append(widget._widgetId)
+					cmd.appendLine(')')
+				}
+			}
+			layoutStack.clear()
 
 			// --
 		} catch (ex: Throwable) {
@@ -160,6 +200,10 @@ class WvBinder {
 		modifierBindingAction.parent = null // To allow GC
 
 		widgetStatusChanges.let { widgets ->
+			for (widget in widgets) widget._widgetStatus = 0 // Consume
+			widgets.clear()
+		}
+		layoutStack.let { widgets ->
 			for (widget in widgets) widget._widgetStatus = 0 // Consume
 			widgets.clear()
 		}
