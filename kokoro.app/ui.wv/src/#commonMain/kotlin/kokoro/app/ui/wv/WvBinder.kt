@@ -98,12 +98,16 @@ class WvBinder {
 			if (status and WS_UPDATE != 0) {
 				cmd.append("U$(")
 				cmd.append(widget._widgetId)
+
 				cmd.append(",[")
 				widget.bindUpdates(cmd)
+				cmd.append(']')
+
+				// TODO Optimize `forEach` by avoiding the lambda object creation
 				widget._modifier.forEach {
 					// TODO Bind modifier updates
 				}
-				cmd.append("])\n")
+				cmd.append(")\n")
 			}
 		}
 
