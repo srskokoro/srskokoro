@@ -3,11 +3,20 @@ package kokoro.app.ui.wv.widget
 import app.cash.redwood.Modifier
 import app.cash.redwood.widget.Widget
 import kokoro.app.ui.wv.modifier.ModifierBinder
+import kokoro.internal.collections.move
+import kokoro.internal.collections.remove
 import kotlin.jvm.JvmField
 
 open class WvWidgetChildren(@JvmField val parent: WvWidget) : Widget.Children<WvWidget> {
 
+	@PublishedApi @JvmField internal val _widgets = ArrayList<WvWidget>()
+	inline val widgets: List<WvWidget> get() = _widgets
+
 	override fun insert(index: Int, widget: Widget<WvWidget>) {
+		val child = widget as WvWidget
+		child.parent = this
+		_widgets.add(index, child)
+
 		val parent = parent
 		val cmd = parent.binder.bindingCommand
 
@@ -15,16 +24,14 @@ open class WvWidgetChildren(@JvmField val parent: WvWidget) : Widget.Children<Wv
 		cmd.append(parent._widgetId)
 
 		cmd.append(','); cmd.append(index)
-
-		cmd.append(',')
-		val child = widget as WvWidget
-		child.parent = this
-		cmd.append(child._widgetId)
+		cmd.append(','); cmd.append(child._widgetId)
 
 		cmd.appendLine(')')
 	}
 
 	override fun move(fromIndex: Int, toIndex: Int, count: Int) {
+		_widgets.move(fromIndex, toIndex, count)
+
 		val parent = parent
 		val cmd = parent.binder.bindingCommand
 
@@ -39,6 +46,8 @@ open class WvWidgetChildren(@JvmField val parent: WvWidget) : Widget.Children<Wv
 	}
 
 	override fun remove(index: Int, count: Int) {
+		_widgets.remove(index, count)
+
 		val parent = parent
 		val cmd = parent.binder.bindingCommand
 
