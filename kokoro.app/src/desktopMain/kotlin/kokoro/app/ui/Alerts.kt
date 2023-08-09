@@ -54,7 +54,7 @@ private class AlertAwaitImpl(
 	override fun run() {
 		val continuation = continuation
 		continuation.resume(try {
-			val parent = null // TODO Infer via `continuation.context`
+			val parent = continuation.context[TopLevelComponentRef]?.get()
 			Alerts.swing(this, parent, spec)
 		} catch (ex: Throwable) {
 			continuation.resumeWithException(ex)
