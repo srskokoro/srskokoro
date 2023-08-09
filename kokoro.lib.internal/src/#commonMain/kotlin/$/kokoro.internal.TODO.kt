@@ -17,11 +17,8 @@ object TODO {
 
 	inline fun NOP() = Unit
 
-	/** Same as [NOP] */
-	inline val PLACEHOLDER get() = PLACEHOLDER()
-
-	/** Same as [NOP] */
-	inline fun PLACEHOLDER() = Unit
+	/** Same as [IMPLEMENT] */
+	inline fun <R> PLACEHOLDER(): R = IMPLEMENT()
 
 	inline fun <R> PLACEHOLDER(block: TODO.() -> R) = block(TODO)
 }
