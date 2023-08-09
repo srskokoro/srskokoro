@@ -258,6 +258,10 @@ class WvBinder {
 		throw AssertionError("Callback already unbound")
 	}
 
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun forceUnbindCallback(callbackId: CallbackId) =
+		forceUnbindCallback(callbackId.id)
+
 	fun callback(callback: CallbackRouter): CallbackId {
 		return CallbackId(boundCallbackIds.computeIfAbsent(callback, callbackBinder))
 	}
