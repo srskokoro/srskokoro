@@ -82,8 +82,7 @@ object StackTraceModal : CoroutineExceptionHandler, Thread.UncaughtExceptionHand
 
 	// --
 
-	override val key: CoroutineContext.Key<*>
-		get() = CoroutineExceptionHandler
+	override val key: CoroutineContext.Key<*> get() = CoroutineExceptionHandler
 
 	override fun handleException(context: CoroutineContext, exception: Throwable) {
 		print(exception) { out ->
