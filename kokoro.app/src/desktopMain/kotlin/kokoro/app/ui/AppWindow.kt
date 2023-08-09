@@ -6,7 +6,7 @@ import java.awt.event.WindowEvent
 import java.lang.ref.WeakReference
 import javax.swing.JFrame
 
-open class BaseAppWindow : JFrame {
+open class AppWindow : JFrame {
 	constructor() : super()
 	constructor(gc: GraphicsConfiguration?) : super(gc)
 	constructor(title: String?) : super(title)
@@ -14,13 +14,13 @@ open class BaseAppWindow : JFrame {
 
 	companion object {
 		/** @see javax.swing.JOptionPane.getRootFrame */
-		val lastActive: BaseAppWindow?
+		val lastActive: AppWindow?
 			get() {
 				assertThreadSwing()
 				return lastActiveRef.get()
 			}
 
-		private var lastActiveRef = WeakReference<BaseAppWindow>(null)
+		private var lastActiveRef = WeakReference<AppWindow>(null)
 	}
 
 	@Suppress("LeakingThis")
