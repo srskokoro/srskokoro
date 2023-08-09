@@ -248,7 +248,7 @@ class WvBinder {
 		}
 	}
 
-	internal fun forceUnbindCallback(callbackId: Int) {
+	fun forceUnbindCallback(callbackId: Int) {
 		val callback = boundCallbacks.set(callbackId, null)
 		if (callback != null) {
 			boundCallbackIds.remove(callback)
