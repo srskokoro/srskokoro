@@ -4,9 +4,9 @@ import java.awt.Component
 import java.lang.ref.WeakReference
 import kotlin.coroutines.CoroutineContext
 
-class TopLevelComponentRef(component: Component?) : WeakReference<Component?>(component), CoroutineContext.Element {
+class TopLevelComponentRef<C : Component?>(component: C) : WeakReference<C>(component), CoroutineContext.Element {
 
-	companion object Key : CoroutineContext.Key<TopLevelComponentRef>
+	companion object Key : CoroutineContext.Key<TopLevelComponentRef<*>>
 
 	override val key: CoroutineContext.Key<*> get() = TopLevelComponentRef
 }

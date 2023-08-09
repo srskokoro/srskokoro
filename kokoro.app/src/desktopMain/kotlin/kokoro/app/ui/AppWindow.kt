@@ -24,7 +24,7 @@ open class AppWindow : JFrame {
 	}
 
 	@Suppress("LeakingThis")
-	private val ref = WeakReference(this)
+	@JvmField protected val ref = TopLevelComponentRef(this)
 
 	override fun processWindowEvent(e: WindowEvent) {
 		super.processWindowEvent(e)
