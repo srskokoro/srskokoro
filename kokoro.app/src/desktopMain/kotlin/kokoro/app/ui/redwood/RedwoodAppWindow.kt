@@ -1,8 +1,9 @@
-package kokoro.app.ui
+package kokoro.app.ui.redwood
 
 import androidx.compose.runtime.*
 import app.cash.redwood.compose.RedwoodComposition
 import app.cash.redwood.widget.Widget
+import kokoro.app.ui.AppWindow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.suspendCancellableCoroutine
