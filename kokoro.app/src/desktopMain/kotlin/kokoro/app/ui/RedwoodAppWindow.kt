@@ -1,9 +1,8 @@
 package kokoro.app.ui
 
-import TODO
 import androidx.compose.runtime.*
 import app.cash.redwood.compose.RedwoodComposition
-import kokoro.app.ui.wv.widget.WvWidgetChildren
+import app.cash.redwood.widget.Widget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -20,17 +19,19 @@ open class RedwoodAppWindow : AppWindow {
 
 	private var _composition: RedwoodComposition? = null
 	val composition: RedwoodComposition
-		get() = _composition ?: error("Must first call `${::init.name}()`")
+		get() = _composition ?: error("Must first call `init()`")
 
 	/** @see composition */
-	fun init(mainScope: CoroutineScope) {
-		if (_composition != null) {
-			error("Already initialized")
-		}
+	fun <W : Any> init(
+		mainScope: CoroutineScope,
+		container: Widget.Children<W>,
+		provider: Widget.Provider<W>,
+		onEndChanges: () -> Unit = {},
+	) {
+		_composition?.cancel()
 		_composition = RedwoodComposition(
 			mainScope + _frameClock + super.ref,
-			TODO { PLACEHOLDER<WvWidgetChildren>() },
-			TODO { PLACEHOLDER() },
+			container, provider, onEndChanges,
 		)
 	}
 
