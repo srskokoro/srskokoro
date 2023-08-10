@@ -145,19 +145,19 @@ internal class WvSetupBuilder(
 		val idLeadDotIdx = name.lastIndexOf('.', name.length - 4) // Excludes the ".js" file extension
 
 		val introArgs: String
-		val introArgsCommaIdx: Int
+		val introArgsCount: Int
 
 		val id = run<Int> {
 			if (idLeadDotIdx >= 0) {
-				introArgs = name.substring(idLeadDotIdx + 1, name.length - 3) // Excludes the ".js" file extension
-					.replace('@', ',')
+				val introArgsSplit = name
+					.substring(idLeadDotIdx + 1, name.length - 3) // Excludes the ".js" file extension
+					.split('@')
 
-				introArgsCommaIdx = introArgs.indexOf(',')
-				val digits = if (introArgsCommaIdx < 0) introArgs else
-					introArgs.substring(0, introArgsCommaIdx)
-
-				try {
-					return@run digits.toInt()
+				introArgsCount = introArgsSplit.size
+				if (introArgsCount > 0) try {
+					val introArgsAsInts = introArgsSplit.map { it.toInt() }
+					introArgs = introArgsAsInts.joinToString(",")
+					return@run introArgsAsInts.first()
 				} catch (_: NumberFormatException) {
 					// Fall through
 				}
@@ -169,24 +169,16 @@ internal class WvSetupBuilder(
 		val type = name[0]
 		val intro = when (type) {
 			TYPE_t -> {
-				if (introArgsCommaIdx >= 0) {
+				if (introArgsCount > 1) {
 					throw E_TypeShouldNotHaveGroupId(name)
 				}
 				"t$("
 			}
 			TYPE_m -> {
-				if (introArgsCommaIdx >= 0) {
-					val digits = introArgs.substring(introArgsCommaIdx + 1)
-					try {
-						digits.toInt()
-					} catch (_: NumberFormatException) {
-						throw E_NonIntegerJsSetupId(name)
-					}
-				}
 				"m$("
 			}
 			TYPE_s -> {
-				if (introArgsCommaIdx >= 0) {
+				if (introArgsCount > 1) {
 					throw E_TypeShouldNotHaveGroupId(name)
 				}
 				if (name.regionMatches(2, "$HEAD_NAME.", 0, length = HEAD_NAME_len + 1, ignoreCase = true)) {
