@@ -2,7 +2,7 @@ package kokoro.jcef
 
 import java.io.File
 
-object JcefSetup {
+object Jcef {
 	val bundleDir = System.getProperty("jcef.bundle")?.let { File(it) } ?: File(
 		System.getenv("APP_HOME") ?: error(ERROR_JCEF_BUNDLE_DIR_NOT_SET),
 		"jcef",
