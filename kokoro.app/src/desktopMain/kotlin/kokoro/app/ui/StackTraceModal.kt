@@ -276,7 +276,7 @@ private object StackTraceModalImpl {
 			options, defaultOption,
 		)
 
-		val parent = AppWindow.lastActive
+		val parent = BaseWindowFrame.lastActive
 		pane.componentOrientation = (parent ?: JOptionPane.getRootFrame()).componentOrientation
 
 		// Necessary to prevent `Esc` key "close" action (which is otherwise

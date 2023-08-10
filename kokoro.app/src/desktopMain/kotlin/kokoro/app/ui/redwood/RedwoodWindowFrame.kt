@@ -3,7 +3,7 @@ package kokoro.app.ui.redwood
 import androidx.compose.runtime.*
 import app.cash.redwood.compose.RedwoodComposition
 import app.cash.redwood.widget.Widget
-import kokoro.app.ui.AppWindow
+import kokoro.app.ui.BaseWindowFrame
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -12,7 +12,7 @@ import java.awt.Graphics
 import java.awt.GraphicsConfiguration
 import kotlin.coroutines.Continuation
 
-open class RedwoodAppWindow : AppWindow {
+open class RedwoodWindowFrame : BaseWindowFrame {
 	constructor() : super()
 	constructor(gc: GraphicsConfiguration?) : super(gc)
 	constructor(title: String?) : super(title)
