@@ -12,6 +12,14 @@ open class BaseWindowFrame : JFrame {
 	constructor(title: String?) : super(title)
 	constructor(title: String?, gc: GraphicsConfiguration?) : super(title, gc)
 
+	init {
+		setUp()
+	}
+
+	private fun setUp() {
+		defaultCloseOperation = DISPOSE_ON_CLOSE
+	}
+
 	companion object {
 		/** @see javax.swing.JOptionPane.getRootFrame */
 		val lastActive: BaseWindowFrame?
