@@ -48,6 +48,7 @@ class WvBinder {
 		return idPool.removeFirst()
 	}
 
+	@Suppress("NOTHING_TO_INLINE")
 	private inline fun recycleWidgetId(id: Int): Unit =
 		widgetIdPool.addLast(id)
 
@@ -62,6 +63,7 @@ class WvBinder {
 		return idPool.removeFirst()
 	}
 
+	@Suppress("NOTHING_TO_INLINE")
 	private inline fun recycleCallbackId(id: Int): Unit =
 		callbackIdPool.addLast(id)
 

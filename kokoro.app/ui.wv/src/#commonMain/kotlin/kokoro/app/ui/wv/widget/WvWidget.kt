@@ -41,6 +41,7 @@ abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widge
 		cmd.appendLine(')')
 	}
 
+	@Suppress("NOTHING_TO_INLINE")
 	internal inline fun flagStatus(flags: Int) {
 		val oldStatus = _widgetStatus
 		if (oldStatus and WS_TRACKED == 0) {
@@ -63,6 +64,7 @@ abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widge
 		flagStatus(WS_REQUESTED_LAYOUT)
 	}
 
+	@Suppress("NOTHING_TO_INLINE")
 	internal inline fun bindUpdates(cmd: StringBuilder) {
 		cmd.append('[')
 		val args = ArgumentsBuilder(cmd)

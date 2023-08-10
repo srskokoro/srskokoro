@@ -73,6 +73,7 @@ open class WvWidgetChildren(@JvmField val parent: WvWidget) : Widget.Children<Wv
 
 	open fun ModifierBinder.onBindScopedModifier(modifier: Modifier) = Unit
 
+	@Suppress("NOTHING_TO_INLINE")
 	inline fun requestLayout() = parent.requestLayout()
 
 	// --
