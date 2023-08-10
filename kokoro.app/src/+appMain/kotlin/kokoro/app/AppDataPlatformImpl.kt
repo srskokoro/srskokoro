@@ -1,5 +1,8 @@
 package kokoro.app
 
+/**
+ * CONTRACT: The paths returned must all be absolute.
+ */
 expect object AppDataPlatformImpl {
 
 	fun forRoamingRoot(): String
