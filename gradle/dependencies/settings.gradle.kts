@@ -55,7 +55,7 @@ dependencyVersions {
 	module("org.ajoberstar.grgit:grgit-core", grgit)
 	module("org.ajoberstar.grgit:grgit-gradle", grgit)
 
-	val gmazzo_buildConfig = "4.0.4" // https://github.com/gmazzo/gradle-buildconfig-plugin
+	val gmazzo_buildConfig = "4.1.2" // https://github.com/gmazzo/gradle-buildconfig-plugin
 	plugin("com.github.gmazzo.buildconfig", gmazzo_buildConfig)
 	module("com.github.gmazzo.buildconfig:plugin", gmazzo_buildConfig)
 
