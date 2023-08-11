@@ -13,6 +13,11 @@ package kokoro.internal
  * @Deprecated(SPECIAL_USE_DEPRECATION)
  * ```
  *
+ * NOTE: Unlike with `@`[RequiresOptIn]`()`, marking symbols as `@`[Deprecated]`()`
+ * appear specially in IDE autocompletion popups (e.g., the symbols appear in
+ * strike-through style), and thus, their special nature is conveyed even before
+ * being entered into code.
+ *
  * @see Deprecated
  * @see SPECIAL_USE_IN_TESTS_DEPRECATION
  */
