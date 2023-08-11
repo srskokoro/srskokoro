@@ -32,7 +32,9 @@ buildConfig {
 	publicTopLevel() inPackage NAMESPACE
 
 	val isReleasing = isReleasing
-	require(isDebug == !isReleasing) { throw AssertionError() }
+	require(isDebug == !isReleasing) {
+		throw AssertionError("Required: `${::isDebug.name} == !${::isReleasing.name}`")
+	}
 
 	buildConfigField("boolean", "IS_RELEASING", "$isReleasing")
 	buildConfigField("boolean", "RELEASE", "IS_RELEASING")
