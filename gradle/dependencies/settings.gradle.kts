@@ -36,7 +36,7 @@ dependencyVersions {
 	module("io.kotest:kotest-assertions-core", kotest)
 	module("io.kotest:kotest-property", kotest)
 
-	val kotlinx_coroutines = "1.7.2" // https://github.com/Kotlin/kotlinx.coroutines/releases
+	val kotlinx_coroutines = "1.7.3" // https://github.com/Kotlin/kotlinx.coroutines/releases
 	module("org.jetbrains.kotlinx:kotlinx-coroutines-test", kotlinx_coroutines)
 	module("org.jetbrains.kotlinx:kotlinx-coroutines-core", kotlinx_coroutines)
 	module("org.jetbrains.kotlinx:kotlinx-coroutines-swing", kotlinx_coroutines)
