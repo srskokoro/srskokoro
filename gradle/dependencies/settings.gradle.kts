@@ -59,6 +59,10 @@ dependencyVersions {
 	plugin("com.github.gmazzo.buildconfig", gmazzo_buildConfig)
 	module("com.github.gmazzo.buildconfig:plugin", gmazzo_buildConfig)
 
+	val closure_compiler = "v20230502" // https://github.com/google/closure-compiler/tags
+	// - See also, https://github.com/gradle-webtools/gradle-minify-plugin
+	module("com.google.javascript:closure-compiler", closure_compiler)
+
 	// --
 
 	module("androidx.core:core-ktx", "1.10.1")
@@ -70,10 +74,15 @@ dependencyVersions {
 
 	// --
 
-	module("com.squareup.okio:okio", "3.3.0")
-	module("net.harawata:appdirs", "1.2.1") // https://github.com/harawata/appdirs
+	val korge = "4.0.9" // https://github.com/korlibs/korge/releases
+	module("com.soywiz.korlibs.kds:kds", korge)
 
+	module("com.squareup.okio:okio", "3.3.0")
+
+	module("net.harawata:appdirs", "1.2.1") // https://github.com/harawata/appdirs
 	module("com.github.ajalt.clikt:clikt", "3.5.2") // https://github.com/ajalt/clikt
+
+	// --
 
 	val flatlaf = "3.1.1"
 	module("com.formdev:flatlaf", flatlaf) // https://github.com/JFormDesigner/FlatLaf
@@ -88,13 +97,6 @@ dependencyVersions {
 
 	val voyager = "1.0.0-rc06" // https://github.com/adrielcafe/voyager/releases
 	module("cafe.adriel.voyager:*", voyager)
-
-	val closure_compiler = "v20230502" // https://github.com/google/closure-compiler/tags
-	// - See also, https://github.com/gradle-webtools/gradle-minify-plugin
-	module("com.google.javascript:closure-compiler", closure_compiler)
-
-	val korge = "4.0.9" // https://github.com/korlibs/korge/releases
-	module("com.soywiz.korlibs.kds:kds", korge)
 }
 
 dependencyBundles {
