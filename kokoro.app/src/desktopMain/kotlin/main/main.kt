@@ -1,6 +1,5 @@
 ﻿package main
 
-import TODO
 import assertUnreachable
 import kokoro.app.AppBuild
 import kokoro.app.AppData
@@ -11,6 +10,7 @@ import kokoro.app.ui.StackTraceModal
 import kokoro.app.ui.ifChoiceMatches
 import kokoro.app.ui.swing
 import kokoro.internal.DEBUG
+import kokoro.jcef.Jcef
 import kotlinx.coroutines.*
 import kotlinx.coroutines.swing.Swing
 import okio.BufferedSource
@@ -153,8 +153,12 @@ private class AppDaemon(
 		this.bindPath = bindPath
 
 		try {
+			// Cleanup for when our last process didn't shut down cleanly
 			if (Files.deleteIfExists(bindPath)) {
-				TODO // TODO Do additional cleanup work here
+				// Some JCEF helpers might have leaked from the last process
+				Jcef.killExtraneousJcefHelpers()
+
+				// NOTE: Do additional cleanup work here.
 			}
 		} catch (ex: Throwable) {
 			server.closeInCatch(ex)
