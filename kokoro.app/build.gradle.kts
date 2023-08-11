@@ -67,6 +67,8 @@ dependencies {
 	appMainImplementation(project("redwood:widget"))
 	appMainImplementation(project("ui.wv"))
 
+	appMainImplementation("cafe.adriel.voyager:voyager-navigator")
+
 	appMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 	desktopMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing")
 

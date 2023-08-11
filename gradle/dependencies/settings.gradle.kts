@@ -86,6 +86,9 @@ dependencyVersions {
 	plugin("app.cash.redwood.*", redwood)
 	plugin("app.cash.redwood.generator.*", redwood)
 
+	val voyager = "1.0.0-rc06" // https://github.com/adrielcafe/voyager/releases
+	module("cafe.adriel.voyager:*", voyager)
+
 	val closure_compiler = "v20230502" // https://github.com/google/closure-compiler/tags
 	// - See also, https://github.com/gradle-webtools/gradle-minify-plugin
 	module("com.google.javascript:closure-compiler", closure_compiler)
