@@ -1,15 +1,13 @@
 package kokoro.app.cli
 
-import com.github.ajalt.clikt.core.Abort
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.CliktError
-import com.github.ajalt.clikt.core.PrintCompletionMessage
-import com.github.ajalt.clikt.core.PrintHelpMessage
-import com.github.ajalt.clikt.core.PrintMessage
-import com.github.ajalt.clikt.core.ProgramResult
-import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.core.context
-import com.github.ajalt.clikt.output.CliktConsole
+import com.github.ajalt.mordant.rendering.AnsiLevel
+import com.github.ajalt.mordant.terminal.PrintRequest
+import com.github.ajalt.mordant.terminal.Terminal
+import com.github.ajalt.mordant.terminal.TerminalInfo
+import com.github.ajalt.mordant.terminal.TerminalInterface
 import kokoro.app.ui.Alerts
 import kokoro.app.ui.swing
 import kokoro.internal.ui.assertThreadSwing
@@ -42,19 +40,17 @@ abstract class BaseCommand(
 	treatUnknownOptionsAsArgs = treatUnknownOptionsAsArgs,
 	hidden = hidden,
 ) {
-	private var _main: Main? = null
 	val main: Main
-		get() = _main ?: (currentContext.findRoot().command as Main)
-			.also { _main = it }
+		get() = execState.main!!
 
 	val workingDir: String
-		get() = deferredState.workingDir
+		get() = execState.workingDir
 
-	private inline val deferredState
-		get() = currentContext.console as DeferredState
+	private inline val execState
+		get() = currentContext.obj as ExecutionState
 
 	@Deprecated("Should not be called directly", ReplaceWith(""), DeprecationLevel.ERROR)
-	final override fun run() = deferredState.pendingExecutions.addLast(this)
+	final override fun run() = execState.pendingExecutions.addLast(this)
 
 	// --
 
@@ -63,74 +59,69 @@ abstract class BaseCommand(
 	suspend fun feed(workingDir: String, args: Array<out String>, executionScope: CoroutineScope) {
 		assertThreadSwing()
 
-		val console = DeferredState(workingDir)
-		context { this.console = console }
+		val execState = ExecutionState(this as? Main, workingDir)
+		context {
+			obj = execState
+			// See, https://ajalt.github.io/clikt/advanced/#replacing-stdin-and-stdout
+			terminal = Terminal(terminalInterface = execState)
+		}
 
 		try {
 			parse(args.asList())
-		} catch (ex: ProgramResult) {
-			if (ex.statusCode != 0)
-				echo("Error! Status code: ${ex.statusCode}", err = true)
-			return // Exit
-		} catch (ex: PrintHelpMessage) {
-			echo(ex.command.getFormattedHelp(), err = ex.error)
-			return // Exit
-		} catch (ex: PrintCompletionMessage) {
-			throw ex
-		} catch (ex: PrintMessage) {
-			echo(ex.message, err = ex.error)
-			return // Exit
-		} catch (ex: UsageError) {
-			echo(ex.helpMessage(), err = true)
-			when (ex.statusCode) {
-				0, 1 -> {}
-				else -> {
-					val ls = currentContext.console.lineSeparator
-					echo("$ls${ls}Status code: ${ex.statusCode}")
-				}
-			}
-			return // Exit
 		} catch (ex: CliktError) {
-			echo(ex.message, err = true)
-			return // Exit
-		} catch (ex: Abort) {
-			echo(currentContext.localization.aborted(), err = true)
+			echoFormattedHelp(ex)
+			echo()
+			echo("EXIT CODE: ${ex.statusCode}")
 			return // Exit
 		} finally {
-			console.consumeMessages()
+			execState.consumeMessages()
 		}
 
-		for (cmd in console.pendingExecutions) with(cmd) {
+		for (cmd in execState.pendingExecutions) with(cmd) {
 			executionScope.execute()
 		}
 	}
 
-	private class DeferredState(
+	private class ExecutionState(
+		var main: Main? = null,
 		val workingDir: String,
-	) : CliktConsole {
-		var err: StringBuilder? = StringBuilder()
-		var out: StringBuilder? = StringBuilder()
-
+	) : TerminalInterface {
 		val pendingExecutions = LinkedList<BaseCommand>()
 
-		override fun promptForLine(prompt: String, hideInput: Boolean): String? = null
+		/** @see com.github.ajalt.mordant.terminal.TerminalRecorder */
+		override val info = TerminalInfo(
+			width = 79,
+			height = 24,
+			ansiLevel = AnsiLevel.NONE,
+			ansiHyperLinks = false,
+			outputInteractive = false,
+			inputInteractive = false,
+			crClearsLine = false,
+		)
 
-		override fun print(text: String, error: Boolean) {
-			(if (error) err else out)!!.append(text)
+		var hasError = false
+		val output = StringBuilder()
+
+		override fun completePrintRequest(request: PrintRequest) {
+			hasError = hasError or request.stderr
+			val sb = output
+			sb.append(request.text)
+			if (request.trailingLinebreak) {
+				sb.append("\n")
+			}
 		}
 
-		override val lineSeparator = "\n"
+		override fun readLineOrNull(hideInput: Boolean): String? = null
 
 		fun consumeMessages() {
-			try {
-				val errorMessage = err!!.trim(); err = null
-				if (errorMessage.isNotEmpty()) {
-					Alerts.swing(null) { message = errorMessage; style { ERROR }; }
-				}
-
-				val printMessage = out!!.trim(); out = null
-				if (printMessage.isNotEmpty()) {
-					Alerts.swing(null) { message = printMessage; }
+			val sb = output
+			val m = sb.trim(); sb.clear()
+			if (m.isNotEmpty()) try {
+				Alerts.swing(null) {
+					// TODO Output in a selectable monospaced text area instead.
+					//  - NOTE: The `message` field here accepts Swing components.
+					message = m
+					if (hasError) style { ERROR }
 				}
 			} catch (ex: Throwable) {
 				throw AssertionError("Shouldn't fail", ex)
