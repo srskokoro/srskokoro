@@ -42,6 +42,9 @@ localKotlin.targets.apply {
 	}
 }
 dependencies {
+	// https://kotlinlang.org/docs/gradle-configure-project.html#versions-alignment-of-transitive-dependencies
+	commonMainImplementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+
 	fun implementation(dep: String) = run {
 		commonTestImplementation(dep)
 	}

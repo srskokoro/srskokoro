@@ -19,6 +19,9 @@ tasks.test {
 }
 
 dependencies {
+	// https://kotlinlang.org/docs/gradle-configure-project.html#versions-alignment-of-transitive-dependencies
+	implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+
 	setUpTestFrameworkDeps_jvm {
 		testImplementation(it)
 	}

@@ -18,6 +18,9 @@ dependencies {
 	implementation("convention:build-support")
 	implementation("convention:deps")
 
+	// https://kotlinlang.org/docs/gradle-configure-project.html#versions-alignment-of-transitive-dependencies
+	implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+
 	implementation("org.jetbrains.kotlin:kotlin-gradle-plugin")
 	implementation("com.android.tools.build:gradle")
 
