@@ -53,13 +53,14 @@ private class AlertAwaitImpl(
 
 	override fun run() {
 		val continuation = continuation
-		continuation.resume(try {
+		val value: AlertButton? = try {
 			val parent = continuation.context[TopLevelComponentRef]?.get()
 			Alerts.swing(this, parent, spec)
 		} catch (ex: Throwable) {
 			continuation.resumeWithException(ex)
 			return
-		})
+		}
+		continuation.resume(value)
 	}
 
 	override fun onShow(token: AlertToken) {
