@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.Companion.COMMON_MAIN_SOURCE_SET_NAME
 
 plugins {
-	id("app.cash.redwood.generator.widget")
+	id("conv.redwood.gen.widget")
 	id("conv.kt.mpp.assets")
 }
 

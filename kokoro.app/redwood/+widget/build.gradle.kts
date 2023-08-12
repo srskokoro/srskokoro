@@ -2,7 +2,7 @@ import conv.sub.android.autoNamespace
 
 plugins {
 	id("kokoro.conv.kt.mpp.lib.sub") // MPP required by redwood generator plugin
-	id("app.cash.redwood.generator.widget")
+	id("conv.redwood.gen.widget")
 	id("conv.kt.mpp.assets")
 	id("conv.redwood.ui.wv.setup")
 }

@@ -1,7 +1,7 @@
 plugins {
 	id("conv.sub")
 	id("conv.kt.jvm") // JVM required by redwood schema plugin
-	id("app.cash.redwood.schema")
+	id("conv.redwood.schema")
 }
 
 redwoodSchema {

@@ -30,4 +30,6 @@ dependencies {
 	implementation("org.ajoberstar.grgit:grgit-gradle")
 	implementation("com.github.gmazzo.buildconfig:plugin")
 	implementation("org.jetbrains.kotlinx:atomicfu-gradle-plugin")
+
+	implementation("app.cash.redwood:redwood-gradle-plugin")
 }
