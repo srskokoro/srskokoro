@@ -4,6 +4,4 @@ plugins {
 	id("app.cash.redwood.schema")
 }
 
-redwoodSchema {
-	setUp(this)
-}
+setUp(redwoodSchema)

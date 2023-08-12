@@ -4,6 +4,4 @@ plugins {
 	id("app.cash.redwood.generator.modifiers")
 }
 
-redwoodSchema {
-	setUp(this)
-}
+setUp(redwoodSchema)
