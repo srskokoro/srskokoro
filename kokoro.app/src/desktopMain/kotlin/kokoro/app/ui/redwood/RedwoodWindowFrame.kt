@@ -54,8 +54,8 @@ open class RedwoodWindowFrame : BaseWindowFrame {
 	) : MonotonicFrameClock {
 
 		private val lock = Any()
-		private var awaiters = mutableListOf<FrameAwaiter<*>>()
-		private var spareList = mutableListOf<FrameAwaiter<*>>()
+		private var awaiters = ArrayList<FrameAwaiter<*>>()
+		private var spareList = ArrayList<FrameAwaiter<*>>()
 
 		fun sendFrame(timeNanos: Long) {
 			synchronized(lock) {
@@ -67,7 +67,7 @@ open class RedwoodWindowFrame : BaseWindowFrame {
 				awaiters = spareList
 				spareList = toResume
 
-				for (i in 0..<toResume.size) {
+				for (i in toResume.indices) {
 					toResume[i].resume(timeNanos)
 				}
 				toResume.clear()
