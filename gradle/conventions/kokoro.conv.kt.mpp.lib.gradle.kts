@@ -8,7 +8,7 @@ plugins {
 kotlin {
 	val targetsExtensions = targets.extensions
 
-	android() asExtensionIn targetsExtensions
+	androidTarget("android") asExtensionIn targetsExtensions
 	jvm("desktop") asExtensionIn targetsExtensions
 
 	KotlinTargets(

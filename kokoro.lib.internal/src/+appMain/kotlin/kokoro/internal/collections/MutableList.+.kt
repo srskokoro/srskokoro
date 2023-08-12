@@ -4,7 +4,7 @@ package kokoro.internal.collections
 // - The receiver is specifically `ArrayList` for guaranteed `RandomAccess`.
 // - The function param is marked `crossinline` to prevent non-local returns.
 inline fun <T> ArrayList<T>.move(fromIndex: Int, toIndex: Int, count: Int, crossinline action: (T) -> Unit) {
-	for (i in fromIndex until fromIndex + count) {
+	for (i in fromIndex..<(fromIndex + count)) {
 		action(get(i))
 	}
 	move(fromIndex, toIndex, count)
@@ -14,7 +14,7 @@ inline fun <T> ArrayList<T>.move(fromIndex: Int, toIndex: Int, count: Int, cross
 // - The receiver is specifically `ArrayList` for guaranteed `RandomAccess`.
 // - The function param is marked `crossinline` to prevent non-local returns.
 inline fun <T> ArrayList<T>.remove(index: Int, count: Int, crossinline action: (T) -> Unit) {
-	for (i in index until index + count) {
+	for (i in index..<(index + count)) {
 		action(get(i))
 	}
 	remove(index, count)

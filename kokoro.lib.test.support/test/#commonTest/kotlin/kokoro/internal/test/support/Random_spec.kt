@@ -10,7 +10,7 @@ class Random_spec : FunSpec({
 	test("`nextIntFavorSmall(u)` returns `0` until `u`") {
 		forAll(arbitrary { rs ->
 			rs.random.nextIntFavorSmall(rs.random.nextInt(1, 11))
-		}) { it in 0 until 10 }
+		}) { it in 0..<10 }
 	}
 	test("`nextString()` respects the specified length") {
 		checkAll(arbitrary { rs ->

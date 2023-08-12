@@ -15,7 +15,7 @@ dependencyVersions {
 		vendor { ADOPTIUM }
 	}
 
-	val kotlin = "1.8.22" // https://kotlinlang.org/docs/releases.html
+	val kotlin = "1.9.0" // https://kotlinlang.org/docs/releases.html
 	"org.jetbrains.kotlin".let {
 		plugin("$it.*", kotlin)
 		module("$it:*", kotlin)
@@ -89,7 +89,7 @@ dependencyVersions {
 	module("com.formdev:flatlaf-extras", flatlaf) // https://github.com/JFormDesigner/FlatLaf/tree/main/flatlaf-extras
 	module("com.github.Dansoftowner:jSystemThemeDetector", "3.8") // https://github.com/Dansoftowner/jSystemThemeDetector
 
-	val redwood = "0.5.0" // https://github.com/cashapp/redwood/releases
+	val redwood = "0.6.0" // https://github.com/cashapp/redwood/releases
 	module("app.cash.redwood:*", redwood)
 	plugin("app.cash.redwood", redwood)
 	plugin("app.cash.redwood.*", redwood)

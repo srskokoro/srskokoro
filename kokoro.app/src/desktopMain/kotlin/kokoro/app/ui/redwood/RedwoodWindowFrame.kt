@@ -67,7 +67,7 @@ open class RedwoodWindowFrame : BaseWindowFrame {
 				awaiters = spareList
 				spareList = toResume
 
-				for (i in 0 until toResume.size) {
+				for (i in 0..<toResume.size) {
 					toResume[i].resume(timeNanos)
 				}
 				toResume.clear()

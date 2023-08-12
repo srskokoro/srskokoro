@@ -160,8 +160,9 @@ internal class KotlinTargetsConfigLoader(
 		}
 
 		when (preset) {
-			/* */"android" ->
-			/*  */android(name) asExtensionIn targetsExtensions
+			/* */"android",
+			/* */"androidTarget" ->
+			/*  */androidTarget(name) asExtensionIn targetsExtensions
 
 			/* */"jvm" ->
 			/*  */jvm(name) asExtensionIn targetsExtensions
