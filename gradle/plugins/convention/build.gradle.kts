@@ -15,6 +15,7 @@ kotlin {
 apply(plugin = "conv.kt.dsl")
 
 dependencies {
+	implementation("convention:#plugins-root")
 	implementation("convention:build-support")
 	implementation("convention:deps")
 

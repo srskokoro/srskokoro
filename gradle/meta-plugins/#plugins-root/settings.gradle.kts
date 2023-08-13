@@ -3,3 +3,7 @@
 dependencyResolutionManagement {
 	repositories.gradlePluginPortal()
 }
+
+gradle.rootProject {
+	group = "convention"
+}
