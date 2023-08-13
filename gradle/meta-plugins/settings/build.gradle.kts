@@ -1,5 +1,5 @@
 plugins {
-	`kotlin-dsl`
+	id("conv.kt.dsl")
 }
 
 dependencies {

@@ -1,7 +1,7 @@
 import me.friwi.jcefmaven.EnumPlatform
 
 plugins {
-	`kotlin-dsl`
+	id("conv.kt.dsl")
 	id("com.github.gmazzo.buildconfig")
 }
 
