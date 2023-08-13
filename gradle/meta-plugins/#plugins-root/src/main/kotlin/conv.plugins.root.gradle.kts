@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
 	`lifecycle-base`
@@ -19,17 +20,17 @@ plugins {
 // isn't even complaining that.
 //
 internal object Build {
-	val kotlinJvmTarget = JvmTarget.JVM_1_8
-	const val javacReleaseOpt = "--release=8"
+	val KOTLIN_JVM_TARGET = JvmTarget.JVM_1_8
+	const val JAVAC_RELEASE_OPT = "--release=8"
 }
-subprojects {
+subprojects(fun Project.(): Unit = with(Build) {
 	pluginManager.withPlugin("org.gradle.kotlin.kotlin-dsl") {
 		project.extra["kotlin.jvm.target.validation.mode"] = "ignore"
-		tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-			compilerOptions.jvmTarget.set(Build.kotlinJvmTarget)
+		tasks.withType<KotlinCompile>().configureEach {
+			compilerOptions.jvmTarget.set(KOTLIN_JVM_TARGET)
 		}
 		tasks.withType<JavaCompile>().configureEach {
-			options.compilerArgs.add(Build.javacReleaseOpt)
+			options.compilerArgs.add(JAVAC_RELEASE_OPT)
 		}
 	}
-}
+})

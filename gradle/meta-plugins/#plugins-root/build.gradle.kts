@@ -13,15 +13,17 @@ plugins {
 // prior to every other build in the project and we don't want it to fail.
 //
 object Build {
-	val kotlinJvmTarget = JvmTarget.JVM_1_8
-	const val javacReleaseOpt = "--release=8"
+	val KOTLIN_JVM_TARGET = JvmTarget.JVM_1_8
+	const val JAVAC_RELEASE_OPT = "--release=8"
 }
-project.extra["kotlin.jvm.target.validation.mode"] = "ignore"
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-	compilerOptions.jvmTarget.set(Build.kotlinJvmTarget)
-}
-tasks.withType<JavaCompile>().configureEach {
-	options.compilerArgs.add(Build.javacReleaseOpt)
+with(Build) {
+	project.extra["kotlin.jvm.target.validation.mode"] = "ignore"
+	tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+		compilerOptions.jvmTarget.set(KOTLIN_JVM_TARGET)
+	}
+	tasks.withType<JavaCompile>().configureEach {
+		options.compilerArgs.add(JAVAC_RELEASE_OPT)
+	}
 }
 
 dependencies {
