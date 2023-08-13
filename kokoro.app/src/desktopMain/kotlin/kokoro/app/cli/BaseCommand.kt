@@ -69,9 +69,8 @@ abstract class BaseCommand(
 		try {
 			parse(args.asList())
 		} catch (ex: CliktError) {
+			execState.statusCode = ex.statusCode
 			echoFormattedHelp(ex)
-			echo()
-			echo("EXIT CODE: ${ex.statusCode}")
 			return // Exit
 		} finally {
 			execState.consumeMessages()
@@ -99,6 +98,8 @@ abstract class BaseCommand(
 			crClearsLine = false,
 		)
 
+		var statusCode: Int? = null
+
 		var hasError = false
 		val output = StringBuilder()
 
@@ -118,6 +119,7 @@ abstract class BaseCommand(
 			val m = sb.trim(); sb.clear()
 			if (m.isNotEmpty()) try {
 				Alerts.swing(null) {
+					statusCode?.let { title = "STATUS CODE: $it" }
 					// TODO Output in a selectable monospaced text area instead.
 					//  - NOTE: The `message` field here accepts Swing components.
 					message = m
