@@ -1,3 +1,3 @@
 plugins {
-	id("conv.kt.dsl")
+	id("conv.kt.minimal.jvm")
 }
