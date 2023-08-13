@@ -42,7 +42,10 @@ object AppData {
 	 * subdirectory of the local app data directory root.
 	 *
 	 * The local app data are those that does not participate in cloud sync, but
-	 * may participate in device-to-device migrations.
+	 * may participate in device-to-device migrations. For example, an app's
+	 * "recently opened documents" list is a good candidate for device-to-device
+	 * migrations as it's likely that any references in the list won't become
+	 * obsolete if most of the device's data would migrate to the other device.
 	 */
 	@JvmStatic val localMain get() = LocalMain.value
 
