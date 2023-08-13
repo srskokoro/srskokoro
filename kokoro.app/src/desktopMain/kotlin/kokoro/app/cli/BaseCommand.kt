@@ -119,7 +119,7 @@ abstract class BaseCommand(
 			val m = sb.trim(); sb.clear()
 			if (m.isNotEmpty()) try {
 				Alerts.swing(null) {
-					statusCode?.let { title = "STATUS CODE: $it" }
+					statusCode?.let { title = "Status Code: $it" }
 					// TODO Output in a selectable monospaced text area instead.
 					//  - NOTE: The `message` field here accepts Swing components.
 					message = m
