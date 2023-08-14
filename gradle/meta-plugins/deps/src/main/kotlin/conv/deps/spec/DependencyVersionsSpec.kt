@@ -50,14 +50,14 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 
 	fun includeBuild(rootProject: Any) {
 		val s = settings
-		val resolved = s.resolveForIncludeBuild(rootProject)
+		val resolved = s.resolveForIncludeBuild(rootProject) // May throw
 		s.includeBuild(rootProject)
 		prioritizeForLoad(resolved)
 	}
 
 	fun includeBuild(rootProject: Any, configuration: Action<ConfigurableIncludedBuild>) {
 		val s = settings
-		val resolved = s.resolveForIncludeBuild(rootProject)
+		val resolved = s.resolveForIncludeBuild(rootProject) // May throw
 		s.includeBuild(rootProject, configuration)
 		prioritizeForLoad(resolved)
 	}
