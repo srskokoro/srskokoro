@@ -114,10 +114,6 @@ internal fun runSingleProcessModel(args: Array<out String>, dispatcher: AppDispa
 
 // --
 
-private object ClientHandlingSwingScope : CoroutineScope {
-	override val coroutineContext = SupervisorJob() + Dispatchers.Swing + StackTraceModal
-}
-
 internal fun interface AppDispatcher {
 	suspend fun dispatch(scope: CoroutineScope, workingDir: String, args: Array<out String>, isInit: Boolean)
 }
@@ -126,6 +122,10 @@ internal suspend inline fun AppDispatcher.dispatch(workingDir: String, args: Arr
 	withContext(Dispatchers.Swing) {
 		dispatch(this, workingDir, args, isInit)
 	}
+}
+
+private object ClientHandlingSwingScope : CoroutineScope {
+	override val coroutineContext = SupervisorJob() + Dispatchers.Swing + StackTraceModal
 }
 
 internal class AppDaemon(
