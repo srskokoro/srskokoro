@@ -1,8 +1,5 @@
 package main
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.swing.Swing
-import kotlinx.coroutines.withContext
 import okio.BufferedSource
 import okio.EOFException
 import java.io.IOException
@@ -109,8 +106,6 @@ internal object APP_RELAY_PROTOCOL_01 {
 		// very long time. Doing so may throw -- let it!
 		source.close()
 
-		withContext(Dispatchers.Swing) {
-			dispatcher.dispatch(this, workingDir, args, isInit = false)
-		}
+		dispatcher.dispatch(workingDir, args)
 	}
 }

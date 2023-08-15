@@ -122,6 +122,12 @@ internal fun interface AppDispatcher {
 	suspend fun dispatch(scope: CoroutineScope, workingDir: String, args: Array<out String>, isInit: Boolean)
 }
 
+internal suspend inline fun AppDispatcher.dispatch(workingDir: String, args: Array<out String>, isInit: Boolean = false) {
+	withContext(Dispatchers.Swing) {
+		dispatch(this, workingDir, args, isInit)
+	}
+}
+
 internal class AppDaemon(
 	sockDir: String,
 
