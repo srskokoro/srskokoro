@@ -125,7 +125,7 @@ internal fun interface AppDispatcher {
 	suspend fun dispatch(scope: CoroutineScope, workingDir: String, args: Array<out String>, isInit: Boolean)
 }
 
-private class AppDaemon(
+internal class AppDaemon(
 	sockDir: String,
 
 	private val lockChannel: FileChannel,
@@ -254,7 +254,7 @@ private class AppDaemon(
 	 * accidentally catch an exception thrown by that app instance's running
 	 * logic.
 	 */
-	private class AbortClientConnection : CancellationException() {
+	class AbortClientConnection : CancellationException() {
 		override fun fillInStackTrace(): Throwable = this
 
 		fun throwAnySuppressed() {
@@ -408,7 +408,7 @@ private class AppDaemon(
 	}
 }
 
-private class AppRelay(sockDir: String) {
+internal class AppRelay(sockDir: String) {
 	private val client: SocketChannel
 	private val serverVersionCode: Int
 
