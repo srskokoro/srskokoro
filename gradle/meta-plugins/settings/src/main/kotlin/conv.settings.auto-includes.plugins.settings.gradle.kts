@@ -8,5 +8,5 @@ pluginManagement {
 	}
 }
 plugins {
-	id("conv.settings.base")
+	id("conv.settings.auto-includes.base")
 }
