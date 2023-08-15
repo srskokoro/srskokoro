@@ -1,9 +1,11 @@
 pluginManagement {
 	// Include our own custom plugins
-	relativize(File(gitRootDir!!, "gradle/plugins")).let {
+	val target = File(autoIncludesRoot, "gradle/plugins")
+	relativize(target).let {
 		// If we're the root, share the root 'gradle.properties'
-		if (isAtGitRoot) shareGradleProperties(it)
-
+		if (isAtAutoIncludesRoot) shareGradleProperties(it) {
+			setProperty(gradleProp_autoIncludesDirs_root, settingsDir.toRelativeString(base = target))
+		}
 		includeBuild(it) // Resolves relative to `settingsDir`
 	}
 }
