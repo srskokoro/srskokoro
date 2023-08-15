@@ -12,17 +12,18 @@ import java.util.*
 
 /**
  * Generates a 'gradle.properties' file for the specified project directory and
- * fills it with the same entries as those in the current build's
- * 'gradle.properties' file (located in the build's settings directory).
+ * fills it with entries as those in the current build's 'gradle.properties'
+ * file (located in the build's settings directory).
  *
  * @param projectDir the project directory path, relative to the build's
  * settings directory.
  *
  * @see Settings.getSettingsDir
  */
-fun Settings.shareGradleProperties(projectDir: String, overrides: Properties.() -> Unit = {}) {
+internal fun Settings.shareGradleProperties(projectDir: String) {
 	val settingsDir = settingsDir
 	val src = File(settingsDir, "gradle.properties")
+
 	val target = File(settingsDir, "$projectDir/gradle.properties")
 	val targetPath = target.toPath()
 
@@ -46,7 +47,11 @@ fun Settings.shareGradleProperties(projectDir: String, overrides: Properties.() 
 		props.load(it)
 	}
 
-	overrides.invoke(props)
+	// Overrides a property
+	props.setProperty(
+		gradleProp_autoIncludesDirs_root,
+		targetPath.parent.relativize(settingsDir.toPath()).toString()
+	)
 
 	// Output to a temporary file first
 	val tmp = File("${target.path}.tmp")
