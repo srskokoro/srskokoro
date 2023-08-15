@@ -8,6 +8,7 @@ pluginManagement {
 	}
 }
 plugins {
+	id("conv.settings.base")
 	id("org.gradle.toolchains.foojay-resolver-convention")
 }
 

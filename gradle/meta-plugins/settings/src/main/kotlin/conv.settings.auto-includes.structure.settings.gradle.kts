@@ -1,3 +1,7 @@
+plugins {
+	id("conv.settings.base")
+}
+
 autoIncludeSubProjects(rootDir, "")
 
 fun Settings.autoIncludeSubProjects(parentProjectDir: File, parentProjectId: String) {

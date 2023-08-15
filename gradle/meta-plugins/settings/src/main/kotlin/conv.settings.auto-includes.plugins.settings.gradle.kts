@@ -7,3 +7,6 @@ pluginManagement {
 		includeBuild(it) // Resolves relative to `settingsDir`
 	}
 }
+plugins {
+	id("conv.settings.base")
+}

@@ -1,3 +1,7 @@
+plugins {
+	id("conv.settings.base")
+}
+
 dependencyVersionsSetup {
 	useInProjects()
 
