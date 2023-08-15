@@ -20,7 +20,7 @@ import java.util.*
  *
  * @see Settings.getSettingsDir
  */
-fun Settings.shareGradleProperties(projectDir: String) {
+fun Settings.shareGradleProperties(projectDir: String, overrides: (Properties) -> Unit = {}) {
 	val settingsDir = settingsDir
 	val src = File(settingsDir, "gradle.properties")
 	val target = File(settingsDir, "$projectDir/gradle.properties")
@@ -45,6 +45,8 @@ fun Settings.shareGradleProperties(projectDir: String) {
 	src.inputStream().use {
 		props.load(it)
 	}
+
+	overrides.invoke(props)
 
 	// Output to a temporary file first
 	val tmp = File("${target.path}.tmp")
