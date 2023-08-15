@@ -59,8 +59,13 @@ private const val INSTANCE_CHANGE_LOCK_BYTE = 0L
  */
 private const val MASTER_INSTANCE_LOCK_BYTE = 1L
 
-/** @see kokoro.app.cli.Main */
-fun main(args: Array<out String>) {
+fun main(args: Array<out String>) = runSingleProcessModel(args, object : AppDispatcher {
+	override suspend fun dispatch(scope: CoroutineScope, workingDir: String, args: Array<out String>, isInit: Boolean) {
+		Main(isInit).feed(workingDir, args, scope)
+	}
+})
+
+internal fun runSingleProcessModel(args: Array<out String>, dispatcher: AppDispatcher) {
 	Thread.setDefaultUncaughtExceptionHandler(StackTraceModal) // Installed early to help with debugging
 
 	val lockDir = AppData.deviceBoundMain.parent!!.toString()
@@ -85,7 +90,7 @@ fun main(args: Array<out String>) {
 		if (masterInstanceLock != null) {
 			// We're the first instance!
 
-			val daemon = AppDaemon(lockDir, lockChannel, masterInstanceLock, args)
+			val daemon = AppDaemon(lockDir, lockChannel, masterInstanceLock, args, dispatcher)
 			instanceChangeLock.release()
 
 			daemon.doWorkLoop() // Will block the current thread
@@ -116,6 +121,10 @@ private object ClientHandlingSwingScope : CoroutineScope {
 	override val coroutineContext = SupervisorJob() + Dispatchers.Swing + StackTraceModal
 }
 
+internal fun interface AppDispatcher {
+	suspend fun dispatch(scope: CoroutineScope, workingDir: String, args: Array<out String>, isInit: Boolean)
+}
+
 private class AppDaemon(
 	sockDir: String,
 
@@ -123,6 +132,8 @@ private class AppDaemon(
 	private val masterInstanceLock: FileLock,
 
 	initialArgs: Array<out String>,
+
+	private val dispatcher: AppDispatcher,
 ) {
 	private val server: ServerSocketChannel
 	private val bindPath: NioPath
@@ -169,7 +180,7 @@ private class AppDaemon(
 		ClientHandlingSwingScope.launch {
 			handleAppInstance {
 				coroutineScope {
-					launchMain(System.getProperty("user.dir"), initialArgs, isInit = true)
+					dispatcher.dispatch(this, System.getProperty("user.dir"), initialArgs, isInit = true)
 				}
 			}
 		}
@@ -334,15 +345,11 @@ private class AppDaemon(
 		source.close()
 
 		withContext(Dispatchers.Swing) {
-			launchMain(workingDir, args)
+			dispatcher.dispatch(this, workingDir, args, isInit = false)
 		}
 	}
 
 	// --
-
-	private suspend inline fun CoroutineScope.launchMain(workingDir: String, args: Array<out String>, isInit: Boolean = false) {
-		Main(isInit).feed(workingDir, args, this)
-	}
 
 	private inline fun handleAppInstance(block: () -> Unit) {
 		val count = appInstanceCount
