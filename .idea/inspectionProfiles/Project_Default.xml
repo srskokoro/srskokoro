@@ -28,6 +28,7 @@
     <inspection_tool class="LocalVariableName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="namePattern" value="[\-_]*[A-Za-z][\-_A-Za-z\d]*" />
     </inspection_tool>
+    <inspection_tool class="ObjectLiteralToLambda" enabled="true" level="INFORMATION" enabled_by_default="true" editorAttributes="INFORMATION_ATTRIBUTES" />
     <inspection_tool class="ObjectPropertyName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="namePattern" value="[\-_]*[A-Za-z][\-_A-Za-z\d]*" />
     </inspection_tool>
