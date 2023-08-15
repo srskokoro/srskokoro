@@ -114,8 +114,8 @@ internal fun runSingleProcessModel(args: Array<out String>, dispatcher: AppDispa
 
 // --
 
-private const val CLI_PROTOCOL_01 = 0x01
-private const val CLI_PROTOCOL_DEFAULT = CLI_PROTOCOL_01
+private const val APP_RELAY_PROTOCOL_01 = 0x01
+private const val APP_RELAY_PROTOCOL_DEFAULT = APP_RELAY_PROTOCOL_01
 
 private object ClientHandlingSwingScope : CoroutineScope {
 	override val coroutineContext = SupervisorJob() + Dispatchers.Swing + StackTraceModal
@@ -213,10 +213,10 @@ internal class AppDaemon(
 						handleAppInstance {
 							sendVersionCode(client)
 							val source = Channels.newInputStream(client).source().buffer()
-							when (val protocol = identifyCliProtocol(source)) {
-								CLI_PROTOCOL_01 -> CLI_PROTOCOL_01_impl(source)
+							when (val protocol = identifyRelayProtocol(source)) {
+								APP_RELAY_PROTOCOL_01 -> APP_RELAY_PROTOCOL_01_impl(source)
 								else -> throw UnsupportedOperationException(
-									"Unknown CLI protocol: 0x${protocol.toString(16)} ($protocol)")
+									"Unknown relay protocol: 0x${protocol.toString(16)} ($protocol)")
 							}
 						}
 					} catch (ex: Throwable) {
@@ -286,7 +286,7 @@ internal class AppDaemon(
 		}
 	}
 
-	private fun identifyCliProtocol(source: BufferedSource): Int {
+	private fun identifyRelayProtocol(source: BufferedSource): Int {
 		try {
 			return source.readByte().toInt()
 		} catch (ex: IOException) {
@@ -302,7 +302,7 @@ internal class AppDaemon(
 		}
 	}
 
-	private suspend fun CLI_PROTOCOL_01_impl(source: BufferedSource) {
+	private suspend fun APP_RELAY_PROTOCOL_01_impl(source: BufferedSource) {
 		val workingDir: String
 		val args: Array<String>
 
@@ -466,10 +466,10 @@ internal class AppRelay(sockDir: String) {
 		val version = serverVersionCode
 		if (version == AppBuild.VERSION_CODE) try {
 			val buffer = okio.Buffer()
-			if (CLI_PROTOCOL_DEFAULT > Byte.MAX_VALUE) throw AssertionError(
+			if (APP_RELAY_PROTOCOL_DEFAULT > Byte.MAX_VALUE) throw AssertionError(
 				"Should be implemented as a varint at this point"
 			)
-			buffer.writeByte(CLI_PROTOCOL_DEFAULT)
+			buffer.writeByte(APP_RELAY_PROTOCOL_DEFAULT)
 
 			// We'll pass the current working directory plus command arguments
 			val payloadCount = 1 + args.size
