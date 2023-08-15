@@ -115,15 +115,15 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 			while (true) {
 				val includedRoot = loadDeque.pollLast() ?: break
 				if (loadedSet.add(includedRoot)) {
-					val target = dirProvider.dir(includedRoot)
-						.file(DEPENDENCY_VERSIONS_EXPORT_PATH)
+					val targetRoot = dirProvider.dir(includedRoot)
+					val target = targetRoot.file(DEPENDENCY_VERSIONS_EXPORT_PATH)
 
 					ByteArrayInputStream(
 						providers.fileContents(target).asBytes.orNull
 							?: failOnDependencyVersionsNotExported(includedRoot)
 					).bufferedReader().use { // Using `use` here because... paranoia
 						try {
-							load(it)
+							load(it, targetRoot.asFile)
 						} catch (ex: Throwable) {
 							throw DependencyVersionsFileException.wrapJudiciously(target, ex)
 						}

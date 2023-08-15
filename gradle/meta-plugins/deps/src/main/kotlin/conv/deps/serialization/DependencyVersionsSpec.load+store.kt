@@ -15,6 +15,7 @@ import org.gradle.api.InvalidUserDataException
 import java.io.BufferedReader
 import java.io.File
 import java.io.Writer
+import java.nio.file.Path
 
 private const val HEADER_INDICATOR = '[' // Must not be a valid JVM identifier character
 private const val KEY_SEP = '='
@@ -37,8 +38,8 @@ private const val PREFIX_JVM_01_VENDOR_len = PREFIX_JVM_01_VENDOR.length
 private const val PREFIX_JVM_02_IMPLEMENTATION = "implementation$KEY_SEP"
 private const val PREFIX_JVM_02_IMPLEMENTATION_len = PREFIX_JVM_02_IMPLEMENTATION.length
 
-internal fun DependencyVersionsSpec.load(reader: BufferedReader) {
-	val state = ReaderState(3)
+internal fun DependencyVersionsSpec.load(reader: BufferedReader, targetRoot: File) {
+	val state = ReaderState(3, targetRoot)
 	state.addFirst { consumeHeader(state, it) }
 
 	var lineNum = 1
@@ -59,7 +60,7 @@ internal fun DependencyVersionsSpec.load(reader: BufferedReader) {
 
 private typealias ReaderAction = DependencyVersionsSpec.(line: String) -> Boolean
 
-private class ReaderState(initialCapacity: Int) :
+private class ReaderState(initialCapacity: Int, @JvmField val targetRoot: File) :
 	java.util.ArrayDeque<ReaderAction>(initialCapacity)
 
 private fun failOnUnexpectedLine(lineNum: Int, line: String, cause: Throwable): Nothing =
@@ -81,9 +82,9 @@ private fun consumeHeader(state: ReaderState, header: String): Boolean {
 		HEADER_03_BUNDLES -> state.addFirst {
 			consumeBundleName(state, it)
 		}
-		HEADER_04_INCLUDES -> state.addFirst(
-			DependencyVersionsSpec::consumeInclude
-		)
+		HEADER_04_INCLUDES -> state.addFirst {
+			consumeInclude(state, it)
+		}
 		else -> return false
 	}
 	return true
@@ -170,13 +171,10 @@ private fun DependencyBundleSpec.consumeBundleElement(line: String): Boolean {
 	return false
 }
 
-private fun DependencyVersionsSpec.consumeInclude(line: String): Boolean {
+private fun DependencyVersionsSpec.consumeInclude(state: ReaderState, line: String): Boolean {
 	if (!line.startsWith(HEADER_INDICATOR)) {
-		val file = File(line)
-		if (!file.isAbsolute) {
-			throw InvalidUserDataException("Path needs to be absolute.")
-		}
-		prioritizeForLoad(file)
+		// NOTE: The following is undefined if `child` if absolute.
+		prioritizeForLoad(File(state.targetRoot, /* child = */ line))
 		return true
 	}
 	return false
@@ -255,7 +253,12 @@ private fun store(spec: DependencyVersionsSpec, writer: Writer): Int = writer.ru
 	nl++; appendLine()
 	nl++; appendLine(HEADER_04_INCLUDES)
 
-	spec.includes.forEach pass@{ includedRoot: String ->
+	val settingsDir = spec.settings.settingsDir.toPath()
+	spec.includes.forEach pass@{
+		val includedRoot = settingsDir
+			.relativize(Path.of(it))
+			.toString()
+
 		if (cannotStore(includedRoot)) return@pass // Skip
 
 		nl++; appendLine(includedRoot)
