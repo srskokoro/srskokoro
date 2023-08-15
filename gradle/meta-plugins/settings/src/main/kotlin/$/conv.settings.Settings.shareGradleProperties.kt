@@ -20,7 +20,7 @@ import java.util.*
  *
  * @see Settings.getSettingsDir
  */
-fun Settings.shareGradleProperties(projectDir: String, overrides: (Properties) -> Unit = {}) {
+fun Settings.shareGradleProperties(projectDir: String, overrides: Properties.() -> Unit = {}) {
 	val settingsDir = settingsDir
 	val src = File(settingsDir, "gradle.properties")
 	val target = File(settingsDir, "$projectDir/gradle.properties")
