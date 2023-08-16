@@ -1,5 +1,6 @@
 plugins {
 	id("conv.settings.auto-includes.base")
+
 	id("conv.settings.deps")
 	id("conv.settings.repositories")
 }
