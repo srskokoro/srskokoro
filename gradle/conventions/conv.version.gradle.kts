@@ -10,7 +10,7 @@ run<Unit> {
 	val versionLoader = rootProject.extensions.let { xs ->
 		// NOTE: The cast below throws on non-null incompatible types (as intended).
 		xs.findByName(versionLoader__name) as InternalVersionLoader?
-		?: xs.create(versionLoader__name, grgitService.service)
+			?: xs.create(versionLoader__name, grgitService.service)
 	}
 	versionLoader.version?.let { version = it }
 	versionCode = versionLoader.versionCode
