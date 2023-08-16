@@ -1,4 +1,4 @@
-package conv.internal.support.dsl
+@file:Suppress("PackageDirectoryMismatch")
 
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.internal.extensibility.DefaultExtraPropertiesExtension

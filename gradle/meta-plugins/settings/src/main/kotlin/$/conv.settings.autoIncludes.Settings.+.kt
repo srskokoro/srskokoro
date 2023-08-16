@@ -1,6 +1,5 @@
 @file:Suppress("PackageDirectoryMismatch")
 
-import conv.internal.support.dsl.getOrNull
 import org.gradle.api.initialization.Settings
 import org.gradle.kotlin.dsl.extra
 import java.io.File
