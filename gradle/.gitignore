@@ -1,3 +1,0 @@
-# Exclude auto-generated configuration files
-/dependencies/gradle.properties
-/plugins/gradle.properties
