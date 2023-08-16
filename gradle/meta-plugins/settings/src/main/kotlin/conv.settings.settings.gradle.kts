@@ -3,5 +3,5 @@ plugins {
 
 	id("conv.settings.auto-includes.deps")
 	id("conv.settings.auto-includes.plugins")
-	id("conv.settings.auto-includes.structure")
+	id("conv.settings.auto-includes.subprojects")
 }

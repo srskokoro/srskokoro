@@ -5,10 +5,14 @@ pluginManagement {
 	includeBuild("../meta-plugins")
 }
 plugins {
-	id("conv.settings")
+	id("conv.plugins.settings")
 }
 
 dependencyResolutionManagement {
 	repositories.gradlePluginPortal()
 	includeBuild("../meta-plugins")
 }
+
+include("convention")
+include("jcef-bundler")
+include("redwood.ui.wv.setup")
