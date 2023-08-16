@@ -1,7 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 pluginManagement {
-	includeBuild("#plugins-root")
+	includeBuild("#root")
 }
 
 dependencyResolutionManagement {

@@ -1,7 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 pluginManagement {
-	includeBuild("../build-logic/#plugins-root")
+	includeBuild("../build-logic/#root")
 	includeBuild("../build-logic")
 }
 plugins {
