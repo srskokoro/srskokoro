@@ -1,5 +1,5 @@
 pluginManagement {
-	includeBuild("gradle/meta-plugins")
+	includeBuild("gradle/build-logic")
 }
 plugins {
 	id("conv.settings")

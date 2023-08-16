@@ -1,8 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
 pluginManagement {
-	includeBuild("../meta-plugins/#plugins-root")
-	includeBuild("../meta-plugins")
+	includeBuild("../build-logic/#plugins-root")
+	includeBuild("../build-logic")
 }
 plugins {
 	id("conv.plugins.settings")
@@ -10,7 +10,7 @@ plugins {
 
 dependencyResolutionManagement {
 	repositories.gradlePluginPortal()
-	includeBuild("../meta-plugins")
+	includeBuild("../build-logic")
 }
 
 include("convention")
