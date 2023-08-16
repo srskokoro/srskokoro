@@ -8,7 +8,7 @@ dependencyVersionsSetup {
 	useInProjects()
 
 	// Include our centralized dependency versions
-	relativize(File(autoIncludesRoot, "gradle/dependencies")).let {
+	relativize(File(autoIncludesRoot, settings.extra[gradleProp_autoIncludesDirs_deps] as String)).let {
 		// If we're the root, share the root 'gradle.properties'
 		if (isAtAutoIncludesRoot) shareGradleProperties(it)
 

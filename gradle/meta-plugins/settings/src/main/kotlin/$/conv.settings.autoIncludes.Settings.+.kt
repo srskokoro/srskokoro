@@ -7,6 +7,11 @@ import java.io.File
 internal const val gradleProp_autoIncludesDirs = "conv.settings.auto-includes.dirs"
 internal const val gradleProp_autoIncludesDirs_root = "$gradleProp_autoIncludesDirs.root"
 
+internal const val gradleProp_autoIncludesDirs_deps = "$gradleProp_autoIncludesDirs.deps"
+internal const val gradleProp_autoIncludesDirs_plugins = "$gradleProp_autoIncludesDirs.plugins"
+
+// --
+
 private const val autoIncludesRoot__name = "autoIncludesRoot"
 
 val Settings.autoIncludesRoot: File
