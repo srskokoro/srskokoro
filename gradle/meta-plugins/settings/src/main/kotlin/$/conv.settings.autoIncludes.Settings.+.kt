@@ -1,5 +1,6 @@
 @file:Suppress("PackageDirectoryMismatch")
 
+import conv.internal.support.dsl.getOrNull
 import org.gradle.api.initialization.Settings
 import org.gradle.kotlin.dsl.extra
 import java.io.File
@@ -20,9 +21,8 @@ val Settings.autoIncludesRoot: File
 		xs.findByName(autoIncludesRoot__name) as File?
 			?: extra.run {
 				val settingsDir = settingsDir
-				if (has(gradleProp_autoIncludesDirs_root)) {
-					val v = get(gradleProp_autoIncludesDirs_root) as String
-					val target = File(settingsDir, v).normalize()
+				getOrNull<String>(gradleProp_autoIncludesDirs_root)?.let {
+					val target = File(settingsDir, it).normalize()
 					if (target != settingsDir) return@run target
 				}
 				return@run settingsDir
