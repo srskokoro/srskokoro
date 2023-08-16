@@ -5,7 +5,7 @@ plugins {
 
 kotlin {
 	sourceSets.main {
-		kotlin.srcDir(File(rootDir, "../conventions"))
+		kotlin.srcDir(File(projectDir, "../conventions"))
 	}
 }
 
