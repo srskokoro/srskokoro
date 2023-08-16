@@ -1,4 +1,5 @@
 plugins {
+	id("conv.sub")
 	id("conv.kt.android.app")
 	id("conv.version")
 }
