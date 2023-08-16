@@ -49,7 +49,7 @@ internal fun Settings.shareGradleProperties(projectDir: String) {
 
 	// Overrides a property
 	props.setProperty(
-		gradleProp_autoIncludesDirs_root,
+		gradleProp_structureDirs_root,
 		targetPath.parent.relativize(settingsDir.toPath()).toString()
 	)
 

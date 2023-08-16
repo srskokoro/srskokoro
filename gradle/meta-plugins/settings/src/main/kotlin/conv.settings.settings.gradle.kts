@@ -1,7 +1,7 @@
 plugins {
 	id("conv.settings.base")
 
-	id("conv.settings.auto-includes.deps")
-	id("conv.settings.auto-includes.plugins")
-	id("conv.settings.auto-includes.subprojects")
+	id("conv.settings.structure.deps")
+	id("conv.settings.structure.plugins")
+	id("conv.settings.structure.subprojects")
 }
