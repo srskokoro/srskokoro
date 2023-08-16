@@ -7,3 +7,5 @@ dependencyResolutionManagement {
 gradle.rootProject {
 	group = "convention"
 }
+
+rootProject.name = "build-root"
