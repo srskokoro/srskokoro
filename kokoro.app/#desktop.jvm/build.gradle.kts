@@ -1,5 +1,4 @@
 plugins {
-	id("conv.sub")
 	id("conv.kt.jvm.app")
 	id("conv.version")
 	id("jcef-bundler")

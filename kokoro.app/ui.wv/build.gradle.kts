@@ -1,4 +1,4 @@
-import conv.sub.android.autoNamespace
+import conv.util.*
 
 plugins {
 	id("kokoro.conv.kt.mpp.lib.sub")

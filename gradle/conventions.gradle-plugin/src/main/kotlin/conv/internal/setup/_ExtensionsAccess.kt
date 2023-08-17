@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 internal val Project.baseExt
 	get() = extensions.getByName("base") as BasePluginExtension
 
+internal val Project.baseExtOrNull
+	get() = extensions.findByName("base") as? BasePluginExtension
+
 internal val Project.androidExt
 	get() = extensions.getByName("android") as AndroidExtension
 

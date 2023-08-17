@@ -18,6 +18,7 @@ dependencies {
 	implementation("convention:build-root")
 	implementation("convention:build-support")
 	implementation("convention:deps")
+	implementation("convention:settings")
 
 	// https://kotlinlang.org/docs/gradle-configure-project.html#versions-alignment-of-transitive-dependencies
 	implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
