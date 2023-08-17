@@ -16,14 +16,14 @@ run<Unit> {
 		throw ex
 	}.archivesName
 
-	// Prevents conflicts when generating the archives, especially for tasks
-	// that output an installation distribution where all the archives are
-	// placed under the same directory. See also, https://github.com/gradle/gradle/issues/847#issuecomment-1205001575
+	// Prevents conflicts when generating the archives, e.g., for tasks that
+	// output an installation distribution where all the archives are placed
+	// under the same directory. See also, https://github.com/gradle/gradle/issues/847#issuecomment-1205001575
 	base.archivesName.convention(parentBaseArchivesName.map { "$it\$$name" })
-	// ^ NOTE: Prior to the character '$' being used above, the character '!'
-	// was also considered in the past, but this seems to confuse the IDE (i.e.,
-	// when a path with a '!' character is displayed in the build output's
-	// console, auto-linking may not work properly), since the '!' character is
-	// often used for denoting the inside of an archive. Hence, the '$' is being
-	// used now.
+	// ^ NOTE: Prior to the '$' character being used above, the '!' character
+	// was also used in the past, but this seems to confuse the IDE (i.e., when
+	// a path with a '!' character is displayed in the build output's console,
+	// auto-linking may not work properly), since the '!' character is often
+	// used for denoting the inside of an archive. Hence, the '$' is now being
+	// used instead.
 }
