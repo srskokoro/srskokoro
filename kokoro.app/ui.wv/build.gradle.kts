@@ -1,7 +1,7 @@
 import conv.util.*
 
 plugins {
-	id("kokoro.conv.kt.mpp.lib.sub")
+	id("kokoro.conv.kt.mpp.lib")
 	id("jcef-bundler-dependency")
 }
 

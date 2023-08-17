@@ -1,7 +1,7 @@
 import conv.util.*
 
 plugins {
-	id("kokoro.conv.kt.mpp.lib.sub") // MPP required by redwood generator plugin
+	id("kokoro.conv.kt.mpp.lib") // MPP required by redwood generator plugin
 	id("conv.redwood.gen.compose")
 }
 
