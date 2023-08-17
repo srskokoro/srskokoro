@@ -23,7 +23,8 @@ private val SETTINGS_GRADLE_KTS = Path.of("settings.gradle.kts")
 
 private fun isPotentialSubProject(dir: Path): Boolean {
 	// NOTE: Excludes those that look like included builds.
-	return !dir.resolve(SETTINGS_GRADLE_KTS).exists()
+	return Files.isDirectory(dir)
+		&& !dir.resolve(SETTINGS_GRADLE_KTS).exists()
 		&& !dir.resolve(SETTINGS_GRADLE).exists()
 		&& (dir.resolve(BUILD_GRADLE_KTS).exists()
 		|| dir.resolve(BUILD_GRADLE).exists())
