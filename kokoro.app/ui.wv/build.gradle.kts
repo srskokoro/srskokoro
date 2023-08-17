@@ -8,7 +8,7 @@ plugins {
 kotestConfigClass = "KotestConfig"
 
 val parent = project.parent!!
-android.autoNamespace(parent)
+android.autoNamespace(project, parent)
 
 dependencies {
 	deps.bundles.testExtras *= {

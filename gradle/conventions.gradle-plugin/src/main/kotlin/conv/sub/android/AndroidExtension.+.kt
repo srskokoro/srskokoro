@@ -2,34 +2,58 @@ package conv.sub.android
 
 import conv.internal.setup.*
 import org.gradle.api.Project
-import org.gradle.api.plugins.ExtensionAware
-import org.gradle.kotlin.dsl.extra
 
-private const val conv_sub_android__pluginId = "conv.sub.android"
+private val REGEX_NON_WORD_CHARS = Regex("\\W")
 
-fun AndroidExtension.autoNamespace(parentNamespaceSource: Project) = autoNamespace(parentNamespaceSource) {
-	error("The specified project doesn't have AGP applied: $parentNamespaceSource")
-}
-
-internal inline fun AndroidExtension.autoNamespace(parentNamespaceSource: Project, onFailure: () -> Unit) {
-	val parentAndroidExt = parentNamespaceSource.extensions
-		.findByName("android") as? AndroidExtension
-		?: return onFailure()
-
-	autoNamespace(parentAndroidExt.namespace)
-}
-
-internal const val autoNamespace_suffix__name = "autoNamespace_suffix"
-
-fun AndroidExtension.autoNamespace(parentNamespace: String?) {
-	val suffix = (this as ExtensionAware).extra[autoNamespace_suffix__name] as? String
-		?: error("Must first apply plugin: \"$conv_sub_android__pluginId\"")
-
-	namespace = buildString {
-		if (!parentNamespace.isNullOrEmpty()) {
+fun AndroidExtension.autoNamespace(project: Project, parentNamespace: String) {
+	val namespace = buildString {
+		if (parentNamespace.isNotEmpty()) {
 			append(parentNamespace)
 			append(".")
 		}
-		append(suffix)
+		val name = project.name
+		if (name.isEmpty() || name[0].isJavaIdentifierStart()) {
+			append('_')
+		}
+		// Converts invalid identifier characters into underscores
+		append(name.replace(REGEX_NON_WORD_CHARS, "_"))
 	}
+	this.namespace = namespace
+}
+
+fun AndroidExtension.autoNamespace(project: Project, parentAndroidExt: AndroidExtension) {
+	autoNamespace(project, requireNotNull(parentAndroidExt.namespace) {
+		"The specified parent `android` extension must have a `namespace` set."
+	})
+}
+
+fun AndroidExtension.autoNamespace(project: Project, parentProject: Project) {
+	autoNamespace(project, requireNotNull(parentProject.androidExtOrNull) {
+		"The specified parent project must have AGP applied: $parentProject"
+	})
+}
+
+fun AndroidExtension.autoNamespace(project: Project) {
+	val parentProject = project.parent
+	autoNamespace(project, requireNotNull(parentProject?.androidExtOrNull) {
+		"The parent project (of the specified project) must have AGP applied: $parentProject"
+	})
+}
+
+// --
+
+fun AndroidExtension.autoNamespaceOrNop(project: Project, parentNamespace: String?) {
+	autoNamespace(project, parentNamespace ?: return)
+}
+
+fun AndroidExtension.autoNamespaceOrNop(project: Project, parentAndroidExt: AndroidExtension?) {
+	autoNamespace(project, parentAndroidExt?.namespace ?: return)
+}
+
+fun AndroidExtension.autoNamespaceOrNop(project: Project, parentProject: Project?) {
+	autoNamespace(project, parentProject?.androidExtOrNull?.namespace ?: return)
+}
+
+fun AndroidExtension.autoNamespaceOrNop(project: Project) {
+	autoNamespace(project, project.parent?.androidExtOrNull?.namespace ?: return)
 }

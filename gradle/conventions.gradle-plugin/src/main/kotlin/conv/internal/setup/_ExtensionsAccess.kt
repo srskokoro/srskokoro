@@ -17,6 +17,9 @@ internal val Project.baseExt
 internal val Project.androidExt
 	get() = extensions.getByName("android") as AndroidExtension
 
+internal val Project.androidExtOrNull
+	get() = extensions.findByName("android") as? AndroidExtension
+
 /** @see kotlinMppExt */
 internal val Project.kotlinExt
 	get() = extensions.getByName("kotlin") as KotlinProjectExtension

@@ -11,7 +11,7 @@ val parent = project.parent!!
 
 android {
 	val client = parent.parent!!
-	autoNamespace(client)
+	autoNamespace(project, client)
 }
 
 redwoodSchema {
