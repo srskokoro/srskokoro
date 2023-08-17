@@ -18,9 +18,10 @@ tasks.withType<AbstractArchiveTask>().configureEach {
 }
 
 prioritizedAfterEvaluate {
+	// Don't proceed if we're either a direct child of the root project or the
+	// root project itself.
+	if (depth <= 1) return@prioritizedAfterEvaluate
 	val parent = parent ?: return@prioritizedAfterEvaluate
-	// Don't proceed if we're a direct child of the root project.
-	if (parent == rootProject) return@prioritizedAfterEvaluate
 
 	// NOTE: Blocks until the parent project is evaluated.
 	evaluationDependsOn(parent.path)
