@@ -14,7 +14,7 @@ import java.io.IOException
 import java.lang.reflect.InvocationTargetException
 import java.nio.file.Files
 
-internal var Project.skipPlaceholderGenerationForKotlinTargetsConfigLoader: Boolean
+var Project.skipPlaceholderGenerationForKotlinTargetsConfigLoader: Boolean
 	get() = extra.let {
 		it.has(::skipPlaceholderGenerationForKotlinTargetsConfigLoader.name) &&
 			it[::skipPlaceholderGenerationForKotlinTargetsConfigLoader.name] as Boolean
