@@ -4,6 +4,8 @@ plugins {
 	id("conv.version")
 }
 
+group = parent!!.group
+
 kotestConfigClass = "KotestConfig"
 
 android {

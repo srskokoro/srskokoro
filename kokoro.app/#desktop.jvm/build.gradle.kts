@@ -5,6 +5,8 @@ plugins {
 	id("jcef-bundler")
 }
 
+group = parent!!.group
+
 kotestConfigClass = "KotestConfig"
 
 application {
