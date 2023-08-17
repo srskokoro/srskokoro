@@ -34,9 +34,8 @@ fun AndroidExtension.autoNamespace(project: Project, parentProject: Project) {
 }
 
 fun AndroidExtension.autoNamespace(project: Project) {
-	val parentProject = project.parent
-	autoNamespace(project, requireNotNull(parentProject?.androidExtOrNull) {
-		"The parent project (of the specified project) must have AGP applied: $parentProject"
+	autoNamespace(project, requireNotNull(project.parent?.androidExtOrNull) {
+		"The parent project (of the specified $project) must have AGP applied."
 	})
 }
 
