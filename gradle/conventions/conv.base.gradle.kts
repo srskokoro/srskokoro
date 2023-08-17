@@ -58,7 +58,7 @@ prioritizedAfterEvaluate {
 	}
 }
 
-configurations.all {
+configurations.configureEach {
 	if (isCanBeResolved) {
 		// Fail on transitive upgrade/downgrade of direct dependency versions
 		failOnDirectDependencyVersionGotcha(gradle)
