@@ -4,7 +4,7 @@ plugins {
 	id("conv.kt.mpp.assets")
 	id("conv.gmazzo.buildconfig")
 	id("conv.version")
-	id("jcef-bundler-dependency")
+	id("kokoro.jcef.dependency")
 	id("conv.ktx.atomicfu")
 }
 

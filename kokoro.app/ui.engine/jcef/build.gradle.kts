@@ -1,6 +1,6 @@
 plugins {
 	id("conv.kt.jvm")
-	id("jcef-bundler-dependency")
+	id("kokoro.jcef.dependency")
 }
 
 kotestConfigClass = "KotestConfig"

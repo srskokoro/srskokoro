@@ -1,7 +1,7 @@
 plugins {
 	id("conv.kt.jvm.app")
 	id("conv.version")
-	id("jcef-bundler")
+	id("kokoro.jcef.bundler")
 }
 
 group = parent!!.group
