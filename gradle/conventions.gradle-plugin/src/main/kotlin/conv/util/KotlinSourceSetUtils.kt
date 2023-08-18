@@ -5,6 +5,7 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 
 infix fun List<KotlinSourceSet>.dependsOn(others: List<KotlinSourceSet>) {
 	forEachIndexed { i, it -> it.dependsOn(others[i]) }
@@ -49,3 +50,70 @@ fun DomainObjectCollection<out KotlinSourceSet>.dependencies(
 		dependencies(configure)
 	}
 }
+
+//region Utilities for inspecting `KotlinSourceSet` trees
+
+fun Iterable<KotlinSourceSet>.toDependencyMap(): MutableMap<String, MutableMap<String, KotlinSourceSet>> {
+	val out = LinkedHashMap<String, MutableMap<String, KotlinSourceSet>>()
+	for (entry in this) {
+		val entryName = entry.name
+		for (parent in entry.dependsOn) {
+			out.computeIfAbsent(parent.name) { LinkedHashMap() }
+				.putIfAbsent(entryName, entry)
+		}
+	}
+	return out
+}
+
+fun KotlinSourceSetContainer.printSourceSetTrees(out: Appendable = System.out) {
+	sourceSets.printSourceSetTrees(out)
+}
+
+fun Iterable<KotlinSourceSet>.printSourceSetTrees(out: Appendable = System.out) {
+	val printed = HashSet<String>()
+	val dependencyMap = toDependencyMap()
+
+	val entryNames = ArrayDeque<String>(if (this is Collection<*>) size else 0)
+	for (entry in this) when (val entryName = entry.name) {
+		KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME,
+		KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME,
+		-> entryNames.addFirst(entryName)
+		else -> entryNames.addLast(entryName)
+	}
+
+	for (entryName in entryNames) printSourceSetTrees_impl(
+		entryName,
+		out = out,
+		prefix = "",
+		printed = printed,
+		dependencyMap,
+	)
+}
+
+private fun printSourceSetTrees_impl(
+	entryName: String,
+	out: Appendable,
+	prefix: String,
+	printed: HashSet<String>,
+	dependencyMap: MutableMap<String, out MutableMap<String, KotlinSourceSet>>,
+) {
+	out.append(prefix)
+	out.append("' ")
+	out.append(entryName)
+	if (!printed.add(entryName)) {
+		out.appendLine(" (*)")
+	} else {
+		out.appendLine()
+		dependencyMap[entryName]?.forEach { (childName, _) ->
+			printSourceSetTrees_impl(
+				childName,
+				out = out,
+				prefix = "$prefix| ",
+				printed = printed,
+				dependencyMap
+			)
+		}
+	}
+}
+
+//endregion
