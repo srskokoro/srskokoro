@@ -14,6 +14,6 @@ dependencyResolutionManagement {
 }
 
 include(":conventions")
-project(":conventions").projectDir = File(settingsDir, "../conventions.gradle-plugin")
+project(":conventions").projectDir = File(settingsDir, "../conventions.build-plugin")
 
 include("redwood.ui.wv.setup")

@@ -1,18 +1,15 @@
 @file:Suppress("PackageDirectoryMismatch")
 
+import conv.internal.support.from
 import org.gradle.api.initialization.Settings
 import java.nio.file.DirectoryStream
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.exists
 
-private const val GRADLE_PLUGIN_SUB_PROJECT_SUFFIX_1 = ".gradle-plugin"
-private const val GRADLE_PLUGIN_SUB_PROJECT_SUFFIX_1_len =
-	/*         */ GRADLE_PLUGIN_SUB_PROJECT_SUFFIX_1.length
-
-private const val GRADLE_PLUGIN_SUB_PROJECT_SUFFIX_2 = ".gradle-plugins"
-private const val GRADLE_PLUGIN_SUB_PROJECT_SUFFIX_2_len =
-	/*         */ GRADLE_PLUGIN_SUB_PROJECT_SUFFIX_2.length
+private const val BUILD_PLUGIN_SUB_PROJECT = "build-plugin"
+private const val BUILD_PLUGIN_SUB_PROJECT_len =
+	/*         */ BUILD_PLUGIN_SUB_PROJECT.length
 
 
 private val BUILD_GRADLE = Path.of("build.gradle")
@@ -35,7 +32,9 @@ private fun isPotentialSubProject(dir: Path): Boolean {
  * system sorting in the IDE's project view.
  */
 private fun getProjectDirectoryPrefixLength(projectDirName: String) = when (projectDirName[0]) {
-	// NOTE: Listed in sorted order.
+	'.', // Special
+
+		// NOTE: Listed in sorted order.
 	'#', '$', '+', '-', '@', '_', '~' -> 1
 	else -> 0
 }
@@ -48,14 +47,19 @@ internal fun Settings.autoIncludeSubProjects(parentDir: Path, parentProjectId: S
 			return // Skip. Don't recurse further.
 		}
 
-		if (name.endsWith(GRADLE_PLUGIN_SUB_PROJECT_SUFFIX_1) || name.endsWith(GRADLE_PLUGIN_SUB_PROJECT_SUFFIX_2)) {
-			return // Skip. Don't recurse further.
+		val nameStart = getProjectDirectoryPrefixLength(name)
+		val nameLen = name.length
+		run<Unit> {
+			val checkIndex = nameLen - BUILD_PLUGIN_SUB_PROJECT_len
+			if (name.startsWith(BUILD_PLUGIN_SUB_PROJECT, checkIndex) && (checkIndex <= nameStart || name[checkIndex - 1] == '.')) {
+				return // Skip. Don't recurse further.
+			}
 		}
 
 		val childProjectId = buildString {
 			append(parentProjectId)
 			append(':')
-			append(name, getProjectDirectoryPrefixLength(name), name.length)
+			append(name, nameStart, nameLen)
 		}
 
 		include(childProjectId) // Resolves relative to `settings.rootDir`
@@ -65,27 +69,38 @@ internal fun Settings.autoIncludeSubProjects(parentDir: Path, parentProjectId: S
 	}))
 }
 
-internal fun Settings.autoIncludeGradlePluginSubProjects(parentDir: Path, projectIdPrefix: String) {
+internal fun Settings.autoIncludeBuildPluginSubProjects(parentDir: Path, projectIdPrefix: String) {
 	Files.newDirectoryStream(parentDir).use(fun DirectoryStream<Path>.() = forEach(fun(path) {
 		val name = path.fileName?.toString()
 		if (name.isNullOrEmpty() || name.startsWith('.') || name == "build" || !isPotentialSubProject(path)) {
 			return // Skip. Don't recurse further.
 		}
 
-		val suffixLen = if (name.endsWith(GRADLE_PLUGIN_SUB_PROJECT_SUFFIX_1)) {
-			GRADLE_PLUGIN_SUB_PROJECT_SUFFIX_1_len
-		} else if (name.endsWith(GRADLE_PLUGIN_SUB_PROJECT_SUFFIX_2)) {
-			GRADLE_PLUGIN_SUB_PROJECT_SUFFIX_2_len
-		} else {
+		val nameStart = getProjectDirectoryPrefixLength(name)
+		val nameEnd: Int
+		val nameLen = name.length
+		run<Unit> {
+			val checkIndex = nameLen - BUILD_PLUGIN_SUB_PROJECT_len
+			if (name.startsWith(BUILD_PLUGIN_SUB_PROJECT, checkIndex)) {
+				if (checkIndex <= nameStart) {
+					nameEnd = nameStart
+					return@run // Proceed below
+				} else {
+					nameEnd = checkIndex - 1
+					if (name[nameEnd] == '.') {
+						return@run // Proceed below
+					}
+				}
+			}
 			// Recurse further. Consider only its subdirectories.
-			autoIncludeGradlePluginSubProjects(path, "$projectIdPrefix$name\$")
+			autoIncludeBuildPluginSubProjects(path, "$projectIdPrefix${name.from(nameStart)}\$")
 			return // Skip. Don't include.
 		}
 
 		val childProjectId = buildString {
 			append(':')
 			append(projectIdPrefix)
-			append(name, getProjectDirectoryPrefixLength(name), name.length - suffixLen)
+			append(name, nameStart, nameEnd)
 		}
 
 		include(childProjectId) // Resolves relative to `settings.rootDir`
