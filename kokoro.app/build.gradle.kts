@@ -4,7 +4,6 @@ plugins {
 	id("conv.kt.mpp.assets")
 	id("conv.gmazzo.buildconfig")
 	id("conv.version")
-	id("kokoro.jcef.dependency")
 	id("conv.ktx.atomicfu")
 }
 
@@ -73,7 +72,6 @@ dependencies {
 	appMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 	desktopJvmMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing")
 
-	desktopJvmMainImplementation(jcef.dependency)
 	androidMainApi("androidx.core:core-ktx")
 	androidMainApi("androidx.activity:activity-ktx")
 

@@ -20,7 +20,7 @@ dependencies {
 	commonMainImplementation(parent.project("redwood:compose"))
 	commonMainImplementation(parent.project("redwood:widget"))
 
-	desktopJvmMainImplementation(project("jcef"))
+	desktopJvmMainApi(project("jcef"))
 
 	commonMainImplementation("com.soywiz.korlibs.kds:kds")
 }
