@@ -79,7 +79,7 @@ internal fun Settings.autoIncludeGradlePluginSubProjects(parentDir: Path, projec
 		} else {
 			// Recurse further. Consider only its subdirectories.
 			autoIncludeGradlePluginSubProjects(path, "$projectIdPrefix$name\$")
-			return // Skip. Don't include.
+			return@forEach // Skip. Don't include.
 		}
 
 		val childProjectId = buildString {
