@@ -16,5 +16,4 @@ dependencyResolutionManagement {
 include(":conventions")
 project(":conventions").projectDir = File(settingsDir, "../conventions.gradle-plugin")
 
-include("jcef-bundler")
 include("redwood.ui.wv.setup")
