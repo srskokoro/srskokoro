@@ -15,7 +15,7 @@ kotlin {
 	 */
 	@Suppress("UNUSED_VARIABLE") val eat_comment: Nothing
 
-	targets.desktop {
+	targets.desktopJvm {
 		// TODO Uncomment eventually to allow `.java` sources -- https://youtrack.jetbrains.com/issue/KT-30878
 		//withJava()
 	}

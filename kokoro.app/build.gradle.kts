@@ -20,7 +20,7 @@ kotlin {
 	 */
 	@Suppress("UNUSED_VARIABLE") val eat_comment: Nothing
 
-	targets.desktop {
+	targets.desktopJvm {
 		// TODO Uncomment eventually to allow `.java` sources -- https://youtrack.jetbrains.com/issue/KT-30878
 		//withJava()
 	}
@@ -51,7 +51,7 @@ buildConfig.appMain {
 	)
 }
 
-buildConfig.desktopMain {
+buildConfig.desktopJvmMain {
 	internalObject("AppBuildDesktop") inPackage NAMESPACE
 	buildConfigField("String", "APP_DATA_DIR_NAME", "\"SRSKokoro${if (isReleasing) "" else "-Dev"}\"")
 }
@@ -71,25 +71,25 @@ dependencies {
 	appMainImplementation("cafe.adriel.voyager:voyager-navigator")
 
 	appMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-	desktopMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing")
+	desktopJvmMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing")
 
-	desktopMainImplementation(jcef.dependency)
+	desktopJvmMainImplementation(jcef.dependency)
 	androidMainApi("androidx.core:core-ktx")
 	androidMainApi("androidx.activity:activity-ktx")
 
 	appMainImplementation("com.squareup.okio:okio")
-	desktopMainImplementation("net.harawata:appdirs")
+	desktopJvmMainImplementation("net.harawata:appdirs")
 
-	desktopMainImplementation("com.github.ajalt.clikt:clikt")
+	desktopJvmMainImplementation("com.github.ajalt.clikt:clikt")
 
-	desktopMainImplementation("com.formdev:flatlaf")
-	desktopMainImplementation("com.formdev:flatlaf-extras")
+	desktopJvmMainImplementation("com.formdev:flatlaf")
+	desktopJvmMainImplementation("com.formdev:flatlaf-extras")
 	// See, https://www.formdev.com/flatlaf/native-libraries/
 	// TODO Auto-detect which native library to use for current OS
-	desktopMainImplementation("com.formdev:flatlaf::linux-x86_64@so")
-	desktopMainImplementation("com.formdev:flatlaf::windows-x86_64@dll")
-	desktopMainImplementation("com.formdev:flatlaf::windows-x86@dll")
+	desktopJvmMainImplementation("com.formdev:flatlaf::linux-x86_64@so")
+	desktopJvmMainImplementation("com.formdev:flatlaf::windows-x86_64@dll")
+	desktopJvmMainImplementation("com.formdev:flatlaf::windows-x86@dll")
 
-	desktopMainImplementation("com.github.Dansoftowner:jSystemThemeDetector")
-	desktopMainImplementation("org.slf4j:slf4j-jdk14") // Needed for `jSystemThemeDetector`
+	desktopJvmMainImplementation("com.github.Dansoftowner:jSystemThemeDetector")
+	desktopJvmMainImplementation("org.slf4j:slf4j-jdk14") // Needed for `jSystemThemeDetector`
 }

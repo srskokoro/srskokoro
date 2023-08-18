@@ -8,7 +8,7 @@ kotlin {
 	val targetsExtensions = targets.extensions
 
 	androidTarget("android") asExtensionIn targetsExtensions
-	jvm("desktop") asExtensionIn targetsExtensions
+	jvm("desktopJvm") asExtensionIn targetsExtensions
 
 	KotlinTargets(
 		objects,
@@ -29,8 +29,8 @@ kotlin {
 		val androidMain/**/ by getting { dependsOn(jvmishMain) }
 		val androidUnitTest by getting { dependsOn(jvmishTest) }
 
-		val desktopMain by getting { dependsOn(jvmishMain) }
-		val desktopTest by getting { dependsOn(jvmishTest) }
+		val desktopJvmMain by getting { dependsOn(jvmishMain) }
+		val desktopJvmTest by getting { dependsOn(jvmishTest) }
 
 		val (iosMain, iosTest) = derive("ios", appMain, appTest)
 

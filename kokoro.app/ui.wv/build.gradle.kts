@@ -21,7 +21,7 @@ dependencies {
 	commonMainImplementation(parent.project("redwood:compose"))
 	commonMainImplementation(parent.project("redwood:widget"))
 
-	desktopMainImplementation(jcef.dependency)
+	desktopJvmMainImplementation(jcef.dependency)
 
 	commonMainImplementation("com.soywiz.korlibs.kds:kds")
 }
