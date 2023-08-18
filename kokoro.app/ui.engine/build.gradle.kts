@@ -2,7 +2,6 @@ import conv.util.*
 
 plugins {
 	id("kokoro.conv.kt.mpp.lib")
-	id("jcef-bundler-dependency")
 }
 
 kotestConfigClass = "KotestConfig"
@@ -21,7 +20,7 @@ dependencies {
 	commonMainImplementation(parent.project("redwood:compose"))
 	commonMainImplementation(parent.project("redwood:widget"))
 
-	desktopJvmMainImplementation(jcef.dependency)
+	desktopJvmMainImplementation(project("jcef"))
 
 	commonMainImplementation("com.soywiz.korlibs.kds:kds")
 }
