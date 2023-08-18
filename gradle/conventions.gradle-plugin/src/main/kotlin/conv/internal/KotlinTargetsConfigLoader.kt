@@ -170,6 +170,15 @@ internal class KotlinTargetsConfigLoader(
 			/* */"js" ->
 			/*  */js(name) asExtensionIn targetsExtensions
 
+			/* */"iosX64" ->
+			/*  */iosX64(name) asExtensionIn targetsExtensions
+
+			/* */"iosArm64" ->
+			/*  */iosArm64(name) asExtensionIn targetsExtensions
+
+			/* */"iosSimulatorArm64" ->
+			/*  */iosSimulatorArm64(name) asExtensionIn targetsExtensions
+
 			// TODO Add more as necessary to avoid resolving things via reflection
 
 			// Resolve via reflection instead
