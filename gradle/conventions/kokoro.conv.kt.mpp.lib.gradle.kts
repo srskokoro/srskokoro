@@ -24,15 +24,30 @@ kotlin {
 		val commonTest by getting
 
 		val (appMain, appTest) = derive("app", commonMain, commonTest)
+
+		val (desktopMain, desktopTest) = derive("desktop", appMain, appTest)
+		val (mobileMain, mobileTest) = derive("mobile", appMain, appTest)
+
+		// --
+
 		val (jvmishMain, jvmishTest) = derive("jvmish", appMain, appTest)
+		val (nativeMain, nativeTest) = derive("native", appMain, appTest)
 
-		val androidMain/**/ by getting { dependsOn(jvmishMain) }
-		val androidUnitTest by getting { dependsOn(jvmishTest) }
+		val (unixMain, unixTest) = derive("unix", nativeMain, nativeTest)
+		val (appleMain, appleTest) = derive("apple", unixMain, unixTest)
 
-		val desktopJvmMain by getting { dependsOn(jvmishMain) }
-		val desktopJvmTest by getting { dependsOn(jvmishTest) }
+		val (iosMain, iosTest) = derive("ios", appleMain, appleTest)
 
-		val (iosMain, iosTest) = derive("ios", appMain, appTest)
+		// --
+
+		val androidMain/**/ by getting { dependsOn(jvmishMain); dependsOn(mobileMain) }
+		val androidUnitTest by getting { dependsOn(jvmishTest); dependsOn(mobileTest) }
+
+		val desktopJvmMain by getting { dependsOn(jvmishMain); dependsOn(desktopMain) }
+		val desktopJvmTest by getting { dependsOn(jvmishTest); dependsOn(desktopTest) }
+
+		with(iosMain) { dependsOn(mobileMain) }
+		with(iosTest) { dependsOn(mobileTest) }
 
 		val iosX64Main by getting { dependsOn(iosMain) }
 		val iosX64Test by getting { dependsOn(iosTest) }

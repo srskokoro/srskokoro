@@ -51,7 +51,7 @@ buildConfig.appMain {
 	)
 }
 
-buildConfig.desktopJvmMain {
+buildConfig.desktopMain {
 	internalObject("AppBuildDesktop") inPackage NAMESPACE
 	buildConfigField("String", "APP_DATA_DIR_NAME", "\"SRSKokoro${if (isReleasing) "" else "-Dev"}\"")
 }
