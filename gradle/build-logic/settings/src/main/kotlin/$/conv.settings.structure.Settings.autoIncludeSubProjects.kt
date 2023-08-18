@@ -42,14 +42,14 @@ private fun getProjectDirectoryPrefixLength(projectDirName: String) = when (proj
 
 
 internal fun Settings.autoIncludeSubProjects(parentDir: Path, parentProjectId: String) {
-	Files.newDirectoryStream(parentDir).use(fun DirectoryStream<Path>.() = forEach { path ->
+	Files.newDirectoryStream(parentDir).use(fun DirectoryStream<Path>.() = forEach(fun(path) {
 		val name = path.fileName?.toString()
 		if (name.isNullOrEmpty() || name.startsWith('.') || name == "build" || !isPotentialSubProject(path)) {
-			return@forEach // Skip. Don't recurse further.
+			return // Skip. Don't recurse further.
 		}
 
 		if (name.endsWith(GRADLE_PLUGIN_SUB_PROJECT_SUFFIX_1) || name.endsWith(GRADLE_PLUGIN_SUB_PROJECT_SUFFIX_2)) {
-			return@forEach // Skip. Don't recurse further.
+			return // Skip. Don't recurse further.
 		}
 
 		val childProjectId = buildString {
@@ -62,14 +62,14 @@ internal fun Settings.autoIncludeSubProjects(parentDir: Path, parentProjectId: S
 		project(childProjectId).projectDir = path.toFile()
 
 		autoIncludeSubProjects(path, childProjectId)
-	})
+	}))
 }
 
 internal fun Settings.autoIncludeGradlePluginSubProjects(parentDir: Path, projectIdPrefix: String) {
-	Files.newDirectoryStream(parentDir).use(fun DirectoryStream<Path>.() = forEach { path ->
+	Files.newDirectoryStream(parentDir).use(fun DirectoryStream<Path>.() = forEach(fun(path) {
 		val name = path.fileName?.toString()
 		if (name.isNullOrEmpty() || name.startsWith('.') || name == "build" || !isPotentialSubProject(path)) {
-			return@forEach // Skip. Don't recurse further.
+			return // Skip. Don't recurse further.
 		}
 
 		val suffixLen = if (name.endsWith(GRADLE_PLUGIN_SUB_PROJECT_SUFFIX_1)) {
@@ -79,7 +79,7 @@ internal fun Settings.autoIncludeGradlePluginSubProjects(parentDir: Path, projec
 		} else {
 			// Recurse further. Consider only its subdirectories.
 			autoIncludeGradlePluginSubProjects(path, "$projectIdPrefix$name\$")
-			return@forEach // Skip. Don't include.
+			return // Skip. Don't include.
 		}
 
 		val childProjectId = buildString {
@@ -93,5 +93,5 @@ internal fun Settings.autoIncludeGradlePluginSubProjects(parentDir: Path, projec
 
 		// Include subprojects normally without special handling
 		autoIncludeSubProjects(path, childProjectId)
-	})
+	}))
 }
