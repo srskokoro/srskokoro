@@ -19,10 +19,6 @@ internal val localKotlin = kotlin.apply {
 	setUp(this)
 }
 
-tasks.withType<KotlinJvmCompile>().configureEach {
-	setUp(compilerOptions)
-}
-
 localKotlin.targets.apply {
 	// Nothing
 }.onType(KotlinAndroidTarget::class) {
@@ -30,6 +26,9 @@ localKotlin.targets.apply {
 		setUpTestFrameworkDeps_android {
 			implementation(it)
 		}
+	}
+	compilations.all {
+		setUp(compilerOptions.options)
 	}
 }.onType(KotlinJvmTarget::class) {
 	testRuns["test"].executionTask.configure {
@@ -39,6 +38,9 @@ localKotlin.targets.apply {
 		setUpTestFrameworkDeps_jvm {
 			implementation(it)
 		}
+	}
+	compilations.all {
+		setUp(compilerOptions.options)
 	}
 }
 dependencies {
