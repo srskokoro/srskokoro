@@ -14,13 +14,13 @@ withAndroid {
 	setUp(this)
 }
 
-internal val localKotlin = kotlin.apply {
+kotlin.apply {
 	setUp(this)
-}
-
-localKotlin.targets.apply {
-	// Nothing
-}.onType(KotlinAndroidTarget::class) {
+}.targets.apply {
+	// Nothing (for now)
+}.all(@Suppress("CascadeIf") fun(t) = t.apply {
+	// Nothing (for now)
+}.run(fun(t) = if (t is KotlinAndroidTarget) t.run {
 	unitTestSourceSet.dependencies {
 		setUpTestFrameworkDeps_android {
 			implementation(it)
@@ -29,7 +29,7 @@ localKotlin.targets.apply {
 	compilations.all {
 		setUp(compilerOptions.options)
 	}
-}.onType(KotlinJvmTarget::class) {
+} else if (t is KotlinJvmTarget) t.run {
 	testRuns["test"].executionTask.configure {
 		setUp(this)
 	}
@@ -41,7 +41,9 @@ localKotlin.targets.apply {
 	compilations.all {
 		setUp(compilerOptions.options)
 	}
-}
+} else t.run {
+	// Nothing (for now)
+}))
 dependencies {
 	// https://kotlinlang.org/docs/gradle-configure-project.html#versions-alignment-of-transitive-dependencies
 	commonMainImplementation(platform("org.jetbrains.kotlin:kotlin-bom"))
