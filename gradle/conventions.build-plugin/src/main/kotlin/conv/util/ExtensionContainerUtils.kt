@@ -11,3 +11,13 @@ inline infix fun <reified T : Named> T.asExtensionIn(extensions: ExtensionContai
 	extensions.add<T>(name, this)
 	return this
 }
+
+inline fun <reified T : Named> T.asExtensionIn(extendable: ExtensionAware, crossinline preconfigure: T.() -> Unit) {
+	preconfigure()
+	asExtensionIn(extendable = extendable)
+}
+
+inline fun <reified T : Named> T.asExtensionIn(extensions: ExtensionContainer, crossinline preconfigure: T.() -> Unit) {
+	preconfigure()
+	asExtensionIn(extensions = extensions)
+}
