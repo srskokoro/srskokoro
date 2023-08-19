@@ -8,11 +8,11 @@ plugins {
 
 kotlin {
 	setUp(this)
+	setUp(compilerOptions)
 }
 
 android {
 	setUp(this)
-	kotlinOptions { setUp(options) }
 
 	packaging {
 		resources {
