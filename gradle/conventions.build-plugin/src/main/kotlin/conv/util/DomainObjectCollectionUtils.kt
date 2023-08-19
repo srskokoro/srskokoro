@@ -5,6 +5,16 @@ import org.gradle.kotlin.dsl.withType
 import kotlin.reflect.KClass
 
 /**
+ * @see DomainObjectCollection.all
+ */
+inline fun <reified T : Any, D : DomainObjectCollection<out T>> D.onAll(
+	crossinline configuration: T.() -> Unit,
+): D {
+	all { configuration() }
+	return this
+}
+
+/**
  * @see DomainObjectCollection.withType
  */
 inline fun <reified T : Any, D : DomainObjectCollection<in T>> D.onType(
