@@ -46,7 +46,10 @@ kotlin.apply {
 }))
 dependencies {
 	// https://kotlinlang.org/docs/gradle-configure-project.html#versions-alignment-of-transitive-dependencies
-	commonMainImplementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+	platform("org.jetbrains.kotlin:kotlin-bom").let { bom ->
+		commonMainImplementation(bom)
+		commonTestImplementation(bom)
+	}
 
 	fun implementation(dep: String) = run {
 		commonTestImplementation(dep)

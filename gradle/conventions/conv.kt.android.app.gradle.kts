@@ -23,7 +23,10 @@ android {
 
 dependencies {
 	// https://kotlinlang.org/docs/gradle-configure-project.html#versions-alignment-of-transitive-dependencies
-	implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+	platform("org.jetbrains.kotlin:kotlin-bom").let { bom ->
+		implementation(bom)
+		testImplementation(bom)
+	}
 
 	setUpTestFrameworkDeps_android {
 		testImplementation(it)
