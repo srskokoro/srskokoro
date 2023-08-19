@@ -20,7 +20,7 @@ kotlin.apply {
 	// Nothing (for now)
 }.all(@Suppress("CascadeIf") fun(t) = t.apply {
 	// Nothing (for now)
-}.run(fun(t) = if (t is KotlinAndroidTarget) t.run {
+}.let(fun(t) = if (t is KotlinAndroidTarget) t.run {
 	unitTestSourceSet.dependencies {
 		setUpTestFrameworkDeps_android {
 			implementation(it)
