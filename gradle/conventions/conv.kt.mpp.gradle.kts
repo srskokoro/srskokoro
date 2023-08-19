@@ -27,6 +27,7 @@ kotlin.apply {
 		}
 	}
 	compilations.all {
+		setUpKotlinVersions(this)
 		setUp(compilerOptions.options)
 	}
 } else if (t is KotlinJvmTarget) t.run {
@@ -39,10 +40,13 @@ kotlin.apply {
 		}
 	}
 	compilations.all {
+		setUpKotlinVersions(this)
 		setUp(compilerOptions.options)
 	}
 } else t.run {
-	// Nothing (for now)
+	compilations.all {
+		setUpKotlinVersions(this)
+	}
 }))
 dependencies {
 	// https://kotlinlang.org/docs/gradle-configure-project.html#versions-alignment-of-transitive-dependencies
