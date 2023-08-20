@@ -1,9 +1,16 @@
 package conv.internal.setup
 
 import com.android.build.api.dsl.ApplicationBaseFlavor
+import getOrNull
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.extra
 
 internal fun Project.setUp(android: AndroidExtension): Unit = with(android) {
+	@Suppress("UnstableApiUsage")
+	project.extra.getOrNull<String>("conv.android.buildToolsVersion")?.let {
+		buildToolsVersion = it
+	}
+
 	compileSdk = 33
 
 	defaultConfig {
