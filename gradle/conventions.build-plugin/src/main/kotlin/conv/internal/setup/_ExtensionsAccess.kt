@@ -33,7 +33,12 @@ internal val Project.kotlinMppExt
 
 
 internal val Project.deps
-	get() = extensions.getByName("deps") as DependencyVersions
+	// NOTE: Given that the extension below is set via the `settings` script, it
+	// will be null if Gradle simply evaluated a fake project in order to
+	// generate type-safe model accessors for precompiled script plugins to use.
+	//
+	// NOTE: The cast below throws on non-null incompatible types as intended.
+	get() = extensions.findByName("deps") as DependencyVersions?
 
 
 internal val Project.sourceSets

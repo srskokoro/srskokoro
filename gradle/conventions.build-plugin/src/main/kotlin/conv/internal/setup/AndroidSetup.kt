@@ -15,7 +15,7 @@ internal fun Project.setUp(android: AndroidExtension): Unit = with(android) {
 
 	compileOptions {
 		// TODO Remove eventually -- See, https://issuetracker.google.com/issues/260059413
-		deps.jvm.verObj?.let {
+		deps?.jvm?.verObj?.let {
 			sourceCompatibility = it
 			targetCompatibility = it
 		}

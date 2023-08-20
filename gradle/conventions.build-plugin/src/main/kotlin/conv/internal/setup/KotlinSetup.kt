@@ -11,7 +11,7 @@ import java.io.File
 
 internal fun Project.setUp(kotlin: KotlinProjectExtension): Unit = with(kotlin) {
 	setUpProject(kotlin)
-	jvmToolchain(deps.jvm)
+	deps?.run { jvmToolchain(jvm) }
 }
 
 // --
