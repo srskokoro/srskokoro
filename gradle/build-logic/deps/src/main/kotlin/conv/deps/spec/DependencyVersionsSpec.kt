@@ -64,7 +64,7 @@ abstract class DependencyVersionsSpec internal constructor(val settings: Setting
 
 	// --
 
-	internal var extensionName: String = ""
+	internal var extensionName: String = DependencyVersionsSetup.DEPS
 
 	private val includesDeque = LinkedList<String>()
 

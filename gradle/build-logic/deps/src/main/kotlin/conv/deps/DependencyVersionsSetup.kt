@@ -9,8 +9,12 @@ import org.gradle.api.plugins.ExtensionAware
 
 abstract class DependencyVersionsSetup internal constructor(val settings: Settings) : ExtensionAware {
 
+	companion object {
+		const val DEPS = "deps"
+	}
+
 	private var willUseInProjects = false
-	fun useInProjects(extensionName: String = "deps") {
+	fun useInProjects(extensionName: String = DEPS) {
 		val spec = settings.ensureDependencyVersions()
 		spec.extensionName = extensionName
 
