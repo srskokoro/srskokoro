@@ -5,17 +5,17 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 
 internal fun setUpKotlinVersions(compilation: KotlinCompilation<*>) {
-	val kotlinVersion = KotlinVersion.DEFAULT
+	val ver = KotlinVersion.DEFAULT
 	compilation.compilerOptions.options.apply {
-		languageVersion.set(kotlinVersion)
-		apiVersion.set(kotlinVersion)
+		languageVersion.set(ver)
+		apiVersion.set(ver)
 	}
 	// NOTE: For some reason, Android Studio isn't honoring the above set
 	// compiler options and that the following is what's necessary.
 	compilation.defaultSourceSet.languageSettings.apply {
-		val kotlinVersionStr = kotlinVersion.version
-		languageVersion = kotlinVersionStr
-		apiVersion = kotlinVersionStr
+		val verStr = ver.version
+		languageVersion = verStr
+		apiVersion = verStr
 	}
 }
 
