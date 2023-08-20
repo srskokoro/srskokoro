@@ -1,3 +1,1 @@
-import conv.settings.PrioritizedEvaluationListenersSetup
-
-gradle.addProjectEvaluationListener(PrioritizedEvaluationListenersSetup)
+// Nothing (for now)
