@@ -28,9 +28,16 @@ internal fun Project.ensurePrioritizedEvaluationListeners(): PrioritizedEvaluati
 	extensions.add<Any>(prioritizedEvaluationListeners__name, listeners)
 
 	val gradle = gradle
-	val xs = (gradle as ExtensionAware).extensions
-	if (xs.findByName(prioritizedEvaluationListeners__name) == null) {
-		xs.add(prioritizedEvaluationListeners__name, true) // Immediately mark as set up, even if the code after it fails.
+	if (gradle is ExtensionAware) {
+		val xs = gradle.extensions
+		if (xs.findByName(prioritizedEvaluationListeners__name) == null) {
+			xs.add(prioritizedEvaluationListeners__name, true) // Immediately mark as set up, even if the code after it fails.
+			gradle.addProjectEvaluationListener(PrioritizedEvaluationListenersSetup)
+		}
+	} else {
+		// In case `gradle` isn't `ExtensionAware`, we work around that by
+		// simply setting the listener. It's a NOP anyway if the listener
+		// already exists.
 		gradle.addProjectEvaluationListener(PrioritizedEvaluationListenersSetup)
 	}
 
