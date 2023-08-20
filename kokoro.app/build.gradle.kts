@@ -65,7 +65,7 @@ dependencies {
 
 	appMainImplementation(project("redwood:compose"))
 	appMainImplementation(project("redwood:widget"))
-	appMainImplementation(project("ui.engine"))
+	commonMainImplementation(project("ui.engine"))
 
 	appMainImplementation("cafe.adriel.voyager:voyager-navigator")
 
