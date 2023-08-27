@@ -1,6 +1,6 @@
 package conv.internal.setup
 
-import XS_assets
+import XS_convAssets
 import assets
 import getAndroidAssets
 import org.gradle.api.Action
@@ -18,6 +18,7 @@ import org.gradle.kotlin.dsl.add
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.withType
 import org.gradle.language.jvm.tasks.ProcessResources
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -135,16 +136,17 @@ private fun initAssetsAsResources(
 	allKotlinSourceSets: ObservableSet<KotlinSourceSet>,
 	project: Project,
 ): Unit = allKotlinSourceSets.forAll(fun KotlinSourceSet.() {
-	@Suppress("OPT_IN_USAGE")
-	if (androidSourceSetInfoOrNull != null) return // Skip (for Android)
-
 	val extensions = (this as ExtensionAware).extensions
-	if (extensions.findByName(XS_assets) != null) return // Skip. Already defined.
+	if (extensions.findByName(XS_convAssets) != null) return // Skip. Already defined.
 
 	val assetsDisplayName = "$name assets (conv)"
 	val assets: SourceDirectorySet = project.objects.sourceDirectorySet(assetsDisplayName, assetsDisplayName)
 
-	extensions.add<SourceDirectorySet>(XS_assets, assets)
+	extensions.add<SourceDirectorySet>(XS_convAssets, assets)
+
+	@OptIn(ExperimentalKotlinGradlePluginApi::class)
+	if (androidSourceSetInfoOrNull != null) return // Skip (for Android)
+
 	assets.srcDir(project.file("src/$name/assets"))
 
 	// Set up as an additional resources directory of the current source set
@@ -171,6 +173,7 @@ private fun KotlinJvmAndroidCompilation.setUpConvAssets(android: AndroidExtensio
 	val project = project
 	if (taskName in project.tasks.names) return // Skip (task already set up for this compilation, or task name conflict)
 
+	// TODO Why not simply link the task itself?
 	val outputDir: Provider<Directory> = project.layout.buildDirectory.dir("processedConvAssets/$outputDirName")
 	androidAssets.srcDir(outputDir) // Link output as Android-style "assets"
 

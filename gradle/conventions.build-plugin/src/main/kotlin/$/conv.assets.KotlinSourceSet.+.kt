@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSetInfo
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOrNull
 
-internal const val XS_assets = "assets"
+internal const val XS_convAssets = "convAssets"
 
 val KotlinSourceSet.assets: SourceDirectorySet?
-	get() = (this as ExtensionAware).extensions.findByName(XS_assets)?.unsafeCast()
+	get() = (this as ExtensionAware).extensions.findByName(XS_convAssets)?.unsafeCast()
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun KotlinSourceSet.getAndroidAssets(android: AndroidExtension): AndroidSourceDirectorySet? = getAndroidSourceSet(android)?.assets
