@@ -168,8 +168,8 @@ private fun KotlinJvmAndroidCompilation.setUpConvAssets(android: AndroidExtensio
 
 	// NOTE: We should ensure that the task's name is unique per compilation.
 	// And thus, we can't use the compilation's default source set name (to be
-	// the task's name), since (at the moment), it's possible for the default
-	// source set to be reused across several compilations.
+	// the task's name), since (at the moment), it's (probably) possible for the
+	// default source set to be reused across several compilations.
 	val outputDirName = "${target.targetName}${compilationName.replaceFirstChar { it.uppercaseChar() }}"
 	val taskName = "${outputDirName}ProcessConvAssets"
 
