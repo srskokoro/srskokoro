@@ -5,12 +5,10 @@ import assets
 import getAndroidAssets
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileTreeElement
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import org.gradle.api.specs.Spec
@@ -160,12 +158,6 @@ private fun KotlinJvmAndroidCompilation.setUpConvAssets(android: AndroidExtensio
 	val androidAssets = defaultSourceSet.getAndroidAssets(android)
 		?: return // Skip (not for Android, or metadata/info not linked)
 
-	val mergeAssetsTask = try {
-		androidVariant.mergeAssetsProvider
-	} catch (_: Exception) { // NOTE: Deliberately not `Throwable`
-		return // Skip -- assume no "assets"
-	}
-
 	// NOTE: We should ensure that the task's name is unique per compilation.
 	// And thus, we can't use the compilation's default source set name (to be
 	// the task's name), since (at the moment), it's (probably) possible for the
@@ -176,19 +168,17 @@ private fun KotlinJvmAndroidCompilation.setUpConvAssets(android: AndroidExtensio
 	val project = project
 	if (taskName in project.tasks.names) return // Skip (task already set up for this compilation, or task name conflict)
 
-	// TODO Why not simply link the task itself?
-	val outputDir: Provider<Directory> = project.layout.buildDirectory.dir("processedConvAssets/$outputDirName")
-	androidAssets.srcDir(outputDir) // Link output as Android-style "assets"
-
 	val allKotlinSourceSets = allKotlinSourceSets
 	initAssetsAsResources(allKotlinSourceSets, project)
 
 	val task = project.tasks.register(taskName, @Suppress("UnstableApiUsage") ProcessResources::class.java) {
 		description = "Processes assets (conv)"
-		from(this.project.files(Callable { allKotlinSourceSets.mapNotNull { it.assets } }))
-		into(outputDir)
+		@Suppress("NAME_SHADOWING") val project = this.project
+		from(project.files(Callable { allKotlinSourceSets.mapNotNull { it.assets } }))
+		into(project.layout.buildDirectory.dir("processedConvAssets/$outputDirName"))
 	}
-	mergeAssetsTask.configure { dependsOn(task) }
+
+	androidAssets.srcDirs(task) // Link output as Android-style "assets"
 }
 
 private fun KotlinJvmAndroidCompilation.setUpConvAssetsDummyAssertion(dummyName: String?) {
