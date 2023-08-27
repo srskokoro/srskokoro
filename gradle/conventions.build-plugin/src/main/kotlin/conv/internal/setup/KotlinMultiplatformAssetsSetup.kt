@@ -99,9 +99,12 @@ private class DummyHandler : Action<@Suppress("UnstableApiUsage") ProcessResourc
 		task.exclude(this)
 	}
 
-	override fun isSatisfiedBy(elem: FileTreeElement) =
-		elem.name == value && elem.relativePath.segments.size <= 1
+	override fun isSatisfiedBy(elem: FileTreeElement) = elem.isDummyFile(value)
 }
+
+@Suppress("NOTHING_TO_INLINE")
+private inline fun FileTreeElement.isDummyFile(dummyName: String?) =
+	name == dummyName && relativePath.segments.size <= 1
 
 private abstract class SetupToInitAssetsAsResourcesExcludingDummy<T : KotlinCompilation<*>>(val dummyHandler: DummyHandler) : Action<T> {
 
@@ -195,7 +198,7 @@ private fun KotlinJvmAndroidCompilation.setUpConvAssetsDummyAssertion(dummyName:
 		return // Skip -- task not available
 	}.configure {
 		eachFile {
-			if (name == dummyName && relativePath.segments.size <= 1) throw AssertionError(
+			if (isDummyFile(dummyName)) throw AssertionError(
 				"""
 				Common "assets" may have been included as Java-style "resources" on Android.
 				This should not happen unless the Kotlin plugin now causes that to happen.
