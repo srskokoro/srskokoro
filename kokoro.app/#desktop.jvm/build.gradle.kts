@@ -10,6 +10,7 @@ kotestConfigClass = "KotestConfig"
 
 application {
 	mainClass.set("main.MainKt")
+	applicationDefaultJvmArgs = jcef.recommendedJvmArgs
 }
 
 afterEvaluate {
