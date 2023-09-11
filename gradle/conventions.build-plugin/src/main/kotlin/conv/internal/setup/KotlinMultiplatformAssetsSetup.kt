@@ -12,7 +12,6 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import org.gradle.api.specs.Spec
-import org.gradle.kotlin.dsl.add
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.withType
 import org.gradle.language.jvm.tasks.ProcessResources
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOr
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
+import addExtraneousSource
 import java.io.File
 import java.util.UUID
 import java.util.concurrent.Callable
@@ -143,7 +143,7 @@ private fun initAssetsAsResources(
 	val assetsDisplayName = "$name assets (conv)"
 	val assets: SourceDirectorySet = project.objects.sourceDirectorySet(assetsDisplayName, assetsDisplayName)
 
-	extensions.add<SourceDirectorySet>(XS_convAssets, assets)
+	addExtraneousSource(XS_convAssets, assets)
 
 	@OptIn(ExperimentalKotlinGradlePluginApi::class)
 	if (androidSourceSetInfoOrNull != null) return // Skip (for Android)

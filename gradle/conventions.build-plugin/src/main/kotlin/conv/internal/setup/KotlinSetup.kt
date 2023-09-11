@@ -1,7 +1,7 @@
 package conv.internal.setup
 
-import assets
 import conv.internal.support.removeFirst
+import extraneousSources
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
@@ -26,11 +26,16 @@ private fun Project.setUpAltSrcDirs(kotlinSourceSets: NamedDomainObjectContainer
 
 	kotlinSourceSets.configureEach {
 		val isTestSourceSet = isTestSourceSet(name)
+
+		// Must process first before `kotlin` and `resources`, since `kotlin` or
+		// `resources` may the include the extraneous source as a nested source
+		// directory set. That way, the alternative directories would be
+		// associated to the extraneous source first.
+		extraneousSources.values.forEach {
+			it.setUpAltSrcDirs(defaultSrcPath, isTestSourceSet)
+		}
+
 		kotlin.setUpAltSrcDirs(defaultSrcPath, isTestSourceSet)
-		// Must process `assets` first before `resources`, since `resources` may
-		// include `assets` as a nested source directory set. That way, the
-		// alternative directories would be associated to `assets` first.
-		assets?.setUpAltSrcDirs(defaultSrcPath, isTestSourceSet)
 		resources.setUpAltSrcDirs(defaultSrcPath, isTestSourceSet)
 	}
 
