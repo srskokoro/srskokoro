@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOr
 internal const val XS_assetsConv = "assetsConv"
 
 val KotlinSourceSet.assets: SourceDirectorySet?
-	get() = (this as ExtensionAware).extensions.findByName(XS_assetsConv)?.unsafeCast()
+	// NOTE: The cast below throws on non-null incompatible types (as intended).
+	get() = (this as ExtensionAware).extensions.findByName(XS_assetsConv).unsafeCast<SourceDirectorySet?>()
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun KotlinSourceSet.getAndroidAssets(android: AndroidExtension): AndroidSourceDirectorySet? = getAndroidSourceSet(android)?.assets
