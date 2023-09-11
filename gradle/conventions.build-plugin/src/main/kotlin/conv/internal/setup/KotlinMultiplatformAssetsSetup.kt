@@ -1,6 +1,6 @@
 package conv.internal.setup
 
-import XS_convAssets
+import XS_assetsConv
 import assets
 import getAndroidAssets
 import org.gradle.api.Action
@@ -138,12 +138,12 @@ private fun initAssetsAsResources(
 	project: Project,
 ): Unit = allKotlinSourceSets.forAll(fun KotlinSourceSet.() {
 	val extensions = (this as ExtensionAware).extensions
-	if (extensions.findByName(XS_convAssets) != null) return // Skip. Already defined.
+	if (extensions.findByName(XS_assetsConv) != null) return // Skip. Already defined.
 
 	val assetsDisplayName = "$name assets (conv)"
 	val assets: SourceDirectorySet = project.objects.sourceDirectorySet(assetsDisplayName, assetsDisplayName)
 
-	addExtraneousSource(XS_convAssets, assets)
+	addExtraneousSource(XS_assetsConv, assets)
 
 	@OptIn(ExperimentalKotlinGradlePluginApi::class)
 	if (androidSourceSetInfoOrNull != null) return // Skip (for Android)
