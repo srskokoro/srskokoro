@@ -78,13 +78,13 @@ internal fun Project.setUpAssetsDir(kotlin: KotlinMultiplatformExtension) {
 		// file, which we exclude on non-Android targets but throw if found on
 		// Android targets. The purpose of this setup is to assert that our
 		// common "assets" won't become Java-style "resources" on Android.
-		dummyHandler.value = setUpConvAssetsDummy(kotlin)
+		dummyHandler.value = setUpAssetsConvDummy(kotlin)
 
 		val android = androidExt
 		kotlinTargets.withType<KotlinAndroidTarget> {
 			compilations.all(fun KotlinJvmAndroidCompilation.() {
-				setUpConvAssets(android)
-				setUpConvAssetsDummyAssertion(dummyHandler.value)
+				setUpAssetsConv(android)
+				setUpAssetsConvDummyAssertion(dummyHandler.value)
 			})
 		}
 	}
@@ -154,7 +154,7 @@ private fun initAssetsAsResources(
 	resources.source(assets)
 })
 
-private fun KotlinJvmAndroidCompilation.setUpConvAssets(android: AndroidExtension) {
+private fun KotlinJvmAndroidCompilation.setUpAssetsConv(android: AndroidExtension) {
 	val androidAssets = defaultSourceSet.getAndroidAssets(android)
 		?: return // Skip (not for Android, or metadata/info not linked)
 
@@ -163,7 +163,7 @@ private fun KotlinJvmAndroidCompilation.setUpConvAssets(android: AndroidExtensio
 	// the task's name), since (at the moment), it's (probably) possible for the
 	// default source set to be reused across several compilations.
 	val outputDirName = "${target.targetName}${compilationName.replaceFirstChar { it.uppercaseChar() }}"
-	val taskName = "${outputDirName}ProcessConvAssets"
+	val taskName = "${outputDirName}ProcessAssetsConv"
 
 	val project = project
 	if (taskName in project.tasks.names) return // Skip (task already set up for this compilation, or task name conflict)
@@ -175,13 +175,13 @@ private fun KotlinJvmAndroidCompilation.setUpConvAssets(android: AndroidExtensio
 		description = "Processes assets (conv)"
 		@Suppress("NAME_SHADOWING") val project = this.project
 		from(project.files(Callable { allKotlinSourceSets.mapNotNull { it.assets } }))
-		into(project.layout.buildDirectory.dir("processedConvAssets/$outputDirName"))
+		into(project.layout.buildDirectory.dir("processedAssetsConv/$outputDirName"))
 	}
 
 	androidAssets.srcDirs(task) // Link output as Android-style "assets"
 }
 
-private fun KotlinJvmAndroidCompilation.setUpConvAssetsDummyAssertion(dummyName: String?) {
+private fun KotlinJvmAndroidCompilation.setUpAssetsConvDummyAssertion(dummyName: String?) {
 	try {
 		androidVariant.processJavaResourcesProvider
 	} catch (_: Exception) { // NOTE: Deliberately not `Throwable`
@@ -199,21 +199,21 @@ private fun KotlinJvmAndroidCompilation.setUpConvAssetsDummyAssertion(dummyName:
 	}
 }
 
-private fun Project.setUpConvAssetsDummy(kotlin: KotlinMultiplatformExtension): String {
-	val dummyDirProvider = layout.buildDirectory.dir("generated/convAssetsDummy")
+private fun Project.setUpAssetsConvDummy(kotlin: KotlinMultiplatformExtension): String {
+	val dummyDirProvider = layout.buildDirectory.dir("generated/assetsConvDummy")
 
 	getSourceSets(kotlin).getByName("commonMain")
 		.resources.srcDir(dummyDirProvider)
 
 	@Suppress("UnstableApiUsage")
-	return providers.of(ConvAssetsDummyNameValueSource::class.java) {
+	return providers.of(AssetsConvDummyNameValueSource::class.java) {
 		parameters.dummyDirProperty.set(dummyDirProvider)
 	}.get()
 }
 
 @Suppress("UnstableApiUsage")
-internal abstract class ConvAssetsDummyNameValueSource :
-	ValueSource<String, ConvAssetsDummyNameValueSource.Parameters> {
+internal abstract class AssetsConvDummyNameValueSource :
+	ValueSource<String, AssetsConvDummyNameValueSource.Parameters> {
 
 	interface Parameters : ValueSourceParameters {
 		val dummyDirProperty: DirectoryProperty
