@@ -24,3 +24,12 @@ fun KotlinSourceSet.addExtraneousSource(extensionName: String, source: SourceDir
 	xs.add<SourceDirectorySet>(extensionName, source)
 	sources[extensionName] = source
 }
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun KotlinSourceSet.getExtraneousSource(extensionName: String) =
+	(this as ExtensionAware).extensions.getByName(extensionName) as SourceDirectorySet
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun KotlinSourceSet.getExtraneousSourceOrNull(extensionName: String) =
+	// NOTE: The cast below throws on non-null incompatible types (as intended).
+	(this as ExtensionAware).extensions.findByName(extensionName) as SourceDirectorySet?
