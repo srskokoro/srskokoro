@@ -5,6 +5,8 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.Companion.COMMON_MAIN_SOURCE_SET_NAME
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.Companion.COMMON_TEST_SOURCE_SET_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetContainer
 
 infix fun List<KotlinSourceSet>.dependsOn(others: List<KotlinSourceSet>) {
@@ -27,12 +29,12 @@ fun NamedDomainObjectContainer<out KotlinSourceSet>.derive(
 	// tried to wire the newly created test source set to the newly created main
 	// source set, but that made things worse: it introduced some hard-to-
 	// describe build errors.
-	if (parentMain.name != KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME) {
-		val commonMain = getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
+	if (parentMain.name != COMMON_MAIN_SOURCE_SET_NAME) {
+		val commonMain = getByName(COMMON_MAIN_SOURCE_SET_NAME)
 		newMain.dependsOn(commonMain)
 	}
-	if (parentTest.name != KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME) {
-		val commonTest = getByName(KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
+	if (parentTest.name != COMMON_TEST_SOURCE_SET_NAME) {
+		val commonTest = getByName(COMMON_TEST_SOURCE_SET_NAME)
 		newTest.dependsOn(commonTest)
 	}
 
@@ -79,8 +81,8 @@ fun Iterable<KotlinSourceSet>.printSourceSetTrees(out: Appendable = System.out) 
 
 	val entryNames = ArrayDeque<String>(if (this is Collection<*>) size else 0)
 	for (entry in this) when (val entryName = entry.name) {
-		KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME,
-		KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME,
+		COMMON_MAIN_SOURCE_SET_NAME,
+		COMMON_TEST_SOURCE_SET_NAME,
 		-> entryNames.addFirst(entryName)
 		else -> entryNames.addLast(entryName)
 	}
