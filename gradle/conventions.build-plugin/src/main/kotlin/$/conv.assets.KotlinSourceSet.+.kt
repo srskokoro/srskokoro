@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOr
 
 internal const val XS_assetsConv = "assetsConv"
 
-val KotlinSourceSet.assets get() = getExtraneousSourceOrNull(XS_assetsConv)
+val KotlinSourceSet.assets get() = getExtraneousSource(XS_assetsConv)
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun KotlinSourceSet.getAndroidAssets(android: AndroidExtension): AndroidSourceDirectorySet? = getAndroidSourceSet(android)?.assets

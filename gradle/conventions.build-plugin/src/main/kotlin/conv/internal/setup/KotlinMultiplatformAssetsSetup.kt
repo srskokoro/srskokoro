@@ -1,6 +1,7 @@
 package conv.internal.setup
 
 import XS_assetsConv
+import addExtraneousSource
 import assets
 import getAndroidAssets
 import org.gradle.api.Action
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOr
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
-import addExtraneousSource
 import java.io.File
 import java.util.UUID
 import java.util.concurrent.Callable
@@ -44,6 +44,17 @@ import java.util.concurrent.Callable
  * - [Why Is ClassLoader.getResourceAsStream So Slow in Android? - nimbledroid : r/androiddev | Reddit](https://www.reddit.com/r/androiddev/comments/4dmflo/why_is_classloadergetresourceasstream_so_slow_in/)
  */
 internal fun Project.setUpAssetsDir(kotlin: KotlinMultiplatformExtension) {
+	val objects = objects
+	getSourceSets(kotlin).all(fun(sourceSet) {
+		val extensions = (sourceSet as ExtensionAware).extensions
+		if (extensions.findByName(XS_assetsConv) != null) return // Skip. Already defined.
+
+		val assetsDisplayName = "${sourceSet.name} assets (conv)"
+		val assets: SourceDirectorySet = objects.sourceDirectorySet(assetsDisplayName, assetsDisplayName)
+
+		sourceSet.addExtraneousSource(XS_assetsConv, assets)
+	})
+
 	// Contains the name of the dummy file in our dummy directory. Throw if
 	// found on Android. Exclude if found on non-Android targets, e.g., JVM, JS,
 	// etc. The value for the name is `null` for now, and will be set eventually
@@ -137,17 +148,10 @@ private fun initAssetsAsResources(
 	allKotlinSourceSets: ObservableSet<KotlinSourceSet>,
 	project: Project,
 ): Unit = allKotlinSourceSets.forAll(fun KotlinSourceSet.() {
-	val extensions = (this as ExtensionAware).extensions
-	if (extensions.findByName(XS_assetsConv) != null) return // Skip. Already defined.
-
-	val assetsDisplayName = "$name assets (conv)"
-	val assets: SourceDirectorySet = project.objects.sourceDirectorySet(assetsDisplayName, assetsDisplayName)
-
-	addExtraneousSource(XS_assetsConv, assets)
-
 	@OptIn(ExperimentalKotlinGradlePluginApi::class)
 	if (androidSourceSetInfoOrNull != null) return // Skip (for Android)
 
+	val assets = assets
 	assets.srcDir(project.file("src/$name/assets"))
 
 	// Set up as an additional resources directory of the current source set
@@ -174,7 +178,7 @@ private fun KotlinJvmAndroidCompilation.setUpAssetsConv(android: AndroidExtensio
 	val task = project.tasks.register(taskName, @Suppress("UnstableApiUsage") ProcessResources::class.java) {
 		description = "Processes assets (conv)"
 		@Suppress("NAME_SHADOWING") val project = this.project
-		from(project.files(Callable { allKotlinSourceSets.mapNotNull { it.assets } }))
+		from(project.files(Callable { allKotlinSourceSets.map { it.assets } }))
 		into(project.layout.buildDirectory.dir("processedAssetsConv/$outputDirName"))
 	}
 
