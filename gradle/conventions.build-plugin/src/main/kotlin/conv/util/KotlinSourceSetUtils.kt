@@ -122,4 +122,46 @@ private fun printSourceSetTrees_impl(
 	}
 }
 
+@Suppress("NOTHING_TO_INLINE")
+inline fun Iterable<KotlinSourceSet>.topDownCollect() = topDownCollect(LinkedHashSet())
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun <C : MutableSet<KotlinSourceSet>> Iterable<KotlinSourceSet>.topDownCollect(destination: C): C {
+	topDownCollectInto(destination)
+	return destination
+}
+
+/**
+ * Adds to the given [MutableSet], the provided source sets and all their source
+ * set dependencies, with the most common (most shared) source set added first.
+ */
+fun Iterable<KotlinSourceSet>.topDownCollectInto(destination: MutableSet<KotlinSourceSet>) {
+	for (s in this) {
+		val name = s.name
+		if (name != COMMON_MAIN_SOURCE_SET_NAME && name != COMMON_TEST_SOURCE_SET_NAME) {
+			s.dependsOn.topDownCollectInto(destination)
+		}
+		destination.add(s)
+	}
+}
+
+/**
+ * Performs the specified action against the provided source sets and all their
+ * source set dependencies, while starting from the most common (most shared)
+ * source set.
+ *
+ * @param action the action to perform
+ */
+fun Iterable<KotlinSourceSet>.topDownWalk(dejaVu: MutableSet<KotlinSourceSet>, action: (KotlinSourceSet) -> Unit) {
+	for (s in this) {
+		val name = s.name
+		if (name != COMMON_MAIN_SOURCE_SET_NAME && name != COMMON_TEST_SOURCE_SET_NAME) {
+			s.dependsOn.topDownWalk(dejaVu, action)
+		}
+		if (dejaVu.add(s)) {
+			action(s)
+		}
+	}
+}
+
 //endregion
