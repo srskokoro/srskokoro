@@ -4,12 +4,13 @@ import XS_assetsConv
 import addExtraneousSource
 import assets
 import getAndroidAssets
+import getExtraneousSourceOrNull
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileTreeElement
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import org.gradle.api.specs.Spec
@@ -45,15 +46,7 @@ import java.util.concurrent.Callable
  */
 internal fun Project.setUpAssetsDir(kotlin: KotlinMultiplatformExtension) {
 	val objects = objects
-	getSourceSets(kotlin).all(fun(sourceSet) {
-		val extensions = (sourceSet as ExtensionAware).extensions
-		if (extensions.findByName(XS_assetsConv) != null) return // Skip. Already defined.
-
-		val assetsDisplayName = "${sourceSet.name} assets (conv)"
-		val assets: SourceDirectorySet = objects.sourceDirectorySet(assetsDisplayName, assetsDisplayName)
-
-		sourceSet.addExtraneousSource(XS_assetsConv, assets)
-	})
+	getSourceSets(kotlin).all(fun KotlinSourceSet.() { ensureAssets(objects) })
 
 	// Contains the name of the dummy file in our dummy directory. Throw if
 	// found on Android. Exclude if found on non-Android targets, e.g., JVM, JS,
@@ -144,6 +137,14 @@ private abstract class SetupToInitAssetsAsResourcesExcludingDummy<T : KotlinComp
 	}
 }
 
+private fun KotlinSourceSet.ensureAssets(objects: ObjectFactory) = getExtraneousSourceOrNull(XS_assetsConv) ?: run {
+	val assetsDisplayName = "$name assets (conv)"
+	val assets: SourceDirectorySet = objects.sourceDirectorySet(assetsDisplayName, assetsDisplayName)
+
+	addExtraneousSource(XS_assetsConv, assets)
+	return assets
+}
+
 private fun initAssetsAsResources(
 	allKotlinSourceSets: ObservableSet<KotlinSourceSet>,
 	project: Project,
@@ -151,7 +152,7 @@ private fun initAssetsAsResources(
 	@OptIn(ExperimentalKotlinGradlePluginApi::class)
 	if (androidSourceSetInfoOrNull != null) return // Skip (for Android)
 
-	val assets = assets
+	val assets = ensureAssets(project.objects)
 	assets.srcDir(project.file("src/$name/assets"))
 
 	// Set up as an additional resources directory of the current source set
