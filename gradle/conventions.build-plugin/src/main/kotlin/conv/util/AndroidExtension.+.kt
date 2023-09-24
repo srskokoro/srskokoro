@@ -11,12 +11,14 @@ fun AndroidExtension.autoNamespace(project: Project, parentNamespace: String) {
 			append(parentNamespace)
 			append(".")
 		}
-		val name = project.name
-		if (name.isEmpty() || !name[0].isJavaIdentifierStart()) {
-			append('_')
-		}
 		// Converts invalid identifier characters into underscores
-		append(name.replace(REGEX_NON_WORD_CHARS, "_"))
+		val name = project.name.replace(REGEX_NON_WORD_CHARS, "_")
+		if (name.isEmpty() || name[0].lowercaseChar() !in 'a'..'z') {
+			// NOTE: Individual package name parts can only start with letters.
+			// See, https://developer.android.com/guide/topics/manifest/manifest-element.html#package
+			append("xx_")
+		}
+		append(name)
 	}
 	this.namespace = namespace
 }
