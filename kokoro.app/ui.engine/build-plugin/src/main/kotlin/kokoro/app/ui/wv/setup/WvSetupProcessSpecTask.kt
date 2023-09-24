@@ -1,7 +1,11 @@
 package kokoro.app.ui.wv.setup
 
+import conv.internal.support.from
 import conv.internal.support.io.asFileTreeVia
+import conv.internal.support.removeLast
+import conv.internal.support.until
 import org.gradle.api.DefaultTask
+import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
@@ -122,8 +126,21 @@ abstract class WvSetupProcessSpecTask @Inject constructor(
 		})
 
 		// TODO Process the `*.wv.lst` files
-		// TODO Check for unlinked source JS files
-		// TODO Check for unlinked source overrides
+
+		for (relativePath in unlikedSourceOverrides) {
+			val ref = relativePath.replaceLastName(getOverriddenReference(relativePath.lastName))
+			if (!sourceInputs.containsKey(ref) && !sourceLstFiles.containsKey(ref) && !sourceOverrides.containsKey(ref)) {
+				val visit = sourceOverrides[relativePath] ?: continue
+				throw InvalidUserDataException("Override file doesn't override anything.\n- Override: $visit\n- Expected target: $ref")
+			}
+		}
+		for (relativePath in unlikedSourceJsFiles) {
+			val spec = relativePath.replaceLastName(getSpecForConstOrTempl(relativePath.lastName))
+			if (!sourceInputs.containsKey(spec)) {
+				val visit = sourceInputs[relativePath] ?: continue
+				throw InvalidUserDataException("The following `*.wv.js` file requires a `*.wv.spec` counterpart to exist.\n- JS: $visit\n- Expected spec: $spec")
+			}
+		}
 	}
 }
 
@@ -142,4 +159,17 @@ private fun isMainInputOrOverride(name: String): Boolean {
 		return true
 	}
 	return false
+}
+
+private fun getOverriddenReference(name: String): String {
+	val i = name.lastIndexOf('!')
+	require(i >= 0)
+	return name.until(i) + name.from(i + 1)
+}
+
+private fun getSpecForConstOrTempl(name: String): String {
+	// templ.wv.js -- 11 chars
+	// const.wv.js -- 11 chars
+	require(name[name.length - 12] == '.')
+	return name.removeLast(11) + "wv.spec"
 }
