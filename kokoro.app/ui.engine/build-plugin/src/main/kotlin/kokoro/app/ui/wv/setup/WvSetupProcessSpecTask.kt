@@ -6,7 +6,11 @@ import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.EmptyFileVisitor
 import org.gradle.api.file.FileTree
+import org.gradle.api.file.FileTreeElement
+import org.gradle.api.file.FileVisitDetails
+import org.gradle.api.file.RelativePath
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.CacheableTask
@@ -72,6 +76,70 @@ abstract class WvSetupProcessSpecTask @Inject constructor(
 
 	@TaskAction
 	fun execute() {
-		// TODO!
+		val incomingInputs = LinkedHashMap<RelativePath, FileTreeElement>()
+		val incomingOverrides = HashMap<RelativePath, FileTreeElement>()
+
+		classpathInputFiles.visit(object : EmptyFileVisitor() {
+			override fun visitFile(visit: FileVisitDetails) {
+				if (isMainInputOrOverride(visit.name)) {
+					incomingInputs
+				} else {
+					incomingOverrides
+				}.let {
+					it[visit.relativePath] = visit
+				}
+			}
+		})
+
+		val sourceLstFiles = LinkedHashMap<RelativePath, FileTreeElement>()
+		val sourceInputs = LinkedHashMap<RelativePath, FileTreeElement>()
+		val sourceOverrides = HashMap<RelativePath, FileTreeElement>()
+
+		val unlikedSourceJsFiles = HashSet<RelativePath>()
+		val unlikedSourceOverrides = HashSet<RelativePath>()
+
+		sourceInputFiles.visit(object : EmptyFileVisitor() {
+			override fun visitFile(visit: FileVisitDetails) {
+				val relativePath = visit.relativePath
+				val name = visit.name
+				if (isMainInputOrOverride(name)) {
+					if (name.endsWith(".lst")) {
+						sourceLstFiles
+					} else {
+						if (name.endsWith("js") &&
+							(name.startsWith(".templ.wv.", name.length - 12) ||
+								name.startsWith(".const.wv.", name.length - 12))
+						) unlikedSourceJsFiles.add(relativePath)
+						sourceInputs
+					}
+				} else {
+					unlikedSourceOverrides.add(relativePath)
+					sourceOverrides
+				}.let {
+					it[relativePath] = visit
+				}
+			}
+		})
+
+		// TODO Process the `*.wv.lst` files
+		// TODO Check for unlinked source JS files
+		// TODO Check for unlinked source overrides
 	}
+}
+
+private fun isMainInputOrOverride(name: String): Boolean {
+	run {
+		if (name.endsWith("js", true)) {
+			if (name.startsWith(".wv.", name.length - 6, true)) {
+				val i = name.lastIndexOf('.', name.length - (6 + 1)) - 1
+				if (i >= 0 && name[i] == '!') return@run
+			}
+		} else if (name.endsWith("spec", true)) {
+			if (name.startsWith("!.wv.", name.length - 9, true)) return@run
+		} else if (name.endsWith("lst", true)) {
+			if (name.startsWith("!.wv.", name.length - 8, true)) return@run
+		}
+		return true
+	}
+	return false
 }
