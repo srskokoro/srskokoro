@@ -12,7 +12,7 @@ fun AndroidExtension.autoNamespace(project: Project, parentNamespace: String) {
 			append(".")
 		}
 		val name = project.name
-		if (name.isEmpty() || name[0].isJavaIdentifierStart()) {
+		if (name.isEmpty() || !name[0].isJavaIdentifierStart()) {
 			append('_')
 		}
 		// Converts invalid identifier characters into underscores
