@@ -125,7 +125,7 @@ class WvSetupPlugin : Plugin<Project> {
 					ic.extendsFrom(configurationSetup.initBucketConfiguration(COMMON_TEST_SOURCE_SET_NAME))
 				}
 
-				val wvSetupCompileTask = tasks.register<WvSetupCompileTask>("${domainNamePrefix}WvSetupProcessSpec") {
+				val wvSetupBuildTask = tasks.register<WvSetupBuildTask>("${domainNamePrefix}WvSetupProcessSpec") {
 					group = LifecycleBasePlugin.BUILD_GROUP
 
 					val project = this.project
@@ -136,8 +136,8 @@ class WvSetupPlugin : Plugin<Project> {
 				}
 
 				val d = compilation.defaultSourceSet
-				d.kotlin.srcDir(wvSetupCompileTask.map { it.kotlinOutputDir })
-				d.assets.srcDir(wvSetupCompileTask.map { it.assetsOutputDir })
+				d.kotlin.srcDir(wvSetupBuildTask.map { it.kotlinOutputDir })
+				d.assets.srcDir(wvSetupBuildTask.map { it.assetsOutputDir })
 			})
 		})
 	}

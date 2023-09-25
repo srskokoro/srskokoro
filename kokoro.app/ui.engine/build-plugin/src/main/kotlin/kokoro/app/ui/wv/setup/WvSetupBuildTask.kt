@@ -31,7 +31,7 @@ import wv
 import javax.inject.Inject
 
 @CacheableTask
-abstract class WvSetupCompileTask @Inject constructor(
+abstract class WvSetupBuildTask @Inject constructor(
 	objects: ObjectFactory,
 	archiveOps: ArchiveOperations,
 ) : DefaultTask() {
