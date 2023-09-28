@@ -83,10 +83,11 @@ internal class WvSetupSourceAnalysis {
 
 	class Entry(
 		val stamp: Int,
-		val path: String,
 		visit: FileTreeElement,
 		val sourceFile: File? = null
 	) {
+		val path = visit.path
+		val packagePath = visit.relativePath.parent.pathString
 		val content = visit.open().reader().readText()
 
 		var parent: Entry? = null
@@ -122,11 +123,9 @@ internal class WvSetupSourceAnalysis {
 		inputFiles.visit(object : EmptyFileVisitor() {
 			override fun visitFile(visit: FileVisitDetails) {
 				val stamp = analyzeInputFileNameForStamp(visit.name)
+				val entry = Entry(stamp, visit, sourceFile = if (isSourceFiles) visit.file else null)
 
-				val path = visit.path
-				val entry = Entry(stamp, path, visit, sourceFile = if (isSourceFiles) visit.file else null)
-
-				if (entries.putIfAbsent(path, entry) != null) {
+				if (entries.putIfAbsent(entry.path, entry) != null) {
 					if (isSourceFiles) throw E_DuplicateSourceEntry(visit)
 					return // Skip
 				}
