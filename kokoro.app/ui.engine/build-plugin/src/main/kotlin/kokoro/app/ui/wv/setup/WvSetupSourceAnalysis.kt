@@ -17,13 +17,13 @@ internal class WvSetupSourceAnalysis {
 		const val WV_SPEC = 0b10 shl 0
 		const val WV_JS = 0b11 shl 0
 
-		const val MASK_WV_TYPE = 0b11 shl 0
+		const val MASK_WV_GENERAL_TYPE = 0b11 shl 0
 
 		const val FLAG_OVERRIDE = 0b01 shl 2
 		const val FLAG_SPEC_PART = 0b10 shl 2
 
 		const val WV_JS_AS_SPEC_PART = WV_JS or FLAG_SPEC_PART
-		const val MASK_WV_JS_AS_SPEC_PART = MASK_WV_TYPE or FLAG_SPEC_PART
+		const val MASK_WV_JS_AS_SPEC_PART = MASK_WV_GENERAL_TYPE or FLAG_SPEC_PART
 
 		const val CONST_WV_JS = WV_JS_AS_SPEC_PART or (0b001 shl 4)
 		const val TEMPL_WV_JS = WV_JS_AS_SPEC_PART or (0b010 shl 4)
@@ -33,7 +33,7 @@ internal class WvSetupSourceAnalysis {
 		const val HEAD_WV_JS = WV_JS or (0b100 shl 4)
 		const val TAIL_WV_JS = WV_JS or (0b101 shl 4)
 
-		const val MASK_WV_JS_TYPE = MASK_WV_JS_AS_SPEC_PART or (0b111 shl 4)
+		const val MASK_WV_SPECIALIZED_TYPE = MASK_WV_JS_AS_SPEC_PART or (0b111 shl 4)
 	}
 
 	internal object S {
@@ -132,7 +132,7 @@ internal class WvSetupSourceAnalysis {
 
 				if (stamp and Stamp.FLAG_OVERRIDE != 0) {
 					overrides.add(entry)
-				} else when (stamp and Stamp.MASK_WV_JS_TYPE) {
+				} else when (stamp and Stamp.MASK_WV_SPECIALIZED_TYPE) {
 					Stamp.CONST_WV_JS -> constParts.add(entry)
 					Stamp.TEMPL_WV_JS -> templParts.add(entry)
 					Stamp.WV_LST -> lstEntries.add(entry)
@@ -228,7 +228,7 @@ private fun analyzeInputFileNameForStamp(name: String): Int {
 	return r
 }
 
-private fun getFileExtLengthFromStamp(stamp: Int) = when (stamp and Stamp.MASK_WV_JS_TYPE) {
+private fun getFileExtLengthFromStamp(stamp: Int) = when (stamp and Stamp.MASK_WV_SPECIALIZED_TYPE) {
 	Stamp.CONST_WV_JS -> N.D_CONST_WV_JS
 	Stamp.TEMPL_WV_JS -> N.D_TEMPL_WV_JS
 
