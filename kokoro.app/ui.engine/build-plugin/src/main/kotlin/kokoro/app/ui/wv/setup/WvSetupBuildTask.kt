@@ -76,6 +76,10 @@ abstract class WvSetupBuildTask @Inject constructor(
 		analysis.loadClasspathInputFiles(classpathInputFiles)
 		analysis.loadSourceInputFiles(sourceInputFiles)
 
-		// TODO Process the `*.wv.lst` files
+		val entries = analysis.entries
+		for (lst in analysis.lstEntries) {
+			val lstState = WvSetupLstState(lst, entries)
+			// TODO Process `lstState`
+		}
 	}
 }
