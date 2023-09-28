@@ -4,7 +4,6 @@ import conv.internal.support.removeLast
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.DuplicateFileCopyingException
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.FileType
 import org.gradle.api.model.ObjectFactory
@@ -96,7 +95,7 @@ private fun handleForGeneration(target: File, change: FileChange, forGeneration:
 		return false // Done.
 	}
 	if (!forGeneration.add(change.normalizedPath)) {
-		throw E_DuplicateInput(change)
+		throw E_DuplicateSourceEntry(change)
 	}
 	return true
 }
@@ -113,5 +112,5 @@ private fun generateForWvLst(target: File, change: FileChange) {
 	// TODO Implement
 }
 
-private fun E_DuplicateInput(change: FileChange) =
-	DuplicateFileCopyingException("Entry is present in multiple sources: ${change.normalizedPath}\nInput file: ${change.file}")
+internal fun E_DuplicateSourceEntry(change: FileChange) =
+	E_DuplicateSourceEntry(change.normalizedPath, change.file)
