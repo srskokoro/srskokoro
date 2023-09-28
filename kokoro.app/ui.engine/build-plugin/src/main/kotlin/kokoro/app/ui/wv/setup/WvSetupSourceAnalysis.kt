@@ -242,6 +242,7 @@ private fun getFileExtLengthFromStamp(stamp: Int) = when (stamp and Stamp.MASK_W
 	else -> 0
 }
 
+
 private fun E_DuplicateSourceEntry(visit: FileTreeElement) = E_DuplicateSourceEntry(visit.path, visit.file)
 
 internal fun E_DuplicateSourceEntry(sourcePath: String, sourceFile: File) =
