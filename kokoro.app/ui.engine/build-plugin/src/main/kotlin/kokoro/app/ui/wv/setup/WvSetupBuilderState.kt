@@ -4,7 +4,7 @@ import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.*
 import org.gradle.api.InvalidUserDataException
 import java.util.LinkedList
 
-internal class WvSetupLstState(lst: Entry, private val entries: Map<String, Entry>) {
+internal class WvSetupBuilderState(lst: Entry, private val entries: Map<String, Entry>) {
 
 	val externEntries = LinkedList<Entry>()
 

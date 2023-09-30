@@ -78,7 +78,7 @@ abstract class WvSetupBuildTask @Inject constructor(
 
 		val entries = analysis.entries
 		for (lst in analysis.lstEntries) {
-			val lstState = WvSetupLstState(lst, entries)
+			val lstState = WvSetupBuilderState(lst, entries)
 			// TODO Process `lstState`
 		}
 	}
