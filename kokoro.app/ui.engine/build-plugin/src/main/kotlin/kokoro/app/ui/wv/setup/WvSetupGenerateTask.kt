@@ -65,7 +65,6 @@ abstract class WvSetupGenerateTask @Inject constructor(
 			if (change.fileType == FileType.DIRECTORY) continue
 
 			val path = change.normalizedPath
-			// TODO Optimize case checks
 			if (path.endsWith(S.D_CONST_WV_JS)) {
 				val target = outputDir.file("${path.removeLast(N.JS)}kt").asFile
 				if (handleForGeneration(target, change, forGeneration)) {
