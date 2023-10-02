@@ -133,7 +133,7 @@ class WvSetupPlugin : Plugin<Project> {
 					ic.extendsFrom(configurationSetup.initBucketConfiguration(COMMON_TEST_SOURCE_SET_NAME))
 				}
 
-				val wvSetupBuildTask = tasks.register<WvSetupBuildTask>("${domainNamePrefix}WvSetupProcessSpec") {
+				val wvSetupBuildTask = tasks.register<WvSetupBuildTask>("${domainNamePrefix}WvSetupBuild") {
 					group = LifecycleBasePlugin.BUILD_GROUP
 
 					val project = this.project
