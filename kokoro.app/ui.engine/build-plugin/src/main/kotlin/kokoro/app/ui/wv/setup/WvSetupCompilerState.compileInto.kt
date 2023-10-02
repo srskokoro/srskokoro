@@ -17,7 +17,7 @@ internal fun WvSetupCompilerState.compileInto(ktOutputDir: File, jsOutputDir: Fi
 
 	val kt = StringBuilder()
 	val pathSegments = lst.relativePath.segments
-	if (pathSegments.size > 1) {
+	if (pathSegments.size >= 2) {
 		kt.append("package ")
 		kt.append(pathSegments[0])
 		for (i in 1 until (pathSegments.size - 1)) {
