@@ -85,8 +85,8 @@ class WvSetupPlugin : Plugin<Project> {
 						oc.extendsFrom(configurationSetup.initBucketConfiguration(s.name))
 				}
 				// NOTE: The common source set isn't necessarily included above,
-				// particularly when the default source set doesn't depend on
-				// the common source set.
+				// particularly when the main source set doesn't depend on the
+				// common source set.
 				oc.extendsFrom(configurationSetup.initBucketConfiguration(COMMON_MAIN_SOURCE_SET_NAME))
 
 				val wvSetupExportTask = tasks.register<WvSetupExportTask>("${targetName}WvSetupExport") {
