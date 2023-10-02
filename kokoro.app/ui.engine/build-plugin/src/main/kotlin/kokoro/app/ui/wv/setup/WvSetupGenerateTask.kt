@@ -4,6 +4,7 @@ import conv.internal.support.removeLast
 import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.N
 import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.S
 import org.gradle.api.DefaultTask
+import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileTree
@@ -114,15 +115,16 @@ private fun generateForTemplWvJs(target: File, change: FileChange) {
 	val kt = StringBuilder()
 	if (pathSegments_last >= 1) {
 		kt.append("package ")
-		kt.append(pathSegments[0])
-		for (i in 1 until pathSegments_last) {
+		appendKotlinIdentifier(kt, pathSegments[0])
+		for (i in 1 until (pathSegments.size - 1)) {
 			kt.append('.')
-			kt.append(pathSegments[i])
+			appendKotlinIdentifier(kt, pathSegments[i])
 		}
 		kt.appendLine()
 	}
 
 	val baseName = pathSegments[pathSegments_last].removeLast(N.D_TEMPL_WV_JS)
+	checkBaseName(baseName, change)
 
 	kt.appendLine()
 	kt.append("const val t_")
@@ -143,15 +145,16 @@ private fun generateForWvLst(target: File, change: FileChange) {
 	val kt = StringBuilder()
 	if (pathSegments_last >= 1) {
 		kt.append("package ")
-		kt.append(pathSegments[0])
-		for (i in 1 until pathSegments_last) {
+		appendKotlinIdentifier(kt, pathSegments[0])
+		for (i in 1 until (pathSegments.size - 1)) {
 			kt.append('.')
-			kt.append(pathSegments[i])
+			appendKotlinIdentifier(kt, pathSegments[i])
 		}
 		kt.appendLine()
 	}
 
 	val baseName = pathSegments[pathSegments_last].removeLast(N.D_WV_LST)
+	checkBaseName(baseName, change)
 
 	kt.appendLine()
 	kt.append("public expect fun ")
@@ -159,6 +162,12 @@ private fun generateForWvLst(target: File, change: FileChange) {
 	kt.appendLine("_wv_getId(templPath: String): Int")
 
 	target.writeText(kt.toString()) // NOTE: Truncates if file already exists.
+}
+
+private fun checkBaseName(name: String, change: FileChange) {
+	if (!isSimpleKotlinIdentifier(name)) {
+		throw InvalidUserDataException("The base name of the file should be a simple Kotlin identifier.\n- Input file: ${change.file}")
+	}
 }
 
 internal fun E_DuplicateSourceEntry(change: FileChange) =

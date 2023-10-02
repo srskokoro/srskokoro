@@ -19,10 +19,10 @@ internal fun WvSetupCompilerState.compileInto(ktOutputDir: File, jsOutputDir: Fi
 	val pathSegments = lst.relativePath.segments
 	if (pathSegments.size >= 2) {
 		kt.append("package ")
-		kt.append(pathSegments[0])
+		appendKotlinIdentifier(kt, pathSegments[0])
 		for (i in 1 until (pathSegments.size - 1)) {
 			kt.append('.')
-			kt.append(pathSegments[i])
+			appendKotlinIdentifier(kt, pathSegments[i])
 		}
 		kt.appendLine()
 	}
