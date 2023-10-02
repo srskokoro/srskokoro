@@ -96,7 +96,11 @@ class WvSetupPlugin : Plugin<Project> {
 					destinationDirectory.set(project.layout.buildDirectory.dir("wvSetupLibs"))
 					target.disambiguationClassifier?.let { archiveAppendix.set(it.lowercase()) }
 
-					from(fun() = listOf(mainSourceSet).topDownCollect().map { it.wv })
+					// NOTE: The common source set isn't necessarily included by
+					// the main source set, particularly when the main source
+					// set doesn't depend on the common source set.
+					val commonSourceSet = project.kotlinSourceSets.getByName(COMMON_MAIN_SOURCE_SET_NAME)
+					from(fun() = listOf(commonSourceSet, mainSourceSet).topDownCollect().map { it.wv })
 				}
 
 				oc.outgoing.artifact(wvSetupExportTask)
