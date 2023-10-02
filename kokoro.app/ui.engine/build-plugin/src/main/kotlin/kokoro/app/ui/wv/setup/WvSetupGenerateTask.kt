@@ -135,7 +135,30 @@ private fun generateForTemplWvJs(target: File, change: FileChange) {
 }
 
 private fun generateForWvLst(target: File, change: FileChange) {
-	// TODO Implement
+	val path = change.normalizedPath
+
+	val pathSegments = path.split('/')
+	val pathSegments_last = pathSegments.size - 1
+
+	val kt = StringBuilder()
+	if (pathSegments_last >= 1) {
+		kt.append("package ")
+		kt.append(pathSegments[0])
+		for (i in 1 until pathSegments_last) {
+			kt.append('.')
+			kt.append(pathSegments[i])
+		}
+		kt.appendLine()
+	}
+
+	val baseName = pathSegments[pathSegments_last].removeLast(N.D_WV_LST)
+
+	kt.appendLine()
+	kt.append("public expect fun ")
+	kt.append(baseName)
+	kt.appendLine("_wv_getId(templPath: String): Int")
+
+	target.writeText(kt.toString()) // NOTE: Truncates if file already exists.
 }
 
 internal fun E_DuplicateSourceEntry(change: FileChange) =
