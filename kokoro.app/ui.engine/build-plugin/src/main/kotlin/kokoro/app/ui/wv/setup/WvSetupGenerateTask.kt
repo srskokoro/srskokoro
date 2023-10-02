@@ -1,6 +1,8 @@
 package kokoro.app.ui.wv.setup
 
 import conv.internal.support.removeLast
+import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.N
+import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.S
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
@@ -62,20 +64,20 @@ abstract class WvSetupGenerateTask @Inject constructor(
 		for (change in inputChanges.getFileChanges(inputFiles)) {
 			if (change.fileType == FileType.DIRECTORY) continue
 
-			val entry = change.normalizedPath
+			val path = change.normalizedPath
 			// TODO Optimize case checks
-			if (entry.endsWith(".const.wv.js")) {
-				val target = outputDir.file("${entry.removeLast(2)}kt").asFile
+			if (path.endsWith(S.D_CONST_WV_JS)) {
+				val target = outputDir.file("${path.removeLast(N.JS)}kt").asFile
 				if (handleForGeneration(target, change, forGeneration)) {
 					generateForConstWvJs(target, change)
 				}
-			} else if (entry.endsWith(".templ.wv.js")) {
-				val target = outputDir.file("${entry.removeLast(2)}kt").asFile
+			} else if (path.endsWith(S.D_TEMPL_WV_JS)) {
+				val target = outputDir.file("${path.removeLast(N.JS)}kt").asFile
 				if (handleForGeneration(target, change, forGeneration)) {
 					generateForTemplWvJs(target, change)
 				}
-			} else if (entry.endsWith(".wv.lst")) {
-				val target = outputDir.file("${entry}.kt").asFile
+			} else if (path.endsWith(S.D_WV_LST)) {
+				val target = outputDir.file("${path.removeLast(N.LST)}kt").asFile
 				if (handleForGeneration(target, change, forGeneration)) {
 					generateForWvLst(target, change)
 				}

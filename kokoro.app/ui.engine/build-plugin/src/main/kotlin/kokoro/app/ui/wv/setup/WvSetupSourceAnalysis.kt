@@ -67,6 +67,12 @@ internal class WvSetupSourceAnalysis {
 
 	internal object N {
 		const val OVER = "${S.OVER}".length
+		const val WV = S.WV.length
+
+		const val JS = S.JS.length
+		const val SPEC = S.SPEC.length
+		const val LST = S.LST.length
+
 		const val D_WV_D = S.D_WV_D.length
 
 		const val D_WV_JS = S.D_WV_JS.length
