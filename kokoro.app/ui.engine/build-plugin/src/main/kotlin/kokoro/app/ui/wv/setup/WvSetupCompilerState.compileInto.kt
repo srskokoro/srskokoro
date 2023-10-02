@@ -28,9 +28,9 @@ internal fun WvSetupCompilerState.compileInto(ktOutputDir: File, jsOutputDir: Fi
 	}
 
 	kt.appendLine()
-	kt.append("public fun `")
+	kt.append("public fun ")
 	kt.append(baseName)
-	kt.append("_wv_getId`(templPath: String): Int = when (templPath) {\n")
+	kt.append("_wv_getId(templPath: String): Int = when (templPath) {\n")
 
 	val js = StringBuilder("'use strict';(function(){\n")
 	stitchInto(kt, js)
