@@ -94,7 +94,7 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 		js.appendLine(entry.content)
 	}
 
-	var ktCasesCount = 0
+	var nextTemplId = 0
 	for ((packagePath, packageEntry) in packageEntries) {
 		js.append(";// Source package: ")
 		js.appendLine(packagePath)
@@ -104,7 +104,22 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 			js.appendLine(entry.content)
 		}
 		for (entry in packageEntry.templEntries) {
+			val id = nextTemplId++
+
 			appendJsEntryHeaderLine(js, entry)
+			val baseName = entry.name.removeLast(N.D_TEMPL_WV_JS)
+
+			js.append("const t_")
+			js.append(baseName)
+			js.append(" = ")
+			js.append(id)
+			js.appendLine(';')
+
+			js.append("const s_")
+			js.append(baseName)
+			js.append(" = ")
+			js.appendLine("Symbol();")
+
 			js.appendLine("(function(){")
 			js.appendLine(entry.content)
 			js.appendLine("})()")
@@ -113,7 +128,7 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 			kt.append(entry.path)
 			kt.append('"')
 			kt.append(" -> ")
-			kt.appendLine(ktCasesCount++)
+			kt.appendLine(id)
 		}
 		js.appendLine("})()")
 	}
