@@ -38,7 +38,7 @@ class WvSetupPlugin : Plugin<Project> {
 		val configurationSetup = ConfigurationSetup(targetProject)
 
 		projectSourceSets.all {
-			val sourceSetName = name
+			val sourceSetName = this.name
 			configurationSetup.initBucketConfiguration(sourceSetName)
 
 			val wvDisplayName = "$sourceSetName WebView setup"
