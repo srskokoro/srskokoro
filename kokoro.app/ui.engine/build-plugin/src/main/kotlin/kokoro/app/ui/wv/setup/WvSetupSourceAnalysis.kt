@@ -86,9 +86,15 @@ internal class WvSetupSourceAnalysis {
 		visit: FileTreeElement,
 		val sourceFile: File? = null
 	) {
+		val name get() = relativePath.lastName
+
 		val path = visit.path
-		val packagePath = visit.relativePath.parent.pathString
-		val content = visit.open().reader().readText()
+		val relativePath = visit.relativePath
+
+		private var _packagePath: String? = null
+		val packagePath get() = _packagePath ?: relativePath.parent.pathString.also { _packagePath = it }
+
+		val content = visit.open().reader().readText().trim()
 
 		var parent: Entry? = null
 

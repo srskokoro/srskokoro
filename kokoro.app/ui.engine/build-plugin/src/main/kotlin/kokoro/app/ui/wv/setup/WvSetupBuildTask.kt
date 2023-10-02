@@ -6,6 +6,7 @@ import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.FileTree
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
@@ -26,6 +27,7 @@ import javax.inject.Inject
 abstract class WvSetupBuildTask @Inject constructor(
 	objects: ObjectFactory,
 	archiveOps: ArchiveOperations,
+	private val fsOps: FileSystemOperations,
 ) : DefaultTask() {
 
 	@get:OutputDirectory
@@ -72,14 +74,21 @@ abstract class WvSetupBuildTask @Inject constructor(
 
 	@TaskAction
 	fun execute() {
+		fsOps.delete { delete(kotlinOutputDir, assetsOutputDir) }
+
 		val analysis = WvSetupSourceAnalysis()
 		analysis.loadClasspathInputFiles(classpathInputFiles)
 		analysis.loadSourceInputFiles(sourceInputFiles)
 
 		val entries = analysis.entries
+
+		val kotlinOutputDir = kotlinOutputDir.get().asFile
+		val assetsOutputDir = assetsOutputDir.get().asFile
+		val logger = logger
+
 		for (lst in analysis.lstEntries) {
 			val lstState = WvSetupCompilerState(lst, entries)
-			// TODO Process `lstState`
+			lstState.compileInto(kotlinOutputDir, assetsOutputDir, logger)
 		}
 	}
 }
