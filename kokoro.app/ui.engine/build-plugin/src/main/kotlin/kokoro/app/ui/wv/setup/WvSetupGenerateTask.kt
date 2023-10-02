@@ -106,7 +106,32 @@ private fun generateForConstWvJs(target: File, change: FileChange) {
 }
 
 private fun generateForTemplWvJs(target: File, change: FileChange) {
-	// TODO Implement
+	val path = change.normalizedPath
+
+	val pathSegments = path.split('/')
+	val pathSegments_last = pathSegments.size - 1
+
+	val kt = StringBuilder()
+	if (pathSegments_last >= 1) {
+		kt.append("package ")
+		kt.append(pathSegments[0])
+		for (i in 1 until pathSegments_last) {
+			kt.append('.')
+			kt.append(pathSegments[i])
+		}
+		kt.appendLine()
+	}
+
+	val baseName = pathSegments[pathSegments_last].removeLast(N.D_TEMPL_WV_JS)
+
+	kt.appendLine()
+	kt.append("const val t_")
+	kt.append(baseName)
+	kt.append(" = \"")
+	kt.append(path)
+	kt.appendLine('"')
+
+	target.writeText(kt.toString()) // NOTE: Truncates if file already exists.
 }
 
 private fun generateForWvLst(target: File, change: FileChange) {
