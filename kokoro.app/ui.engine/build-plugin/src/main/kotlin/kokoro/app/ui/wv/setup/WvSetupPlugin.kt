@@ -70,8 +70,8 @@ class WvSetupPlugin : Plugin<Project> {
 			if (target.platformType == KotlinPlatformType.common) {
 				return // Skip!
 			}
-			val targetName = target.targetName
 			kotlin.run {
+				val targetName = target.targetName
 				val mainSourceSet = projectSourceSets.findByName("${targetName}Main")
 					?: return // We require it. Skip it then.
 
@@ -106,8 +106,12 @@ class WvSetupPlugin : Plugin<Project> {
 				oc.outgoing.artifact(wvSetupExportTask)
 			}
 			target.compilations.all(fun(compilation) {
+				@Suppress("NAME_SHADOWING") val target = compilation.target
+				val targetName = target.targetName
+
 				val compilationName = compilation.compilationName
 				val uCompilationName = compilationName.replaceFirstChar { it.uppercaseChar() }
+
 				val domainNamePrefix = "${targetName}${uCompilationName}"
 
 				val ic = configurationSetup.configurations.create("${domainNamePrefix}WvSetupIncoming")
