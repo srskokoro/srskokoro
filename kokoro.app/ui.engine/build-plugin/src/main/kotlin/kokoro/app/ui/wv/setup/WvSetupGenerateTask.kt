@@ -25,6 +25,7 @@ import org.gradle.work.InputChanges
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import wv
 import java.io.File
+import java.nio.file.Files
 import javax.inject.Inject
 import kotlin.io.path.deleteExisting
 
@@ -98,6 +99,11 @@ private fun handleForGeneration(target: File, change: FileChange, forGeneration:
 	}
 	if (!forGeneration.add(change.normalizedPath)) {
 		throw E_DuplicateSourceEntry(change)
+	}
+	val parentFile = target.parentFile
+	if (!parentFile.mkdirs() && !parentFile.exists()) {
+		// Let the following throw a pretty error message
+		Files.createDirectories(parentFile.toPath())
 	}
 	return true
 }
