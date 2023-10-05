@@ -144,11 +144,11 @@ private fun generateForTemplWvJs(target: File, change: FileChange) {
 
 private fun generateForWvLst(target: File, change: FileChange) {
 	val path = change.normalizedPath
-
 	val pathSegments = path.split('/')
-	val pathSegments_last = pathSegments.size - 1
 
-	val kt = StringBuilder()
+	val kt = StringBuilder("@file:Suppress(\"NO_ACTUAL_FOR_EXPECT\")\n\n")
+
+	val pathSegments_last = pathSegments.size - 1
 	if (pathSegments_last >= 1) {
 		kt.append("package ")
 		appendKotlinIdentifier(kt, pathSegments[0])
@@ -157,8 +157,8 @@ private fun generateForWvLst(target: File, change: FileChange) {
 			appendKotlinIdentifier(kt, pathSegments[i])
 		}
 		kt.appendLine()
+		kt.appendLine()
 	}
-	kt.appendLine()
 
 	val baseName = pathSegments[pathSegments_last].removeLast(N.D_WV_LST)
 	checkBaseName(baseName, change)

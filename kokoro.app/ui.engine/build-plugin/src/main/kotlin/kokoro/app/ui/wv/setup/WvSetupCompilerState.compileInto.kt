@@ -15,7 +15,8 @@ internal fun WvSetupCompilerState.compileInto(ktOutputDir: File, jsOutputDir: Fi
 
 	// --
 
-	val kt = StringBuilder()
+	val kt = StringBuilder("@file:Suppress(\"ACTUAL_WITHOUT_EXPECT\")\n\n")
+
 	val pathSegments = lst.relativePath.segments
 	if (pathSegments.size >= 2) {
 		kt.append("package ")
@@ -25,8 +26,8 @@ internal fun WvSetupCompilerState.compileInto(ktOutputDir: File, jsOutputDir: Fi
 			appendKotlinIdentifier(kt, pathSegments[i])
 		}
 		kt.appendLine()
+		kt.appendLine()
 	}
-	kt.appendLine()
 
 	kt.append("public actual fun ")
 	kt.append(baseName)
