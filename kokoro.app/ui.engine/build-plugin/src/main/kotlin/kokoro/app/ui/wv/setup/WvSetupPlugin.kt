@@ -37,6 +37,9 @@ class WvSetupPlugin : Plugin<Project> {
 
 		val configurationSetup = ConfigurationSetup(targetProject)
 
+		// See, https://twitter.com/Sellmair/status/1619308362881187840
+		val prepareKotlinIdeaImport = tasks.maybeCreate("prepareKotlinIdeaImport")
+
 		projectSourceSets.all {
 			val sourceSetName = this.name
 			configurationSetup.initBucketConfiguration(sourceSetName)
@@ -59,6 +62,7 @@ class WvSetupPlugin : Plugin<Project> {
 
 				sourceDirectories.from(wv.sourceDirectories)
 			}
+			prepareKotlinIdeaImport.dependsOn(wvSetupGenerateTask)
 
 			this.kotlin.run {
 				srcDir(wvSetupGenerateTask)
