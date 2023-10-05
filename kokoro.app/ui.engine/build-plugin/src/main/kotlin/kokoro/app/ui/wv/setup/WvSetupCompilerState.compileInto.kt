@@ -37,6 +37,7 @@ internal fun WvSetupCompilerState.compileInto(ktOutputDir: File, jsOutputDir: Fi
 	stitchInto(kt, js)
 	js.append("})()\n")
 
+	kt.appendLine("else -> -1")
 	kt.appendLine('}')
 
 	// --
