@@ -26,8 +26,8 @@ internal fun WvSetupCompilerState.compileInto(ktOutputDir: File, jsOutputDir: Fi
 		}
 		kt.appendLine()
 	}
-
 	kt.appendLine()
+
 	kt.append("public actual fun ")
 	kt.append(baseName)
 	kt.append("_wv_getId(templPath: String): Int = when (templPath) {\n")
