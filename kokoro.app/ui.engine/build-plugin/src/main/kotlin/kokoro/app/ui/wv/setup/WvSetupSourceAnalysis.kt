@@ -156,7 +156,14 @@ internal class WvSetupSourceAnalysis {
 
 		for (entry in overrides) {
 			val path = entry.path
-			val basePath_n = path.length - getFileExtLengthFromStamp(entry.stamp)
+
+			val stamp = entry.stamp
+			if (stamp and Stamp.MASK_WV_SPECIALIZED_TYPE == Stamp.CONST_WV_JS) {
+				if (isSourceFiles) throw E_OverrideCannotBeConst(path, entry.sourceFile)
+				continue // Skip (silently)
+			}
+
+			val basePath_n = path.length - getFileExtLengthFromStamp(stamp)
 			val targetPath = path.substring(0, basePath_n - N.OVER) + path.substring(basePath_n)
 
 			val parent = entries[targetPath]
@@ -260,6 +267,9 @@ private fun E_DuplicateSourceEntry(visit: FileTreeElement) = E_DuplicateSourceEn
 internal fun E_DuplicateSourceEntry(sourcePath: String, sourceFile: File) =
 	DuplicateFileCopyingException("Entry is present in multiple sources: $sourcePath\n- Input file: $sourceFile")
 
+
+private fun E_OverrideCannotBeConst(sourcePath: String, sourceFile: File?) =
+	InvalidUserDataException("Override entry cannot be a `*${S.D_CONST_WV_JS}` file: $sourcePath\n- Input file: $sourceFile")
 
 private fun E_MissingOverrideParent(sourcePath: String, sourceFile: File?) =
 	InvalidUserDataException("Override entry doesn't override anything: $sourcePath\n- Input file: $sourceFile")
