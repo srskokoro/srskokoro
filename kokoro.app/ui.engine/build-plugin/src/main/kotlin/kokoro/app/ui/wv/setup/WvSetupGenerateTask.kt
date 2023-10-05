@@ -170,5 +170,5 @@ private fun checkBaseName(name: String, change: FileChange) {
 	}
 }
 
-internal fun E_DuplicateSourceEntry(change: FileChange) =
+private fun E_DuplicateSourceEntry(change: FileChange) =
 	E_DuplicateSourceEntry(change.normalizedPath, change.file)
