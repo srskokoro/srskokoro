@@ -31,7 +31,7 @@ internal class WvSetupCompilerState(val lst: Entry, private val entries: Map<Str
 			if (line.isBlank()) continue
 			if (line.startsWith('#')) {
 				if (line.startsWith("%include-base", 1)) {
-					context.parent?.let { loadLst(it, seenPaths) }
+					context.base?.let { loadLst(it, seenPaths) }
 				}
 				continue // Skip code below
 			}
@@ -89,7 +89,7 @@ internal class WvSetupCompilerState(val lst: Entry, private val entries: Map<Str
 			if (line.isBlank()) continue
 			if (line.startsWith('#')) {
 				if (line.startsWith("%include-base", 1)) {
-					context.parent?.let { loadSpec(it, seenPaths) }
+					context.base?.let { loadSpec(it, seenPaths) }
 				}
 				continue // Skip code below
 			}

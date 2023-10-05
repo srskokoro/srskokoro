@@ -102,8 +102,7 @@ internal class WvSetupSourceAnalysis {
 
 		val content = visit.open().reader().readText().trim()
 
-		var parent: Entry? = null
-
+		var base: Entry? = null
 		var override: Entry? = null
 
 		var constPart: Entry? = null
@@ -166,10 +165,10 @@ internal class WvSetupSourceAnalysis {
 			val basePath_n = path.length - getFileExtLengthFromStamp(stamp)
 			val targetPath = path.substring(0, basePath_n - N.OVER) + path.substring(basePath_n)
 
-			val parent = entries[targetPath]
-			if (parent != null && (parent.sourceFile != null) == isSourceFiles) {
-				entry.parent = parent
-				parent.override = entry
+			val base = entries[targetPath]
+			if (base != null && (base.sourceFile != null) == isSourceFiles) {
+				entry.base = base
+				base.override = entry
 			} else if (isSourceFiles) {
 				throw E_MissingOverrideParent(path, entry.sourceFile)
 			}
@@ -184,7 +183,6 @@ internal class WvSetupSourceAnalysis {
 
 			val parent = entries[targetPath]
 			if (parent != null && (parent.sourceFile != null) == isSourceFiles) {
-				entry.parent = parent
 				parent.constPart = entry
 			} else if (isSourceFiles) {
 				throw E_MissingSpecParent(path, entry.sourceFile)
@@ -198,7 +196,6 @@ internal class WvSetupSourceAnalysis {
 
 			val parent = entries[targetPath]
 			if (parent != null && (parent.sourceFile != null) == isSourceFiles) {
-				entry.parent = parent
 				parent.templPart = entry
 			} else if (isSourceFiles) {
 				throw E_MissingSpecParent(path, entry.sourceFile)
