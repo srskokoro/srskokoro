@@ -122,11 +122,11 @@ private fun generateForTemplWvJs(target: File, change: FileChange) {
 		}
 		kt.appendLine()
 	}
+	kt.appendLine()
 
 	val baseName = pathSegments[pathSegments_last].removeLast(N.D_TEMPL_WV_JS)
 	checkBaseName(baseName, change)
 
-	kt.appendLine()
 	kt.append("const val t_")
 	kt.append(baseName)
 	kt.append(" = \"")
@@ -152,11 +152,11 @@ private fun generateForWvLst(target: File, change: FileChange) {
 		}
 		kt.appendLine()
 	}
+	kt.appendLine()
 
 	val baseName = pathSegments[pathSegments_last].removeLast(N.D_WV_LST)
 	checkBaseName(baseName, change)
 
-	kt.appendLine()
 	kt.append("public expect fun ")
 	kt.append(baseName)
 	kt.appendLine("_wv_getId(templPath: String): Int")
