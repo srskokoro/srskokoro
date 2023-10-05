@@ -114,11 +114,11 @@ private fun generateForConstWvJs(target: File, change: FileChange) {
 
 private fun generateForTemplWvJs(target: File, change: FileChange) {
 	val path = change.normalizedPath
-
 	val pathSegments = path.split('/')
-	val pathSegments_last = pathSegments.size - 1
 
 	val kt = StringBuilder()
+
+	val pathSegments_last = pathSegments.size - 1
 	if (pathSegments_last >= 1) {
 		kt.append("package ")
 		appendKotlinIdentifier(kt, pathSegments[0])
