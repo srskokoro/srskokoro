@@ -73,12 +73,12 @@ abstract class WvSetupGenerateTask @Inject constructor(
 
 			val path = change.normalizedPath
 			if (path.endsWith(S.D_CONST_WV_JS)) {
-				val target = outputDir.file("${path.removeLast(N.JS)}kt").asFile
+				val target = outputDir.file("${path.removeLast(N.JS)}${S.KT}").asFile
 				if (handleForGeneration(target, change, forGeneration)) {
 					generateForConstWvJs(target, change)
 				}
 			} else if (path.endsWith(S.D_TEMPL_WV_JS)) {
-				val target = outputDir.file("${path.removeLast(N.JS)}kt").asFile
+				val target = outputDir.file("${path.removeLast(N.JS)}${S.KT}").asFile
 				if (handleForGeneration(target, change, forGeneration)) {
 					generateForTemplWvJs(target, change)
 				}
@@ -88,7 +88,7 @@ abstract class WvSetupGenerateTask @Inject constructor(
 				// declarations without worrying about an equivalent class file
 				// generated clashing with the class file generated for the file
 				// containing the `actual` declarations.
-				val target = outputDir.file("${path.removeLast(N.LST + 1)}!.kt").asFile
+				val target = outputDir.file("${path.removeLast(N.LST + 1)}!.${S.KT}").asFile
 				if (handleForGeneration(target, change, forGeneration)) {
 					generateForWvLst(target, change)
 				}

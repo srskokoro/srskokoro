@@ -40,6 +40,7 @@ internal class WvSetupSourceAnalysis {
 		const val OVER = '!'
 		const val WV = "wv"
 
+		const val KT = "kt"
 		const val JS = "js"
 		const val SPEC = "spec"
 		const val LST = "lst"
@@ -53,6 +54,7 @@ internal class WvSetupSourceAnalysis {
 
 		const val D_WV_D = ".$WV."
 
+		const val D_WV_KT = "$D_WV_D$KT"
 		const val D_WV_JS = "$D_WV_D$JS"
 		const val D_WV_SPEC = "$D_WV_D$SPEC"
 		const val D_WV_LST = "$D_WV_D$LST"
@@ -69,12 +71,14 @@ internal class WvSetupSourceAnalysis {
 		const val OVER = "${S.OVER}".length
 		const val WV = S.WV.length
 
+		const val KT = S.KT.length
 		const val JS = S.JS.length
 		const val SPEC = S.SPEC.length
 		const val LST = S.LST.length
 
 		const val D_WV_D = S.D_WV_D.length
 
+		const val D_WV_KT = S.D_WV_KT.length
 		const val D_WV_JS = S.D_WV_JS.length
 		const val D_WV_SPEC = S.D_WV_SPEC.length
 		const val D_WV_LST = S.D_WV_LST.length

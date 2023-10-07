@@ -51,8 +51,8 @@ internal fun WvSetupCompilerState.compileInto(ktOutputDir: File, jsOutputDir: Fi
 	ktPackageDir.mkdirs()
 	jsPackageDir.mkdirs()
 
-	val ktFile = File(ktPackageDir, "$baseName${S.D_WV_D}kt")
-	val jsFile = File(jsPackageDir, "$baseName${S.D_WV_D}js")
+	val ktFile = File(ktPackageDir, "$baseName${S.D_WV_KT}")
+	val jsFile = File(jsPackageDir, "$baseName${S.D_WV_JS}")
 
 	val ktStr = kt.toString()
 	val jsStr = js.toString()
