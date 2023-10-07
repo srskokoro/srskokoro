@@ -221,7 +221,7 @@ private fun generateForTemplWvJs(target: File, change: FileChange) {
 	val baseName = pathSegments[pathSegments_last].removeLast(N.D_TEMPL_WV_JS)
 	checkBaseName(baseName, change)
 
-	kt.append("const val t_")
+	kt.append("public const val t_")
 	kt.append(baseName)
 	kt.append(" = \"")
 	kt.append(path)
