@@ -4,6 +4,7 @@ import com.google.javascript.jscomp.CompilerOptions
 import com.google.javascript.jscomp.SourceFile
 import com.google.javascript.jscomp.SourceMap
 import conv.internal.support.removeLast
+import kokoro.app.ui.wv.setup.GenerationUtils.appendIdentifierPartAfterStart
 import kokoro.app.ui.wv.setup.GenerationUtils.appendIdentifierStart
 import kokoro.app.ui.wv.setup.GenerationUtils.appendInDqString
 import kokoro.app.ui.wv.setup.GenerationUtils.appendKtPackageHeader
@@ -109,13 +110,13 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 			val baseName = entry.name.removeLast(N.D_TEMPL_WV_JS)
 
 			js.append("const t_")
-			js.append(baseName)
+			appendIdentifierPartAfterStart(js, baseName)
 			js.append(" = ")
 			js.append(id)
 			js.appendLine(';')
 
 			js.append("const s_")
-			js.append(baseName)
+			appendIdentifierPartAfterStart(js, baseName)
 			js.append(" = ")
 			js.appendLine("Symbol();")
 
