@@ -83,7 +83,12 @@ abstract class WvSetupGenerateTask @Inject constructor(
 					generateForTemplWvJs(target, change)
 				}
 			} else if (path.endsWith(S.D_WV_LST)) {
-				val target = outputDir.file("${path.removeLast(N.LST)}kt").asFile
+				// WARNING: Should not have the same name as the file containing
+				// the `actual` declarations, so that we can add non-`expect`
+				// declarations without worrying about an equivalent class file
+				// generated clashing with the class file generated for the file
+				// containing the `actual` declarations.
+				val target = outputDir.file("${path.removeLast(N.LST + 1)}!.kt").asFile
 				if (handleForGeneration(target, change, forGeneration)) {
 					generateForWvLst(target, change)
 				}
@@ -250,6 +255,13 @@ private fun generateForWvLst(target: File, change: FileChange) {
 
 	val baseName = pathSegments[pathSegments_last].removeLast(N.D_WV_LST)
 	checkBaseName(baseName, change)
+
+	kt.append("public const val ")
+	kt.append(baseName)
+	kt.append("_wv_asset = \"")
+	kt.append(path.removeLast(N.LST))
+	kt.appendLine("${S.JS}\"")
+	kt.appendLine()
 
 	kt.append("public expect fun ")
 	kt.append(baseName)
