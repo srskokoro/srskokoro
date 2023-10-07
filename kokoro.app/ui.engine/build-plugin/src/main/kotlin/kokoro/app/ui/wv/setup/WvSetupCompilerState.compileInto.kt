@@ -4,6 +4,9 @@ import com.google.javascript.jscomp.CompilerOptions
 import com.google.javascript.jscomp.SourceFile
 import com.google.javascript.jscomp.SourceMap
 import conv.internal.support.removeLast
+import kokoro.app.ui.wv.setup.KotlinGenerationUtils.appendInEscapedIdentifier
+import kokoro.app.ui.wv.setup.KotlinGenerationUtils.appendInQuotedString
+import kokoro.app.ui.wv.setup.KotlinGenerationUtils.appendPackageHeader
 import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.N
 import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.S
 import org.gradle.api.logging.Logger
@@ -19,19 +22,13 @@ internal fun WvSetupCompilerState.compileInto(ktOutputDir: File, jsOutputDir: Fi
 
 	val pathSegments = lst.relativePath.segments
 	if (pathSegments.size >= 2) {
-		kt.append("package ")
-		appendKotlinIdentifier(kt, pathSegments[0])
-		for (i in 1 until (pathSegments.size - 1)) {
-			kt.append('.')
-			appendKotlinIdentifier(kt, pathSegments[i])
-		}
-		kt.appendLine()
+		appendPackageHeader(kt, pathSegments.asList().subList(0, pathSegments.size - 1))
 		kt.appendLine()
 	}
 
-	kt.append("public actual fun ")
-	kt.append(baseName)
-	kt.append("_wv_getId(templPath: String): Int = when (templPath) {\n")
+	kt.append("public actual fun `")
+	appendInEscapedIdentifier(kt, baseName)
+	kt.append("_wv_getId`(templPath: String): Int = when (templPath) {\n")
 
 	val js = StringBuilder("'use strict';(function(){\n")
 	stitchInto(kt, js)
@@ -128,9 +125,8 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 
 			kt.append('\t')
 			kt.append('"')
-			kt.append(entry.path)
-			kt.append('"')
-			kt.append(" -> ")
+			appendInQuotedString(kt, entry.path)
+			kt.append("\" -> ")
 			kt.appendLine(id)
 		}
 		js.appendLine("})()")

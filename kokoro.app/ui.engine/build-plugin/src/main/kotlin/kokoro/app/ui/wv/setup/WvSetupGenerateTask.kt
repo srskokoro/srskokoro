@@ -1,6 +1,9 @@
 package kokoro.app.ui.wv.setup
 
 import conv.internal.support.removeLast
+import kokoro.app.ui.wv.setup.KotlinGenerationUtils.appendInEscapedIdentifier
+import kokoro.app.ui.wv.setup.KotlinGenerationUtils.appendInQuotedString
+import kokoro.app.ui.wv.setup.KotlinGenerationUtils.appendPackageHeader
 import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.N
 import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.S
 import org.gradle.api.DefaultTask
@@ -157,16 +160,7 @@ private fun generateForConstWvJs(target: File, change: FileChange) {
 
 	val kt = StringBuilder()
 
-	val pathSegments_last = pathSegments.size - 1
-	if (pathSegments_last >= 1) {
-		kt.append("package ")
-		appendKotlinIdentifier(kt, pathSegments[0])
-		for (i in 1 until (pathSegments.size - 1)) {
-			kt.append('.')
-			appendKotlinIdentifier(kt, pathSegments[i])
-		}
-		kt.appendLine()
-	}
+	appendPackageHeader(kt, pathSegments.subList(0, pathSegments.size - 1))
 	kt.appendLine()
 
 	// --
@@ -212,24 +206,15 @@ private fun generateForTemplWvJs(target: File, change: FileChange) {
 	val kt = StringBuilder()
 
 	val pathSegments_last = pathSegments.size - 1
-	if (pathSegments_last >= 1) {
-		kt.append("package ")
-		appendKotlinIdentifier(kt, pathSegments[0])
-		for (i in 1 until (pathSegments.size - 1)) {
-			kt.append('.')
-			appendKotlinIdentifier(kt, pathSegments[i])
-		}
-		kt.appendLine()
-	}
+	appendPackageHeader(kt, pathSegments.subList(0, pathSegments_last))
 	kt.appendLine()
 
 	val baseName = pathSegments[pathSegments_last].removeLast(N.D_TEMPL_WV_JS)
-	checkBaseName(baseName, change)
 
-	kt.append("public const val t_")
-	kt.append(baseName)
-	kt.append(" = \"")
-	kt.append(path)
+	kt.append("public const val `t_")
+	appendInEscapedIdentifier(kt, baseName)
+	kt.append("` = \"")
+	appendInQuotedString(kt, path)
 	kt.appendLine('"')
 
 	target.writeText(kt.toString()) // NOTE: Truncates if file already exists.
@@ -242,38 +227,25 @@ private fun generateForWvLst(target: File, change: FileChange) {
 	val kt = StringBuilder("@file:Suppress(\"NO_ACTUAL_FOR_EXPECT\")\n\n")
 
 	val pathSegments_last = pathSegments.size - 1
-	if (pathSegments_last >= 1) {
-		kt.append("package ")
-		appendKotlinIdentifier(kt, pathSegments[0])
-		for (i in 1 until (pathSegments.size - 1)) {
-			kt.append('.')
-			appendKotlinIdentifier(kt, pathSegments[i])
-		}
-		kt.appendLine()
+	if (appendPackageHeader(kt, pathSegments.subList(0, pathSegments_last))) {
 		kt.appendLine()
 	}
 
 	val baseName = pathSegments[pathSegments_last].removeLast(N.D_WV_LST)
-	checkBaseName(baseName, change)
+	val baseName_analysis = KotlinIdentifierType.analyze(baseName)
 
-	kt.append("public const val ")
-	kt.append(baseName)
-	kt.append("_wv_asset = \"")
-	kt.append(path.removeLast(N.LST))
+	kt.append("public const val `")
+	appendInEscapedIdentifier(kt, baseName, baseName_analysis)
+	kt.append("_wv_asset` = \"")
+	appendInQuotedString(kt, path.removeLast(N.LST))
 	kt.appendLine("${S.JS}\"")
 	kt.appendLine()
 
-	kt.append("public expect fun ")
-	kt.append(baseName)
-	kt.appendLine("_wv_getId(templPath: String): Int")
+	kt.append("public expect fun `")
+	appendInEscapedIdentifier(kt, baseName, baseName_analysis)
+	kt.appendLine("_wv_getId`(templPath: String): Int")
 
 	target.writeText(kt.toString()) // NOTE: Truncates if file already exists.
-}
-
-private fun checkBaseName(name: String, change: FileChange) {
-	if (!isSimpleKotlinIdentifier(name)) {
-		throw InvalidUserDataException("The base name of the file should be a simple Kotlin identifier.\n- Input file: ${change.file}")
-	}
 }
 
 private fun E_DuplicateSourceEntry(change: FileChange) =
