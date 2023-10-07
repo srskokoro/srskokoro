@@ -39,7 +39,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 @CacheableTask
-abstract class WvSetupGenerateTask @Inject constructor(
+abstract class WvSetupPreBuildTask @Inject constructor(
 	objects: ObjectFactory,
 ) : DefaultTask() {
 

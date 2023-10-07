@@ -55,7 +55,7 @@ class WvSetupPlugin : Plugin<Project> {
 			wv.srcDir("src/$sourceSetName/wv")
 			addExtraneousSource(XS_wv, wv)
 
-			val wvSetupGenerateTask = tasks.register<WvSetupGenerateTask>("${sourceSetName}WvSetupGenerate") {
+			val wvSetupPreBuildTask = tasks.register<WvSetupPreBuildTask>("${sourceSetName}WvSetupPreBuild") {
 				group = LifecycleBasePlugin.BUILD_GROUP
 
 				val project = this.project
@@ -63,10 +63,10 @@ class WvSetupPlugin : Plugin<Project> {
 
 				sourceDirectories.from(wv.sourceDirectories)
 			}
-			prepareKotlinIdeaImport.dependsOn(wvSetupGenerateTask)
+			prepareKotlinIdeaImport.dependsOn(wvSetupPreBuildTask)
 
 			this.kotlin.run {
-				srcDir(wvSetupGenerateTask)
+				srcDir(wvSetupPreBuildTask)
 				source(wv) // Simply for IDE support. Unnecessary otherwise.
 			}
 		}
