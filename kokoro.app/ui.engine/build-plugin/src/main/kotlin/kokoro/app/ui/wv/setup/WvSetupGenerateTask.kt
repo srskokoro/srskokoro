@@ -49,14 +49,14 @@ abstract class WvSetupGenerateTask @Inject constructor(
 	@get:[IgnoreEmptyDirectories SkipWhenEmpty]
 	@get:InputFiles
 	internal val inputFiles: FileTree = sourceDirectories.asFileTree.matching {
-		include("**/*.const.wv.js")
-		exclude("**/*!.const.wv.js")
+		include("**/*${S.D_CONST_WV_JS}")
+		exclude("**/*!${S.D_CONST_WV_JS}")
 
-		include("**/*.templ.wv.js")
-		exclude("**/*!.templ.wv.js")
+		include("**/*${S.D_TEMPL_WV_JS}")
+		exclude("**/*!${S.D_TEMPL_WV_JS}")
 
-		include("**/*.wv.lst")
-		exclude("**/*!.wv.lst")
+		include("**/*${S.D_WV_LST}")
+		exclude("**/*!${S.D_WV_LST}")
 	}
 
 	fun from(sourceSet: KotlinSourceSet) {

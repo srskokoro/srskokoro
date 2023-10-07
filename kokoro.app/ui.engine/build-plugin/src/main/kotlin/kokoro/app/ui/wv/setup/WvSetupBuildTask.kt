@@ -1,6 +1,7 @@
 package kokoro.app.ui.wv.setup
 
 import conv.internal.support.io.asFileTreeVia
+import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.S
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.ConfigurableFileCollection
@@ -55,17 +56,17 @@ abstract class WvSetupBuildTask @Inject constructor(
 			archiveOps.zipTree(it)
 		} else it
 	}.asFileTree.matching {
-		include("**/*.wv.js")
-		include("**/*.wv.spec")
+		include("**/*${S.D_WV_JS}")
+		include("**/*${S.D_WV_SPEC}")
 	}
 
 	@get:PathSensitive(PathSensitivity.RELATIVE)
 	@get:[IgnoreEmptyDirectories SkipWhenEmpty]
 	@get:InputFiles
 	internal val sourceInputFiles: FileTree = sourceDirectories.asFileTree.matching {
-		include("**/*.wv.js")
-		include("**/*.wv.spec")
-		include("**/*.wv.lst")
+		include("**/*${S.D_WV_JS}")
+		include("**/*${S.D_WV_SPEC}")
+		include("**/*${S.D_WV_LST}")
 	}
 
 	fun from(sourceSets: Iterable<KotlinSourceSet>) {
