@@ -96,7 +96,8 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 
 	var nextTemplId = 0
 	for ((packagePath, packageEntry) in packageEntries) {
-		js.append(";// Source package: ")
+		js.appendLine()
+		js.append(";//+ Source package: ")
 		js.appendLine(packagePath)
 		js.appendLine("(function(){")
 		for (entry in packageEntry.constEntries) {
@@ -140,6 +141,7 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 }
 
 private fun appendJsEntryHeaderLine(sb: StringBuilder, entry: WvSetupSourceAnalysis.Entry) {
-	sb.append(";// Source: ")
+	sb.appendLine()
+	sb.append(";//+ Source: ")
 	sb.appendLine(entry.path)
 }
