@@ -3,7 +3,7 @@ package kokoro.app.ui.wv.setup
 import kotlin.math.min
 
 internal object GenerationUtils {
-	private const val IDENTIFIER_ESCAPE = '\u01C3'
+	private const val IDENTIFIER_ESCAPE = '\u01BB'
 
 	private val BACKTICKS_NEEDED = HashSet<String>().apply {
 		// -- https://kotlinlang.org/docs/keyword-reference.html
