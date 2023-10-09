@@ -4,7 +4,6 @@ plugins {
 	id("kokoro.conv.kt.mpp.lib") // MPP required by redwood generator plugin
 	id("conv.redwood.gen.widget")
 	id("conv.kt.mpp.assets")
-	id("conv.redwood.ui.wv.setup")
 }
 
 val parent = project.parent!!

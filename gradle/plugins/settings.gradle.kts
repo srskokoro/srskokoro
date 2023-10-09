@@ -15,5 +15,3 @@ dependencyResolutionManagement {
 
 include(":conventions")
 project(":conventions").projectDir = File(settingsDir, "../conventions.build-plugin")
-
-include("redwood.ui.wv.setup")
