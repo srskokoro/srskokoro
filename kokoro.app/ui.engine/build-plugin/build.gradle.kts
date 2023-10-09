@@ -1,5 +1,5 @@
 plugins {
-	id("build.plugins.kt.dsl")
+	id("conv.plugins.kt.dsl")
 }
 
 gradlePlugin {
