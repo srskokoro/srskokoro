@@ -1,2 +1,2 @@
-apply(plugin = "conv.kt.minimal.jvm")
+apply(plugin = "conv.minimal.kt.jvm")
 apply(plugin = "java-gradle-plugin")
