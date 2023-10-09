@@ -109,10 +109,16 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 		for (entry in packageEntry.templEntries) {
 			val id = nextTemplId++
 
-			val effective = entry.getEffectiveEntry()
-			appendJsEntryHeaderLine(js, effective)
+			kt.append('\t')
+			kt.append('"')
+			appendInDqString(kt, entry.path)
+			kt.append("\" -> ")
+			kt.appendLine(id)
 
 			val baseName = entry.name.removeLast(N.D_TEMPL_WV_JS)
+
+			val effective = entry.getEffectiveEntry()
+			appendJsEntryHeaderLine(js, effective)
 
 			js.append("const t_")
 			appendIdentifierPartAfterStart(js, baseName)
@@ -128,12 +134,6 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 			js.appendLine("(function(){")
 			appendJsEntryContent(js, effective)
 			js.appendLine("})()")
-
-			kt.append('\t')
-			kt.append('"')
-			appendInDqString(kt, entry.path)
-			kt.append("\" -> ")
-			kt.appendLine(id)
 		}
 		js.appendLine("})()")
 	}
