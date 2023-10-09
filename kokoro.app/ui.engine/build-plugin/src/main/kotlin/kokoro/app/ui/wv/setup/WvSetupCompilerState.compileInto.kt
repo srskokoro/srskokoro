@@ -91,8 +91,9 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 	@Suppress("UnnecessaryVariable") val js = jsBuilder
 
 	for (entry in headEntries) {
-		appendJsEntryHeaderLine(js, entry)
-		appendJsEntryContent(js, entry.getEffectiveEntry())
+		val effective = entry.getEffectiveEntry()
+		appendJsEntryHeaderLine(js, effective)
+		appendJsEntryContent(js, effective)
 	}
 
 	var nextTemplId = 0
@@ -108,7 +109,9 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 		for (entry in packageEntry.templEntries) {
 			val id = nextTemplId++
 
-			appendJsEntryHeaderLine(js, entry)
+			val effective = entry.getEffectiveEntry()
+			appendJsEntryHeaderLine(js, effective)
+
 			val baseName = entry.name.removeLast(N.D_TEMPL_WV_JS)
 
 			js.append("const t_")
@@ -123,7 +126,7 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 			js.appendLine("Symbol();")
 
 			js.appendLine("(function(){")
-			appendJsEntryContent(js, entry.getEffectiveEntry())
+			appendJsEntryContent(js, effective)
 			js.appendLine("})()")
 
 			kt.append('\t')
@@ -136,8 +139,9 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 	}
 
 	for (entry in tailEntries) {
-		appendJsEntryHeaderLine(js, entry)
-		appendJsEntryContent(js, entry.getEffectiveEntry())
+		val effective = entry.getEffectiveEntry()
+		appendJsEntryHeaderLine(js, effective)
+		appendJsEntryContent(js, effective)
 	}
 }
 
