@@ -5,6 +5,7 @@ plugins {
 	id("conv.gmazzo.buildconfig")
 	id("conv.version")
 	id("conv.ktx.atomicfu")
+	id("kokoro.app.ui.wv.setup")
 }
 
 kotestConfigClass = "KotestConfig"
@@ -65,7 +66,10 @@ dependencies {
 
 	appMainImplementation(project("redwood:compose"))
 	appMainImplementation(project("redwood:widget"))
-	commonMainImplementation(project("ui.engine"))
+	project("ui.engine").let {
+		commonMainImplementation(it)
+		commonMainWvSetup(it)
+	}
 
 	appMainImplementation("cafe.adriel.voyager:voyager-navigator")
 
