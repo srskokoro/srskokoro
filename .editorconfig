@@ -58,10 +58,6 @@ indent_style = space
 [{*.htm,*.html,*.sht,*.shtm,*.shtml}]
 
 # ---===--- ---===--- ---===---
-# JSON
-[{*.har,*.json}]
-
-# ---===--- ---===--- ---===---
 # Markdown
 [{*.markdown,*.md}]
 
@@ -69,6 +65,10 @@ indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = false
 max_line_length = 80
+
+# ---===--- ---===--- ---===---
+# JSON
+[{*.har,*.json}]
 
 # ---===--- ---===--- ---===---
 # JavaScript
