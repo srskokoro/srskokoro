@@ -140,8 +140,8 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 	}
 }
 
-private fun appendJsEntryHeaderLine(sb: StringBuilder, entry: WvSetupSourceAnalysis.Entry) {
-	sb.appendLine()
-	sb.append(";//+ Source: ")
-	sb.appendLine(entry.path)
+private fun appendJsEntryHeaderLine(js: StringBuilder, entry: WvSetupSourceAnalysis.Entry) {
+	js.appendLine()
+	js.append(";//+ Source: ")
+	js.appendLine(entry.path)
 }
