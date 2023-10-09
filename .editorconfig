@@ -71,6 +71,13 @@ trim_trailing_whitespace = false
 max_line_length = 80
 
 # ---===--- ---===--- ---===---
+# JavaScript
+[*.js]
+
+# End of line
+insert_final_newline = true
+
+# ---===--- ---===--- ---===---
 # Java
 [*.java]
 
