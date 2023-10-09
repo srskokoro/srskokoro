@@ -5,7 +5,7 @@ import addExtraneousSource
 import assets
 import conv.internal.setup.*
 import conv.util.*
-import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.S
+import kokoro.app.ui.wv.setup.WvSetup.S
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -48,7 +48,7 @@ class WvSetupPlugin : Plugin<Project> {
 			val wvDisplayName = "$sourceSetName WebView setup"
 			val wv = objects.sourceDirectorySet(wvDisplayName, wvDisplayName)
 
-			WvSetupSourceAnalysis.includeWvSetupJsInputs(wv)
+			WvSetup.includeJsInputs(wv)
 			wv.include("**/*${S.D_WV_SPEC}")
 			wv.include("**/*${S.D_WV_LST}")
 

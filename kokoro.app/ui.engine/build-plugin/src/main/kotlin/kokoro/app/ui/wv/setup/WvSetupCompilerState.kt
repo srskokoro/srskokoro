@@ -1,6 +1,8 @@
 package kokoro.app.ui.wv.setup
 
-import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.*
+import kokoro.app.ui.wv.setup.WvSetup.S
+import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.Entry
+import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.Stamp
 import org.gradle.api.InvalidUserDataException
 import java.util.LinkedList
 

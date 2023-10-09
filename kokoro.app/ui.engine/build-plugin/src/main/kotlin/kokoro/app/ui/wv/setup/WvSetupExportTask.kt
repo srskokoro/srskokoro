@@ -1,6 +1,6 @@
 package kokoro.app.ui.wv.setup
 
-import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.S
+import kokoro.app.ui.wv.setup.WvSetup.S
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.work.DisableCachingByDefault
 
@@ -13,7 +13,7 @@ abstract class WvSetupExportTask : Zip() {
 	init {
 		@Suppress("LeakingThis") val self = this
 		self.archiveExtension.set(DEFAULT_EXTENSION)
-		WvSetupSourceAnalysis.includeWvSetupJsInputs(self)
+		WvSetup.includeJsInputs(self)
 		self.include("**/*${S.D_WV_SPEC}")
 	}
 }

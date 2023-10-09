@@ -1,7 +1,7 @@
 package kokoro.app.ui.wv.setup
 
 import conv.internal.support.io.asFileTreeVia
-import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.S
+import kokoro.app.ui.wv.setup.WvSetup.S
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.ConfigurableFileCollection
@@ -56,7 +56,7 @@ abstract class WvSetupBuildTask @Inject constructor(
 			archiveOps.zipTree(it)
 		} else it
 	}.asFileTree.matching {
-		WvSetupSourceAnalysis.includeWvSetupJsInputs(this)
+		WvSetup.includeJsInputs(this)
 		include("**/*${S.D_WV_SPEC}")
 	}
 
@@ -64,7 +64,7 @@ abstract class WvSetupBuildTask @Inject constructor(
 	@get:[IgnoreEmptyDirectories SkipWhenEmpty]
 	@get:InputFiles
 	internal val sourceInputFiles: FileTree = sourceDirectories.asFileTree.matching {
-		WvSetupSourceAnalysis.includeWvSetupJsInputs(this)
+		WvSetup.includeJsInputs(this)
 		include("**/*${S.D_WV_SPEC}")
 		include("**/*${S.D_WV_LST}")
 	}

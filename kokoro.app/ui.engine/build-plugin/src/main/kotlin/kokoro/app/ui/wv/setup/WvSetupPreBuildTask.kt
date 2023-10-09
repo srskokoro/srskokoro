@@ -5,8 +5,8 @@ import kokoro.app.ui.wv.setup.GenerationUtils.appendIdentifierPartAfterStart
 import kokoro.app.ui.wv.setup.GenerationUtils.appendIdentifierStart
 import kokoro.app.ui.wv.setup.GenerationUtils.appendInDqString
 import kokoro.app.ui.wv.setup.GenerationUtils.appendKtPackageHeader
-import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.N
-import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.S
+import kokoro.app.ui.wv.setup.WvSetup.N
+import kokoro.app.ui.wv.setup.WvSetup.S
 import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.ConfigurableFileCollection
