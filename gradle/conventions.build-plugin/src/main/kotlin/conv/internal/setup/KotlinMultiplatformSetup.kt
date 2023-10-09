@@ -23,6 +23,6 @@ internal fun Project.setUp(kotlin: KotlinMultiplatformExtension) {
 }
 
 internal fun Project.setUpTargetsExtensions(kotlin: KotlinMultiplatformExtension) {
-	val config = layout.projectDirectory.file("build.targets.txt")
+	val config = layout.projectDirectory.file("build.targets.cf")
 	KotlinTargetsConfigLoader(providers, config).loadInto(kotlin, skipPlaceholderGenerationForKotlinTargetsConfigLoader)
 }

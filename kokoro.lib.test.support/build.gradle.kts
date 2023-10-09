@@ -7,7 +7,7 @@ kotestConfigClass = "KotestConfig"
 
 kotlin {
 	/**
-	 * See 'build.targets.txt' to declare build targets, then use
+	 * See 'build.targets.cf' to declare build targets, then use
 	 * `targets.<targetName>` here to configure them further.
 	 *
 	 * See also [conv.internal.setup.setUpTargetsExtensions] in the convention
