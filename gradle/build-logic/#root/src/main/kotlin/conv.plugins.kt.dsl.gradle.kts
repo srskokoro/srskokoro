@@ -1,2 +1,2 @@
-apply(plugin = "conv.kt.minimal.base")
+apply(plugin = "conv.plugins.kt")
 apply(plugin = "org.gradle.kotlin.kotlin-dsl")
