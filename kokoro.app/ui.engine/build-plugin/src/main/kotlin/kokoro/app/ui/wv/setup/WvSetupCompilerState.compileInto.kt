@@ -12,6 +12,7 @@ import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.N
 import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.S
 import org.gradle.api.logging.Logger
 import java.io.File
+import java.util.regex.Pattern
 
 internal fun WvSetupCompilerState.compileInto(ktOutputDir: File, jsOutputDir: File, logger: Logger) {
 	val lst = lst
@@ -91,7 +92,7 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 
 	for (entry in headEntries) {
 		appendJsEntryHeaderLine(js, entry)
-		js.appendLine(entry.content)
+		appendJsEntryContent(js, entry.getEffectiveEntry())
 	}
 
 	var nextTemplId = 0
@@ -102,7 +103,7 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 		js.appendLine("(function(){")
 		for (entry in packageEntry.constEntries) {
 			appendJsEntryHeaderLine(js, entry)
-			js.appendLine(entry.content)
+			js.appendLine(entry.content) // NOTE: No overrides (supposedly).
 		}
 		for (entry in packageEntry.templEntries) {
 			val id = nextTemplId++
@@ -122,7 +123,7 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 			js.appendLine("Symbol();")
 
 			js.appendLine("(function(){")
-			js.appendLine(entry.content)
+			appendJsEntryContent(js, entry.getEffectiveEntry())
 			js.appendLine("})()")
 
 			kt.append('\t')
@@ -136,7 +137,7 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 
 	for (entry in tailEntries) {
 		appendJsEntryHeaderLine(js, entry)
-		js.appendLine(entry.content)
+		appendJsEntryContent(js, entry.getEffectiveEntry())
 	}
 }
 
@@ -144,4 +145,61 @@ private fun appendJsEntryHeaderLine(js: StringBuilder, entry: WvSetupSourceAnaly
 	js.appendLine()
 	js.append(";//+ Source: ")
 	js.appendLine(entry.path)
+}
+
+// language=RegExp
+private object RegexWvJsDirectives {
+	const val flags = Pattern.DOTALL
+
+	// See, https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar#line_terminators
+	const val nl = """[\n\r\u2028\u2029]"""
+
+	const val dir_char = '%'
+
+	const val ig_ungrouped = """\s++|//(?!$dir_char).*?(?:$nl++|\z)|/\*.*?(?:\*/|\z)"""
+
+	@Suppress("RegExpUnnecessaryNonCapturingGroup")
+	const val ig_stat = """(?:$ig_ungrouped|;|\z)"""
+
+	const val heading = """$ig_stat*+"""
+
+	const val dir_entry_g_cmd = 1
+	const val dir_entry_g_tail = 2
+	const val dir_entry = """\G//$dir_char(\S++).*?(?:$nl++|\z)($ig_stat*+)"""
+
+	val heading_P: Pattern = Pattern.compile(heading, flags)
+	val dir_entry_P: Pattern = Pattern.compile(dir_entry, flags)
+}
+
+private fun appendJsEntryContent(js: StringBuilder, entry: WvSetupSourceAnalysis.Entry) {
+	val input = entry.content
+
+	val m = RegexWvJsDirectives.heading_P.matcher(input)
+	if (!m.lookingAt()) throw AssertionError("Expected to match anything (including the empty string).\n- Input file: ${entry.sourceFile ?: entry.path}")
+
+	var last = m.end()
+	js.append(input, 0, last)
+
+	var includeBase = 0 // -1 means prepend; 1 means append;
+	m.usePattern(RegexWvJsDirectives.dir_entry_P)
+
+	while (m.find()) {
+		last = m.end()
+		val tail_i = m.start(RegexWvJsDirectives.dir_entry_g_tail)
+		js.append(input, tail_i, last)
+
+		val cmd_i = m.start(RegexWvJsDirectives.dir_entry_g_cmd)
+		if (input.startsWith("prepend-base", cmd_i)) {
+			if (includeBase == 0) includeBase = -1
+		} else if (input.startsWith("append-base", cmd_i)) {
+			if (includeBase == 0) includeBase = 1
+		}
+	}
+
+	if (includeBase < 0) entry.base?.let { appendJsEntryContent(js, it) }
+
+	js.append(input, last, input.length)
+	js.appendLine()
+
+	if (includeBase > 0) entry.base?.let { appendJsEntryContent(js, it) }
 }
