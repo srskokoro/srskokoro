@@ -75,6 +75,13 @@ internal class WvSetupSourceAnalysis {
 		const val SPEC = S.SPEC.length
 		const val LST = S.LST.length
 
+		const val CONST = S.CONST.length
+		const val TEMPL = S.TEMPL.length
+
+		const val EXTERN = S.EXTERN.length
+		const val HEAD = S.HEAD.length
+		const val TAIL = S.TAIL.length
+
 		const val D_WV_D = S.D_WV_D.length
 
 		const val D_WV_KT = S.D_WV_KT.length
@@ -238,21 +245,27 @@ private fun analyzeInputFileNameForStamp(name: String): Int {
 	var i = 0
 	var r = 0
 	when {
-		name.endsWith(S.JS, ignoreCase = true) -> when {
-			name.startsWith(S.D_WV_CONST_JS, (name.length - N.D_WV_CONST_JS).also { i = it }, ignoreCase = true) -> {
-				r = Stamp.WV_CONST_JS
+		name.endsWith(S.JS, ignoreCase = true) -> run {
+			when {
+				name.startsWith(S.CONST, (name.length - (N.CONST + N.JS)).also { i = it }, ignoreCase = true) -> {
+					r = Stamp.WV_CONST_JS
+				}
+				name.startsWith(S.TEMPL, (name.length - (N.TEMPL + N.JS)).also { i = it }, ignoreCase = true) -> {
+					r = Stamp.WV_TEMPL_JS
+				}
+				name.startsWith(S.HEAD, (name.length - (N.HEAD + N.JS)).also { i = it }, ignoreCase = true) -> {
+					r = Stamp.WV_HEAD_JS
+				}
+				name.startsWith(S.TAIL, (name.length - (N.TAIL + N.JS)).also { i = it }, ignoreCase = true) -> {
+					r = Stamp.WV_TAIL_JS
+				}
+				name.startsWith(S.EXTERN, (name.length - (N.EXTERN + N.JS)).also { i = it }, ignoreCase = true) -> {
+					r = Stamp.WV_EXTERN_JS
+				}
+				else -> return@run
 			}
-			name.startsWith(S.D_WV_TEMPL_JS, (name.length - N.D_WV_TEMPL_JS).also { i = it }, ignoreCase = true) -> {
-				r = Stamp.WV_TEMPL_JS
-			}
-			name.startsWith(S.D_WV_HEAD_JS, (name.length - N.D_WV_HEAD_JS).also { i = it }, ignoreCase = true) -> {
-				r = Stamp.WV_HEAD_JS
-			}
-			name.startsWith(S.D_WV_TAIL_JS, (name.length - N.D_WV_TAIL_JS).also { i = it }, ignoreCase = true) -> {
-				r = Stamp.WV_TAIL_JS
-			}
-			name.startsWith(S.D_WV_EXTERN_JS, (name.length - N.D_WV_EXTERN_JS).also { i = it }, ignoreCase = true) -> {
-				r = Stamp.WV_EXTERN_JS
+			if (!name.startsWith(S.D_WV_H, (i - N.D_WV_H).also { i = it }, ignoreCase = true)) {
+				r = 0 // Revert
 			}
 		}
 		name.endsWith(S.SPEC, ignoreCase = true) -> when {
