@@ -1,5 +1,6 @@
 package kokoro.app.ui.wv.setup
 
+import conv.internal.support.io.UnsafeCharArrayWriter
 import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.*
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.DuplicateFileCopyingException
@@ -104,7 +105,20 @@ internal class WvSetupSourceAnalysis {
 		private var _packagePath: String? = null
 		val packagePath get() = _packagePath ?: relativePath.parent.pathString.also { _packagePath = it }
 
-		val content = visit.open().reader().use { it.readText() }
+		val content = run(fun(): String {
+			val w = UnsafeCharArrayWriter()
+			visit.open().reader().use { it.copyTo(w) }
+			val b = w.buffer
+			val n = run(fun(): Int {
+				// Trim trailing whitespace
+				for (i in w.size - 1 downTo 0) {
+					if (!b[i].isWhitespace())
+						return i + 1
+				}
+				return 0
+			})
+			return String(b, 0, n)
+		})
 
 		var base: Entry? = null
 		var override: Entry? = null
