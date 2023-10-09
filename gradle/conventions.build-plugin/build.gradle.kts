@@ -1,6 +1,7 @@
 plugins {
+	`kotlin-dsl` apply false
 	id("build.plugins.kt.dsl") apply false
-	kotlin("jvm") // See, https://stackoverflow.com/a/72724249
+	kotlin("jvm") version embeddedKotlinVersion // See, https://stackoverflow.com/a/72724249
 }
 
 kotlin {

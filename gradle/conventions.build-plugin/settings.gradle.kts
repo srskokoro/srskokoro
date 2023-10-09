@@ -13,9 +13,8 @@ dependencyResolutionManagement {
 	includeBuild("../build-logic")
 }
 
-gradle.allprojects {
+gradle.rootProject {
 	group = "convention"
 }
 
-include(":conventions")
-project(":conventions").projectDir = File(settingsDir, "../conventions.build-plugin")
+rootProject.name = "conventions"

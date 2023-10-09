@@ -35,5 +35,5 @@ google-services.json
 
 # Exclude auto-generated configuration files
 /dependencies/gradle.properties
-/gradle/conventions.build-root/gradle.properties
+/gradle/conventions.build-plugin/gradle.properties
 /gradle/plugins/gradle.properties
