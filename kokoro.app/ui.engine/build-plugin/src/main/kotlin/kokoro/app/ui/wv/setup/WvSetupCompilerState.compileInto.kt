@@ -101,11 +101,13 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 		js.appendLine()
 		js.append(";//+ Source package: ")
 		js.appendLine(packagePath)
-		js.appendLine("(function(){")
+		js.append("(function(){\n")
+
 		for (entry in packageEntry.constEntries) {
 			appendJsEntryHeaderLine(js, entry)
 			js.appendLine(entry.content) // NOTE: No overrides (supposedly).
 		}
+
 		for (entry in packageEntry.templEntries) {
 			val id = nextTemplId++
 
@@ -135,8 +137,10 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 			appendJsEntryContent(js, effective)
 			js.appendLine("})()")
 		}
-		js.appendLine("})()")
+
+		js.append("\n})()\n")
 	}
+	js.appendLine()
 
 	for (entry in tailEntries) {
 		val effective = entry.getEffectiveEntry()
