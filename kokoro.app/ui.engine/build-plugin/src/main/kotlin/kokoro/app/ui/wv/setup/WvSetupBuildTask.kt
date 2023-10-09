@@ -56,7 +56,7 @@ abstract class WvSetupBuildTask @Inject constructor(
 			archiveOps.zipTree(it)
 		} else it
 	}.asFileTree.matching {
-		include("**/*${S.D_WV_JS}")
+		WvSetupSourceAnalysis.includeWvSetupJsInputs(this)
 		include("**/*${S.D_WV_SPEC}")
 	}
 
@@ -64,7 +64,7 @@ abstract class WvSetupBuildTask @Inject constructor(
 	@get:[IgnoreEmptyDirectories SkipWhenEmpty]
 	@get:InputFiles
 	internal val sourceInputFiles: FileTree = sourceDirectories.asFileTree.matching {
-		include("**/*${S.D_WV_JS}")
+		WvSetupSourceAnalysis.includeWvSetupJsInputs(this)
 		include("**/*${S.D_WV_SPEC}")
 		include("**/*${S.D_WV_LST}")
 	}

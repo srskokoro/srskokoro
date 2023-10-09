@@ -117,7 +117,7 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 			kt.append("\" -> ")
 			kt.appendLine(id)
 
-			val baseName = entry.name.removeLast(N.D_TEMPL_WV_JS)
+			val baseName = entry.name.removeLast(N.D_WV_TEMPL_JS)
 
 			val effective = entry.getEffectiveEntry()
 			appendJsEntryHeaderLine(js, effective)

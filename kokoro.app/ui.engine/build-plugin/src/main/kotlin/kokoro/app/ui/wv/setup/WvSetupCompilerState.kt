@@ -40,29 +40,29 @@ internal class WvSetupCompilerState(val lst: Entry, private val entries: Map<Str
 			val entry = entries[path]
 				?: throw InvalidUserDataException("Error: ${context.sourceFile}:$ln:1 Referenced entry not found")
 
-			when (entry.stamp and (Stamp.MASK_WV_SPECIALIZED_TYPE or Stamp.FLAG_OVERRIDE)) {
+			when (entry.stamp and (Stamp.MASK_WV_TYPE or Stamp.FLAG_OVERRIDE)) {
 				Stamp.WV_SPEC -> {
 					if (seenPaths.add(path)) {
 						loadSpec(entry.getEffectiveEntry(), seenPaths)
 					}
 				}
 
-				Stamp.HEAD_WV_JS -> {
+				Stamp.WV_HEAD_JS -> {
 					if (seenPaths.add(path)) {
 						headEntries.addLast(entry)
 					} else {
-						throw InvalidUserDataException("Error: ${context.sourceFile}:$ln:1 Duplicate `*${S.D_HEAD_WV_JS}` entries not allowed")
+						throw InvalidUserDataException("Error: ${context.sourceFile}:$ln:1 Duplicate `*${S.D_WV_HEAD_JS}` entries not allowed")
 					}
 				}
-				Stamp.TAIL_WV_JS -> {
+				Stamp.WV_TAIL_JS -> {
 					if (seenPaths.add(path)) {
 						tailEntries.addLast(entry)
 					} else {
-						throw InvalidUserDataException("Error: ${context.sourceFile}:$ln:1 Duplicate `*${S.D_TAIL_WV_JS}` entries not allowed")
+						throw InvalidUserDataException("Error: ${context.sourceFile}:$ln:1 Duplicate `*${S.D_WV_TAIL_JS}` entries not allowed")
 					}
 				}
 
-				Stamp.EXTERN_WV_JS -> {
+				Stamp.WV_EXTERN_JS -> {
 					if (seenPaths.add(path)) {
 						externEntries.addLast(entry)
 					}
@@ -98,7 +98,7 @@ internal class WvSetupCompilerState(val lst: Entry, private val entries: Map<Str
 			val entry = entries[path]
 				?: throw InvalidUserDataException("Error: ${context.sourceFile}:$ln:1 Referenced entry not found")
 
-			if (entry.stamp and (Stamp.MASK_WV_SPECIALIZED_TYPE or Stamp.FLAG_OVERRIDE) != Stamp.WV_SPEC) {
+			if (entry.stamp and (Stamp.MASK_WV_TYPE or Stamp.FLAG_OVERRIDE) != Stamp.WV_SPEC) {
 				throw InvalidUserDataException("Error: ${context.sourceFile}:$ln:1 Unsupported entry in `*${S.D_WV_SPEC}` file")
 			}
 

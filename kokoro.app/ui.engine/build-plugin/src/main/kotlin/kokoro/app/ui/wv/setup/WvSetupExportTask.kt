@@ -13,7 +13,7 @@ abstract class WvSetupExportTask : Zip() {
 	init {
 		@Suppress("LeakingThis") val self = this
 		self.archiveExtension.set(DEFAULT_EXTENSION)
-		self.include("**/*${S.D_WV_JS}")
+		WvSetupSourceAnalysis.includeWvSetupJsInputs(self)
 		self.include("**/*${S.D_WV_SPEC}")
 	}
 }

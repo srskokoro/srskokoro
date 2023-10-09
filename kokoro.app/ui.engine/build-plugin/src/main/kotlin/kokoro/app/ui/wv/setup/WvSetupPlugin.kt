@@ -48,7 +48,7 @@ class WvSetupPlugin : Plugin<Project> {
 			val wvDisplayName = "$sourceSetName WebView setup"
 			val wv = objects.sourceDirectorySet(wvDisplayName, wvDisplayName)
 
-			wv.include("**/*${S.D_WV_JS}")
+			WvSetupSourceAnalysis.includeWvSetupJsInputs(wv)
 			wv.include("**/*${S.D_WV_SPEC}")
 			wv.include("**/*${S.D_WV_LST}")
 

@@ -8,33 +8,29 @@ import org.gradle.api.file.EmptyFileVisitor
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.FileTreeElement
 import org.gradle.api.file.FileVisitDetails
+import org.gradle.api.tasks.util.PatternFilterable
 import java.io.File
 import java.util.LinkedList
 
 internal class WvSetupSourceAnalysis {
 
 	internal object Stamp {
-		const val WV_LST = 0b01 shl 0
-		const val WV_SPEC = 0b10 shl 0
-		const val WV_JS = 0b11 shl 0
+		const val FLAG_OVERRIDE = 1 shl 6
 
-		const val MASK_WV_GENERAL_TYPE = 0b11 shl 0
+		const val FLAG_SPEC_PART = 1 shl 5
+		const val FLAG_JS = 1 shl 4
 
-		const val FLAG_OVERRIDE = 0b01 shl 2
-		const val FLAG_SPEC_PART = 0b10 shl 2
+		const val MASK_WV_TYPE = FLAG_JS or FLAG_SPEC_PART or 0b111
 
-		const val WV_JS_AS_SPEC_PART = WV_JS or FLAG_SPEC_PART
-		const val MASK_WV_JS_AS_SPEC_PART = MASK_WV_GENERAL_TYPE or FLAG_SPEC_PART
+		const val WV_CONST_JS = FLAG_JS or FLAG_SPEC_PART or 0b111
+		const val WV_TEMPL_JS = FLAG_JS or FLAG_SPEC_PART or 0b110
 
-		const val CONST_WV_JS = WV_JS_AS_SPEC_PART or (0b001 shl 4)
-		const val TEMPL_WV_JS = WV_JS_AS_SPEC_PART or (0b010 shl 4)
+		const val WV_EXTERN_JS = FLAG_JS or 0b101
+		const val WV_HEAD_JS = FLAG_JS or 0b100
+		const val WV_TAIL_JS = FLAG_JS or 0b011
 
-		const val EXTERN_WV_JS = WV_JS or (0b011 shl 4)
-
-		const val HEAD_WV_JS = WV_JS or (0b100 shl 4)
-		const val TAIL_WV_JS = WV_JS or (0b101 shl 4)
-
-		const val MASK_WV_SPECIALIZED_TYPE = MASK_WV_JS_AS_SPEC_PART or (0b111 shl 4)
+		const val WV_SPEC = 0b010
+		const val WV_LST = 0b001
 	}
 
 	internal object S {
@@ -60,12 +56,14 @@ internal class WvSetupSourceAnalysis {
 		const val D_WV_SPEC = "$D_WV_D$SPEC"
 		const val D_WV_LST = "$D_WV_D$LST"
 
-		const val D_CONST_WV_JS = ".$CONST$D_WV_JS"
-		const val D_TEMPL_WV_JS = ".$TEMPL$D_WV_JS"
+		const val D_WV_H = ".$WV-"
 
-		const val D_EXTERN_WV_JS = ".$EXTERN$D_WV_JS"
-		const val D_HEAD_WV_JS = ".$HEAD$D_WV_JS"
-		const val D_TAIL_WV_JS = ".$TAIL$D_WV_JS"
+		const val D_WV_CONST_JS = "$D_WV_H$CONST$JS"
+		const val D_WV_TEMPL_JS = "$D_WV_H$TEMPL$JS"
+
+		const val D_WV_EXTERN_JS = "$D_WV_H$EXTERN$JS"
+		const val D_WV_HEAD_JS = "$D_WV_H$HEAD$JS"
+		const val D_WV_TAIL_JS = "$D_WV_H$TAIL$JS"
 	}
 
 	internal object N {
@@ -84,12 +82,26 @@ internal class WvSetupSourceAnalysis {
 		const val D_WV_SPEC = S.D_WV_SPEC.length
 		const val D_WV_LST = S.D_WV_LST.length
 
-		const val D_CONST_WV_JS = S.D_CONST_WV_JS.length
-		const val D_TEMPL_WV_JS = S.D_TEMPL_WV_JS.length
+		const val D_WV_H = S.D_WV_H.length
 
-		const val D_EXTERN_WV_JS = S.D_EXTERN_WV_JS.length
-		const val D_HEAD_WV_JS = S.D_HEAD_WV_JS.length
-		const val D_TAIL_WV_JS = S.D_TAIL_WV_JS.length
+		const val D_WV_CONST_JS = S.D_WV_CONST_JS.length
+		const val D_WV_TEMPL_JS = S.D_WV_TEMPL_JS.length
+
+		const val D_WV_EXTERN_JS = S.D_WV_EXTERN_JS.length
+		const val D_WV_HEAD_JS = S.D_WV_HEAD_JS.length
+		const val D_WV_TAIL_JS = S.D_WV_TAIL_JS.length
+	}
+
+	companion object {
+
+		fun includeWvSetupJsInputs(filterable: PatternFilterable) {
+			filterable.include("**/*${S.D_WV_CONST_JS}")
+			filterable.include("**/*${S.D_WV_TEMPL_JS}")
+
+			filterable.include("**/*${S.D_WV_EXTERN_JS}")
+			filterable.include("**/*${S.D_WV_HEAD_JS}")
+			filterable.include("**/*${S.D_WV_TAIL_JS}")
+		}
 	}
 
 	class Entry(
@@ -161,9 +173,9 @@ internal class WvSetupSourceAnalysis {
 
 				if (stamp and Stamp.FLAG_OVERRIDE != 0) {
 					overrides.add(entry)
-				} else when (stamp and Stamp.MASK_WV_SPECIALIZED_TYPE) {
-					Stamp.CONST_WV_JS -> constParts.add(entry)
-					Stamp.TEMPL_WV_JS -> templParts.add(entry)
+				} else when (stamp and Stamp.MASK_WV_TYPE) {
+					Stamp.WV_CONST_JS -> constParts.add(entry)
+					Stamp.WV_TEMPL_JS -> templParts.add(entry)
 					Stamp.WV_LST -> lstEntries.add(entry)
 				}
 			}
@@ -175,7 +187,7 @@ internal class WvSetupSourceAnalysis {
 			val path = entry.path
 
 			val stamp = entry.stamp
-			if (stamp and Stamp.MASK_WV_SPECIALIZED_TYPE == Stamp.CONST_WV_JS) {
+			if (stamp and Stamp.MASK_WV_TYPE == Stamp.WV_CONST_JS) {
 				if (isSourceFiles) throw E_OverrideCannotBeConst(path, entry.sourceFile)
 				continue // Skip (silently)
 			}
@@ -227,20 +239,20 @@ private fun analyzeInputFileNameForStamp(name: String): Int {
 	var r = 0
 	when {
 		name.endsWith(S.JS, ignoreCase = true) -> when {
-			name.startsWith(S.D_CONST_WV_JS, (name.length - N.D_CONST_WV_JS).also { i = it }, ignoreCase = true) -> {
-				r = Stamp.CONST_WV_JS
+			name.startsWith(S.D_WV_CONST_JS, (name.length - N.D_WV_CONST_JS).also { i = it }, ignoreCase = true) -> {
+				r = Stamp.WV_CONST_JS
 			}
-			name.startsWith(S.D_TEMPL_WV_JS, (name.length - N.D_TEMPL_WV_JS).also { i = it }, ignoreCase = true) -> {
-				r = Stamp.TEMPL_WV_JS
+			name.startsWith(S.D_WV_TEMPL_JS, (name.length - N.D_WV_TEMPL_JS).also { i = it }, ignoreCase = true) -> {
+				r = Stamp.WV_TEMPL_JS
 			}
-			name.startsWith(S.D_HEAD_WV_JS, (name.length - N.D_HEAD_WV_JS).also { i = it }, ignoreCase = true) -> {
-				r = Stamp.HEAD_WV_JS
+			name.startsWith(S.D_WV_HEAD_JS, (name.length - N.D_WV_HEAD_JS).also { i = it }, ignoreCase = true) -> {
+				r = Stamp.WV_HEAD_JS
 			}
-			name.startsWith(S.D_TAIL_WV_JS, (name.length - N.D_TAIL_WV_JS).also { i = it }, ignoreCase = true) -> {
-				r = Stamp.TAIL_WV_JS
+			name.startsWith(S.D_WV_TAIL_JS, (name.length - N.D_WV_TAIL_JS).also { i = it }, ignoreCase = true) -> {
+				r = Stamp.WV_TAIL_JS
 			}
-			name.startsWith(S.D_EXTERN_WV_JS, (name.length - N.D_EXTERN_WV_JS).also { i = it }, ignoreCase = true) -> {
-				r = Stamp.EXTERN_WV_JS
+			name.startsWith(S.D_WV_EXTERN_JS, (name.length - N.D_WV_EXTERN_JS).also { i = it }, ignoreCase = true) -> {
+				r = Stamp.WV_EXTERN_JS
 			}
 		}
 		name.endsWith(S.SPEC, ignoreCase = true) -> when {
@@ -262,13 +274,13 @@ private fun analyzeInputFileNameForStamp(name: String): Int {
 	return r
 }
 
-private fun getFileExtLengthFromStamp(stamp: Int) = when (stamp and Stamp.MASK_WV_SPECIALIZED_TYPE) {
-	Stamp.CONST_WV_JS -> N.D_CONST_WV_JS
-	Stamp.TEMPL_WV_JS -> N.D_TEMPL_WV_JS
+private fun getFileExtLengthFromStamp(stamp: Int) = when (stamp and Stamp.MASK_WV_TYPE) {
+	Stamp.WV_CONST_JS -> N.D_WV_CONST_JS
+	Stamp.WV_TEMPL_JS -> N.D_WV_TEMPL_JS
 
-	Stamp.EXTERN_WV_JS -> N.D_EXTERN_WV_JS
-	Stamp.HEAD_WV_JS -> N.D_HEAD_WV_JS
-	Stamp.TAIL_WV_JS -> N.D_TAIL_WV_JS
+	Stamp.WV_EXTERN_JS -> N.D_WV_EXTERN_JS
+	Stamp.WV_HEAD_JS -> N.D_WV_HEAD_JS
+	Stamp.WV_TAIL_JS -> N.D_WV_TAIL_JS
 
 	Stamp.WV_SPEC -> N.D_WV_SPEC
 	Stamp.WV_LST -> N.D_WV_LST
@@ -284,7 +296,7 @@ internal fun E_DuplicateSourceEntry(sourcePath: String, sourceFile: File) =
 
 
 private fun E_OverrideCannotBeConst(sourcePath: String, sourceFile: File?) =
-	InvalidUserDataException("Override entry cannot be a `*${S.D_CONST_WV_JS}` file: $sourcePath\n- Input file: $sourceFile")
+	InvalidUserDataException("Override entry cannot be a `*${S.D_WV_CONST_JS}` file: $sourcePath\n- Input file: $sourceFile")
 
 private fun E_MissingOverrideParent(sourcePath: String, sourceFile: File?) =
 	InvalidUserDataException("Override entry doesn't override anything: $sourcePath\n- Input file: $sourceFile")

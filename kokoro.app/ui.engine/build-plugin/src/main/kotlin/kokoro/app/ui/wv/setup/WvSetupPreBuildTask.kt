@@ -53,11 +53,11 @@ abstract class WvSetupPreBuildTask @Inject constructor(
 	@get:[IgnoreEmptyDirectories SkipWhenEmpty]
 	@get:InputFiles
 	internal val inputFiles: FileTree = sourceDirectories.asFileTree.matching {
-		include("**/*${S.D_CONST_WV_JS}")
-		exclude("**/*!${S.D_CONST_WV_JS}")
+		include("**/*${S.D_WV_CONST_JS}")
+		exclude("**/*!${S.D_WV_CONST_JS}")
 
-		include("**/*${S.D_TEMPL_WV_JS}")
-		exclude("**/*!${S.D_TEMPL_WV_JS}")
+		include("**/*${S.D_WV_TEMPL_JS}")
+		exclude("**/*!${S.D_WV_TEMPL_JS}")
 
 		include("**/*${S.D_WV_LST}")
 		exclude("**/*!${S.D_WV_LST}")
@@ -76,15 +76,15 @@ abstract class WvSetupPreBuildTask @Inject constructor(
 			if (change.fileType == FileType.DIRECTORY) continue
 
 			val path = change.normalizedPath
-			if (path.endsWith(S.D_CONST_WV_JS)) {
+			if (path.endsWith(S.D_WV_CONST_JS)) {
 				val target = outputDir.file("${path.removeLast(N.JS)}${S.KT}").asFile
 				if (handleForGeneration(target, change, forGeneration)) {
-					generateForConstWvJs(target, change)
+					generateForWvConstJs(target, change)
 				}
-			} else if (path.endsWith(S.D_TEMPL_WV_JS)) {
+			} else if (path.endsWith(S.D_WV_TEMPL_JS)) {
 				val target = outputDir.file("${path.removeLast(N.JS)}${S.KT}").asFile
 				if (handleForGeneration(target, change, forGeneration)) {
-					generateForTemplWvJs(target, change)
+					generateForWvTemplJs(target, change)
 				}
 			} else if (path.endsWith(S.D_WV_LST)) {
 				// WARNING: Should not have the same name as the file containing
@@ -155,7 +155,7 @@ private object RegexConstWvJs {
 	val const_entry_P: Pattern = Pattern.compile(const_entry, flags)
 }
 
-private fun generateForConstWvJs(target: File, change: FileChange) {
+private fun generateForWvConstJs(target: File, change: FileChange) {
 	val path = change.normalizedPath
 	val pathSegments = path.split('/')
 
@@ -200,7 +200,7 @@ private fun generateForConstWvJs(target: File, change: FileChange) {
 	target.writeText(kt.toString()) // NOTE: Truncates if file already exists.
 }
 
-private fun generateForTemplWvJs(target: File, change: FileChange) {
+private fun generateForWvTemplJs(target: File, change: FileChange) {
 	val path = change.normalizedPath
 	val pathSegments = path.split('/')
 
@@ -210,7 +210,7 @@ private fun generateForTemplWvJs(target: File, change: FileChange) {
 	appendKtPackageHeader(kt, pathSegments, 0, pathSegments_last)
 	kt.appendLine()
 
-	val baseName = pathSegments[pathSegments_last].removeLast(N.D_TEMPL_WV_JS)
+	val baseName = pathSegments[pathSegments_last].removeLast(N.D_WV_TEMPL_JS)
 
 	kt.append("public const val t_")
 	appendIdentifierPartAfterStart(kt, baseName)
