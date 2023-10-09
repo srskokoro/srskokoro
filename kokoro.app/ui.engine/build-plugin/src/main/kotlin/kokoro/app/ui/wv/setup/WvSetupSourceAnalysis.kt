@@ -244,39 +244,30 @@ internal class WvSetupSourceAnalysis {
 private fun analyzeInputFileNameForStamp(name: String): Int {
 	var i = 0
 	var r = 0
-	when {
-		name.endsWith(S.JS, ignoreCase = true) -> run {
-			when {
-				name.startsWith(S.CONST, (name.length - (N.CONST + N.JS)).also { i = it }, ignoreCase = true) -> {
-					r = Stamp.WV_CONST_JS
-				}
-				name.startsWith(S.TEMPL, (name.length - (N.TEMPL + N.JS)).also { i = it }, ignoreCase = true) -> {
-					r = Stamp.WV_TEMPL_JS
-				}
-				name.startsWith(S.HEAD, (name.length - (N.HEAD + N.JS)).also { i = it }, ignoreCase = true) -> {
-					r = Stamp.WV_HEAD_JS
-				}
-				name.startsWith(S.TAIL, (name.length - (N.TAIL + N.JS)).also { i = it }, ignoreCase = true) -> {
-					r = Stamp.WV_TAIL_JS
-				}
-				name.startsWith(S.EXTERN, (name.length - (N.EXTERN + N.JS)).also { i = it }, ignoreCase = true) -> {
-					r = Stamp.WV_EXTERN_JS
-				}
-				else -> return@run
-			}
-			if (!name.startsWith(S.D_WV_H, (i - N.D_WV_H).also { i = it }, ignoreCase = true)) {
-				r = 0 // Revert
-			}
+	if (name.endsWith(S.JS, ignoreCase = true)) run {
+		if (name.startsWith(S.CONST, (name.length - (N.CONST + N.JS)).also { i = it }, ignoreCase = true)) {
+			r = Stamp.WV_CONST_JS
+		} else if (name.startsWith(S.TEMPL, (name.length - (N.TEMPL + N.JS)).also { i = it }, ignoreCase = true)) {
+			r = Stamp.WV_TEMPL_JS
+		} else if (name.startsWith(S.HEAD, (name.length - (N.HEAD + N.JS)).also { i = it }, ignoreCase = true)) {
+			r = Stamp.WV_HEAD_JS
+		} else if (name.startsWith(S.TAIL, (name.length - (N.TAIL + N.JS)).also { i = it }, ignoreCase = true)) {
+			r = Stamp.WV_TAIL_JS
+		} else if (name.startsWith(S.EXTERN, (name.length - (N.EXTERN + N.JS)).also { i = it }, ignoreCase = true)) {
+			r = Stamp.WV_EXTERN_JS
+		} else {
+			return@run
 		}
-		name.endsWith(S.SPEC, ignoreCase = true) -> when {
-			name.startsWith(S.D_WV_D, (name.length - N.D_WV_SPEC).also { i = it }, ignoreCase = true) -> {
-				r = Stamp.WV_SPEC
-			}
+		if (!name.startsWith(S.D_WV_H, (i - N.D_WV_H).also { i = it }, ignoreCase = true)) {
+			r = 0 // Revert
 		}
-		name.endsWith(S.LST, ignoreCase = true) -> when {
-			name.startsWith(S.D_WV_D, (name.length - N.D_WV_LST).also { i = it }, ignoreCase = true) -> {
-				r = Stamp.WV_LST
-			}
+	} else if (name.endsWith(S.SPEC, ignoreCase = true)) {
+		if (name.startsWith(S.D_WV_D, (name.length - N.D_WV_SPEC).also { i = it }, ignoreCase = true)) {
+			r = Stamp.WV_SPEC
+		}
+	} else if (name.endsWith(S.LST, ignoreCase = true)) {
+		if (name.startsWith(S.D_WV_D, (name.length - N.D_WV_LST).also { i = it }, ignoreCase = true)) {
+			r = Stamp.WV_LST
 		}
 	}
 	if (r != 0) (i - 1).let {
