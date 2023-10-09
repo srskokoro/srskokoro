@@ -104,7 +104,7 @@ internal class WvSetupSourceAnalysis {
 		private var _packagePath: String? = null
 		val packagePath get() = _packagePath ?: relativePath.parent.pathString.also { _packagePath = it }
 
-		val content = visit.open().reader().readText()
+		val content = visit.open().reader().use { it.readText() }
 
 		var base: Entry? = null
 		var override: Entry? = null
