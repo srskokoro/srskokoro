@@ -8,6 +8,7 @@ internal const val gradleProp_structureDirs = "conv.settings.structure.dirs"
 internal const val gradleProp_structureDirs_root = "$gradleProp_structureDirs.root"
 
 internal const val gradleProp_structureDirs_deps = "$gradleProp_structureDirs.deps"
+internal const val gradleProp_structureDirs_conventions = "$gradleProp_structureDirs.conventions"
 internal const val gradleProp_structureDirs_plugins = "$gradleProp_structureDirs.plugins"
 
 // --

@@ -16,7 +16,7 @@ dependencies {
 
 	implementation("convention:build-support")
 	implementation("convention:settings")
-	implementation(project(":conventions"))
+	implementation("convention:conventions")
 
 	implementation("com.google.javascript:closure-compiler")
 }
