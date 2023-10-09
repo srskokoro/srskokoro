@@ -1,5 +1,5 @@
 plugins {
-	id("conv.plugins.kt.dsl")
+	id("build.plugins.kt.dsl")
 }
 
 dependencies {

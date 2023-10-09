@@ -1,7 +1,7 @@
 import me.friwi.jcefmaven.EnumPlatform
 
 plugins {
-	id("conv.plugins.kt.dsl")
+	id("build.plugins.kt.dsl")
 	id("com.github.gmazzo.buildconfig")
 }
 

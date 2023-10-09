@@ -1,5 +1,5 @@
 plugins {
-	id("conv.minimal.kt.jvm")
+	id("build.minimal.kt.jvm")
 }
 
 dependencies {
