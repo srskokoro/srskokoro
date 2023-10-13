@@ -5,9 +5,6 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.jvm.JvmInline
 
-@DslMarker
-annotation class ArgumentsBuilderDsl
-
 @Suppress("NOTHING_TO_INLINE")
 @ArgumentsBuilderDsl
 @JvmInline
