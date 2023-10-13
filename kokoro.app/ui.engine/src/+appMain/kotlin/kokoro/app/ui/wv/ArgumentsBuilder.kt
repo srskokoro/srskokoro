@@ -32,8 +32,10 @@ value class ArgumentsBuilder(@PublishedApi internal val out: StringBuilder) {
 	inline fun arg(value: CharSequence, startIndex: Int, endIndex: Int = value.length) = arg { append(value, startIndex, endIndex) }
 
 	@OptIn(ExperimentalContracts::class)
-	inline fun arg(block: Arg.() -> Arg): ArgumentsBuilder {
+	inline fun arg(crossinline block: Arg.() -> Arg): ArgumentsBuilder {
 		contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+		// The following inline function call is accompanied with `crossinline`,
+		// so as to not worry about non-local returns.
 		block(Arg(out))
 		out.append(',')
 		return this
