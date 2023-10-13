@@ -69,7 +69,7 @@ abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widge
 		cmd.append('[')
 		val args = ArgumentsBuilder(cmd)
 		args.onBindUpdates()
-		args.conclude(']')
+		conclude(args, ']')
 	}
 
 	abstract fun ArgumentsBuilder.onBindUpdates()

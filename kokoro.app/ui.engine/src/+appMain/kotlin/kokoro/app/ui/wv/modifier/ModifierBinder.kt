@@ -18,6 +18,6 @@ value class ModifierBinder(@PublishedApi internal val out: StringBuilder) {
 		// so as to not worry about non-local returns.
 		onBind(args)
 
-		args.conclude(']')
+		conclude(args, ']')
 	}
 }
