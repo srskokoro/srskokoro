@@ -40,7 +40,7 @@ value class ArgumentsBuilder(@PublishedApi internal val out: StringBuilder) {
 	}
 
 	fun arg(callback: CallbackId) = arg {
-		+"F\$(" + callback.id + ')'
+		+"F$(" + callback.id + ')'
 	}
 
 	// --
