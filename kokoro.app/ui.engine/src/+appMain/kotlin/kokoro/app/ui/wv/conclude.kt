@@ -15,7 +15,7 @@ internal fun conclude(builder: StringBuilder) {
 			return
 		}
 	}
-	throw E_AlreadyConcluded()
+	// Otherwise, nothing to do.
 }
 
 @PublishedApi
@@ -27,7 +27,7 @@ internal fun conclude(builder: StringBuilder, closing: Char) {
 			return
 		}
 	}
-	throw E_AlreadyConcluded()
+	builder.append(closing)
 }
 
 @PublishedApi
@@ -39,7 +39,5 @@ internal fun conclude(builder: StringBuilder, closing: String) {
 			return
 		}
 	}
-	throw E_AlreadyConcluded()
+	builder.append(closing)
 }
-
-private fun E_AlreadyConcluded() = IllegalStateException("Already concluded")
