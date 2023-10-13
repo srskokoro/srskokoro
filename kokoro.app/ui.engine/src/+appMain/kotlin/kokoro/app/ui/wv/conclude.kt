@@ -7,11 +7,11 @@ package kokoro.app.ui.wv
 // --
 
 @PublishedApi
-internal fun conclude(out: StringBuilder) {
-	if (out.isNotEmpty()) {
-		val lastIndex = out.length - 1
-		if (out[lastIndex] == ',') {
-			out.setLength(lastIndex)
+internal fun conclude(builder: StringBuilder) {
+	if (builder.isNotEmpty()) {
+		val lastIndex = builder.length - 1
+		if (builder[lastIndex] == ',') {
+			builder.setLength(lastIndex)
 			return
 		}
 	}
@@ -19,11 +19,11 @@ internal fun conclude(out: StringBuilder) {
 }
 
 @PublishedApi
-internal fun conclude(out: StringBuilder, closing: Char) {
-	if (out.isNotEmpty()) {
-		val lastIndex = out.length - 1
-		if (out[lastIndex] == ',') {
-			out[lastIndex] = closing
+internal fun conclude(builder: StringBuilder, closing: Char) {
+	if (builder.isNotEmpty()) {
+		val lastIndex = builder.length - 1
+		if (builder[lastIndex] == ',') {
+			builder[lastIndex] = closing
 			return
 		}
 	}
@@ -31,11 +31,11 @@ internal fun conclude(out: StringBuilder, closing: Char) {
 }
 
 @PublishedApi
-internal fun conclude(out: StringBuilder, closing: String) {
-	if (out.isNotEmpty()) {
-		val lastIndex = out.length - 1
-		if (out[lastIndex] == ',') {
-			out.setRange(lastIndex, lastIndex + 1, closing)
+internal fun conclude(builder: StringBuilder, closing: String) {
+	if (builder.isNotEmpty()) {
+		val lastIndex = builder.length - 1
+		if (builder[lastIndex] == ',') {
+			builder.setRange(lastIndex, lastIndex + 1, closing)
 			return
 		}
 	}
