@@ -36,7 +36,7 @@ open class RedwoodWindowFrame : BaseWindowFrame {
 		)
 	}
 
-	//region Frame Clock Handling
+	//#region Frame Clock Handling
 
 	private val _frameClock = FrameClock { repaint() }
 	val frameClock: MonotonicFrameClock get() = _frameClock
@@ -99,5 +99,5 @@ open class RedwoodWindowFrame : BaseWindowFrame {
 		}
 	}
 
-	//endregion
+	//#endregion
 }

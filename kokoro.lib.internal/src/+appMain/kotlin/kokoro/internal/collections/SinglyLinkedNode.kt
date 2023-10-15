@@ -30,7 +30,7 @@ inline fun <T : SinglyLinkedNode<out T>> T?.asIterable() = Iterable { iterator()
 @Suppress("NOTHING_TO_INLINE")
 inline fun <T : SinglyLinkedNode<out T>> T?.asSequence() = Sequence { iterator() }
 
-//region Convenience
+//#region Convenience
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun <T : SinglyLinkedNode<in T>> T.chain(element: T): T {
@@ -71,4 +71,4 @@ inline fun <T : SinglyLinkedNode<out T>> T?.forEachIndexed(action: (index: Int, 
 	}
 }
 
-//endregion
+//#endregion

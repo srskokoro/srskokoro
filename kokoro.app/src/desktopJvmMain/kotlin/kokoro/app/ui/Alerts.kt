@@ -36,7 +36,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.math.max
 
-//region
+//#region
 
 actual suspend fun Alerts.await(handler: AlertHandler, spec: AlertSpec): AlertButton? {
 	return suspendCancellableCoroutine { continuation ->
@@ -69,9 +69,9 @@ private class AlertAwaitImpl(
 	}
 }
 
-//endregion
+//#endregion
 
-//region Counterpart in "Swing"
+//#region Counterpart in "Swing"
 
 inline fun Alerts.swing(parent: Component?, spec: AlertSpec.() -> Unit) = swing(AlertHandler.DEFAULT, parent, spec)
 
@@ -222,9 +222,9 @@ private class AlertTokenImpl(
 	}
 }
 
-//endregion
+//#endregion
 
-//region Style
+//#region Style
 
 actual enum class AlertStyle(internal val value: Int) {
 	PLAIN(JOptionPane.PLAIN_MESSAGE),
@@ -234,9 +234,9 @@ actual enum class AlertStyle(internal val value: Int) {
 	INFO(JOptionPane.INFORMATION_MESSAGE),
 }
 
-//endregion
+//#endregion
 
-//region Buttons
+//#region Buttons
 
 actual sealed interface AlertButton {
 	actual val choice: AlertChoice
@@ -482,4 +482,4 @@ internal class AlertButtonInflater {
 	}
 }
 
-//endregion
+//#endregion

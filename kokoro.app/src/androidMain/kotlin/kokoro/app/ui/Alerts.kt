@@ -1,12 +1,12 @@
 package kokoro.app.ui
 
-//region
+//#region
 
 actual suspend fun Alerts.await(handler: AlertHandler, spec: AlertSpec): AlertButton? = TODO("Not yet implemented")
 
-//endregion
+//#endregion
 
-//region Style
+//#region Style
 
 actual enum class AlertStyle {
 	PLAIN,
@@ -16,9 +16,9 @@ actual enum class AlertStyle {
 	INFO,
 }
 
-//endregion
+//#endregion
 
-//region Buttons
+//#region Buttons
 
 actual sealed interface AlertButton {
 	actual val choice: AlertChoice
@@ -37,4 +37,4 @@ actual enum class AlertChoice : AlertButton {
 	actual override val textOverride: Nothing? get() = null
 }
 
-//endregion
+//#endregion

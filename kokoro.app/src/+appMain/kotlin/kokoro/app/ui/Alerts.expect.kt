@@ -4,7 +4,7 @@ import kokoro.app.AppBuild
 import kokoro.internal.SPECIAL_USE_DEPRECATION
 import kotlin.math.max
 
-//region
+//#region
 
 object Alerts
 
@@ -16,9 +16,9 @@ suspend inline fun Alerts.await(handler: AlertHandler, spec: AlertSpec.() -> Uni
 
 expect suspend fun Alerts.await(handler: AlertHandler, spec: AlertSpec): AlertButton?
 
-//endregion
+//#endregion
 
-//region Callbacks
+//#region Callbacks
 
 fun interface AlertHandler {
 
@@ -37,9 +37,9 @@ interface AlertToken {
 @Suppress("NOTHING_TO_INLINE")
 inline fun AlertToken.dismiss() = dismiss(null)
 
-//endregion
+//#endregion
 
-//region Type-safe builder
+//#region Type-safe builder
 
 @DslMarker
 private annotation class AlertSpecDsl
@@ -107,9 +107,9 @@ class AlertSpec {
 	}
 }
 
-//endregion
+//#endregion
 
-//region Style
+//#region Style
 
 @AlertSpecDsl
 object AlertStyles {
@@ -128,9 +128,9 @@ expect enum class AlertStyle {
 	INFO,
 }
 
-//endregion
+//#endregion
 
-//region Buttons
+//#region Buttons
 
 expect sealed interface AlertButton {
 	val choice: AlertChoice
@@ -234,14 +234,14 @@ class AlertButtonsSetup(
 		})
 	}
 
-	//region `List` implementation
+	//#region `List` implementation
 	override val size: Int get() = buttons.size
 	override fun isEmpty() = buttons.isEmpty()
 	override fun contains(element: AlertButton) = buttons.contains(element)
 	override fun get(index: Int) = buttons[index]
 	override fun indexOf(element: AlertButton) = buttons.indexOf(element)
 	override fun lastIndexOf(element: AlertButton) = buttons.lastIndexOf(element)
-	//endregion
+	//#endregion
 
 	public override fun toArray(): Array<Any?> = buttons.run {
 		val n = size; copyInto(arrayOfNulls(n), 0, 0, n)
@@ -256,4 +256,4 @@ class AlertButtonsSetup(
 	}
 }
 
-//endregion
+//#endregion

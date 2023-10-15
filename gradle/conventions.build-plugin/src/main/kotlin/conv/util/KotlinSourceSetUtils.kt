@@ -57,7 +57,7 @@ fun DomainObjectCollection<out KotlinSourceSet>.dependencies(
 	}
 }
 
-//region Utilities for inspecting `KotlinSourceSet` trees
+//#region Utilities for inspecting `KotlinSourceSet` trees
 
 fun Iterable<KotlinSourceSet>.toDependencyMap(): MutableMap<String, MutableMap<String, KotlinSourceSet>> {
 	val out = LinkedHashMap<String, MutableMap<String, KotlinSourceSet>>()
@@ -164,4 +164,4 @@ fun Iterable<KotlinSourceSet>.topDownWalk(dejaVu: MutableSet<KotlinSourceSet>, a
 	}
 }
 
-//endregion
+//#endregion

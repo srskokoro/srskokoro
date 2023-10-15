@@ -28,7 +28,7 @@ class WvBinder {
 		}
 	}
 
-	//region ID Binding
+	//#region ID Binding
 
 	private val widgetIdPool = IntDeque()
 	private var widgetIdLastGen = 0
@@ -66,9 +66,9 @@ class WvBinder {
 	private inline fun recycleCallbackId(id: Int): Unit =
 		callbackIdPool.addLast(id)
 
-	//endregion
+	//#endregion
 
-	//region Widget Binding
+	//#region Widget Binding
 
 	@JvmField internal val widgetStatusChanges = ArrayList<WvWidget>()
 
@@ -272,9 +272,9 @@ class WvBinder {
 		}
 	}
 
-	//endregion
+	//#endregion
 
-	//region Callback Binding
+	//#region Callback Binding
 
 	private val boundCallbackIds = HashMap<CallbackRouter, Int>()
 	private val boundCallbacks = FastIntMap<CallbackRouter>()
@@ -324,7 +324,7 @@ class WvBinder {
 		) -> Unit
 	) = callback(CallbackRouter(s1, s2, s3, route))
 
-	//endregion
+	//#endregion
 }
 
 private fun E_IdGenOverflow() = Error("Overflow: ID generation already exhausted")
