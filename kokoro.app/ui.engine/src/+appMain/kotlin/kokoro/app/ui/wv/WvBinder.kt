@@ -36,7 +36,8 @@ class WvBinder {
 	private val callbackIdPool = IntDeque()
 	private var callbackIdLastGen = -1
 
-	internal fun obtainWidgetId_inline(): Int {
+	@Suppress("NOTHING_TO_INLINE")
+	internal inline fun obtainWidgetId_inline(): Int {
 		val idPool = widgetIdPool
 		if (idPool.isEmpty()) {
 			val newId = widgetIdLastGen + WIDGET_ID_INC
@@ -51,7 +52,8 @@ class WvBinder {
 	private inline fun recycleWidgetId(id: Int): Unit =
 		widgetIdPool.addLast(id)
 
-	private fun obtainCallbackId_inline(): Int {
+	@Suppress("NOTHING_TO_INLINE")
+	private inline fun obtainCallbackId_inline(): Int {
 		val idPool = callbackIdPool
 		if (idPool.isEmpty()) {
 			val newId = callbackIdLastGen + 1
