@@ -87,14 +87,14 @@ internal object WvSetup {
 		filterable.include("**/*${S.D_WV_TAIL_JS}")
 	}
 
-	fun includeExportableInputs(filterable: PatternFilterable) {
+	fun includeExportables(filterable: PatternFilterable) {
 		includeJsInputs(filterable)
 		filterable.include("**/*${S.D_WV_SPEC}")
 		filterable.include("**/*${S.D_WV_BASE_LST}")
 	}
 
-	fun includeAllSupportedInputs(filterable: PatternFilterable) {
-		includeExportableInputs(filterable)
+	fun includeAllSupported(filterable: PatternFilterable) {
+		includeExportables(filterable)
 		filterable.include("**/*${S.D_WV_LST}")
 	}
 }

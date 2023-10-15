@@ -54,12 +54,12 @@ abstract class WvSetupBuildTask @Inject constructor(
 		if (it.isFile && it.path.endsWith(".${WvSetupExportTask.DEFAULT_EXTENSION}")) {
 			archiveOps.zipTree(it)
 		} else it
-	}.asFileTree.matching(WvSetup::includeExportableInputs)
+	}.asFileTree.matching(WvSetup::includeExportables)
 
 	@get:PathSensitive(PathSensitivity.RELATIVE)
 	@get:[IgnoreEmptyDirectories SkipWhenEmpty]
 	@get:InputFiles
-	internal val sourceInputFiles: FileTree = sourceDirectories.asFileTree.matching(WvSetup::includeAllSupportedInputs)
+	internal val sourceInputFiles: FileTree = sourceDirectories.asFileTree.matching(WvSetup::includeAllSupported)
 
 	fun from(sourceSets: Iterable<KotlinSourceSet>) {
 		sourceDirectories.from(fun() = sourceSets.map { it.wv.sourceDirectories })

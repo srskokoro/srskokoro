@@ -12,6 +12,6 @@ abstract class WvSetupExportTask : Zip() {
 	init {
 		@Suppress("LeakingThis") val self = this
 		self.archiveExtension.set(DEFAULT_EXTENSION)
-		WvSetup.includeExportableInputs(self)
+		WvSetup.includeExportables(self)
 	}
 }
