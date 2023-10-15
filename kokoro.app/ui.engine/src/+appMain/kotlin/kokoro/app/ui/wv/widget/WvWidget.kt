@@ -3,7 +3,9 @@ package kokoro.app.ui.wv.widget
 import app.cash.redwood.Modifier
 import app.cash.redwood.widget.Widget
 import kokoro.app.ui.wv.UpdatesBuilder
+import kokoro.app.ui.wv.WS_EXT_SHL
 import kokoro.app.ui.wv.WS_GARBAGE
+import kokoro.app.ui.wv.WS_CORE_MASK
 import kokoro.app.ui.wv.WS_MODEL_UPDATE
 import kokoro.app.ui.wv.WS_MODIFIER_UPDATE
 import kokoro.app.ui.wv.WS_REQUESTED_LAYOUT
@@ -49,9 +51,25 @@ abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widge
 		_widgetStatus = oldStatus or (flags or WS_TRACKED)
 	}
 
+
 	fun postUpdate() {
 		flagStatus(WS_MODEL_UPDATE)
 	}
+
+	fun postUpdate(extFlags: Int) {
+		flagStatus(WS_MODEL_UPDATE or (extFlags shl WS_EXT_SHL))
+	}
+
+	fun meldExtFlags(extFlags: Int) {
+		_widgetStatus = _widgetStatus or (extFlags shl WS_EXT_SHL)
+	}
+
+	fun setExtFlags(extFlags: Int) {
+		_widgetStatus = (_widgetStatus and WS_CORE_MASK) or (extFlags shl WS_EXT_SHL)
+	}
+
+	fun getExtFlags() = _widgetStatus ushr WS_EXT_SHL
+
 
 	fun postModifierUpdate() {
 		flagStatus(WS_MODIFIER_UPDATE)
@@ -60,6 +78,7 @@ abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widge
 	fun requestLayout() {
 		flagStatus(WS_REQUESTED_LAYOUT)
 	}
+
 
 	@Suppress("NOTHING_TO_INLINE")
 	internal inline fun bindUpdates(updater: UpdatesBuilder) {

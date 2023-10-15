@@ -19,4 +19,7 @@ internal const val WS_TRACKED_IN_LAYOUT_STACK = 1 shl 4
 internal const val WS_REQUESTED_LAYOUT = 1 shl 5
 internal const val WS_TREE_REQUESTED_LAYOUT = WS_REQUESTED_LAYOUT or WS_TRACKED_IN_LAYOUT_STACK
 
+internal const val WS_EXT_SHL = 16
+internal const val WS_CORE_MASK = (1 shl WS_EXT_SHL) - 1
+
 //#endregion
