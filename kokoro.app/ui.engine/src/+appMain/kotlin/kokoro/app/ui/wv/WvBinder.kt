@@ -31,16 +31,16 @@ class WvBinder {
 	//#region ID Binding
 
 	private val widgetIdPool = IntDeque()
-	private var widgetIdLastGen = 0
+	private var widgetIdLastGen = -WIDGET_ID_INC
 
 	private val callbackIdPool = IntDeque()
-	private var callbackIdLastGen = 0
+	private var callbackIdLastGen = -1
 
 	internal fun obtainWidgetId_inline(): Int {
 		val idPool = widgetIdPool
 		if (idPool.isEmpty()) {
 			val newId = widgetIdLastGen + WIDGET_ID_INC
-			if (newId <= 0) throw E_IdGenOverflow()
+			if (newId < 0) throw E_IdGenOverflow()
 			widgetIdLastGen = newId
 			return newId
 		}
@@ -55,7 +55,7 @@ class WvBinder {
 		val idPool = callbackIdPool
 		if (idPool.isEmpty()) {
 			val newId = callbackIdLastGen + 1
-			if (newId <= 0) throw E_IdGenOverflow()
+			if (newId < 0) throw E_IdGenOverflow()
 			callbackIdLastGen = newId
 			return newId
 		}
@@ -107,9 +107,9 @@ class WvBinder {
 
 				if (status and WS_GARBAGE != 0) {
 					val widgetId = widget._widgetId
-					widget._widgetId = 0
+					widget._widgetId = -1
 
-					if (widgetId == 0) {
+					if (widgetId < 0) {
 						assertUnreachable { "Widget already unbound" }
 						continue
 					}
