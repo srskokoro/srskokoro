@@ -101,12 +101,17 @@ internal class WvSetupSourceAnalysis {
 					return // Skip
 				}
 
-				if (stamp and Stamp.FLAG_OVERRIDE != 0) {
-					overrides.add(entry)
-				} else when (stamp and Stamp.MASK_WV_TYPE) {
+				when (stamp and (Stamp.MASK_WV_TYPE or Stamp.FLAG_OVERRIDE)) {
 					Stamp.WV_CONST_JS -> constParts.add(entry)
+					Stamp.WV_CONST_JS or Stamp.FLAG_OVERRIDE -> {
+						if (isSourceFiles) throw E_OverrideCannotBeConst(entry.path, entry.sourceFile)
+						return // Skip (silently)
+					}
 					Stamp.WV_TEMPL_JS -> templParts.add(entry)
 					Stamp.WV_LST -> lstEntries.add(entry)
+					else -> if (stamp and Stamp.FLAG_OVERRIDE != 0) {
+						overrides.add(entry)
+					}
 				}
 			}
 		})
@@ -117,11 +122,6 @@ internal class WvSetupSourceAnalysis {
 			val path = entry.path
 
 			val stamp = entry.stamp
-			if (stamp and Stamp.MASK_WV_TYPE == Stamp.WV_CONST_JS) {
-				if (isSourceFiles) throw E_OverrideCannotBeConst(path, entry.sourceFile)
-				continue // Skip (silently)
-			}
-
 			val basePath_n = path.length - getFileExtLengthFromStamp(stamp)
 			val targetPath = path.substring(0, basePath_n - N.OVER) + path.substring(basePath_n)
 
