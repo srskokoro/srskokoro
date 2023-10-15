@@ -167,16 +167,16 @@ internal class WvSetupSourceAnalysis {
 private fun analyzeInputFileNameForStamp(name: String): Int {
 	var i = 0
 	var r = 0
-	if (name.endsWith(S.JS, ignoreCase = true)) run {
-		if (name.startsWith(S.CONST, (name.length - (N.CONST + N.JS)).also { i = it }, ignoreCase = true)) {
+	if (name.endsWith(S.D_JS, ignoreCase = true)) run {
+		if (name.startsWith(S.CONST, (name.length - (N.CONST + N.D_JS)).also { i = it }, ignoreCase = true)) {
 			r = Stamp.WV_CONST_JS
-		} else if (name.startsWith(S.TEMPL, (name.length - (N.TEMPL + N.JS)).also { i = it }, ignoreCase = true)) {
+		} else if (name.startsWith(S.TEMPL, (name.length - (N.TEMPL + N.D_JS)).also { i = it }, ignoreCase = true)) {
 			r = Stamp.WV_TEMPL_JS
-		} else if (name.startsWith(S.HEAD, (name.length - (N.HEAD + N.JS)).also { i = it }, ignoreCase = true)) {
+		} else if (name.startsWith(S.HEAD, (name.length - (N.HEAD + N.D_JS)).also { i = it }, ignoreCase = true)) {
 			r = Stamp.WV_HEAD_JS
-		} else if (name.startsWith(S.TAIL, (name.length - (N.TAIL + N.JS)).also { i = it }, ignoreCase = true)) {
+		} else if (name.startsWith(S.TAIL, (name.length - (N.TAIL + N.D_JS)).also { i = it }, ignoreCase = true)) {
 			r = Stamp.WV_TAIL_JS
-		} else if (name.startsWith(S.EXTERN, (name.length - (N.EXTERN + N.JS)).also { i = it }, ignoreCase = true)) {
+		} else if (name.startsWith(S.EXTERN, (name.length - (N.EXTERN + N.D_JS)).also { i = it }, ignoreCase = true)) {
 			r = Stamp.WV_EXTERN_JS
 		} else {
 			return@run

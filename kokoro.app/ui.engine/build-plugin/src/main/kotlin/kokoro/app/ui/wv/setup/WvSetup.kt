@@ -10,6 +10,7 @@ internal object WvSetup {
 
 		const val KT = "kt"
 		const val JS = "js"
+		const val D_JS = ".$JS"
 		const val SPEC = "spec"
 		const val LST = "lst"
 
@@ -29,12 +30,12 @@ internal object WvSetup {
 
 		const val D_WV_H = ".$WV-"
 
-		const val D_WV_CONST_JS = "$D_WV_H$CONST$JS"
-		const val D_WV_TEMPL_JS = "$D_WV_H$TEMPL$JS"
+		const val D_WV_CONST_JS = "$D_WV_H$CONST$D_JS"
+		const val D_WV_TEMPL_JS = "$D_WV_H$TEMPL$D_JS"
 
-		const val D_WV_EXTERN_JS = "$D_WV_H$EXTERN$JS"
-		const val D_WV_HEAD_JS = "$D_WV_H$HEAD$JS"
-		const val D_WV_TAIL_JS = "$D_WV_H$TAIL$JS"
+		const val D_WV_EXTERN_JS = "$D_WV_H$EXTERN$D_JS"
+		const val D_WV_HEAD_JS = "$D_WV_H$HEAD$D_JS"
+		const val D_WV_TAIL_JS = "$D_WV_H$TAIL$D_JS"
 	}
 
 	object N {
@@ -43,6 +44,7 @@ internal object WvSetup {
 
 		const val KT = S.KT.length
 		const val JS = S.JS.length
+		const val D_JS = S.D_JS.length
 		const val SPEC = S.SPEC.length
 		const val LST = S.LST.length
 
