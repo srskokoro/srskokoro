@@ -58,6 +58,7 @@ abstract class WvSetupBuildTask @Inject constructor(
 	}.asFileTree.matching {
 		WvSetup.includeJsInputs(this)
 		include("**/*${S.D_WV_SPEC}")
+		include("**/*${S.D_WV_BASE_LST}")
 	}
 
 	@get:PathSensitive(PathSensitivity.RELATIVE)
@@ -66,6 +67,7 @@ abstract class WvSetupBuildTask @Inject constructor(
 	internal val sourceInputFiles: FileTree = sourceDirectories.asFileTree.matching {
 		WvSetup.includeJsInputs(this)
 		include("**/*${S.D_WV_SPEC}")
+		include("**/*${S.D_WV_BASE_LST}")
 		include("**/*${S.D_WV_LST}")
 	}
 

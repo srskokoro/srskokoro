@@ -15,5 +15,6 @@ abstract class WvSetupExportTask : Zip() {
 		self.archiveExtension.set(DEFAULT_EXTENSION)
 		WvSetup.includeJsInputs(self)
 		self.include("**/*${S.D_WV_SPEC}")
+		self.include("**/*${S.D_WV_BASE_LST}")
 	}
 }

@@ -43,6 +43,14 @@ internal class WvSetupCompilerState(val lst: Entry, private val entries: Map<Str
 				?: throw InvalidUserDataException("Error: ${context.sourceFile}:$ln:1 Referenced entry not found")
 
 			when (entry.stamp and (Stamp.MASK_WV_TYPE or Stamp.FLAG_OVERRIDE)) {
+				Stamp.WV_BASE_LST -> {
+					if (seenPaths.add(path)) {
+						loadLst(entry.getEffectiveEntry(), seenPaths)
+					} else {
+						throw InvalidUserDataException("Error: ${context.sourceFile}:$ln:1 Duplicate `*${S.D_WV_BASE_LST}` entries not allowed")
+					}
+				}
+
 				Stamp.WV_SPEC -> {
 					if (seenPaths.add(path)) {
 						loadSpec(entry.getEffectiveEntry(), seenPaths)

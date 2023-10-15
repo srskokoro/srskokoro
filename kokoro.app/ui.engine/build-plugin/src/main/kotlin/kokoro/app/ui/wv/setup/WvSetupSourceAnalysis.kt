@@ -31,7 +31,8 @@ internal class WvSetupSourceAnalysis {
 		const val WV_TAIL_JS = FLAG_JS or 0b011
 
 		const val WV_SPEC = 0b010
-		const val WV_LST = 0b001
+		const val WV_BASE_LST = 0b001
+		const val WV_LST = 0b000
 	}
 
 	class Entry(
@@ -191,6 +192,8 @@ private fun analyzeInputFileNameForStamp(name: String): Int {
 	} else if (name.endsWith(S.LST, ignoreCase = true)) {
 		if (name.startsWith(S.D_WV_D, (name.length - N.D_WV_LST).also { i = it }, ignoreCase = true)) {
 			r = Stamp.WV_LST
+		} else if (name.startsWith(S.D_WV_BASE_LST, (name.length - N.D_WV_BASE_LST).also { i = it }, ignoreCase = true)) {
+			r = Stamp.WV_BASE_LST
 		}
 	}
 	if (r != 0) (i - 1).let {
@@ -210,6 +213,7 @@ private fun getFileExtLengthFromStamp(stamp: Int) = when (stamp and Stamp.MASK_W
 	Stamp.WV_TAIL_JS -> N.D_WV_TAIL_JS
 
 	Stamp.WV_SPEC -> N.D_WV_SPEC
+	Stamp.WV_BASE_LST -> N.D_WV_BASE_LST
 	Stamp.WV_LST -> N.D_WV_LST
 
 	else -> 0

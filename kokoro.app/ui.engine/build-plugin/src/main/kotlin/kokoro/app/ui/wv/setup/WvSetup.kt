@@ -13,6 +13,9 @@ internal object WvSetup {
 		const val D_JS = ".$JS"
 		const val SPEC = "spec"
 		const val LST = "lst"
+		const val D_LST = ".$LST"
+
+		const val BASE = "base"
 
 		const val CONST = "const"
 		const val TEMPL = "templ"
@@ -22,13 +25,13 @@ internal object WvSetup {
 		const val TAIL = "tail"
 
 		const val D_WV_D = ".$WV."
+		const val D_WV_H = ".$WV-"
 
 		const val D_WV_KT = "$D_WV_D$KT"
 		const val D_WV_JS = "$D_WV_D$JS"
 		const val D_WV_SPEC = "$D_WV_D$SPEC"
+		const val D_WV_BASE_LST = "$D_WV_H$BASE$D_LST"
 		const val D_WV_LST = "$D_WV_D$LST"
-
-		const val D_WV_H = ".$WV-"
 
 		const val D_WV_CONST_JS = "$D_WV_H$CONST$D_JS"
 		const val D_WV_TEMPL_JS = "$D_WV_H$TEMPL$D_JS"
@@ -47,6 +50,9 @@ internal object WvSetup {
 		const val D_JS = S.D_JS.length
 		const val SPEC = S.SPEC.length
 		const val LST = S.LST.length
+		const val D_LST = S.D_LST.length
+
+		const val BASE = S.BASE.length
 
 		const val CONST = S.CONST.length
 		const val TEMPL = S.TEMPL.length
@@ -56,13 +62,13 @@ internal object WvSetup {
 		const val TAIL = S.TAIL.length
 
 		const val D_WV_D = S.D_WV_D.length
+		const val D_WV_H = S.D_WV_H.length
 
 		const val D_WV_KT = S.D_WV_KT.length
 		const val D_WV_JS = S.D_WV_JS.length
 		const val D_WV_SPEC = S.D_WV_SPEC.length
+		const val D_WV_BASE_LST = S.D_WV_BASE_LST.length
 		const val D_WV_LST = S.D_WV_LST.length
-
-		const val D_WV_H = S.D_WV_H.length
 
 		const val D_WV_CONST_JS = S.D_WV_CONST_JS.length
 		const val D_WV_TEMPL_JS = S.D_WV_TEMPL_JS.length
