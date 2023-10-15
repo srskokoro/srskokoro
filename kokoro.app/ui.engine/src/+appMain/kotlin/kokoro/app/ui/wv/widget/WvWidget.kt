@@ -13,7 +13,9 @@ import kokoro.app.ui.wv.WS_TRACKED
 import kokoro.app.ui.wv.WvBinder
 import kotlin.jvm.JvmField
 
-abstract class WvWidget(templKey: String, @JvmField val binder: WvBinder) : Widget<WvWidget> {
+abstract class WvWidget(templId: Int, @JvmField val binder: WvBinder) : Widget<WvWidget> {
+	constructor(templKey: String, binder: WvBinder) : this(binder.tIdMapper.invoke(templKey), binder)
+
 	@PublishedApi @JvmField internal var _widgetId: Int
 	@PublishedApi @JvmField internal var _widgetStatus: Int
 
@@ -36,7 +38,7 @@ abstract class WvWidget(templKey: String, @JvmField val binder: WvBinder) : Widg
 
 		val cmd = binder.bindingCommand
 		cmd.append("C$(")
-		cmd.append(binder.tIdMapper.invoke(templKey))
+		cmd.append(templId)
 		cmd.append(',')
 		cmd.append(widgetId)
 		cmd.appendLine(')')
