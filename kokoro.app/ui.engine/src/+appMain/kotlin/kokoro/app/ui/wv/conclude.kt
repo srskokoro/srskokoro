@@ -1,8 +1,16 @@
 package kokoro.app.ui.wv
 
-@PublishedApi internal inline fun conclude(args: ArgumentsBuilder) = conclude(args.out)
-@PublishedApi internal inline fun conclude(args: ArgumentsBuilder, closing: Char) = conclude(args.out, closing = closing)
-@PublishedApi internal inline fun conclude(args: ArgumentsBuilder, closing: String) = conclude(args.out, closing = closing)
+@Suppress("NOTHING_TO_INLINE")
+@PublishedApi
+internal inline fun conclude(args: ArgumentsBuilder) = conclude(args.out)
+
+@Suppress("NOTHING_TO_INLINE")
+@PublishedApi
+internal inline fun conclude(args: ArgumentsBuilder, closing: Char) = conclude(args.out, closing = closing)
+
+@Suppress("NOTHING_TO_INLINE")
+@PublishedApi
+internal inline fun conclude(args: ArgumentsBuilder, closing: String) = conclude(args.out, closing = closing)
 
 // --
 
