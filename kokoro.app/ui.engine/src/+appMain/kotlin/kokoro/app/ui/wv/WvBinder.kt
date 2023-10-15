@@ -3,9 +3,8 @@ package kokoro.app.ui.wv
 import app.cash.redwood.Modifier
 import assertUnreachable
 import kokoro.app.ui.wv.modifier.GlobalModifier
-import kokoro.app.ui.wv.modifier.ModifierBinder
+import kokoro.app.ui.wv.modifier.ModifierDelegate
 import kokoro.app.ui.wv.widget.WvWidget
-import kokoro.app.ui.wv.widget.WvWidgetChildren
 import kokoro.internal.collections.MapComputeFunction
 import kokoro.internal.collections.computeIfAbsent
 import korlibs.datastructure.FastIntMap
@@ -16,7 +15,7 @@ class WvBinder {
 	@JvmField internal val bindingCommand = StringBuilder()
 	private var bindingCommand_lengthBackup: Int = 0
 
-	private val modifierBindingAction = ModifierBindingAction(ModifierBinder(bindingCommand))
+	private val modifierBindingAction = ModifierBindingAction(this)
 
 	private var deferredException: Throwable? = null
 
@@ -133,15 +132,12 @@ class WvBinder {
 					cmd.append("U$(")
 					cmd.append(widget._widgetId)
 
-					cmd.append(',')
 					if (status and WS_MODEL_UPDATE != 0) {
-						widget.bindUpdates(cmd)
-					} else {
-						cmd.append("null")
+						widget.bindUpdates(UpdatesBuilder(cmd))
 					}
-
-					modifierBindingAction.parent = widget._parent
-					widget._modifier.forEach(modifierBindingAction)
+					if (status and WS_MODIFIER_UPDATE != 0) {
+						modifierBindingAction.on(widget)
+					}
 
 					cmd.appendLine(')')
 				}
@@ -154,7 +150,7 @@ class WvBinder {
 				}
 			}
 			statusChanges.clear()
-			modifierBindingAction.parent = null // To allow GC
+			modifierBindingAction.clear() // To allow GC
 
 			val layoutStack = layoutStack
 			for (i in layoutStack.indices.reversed()) {
@@ -199,7 +195,7 @@ class WvBinder {
 			bindingCommand.setLength(it)
 		}
 
-		modifierBindingAction.parent = null // To allow GC
+		modifierBindingAction.clear() // To allow GC
 
 		widgetStatusChanges.let { widgets ->
 			for (widget in widgets) widget._widgetStatus = 0 // Consume
@@ -223,17 +219,56 @@ class WvBinder {
 		// TODO Send binding command to `WebView`
 	}
 
-	private class ModifierBindingAction(
-		private val binder: ModifierBinder,
-	) : (Modifier) -> Unit {
-		@JvmField var parent: WvWidgetChildren? = null
+	private class ModifierBindingAction(binder: WvBinder) : (Modifier.Element) -> Unit {
+		private val out = binder.bindingCommand
+		private var widget: WvWidget? = null
+		private var oldModifierMap: LinkedHashMap<Int, Modifier.Element>? = null
 
-		override fun invoke(modifier: Modifier) {
-			if (modifier is GlobalModifier) with(modifier) {
-				binder.onBind()
-			} else parent?.run {
-				binder.onBindScopedModifier(modifier)
+		fun clear() {
+			widget = null
+			oldModifierMap?.clear()
+		}
+
+		fun on(widget: WvWidget) {
+			try {
+				this.widget = widget
+
+				val oldModifierMap = widget._modifierMap
+				this.oldModifierMap = oldModifierMap
+
+				val newModifierMap = LinkedHashMap<Int, Modifier.Element>()
+				widget._modifierMap = newModifierMap
+
+				out.append(','); out.append('[')
+				widget._modifier.forEach(this)
+				conclude(out, ']')
+
+				if (newModifierMap.isEmpty()) widget._modifierMap = null
+
+				oldModifierMap?.forEach { (mId, _) ->
+					out.append(','); out.append(mId)
+				}
+			} catch (ex: Throwable) {
+				widget._modifierMap = null
+				throw ex
 			}
+		}
+
+		override fun invoke(modifier: Modifier.Element) {
+			val delegate: ModifierDelegate<*> =
+				if (modifier is GlobalModifier) modifier
+				else widget?._parent?.onBindScopedModifier(modifier)
+					?: return // Skip
+
+			val mId = delegate.modifierId
+			val prev = oldModifierMap?.remove(mId)
+			if (prev == null || prev != modifier) {
+				out.append(mId); out.append(',')
+				out.append('[')
+				delegate.bind(ArgumentsBuilder(out), modifier)
+				out.append(']'); out.append(',')
+			}
+			widget?._modifierMap?.put(mId, modifier)
 		}
 	}
 

@@ -4,7 +4,7 @@ import app.cash.redwood.Modifier
 import app.cash.redwood.widget.Widget
 import kokoro.app.ui.wv.WS_GARBAGE
 import kokoro.app.ui.wv.WS_GARBAGE_INV
-import kokoro.app.ui.wv.modifier.ModifierBinder
+import kokoro.app.ui.wv.modifier.ModifierDelegate
 import kokoro.internal.collections.move
 import kokoro.internal.collections.remove
 import kotlin.jvm.JvmField
@@ -71,7 +71,7 @@ open class WvWidgetChildren(@JvmField val parent: WvWidget) : Widget.Children<Wv
 
 	override fun onModifierUpdated() = Unit
 
-	open fun ModifierBinder.onBindScopedModifier(modifier: Modifier) = Unit
+	open fun onBindScopedModifier(modifier: Modifier.Element): ModifierDelegate<*>? = null
 
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun requestLayout() = parent.requestLayout()
@@ -100,13 +100,13 @@ open class WvWidgetChildren(@JvmField val parent: WvWidget) : Widget.Children<Wv
 			requestLayout()
 		}
 
-		abstract override fun ModifierBinder.onBindScopedModifier(modifier: Modifier)
+		abstract override fun onBindScopedModifier(modifier: Modifier.Element): ModifierDelegate<*>?
 
 		companion object {
 			inline operator fun invoke(
-				parent: WvWidget, crossinline onBindScopedModifier: ModifierBinder.(modifier: Modifier) -> Unit,
+				parent: WvWidget, crossinline onBindScopedModifier: (modifier: Modifier.Element) -> ModifierDelegate<*>?,
 			) = object : WithScopedModifier(parent) {
-				override fun ModifierBinder.onBindScopedModifier(modifier: Modifier) = onBindScopedModifier(modifier)
+				override fun onBindScopedModifier(modifier: Modifier.Element) = onBindScopedModifier(modifier)
 			}
 		}
 	}

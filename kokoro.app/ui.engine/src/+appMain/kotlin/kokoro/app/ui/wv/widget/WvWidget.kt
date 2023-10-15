@@ -2,14 +2,13 @@ package kokoro.app.ui.wv.widget
 
 import app.cash.redwood.Modifier
 import app.cash.redwood.widget.Widget
-import kokoro.app.ui.wv.ArgumentsBuilder
+import kokoro.app.ui.wv.UpdatesBuilder
 import kokoro.app.ui.wv.WS_GARBAGE
+import kokoro.app.ui.wv.WS_MODEL_UPDATE
 import kokoro.app.ui.wv.WS_MODIFIER_UPDATE
 import kokoro.app.ui.wv.WS_REQUESTED_LAYOUT
 import kokoro.app.ui.wv.WS_TRACKED
-import kokoro.app.ui.wv.WS_UPDATE
 import kokoro.app.ui.wv.WvBinder
-import kokoro.app.ui.wv.conclude
 import kotlin.jvm.JvmField
 
 abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widget<WvWidget> {
@@ -51,9 +50,7 @@ abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widge
 	}
 
 	fun postUpdate() {
-		// NOTE: Modifier updates must be rebound on top of widget model
-		// updates, even if there are only widget model updates.
-		flagStatus(WS_UPDATE)
+		flagStatus(WS_MODEL_UPDATE)
 	}
 
 	fun postModifierUpdate() {
@@ -65,14 +62,11 @@ abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widge
 	}
 
 	@Suppress("NOTHING_TO_INLINE")
-	internal inline fun bindUpdates(cmd: StringBuilder) {
-		cmd.append('[')
-		val args = ArgumentsBuilder(cmd)
-		args.onBindUpdates()
-		conclude(args, ']')
+	internal inline fun bindUpdates(updater: UpdatesBuilder) {
+		updater.onBindUpdates()
 	}
 
-	abstract fun ArgumentsBuilder.onBindUpdates()
+	abstract fun UpdatesBuilder.onBindUpdates()
 
 	// --
 
@@ -87,4 +81,6 @@ abstract class WvWidget(templateId: Int, @JvmField val binder: WvBinder) : Widge
 			postModifierUpdate()
 			_modifier = v
 		}
+
+	@JvmField internal var _modifierMap: LinkedHashMap<Int, Modifier.Element>? = null
 }
