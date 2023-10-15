@@ -11,7 +11,9 @@ import korlibs.datastructure.FastIntMap
 import korlibs.datastructure.IntDeque
 import kotlin.jvm.JvmField
 
-class WvBinder {
+class WvBinder(
+	@JvmField val tIdMapper: TemplateIdMapper,
+) {
 	@JvmField internal val bindingCommand = StringBuilder()
 	private var bindingCommand_lengthBackup: Int = 0
 
@@ -223,6 +225,8 @@ class WvBinder {
 
 	private class ModifierBindingAction(binder: WvBinder) : (Modifier.Element) -> Unit {
 		private val out = binder.bindingCommand
+		private val tIdMapper = binder.tIdMapper
+
 		private var widget: WvWidget? = null
 		private var oldModifierMap: LinkedHashMap<Int, Modifier.Element>? = null
 
@@ -262,7 +266,7 @@ class WvBinder {
 				else widget?._parent?.onBindScopedModifier(modifier)
 					?: return // Skip
 
-			val mId = delegate.modifierId
+			val mId = tIdMapper.invoke(delegate.templKey)
 			val prev = oldModifierMap?.remove(mId)
 			if (prev == null || prev != modifier) {
 				out.append(mId); out.append(',')

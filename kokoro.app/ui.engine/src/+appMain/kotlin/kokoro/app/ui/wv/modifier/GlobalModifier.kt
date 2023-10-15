@@ -3,9 +3,7 @@ package kokoro.app.ui.wv.modifier
 import app.cash.redwood.Modifier
 import kokoro.app.ui.wv.ArgumentsBuilder
 
-abstract class GlobalModifier(
-	modifierId: Int,
-) : ModifierDelegate<Modifier>(modifierId), Modifier.Element {
+abstract class GlobalModifier : ModifierDelegate<Modifier>(), Modifier.Element {
 
 	abstract fun ArgumentsBuilder.onBind()
 
