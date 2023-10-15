@@ -16,12 +16,13 @@ import java.util.LinkedList
 internal class WvSetupSourceAnalysis {
 
 	internal object Stamp {
-		const val FLAG_OVERRIDE = 1 shl 6
+		const val FLAG_OVERRIDE = 1 shl 7
 
+		const val FLAG_LST = 1 shl 6
 		const val FLAG_SPEC_PART = 1 shl 5
 		const val FLAG_JS = 1 shl 4
 
-		const val MASK_WV_TYPE = FLAG_JS or FLAG_SPEC_PART or 0b111
+		const val MASK_WV_TYPE = FLAG_JS or FLAG_SPEC_PART or FLAG_LST or 0b111
 
 		const val WV_CONST_JS = FLAG_JS or FLAG_SPEC_PART or 0b111
 		const val WV_TEMPL_JS = FLAG_JS or FLAG_SPEC_PART or 0b110
@@ -31,8 +32,10 @@ internal class WvSetupSourceAnalysis {
 		const val WV_TAIL_JS = FLAG_JS or 0b011
 
 		const val WV_SPEC = 0b010
-		const val WV_BASE_LST = 0b001
-		const val WV_LST = 0b000
+		const val WV_BASE_LST = FLAG_LST or 0b001
+		const val WV_LST = FLAG_LST or 0b000
+		// ^ NOTE: Even though the actual "type" stamp is zero, the overall
+		// value should be nonzero, as we're using zero to mean "no stamp".
 	}
 
 	class Entry(
