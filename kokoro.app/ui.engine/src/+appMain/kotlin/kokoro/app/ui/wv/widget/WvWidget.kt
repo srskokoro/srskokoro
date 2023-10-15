@@ -3,9 +3,9 @@ package kokoro.app.ui.wv.widget
 import app.cash.redwood.Modifier
 import app.cash.redwood.widget.Widget
 import kokoro.app.ui.wv.UpdatesBuilder
+import kokoro.app.ui.wv.WS_CORE_MASK
 import kokoro.app.ui.wv.WS_EXT_SHL
 import kokoro.app.ui.wv.WS_GARBAGE
-import kokoro.app.ui.wv.WS_CORE_MASK
 import kokoro.app.ui.wv.WS_MODEL_UPDATE
 import kokoro.app.ui.wv.WS_MODIFIER_UPDATE
 import kokoro.app.ui.wv.WS_REQUESTED_LAYOUT
