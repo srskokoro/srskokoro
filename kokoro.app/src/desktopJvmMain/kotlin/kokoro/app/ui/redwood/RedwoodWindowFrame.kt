@@ -2,6 +2,7 @@ package kokoro.app.ui.redwood
 
 import androidx.compose.runtime.*
 import app.cash.redwood.compose.RedwoodComposition
+import app.cash.redwood.widget.RedwoodView
 import app.cash.redwood.widget.Widget
 import kokoro.app.ui.BaseWindowFrame
 import kotlinx.coroutines.CoroutineScope
@@ -25,14 +26,14 @@ open class RedwoodWindowFrame : BaseWindowFrame {
 	/** @see composition */
 	fun <W : Any> init(
 		mainScope: CoroutineScope,
-		container: Widget.Children<W>,
+		view: RedwoodView<W>,
 		provider: Widget.Provider<W>,
 		onEndChanges: () -> Unit = {},
 	) {
 		_composition?.cancel()
 		_composition = RedwoodComposition(
 			mainScope + _frameClock + super.ref,
-			container, provider, onEndChanges,
+			view, provider, onEndChanges,
 		)
 	}
 
