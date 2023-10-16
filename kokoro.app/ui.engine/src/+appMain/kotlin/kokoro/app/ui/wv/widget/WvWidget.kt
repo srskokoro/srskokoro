@@ -41,9 +41,10 @@ abstract class WvWidget : Widget<WvWidget> {
 
 	constructor(templId: Int, binder: WvBinder) {
 		this.binder = binder
-		val widgetId = binder.obtainWidgetId_inline()
 
+		val widgetId = binder.obtainWidgetId_inline()
 		_widgetId = widgetId
+
 		_widgetStatus = WS_GARBAGE
 		binder.widgetStatusChanges.add(@Suppress("LeakingThis") this)
 
