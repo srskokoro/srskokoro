@@ -74,8 +74,10 @@ internal object AppLafSetup :
 			}
 
 			// Also update existing windows
-			for (w in Window.getWindows())
+			for (w in Window.getWindows()) {
+				if (w is AppLafListener) w.onAppLafUpdated() // May throw; let it!
 				SwingUtilities.updateComponentTreeUI(w) // May throw; let it!
+			}
 
 			// ---===--- ---===--- ---===---
 			FlatAnimatedLafChange.hideSnapshotWithAnimation()
