@@ -295,6 +295,10 @@ class WvBinder(
 		}
 	}
 
+	fun onCallbackEvent(callbackId: Int, data: String) {
+		boundCallbacks[callbackId]?.route(data)
+	}
+
 	fun forceUnbindCallback(callbackId: Int) {
 		val callback = boundCallbacks.set(callbackId, null)
 		if (callback != null) {
