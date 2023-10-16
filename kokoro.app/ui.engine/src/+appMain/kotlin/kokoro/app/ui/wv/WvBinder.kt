@@ -11,6 +11,13 @@ import korlibs.datastructure.FastIntMap
 import korlibs.datastructure.IntDeque
 import kotlin.jvm.JvmField
 
+/**
+ * Core hooks that must be called and managed by external code:
+ * - [onWebViewSetupReady]`()`
+ * - [onConcludeChanges]`()`
+ * - [onCallbackEvent]`()`
+ * - [onUnbindCallback]`()`
+ */
 class WvBinder(
 	@JvmField val tIdMapper: TemplateIdMapper,
 ) {
@@ -318,6 +325,11 @@ class WvBinder(
 
 	fun onCallbackEvent(callbackId: Int, data: String) {
 		boundCallbacks[callbackId]?.route(data)
+	}
+
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun onUnbindCallback(callbackId: Int) {
+		forceUnbindCallback(callbackId)
 	}
 
 	fun forceUnbindCallback(callbackId: Int) {
