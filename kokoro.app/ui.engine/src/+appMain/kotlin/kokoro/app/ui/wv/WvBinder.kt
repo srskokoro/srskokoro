@@ -98,7 +98,7 @@ class WvBinder(
 
 	var onConcludeChangesError: (ex: Throwable) -> Unit = { ex -> throw ex }
 
-	fun concludeChanges() {
+	fun onConcludeChanges() {
 		val cmd = bindingCommand
 		bindingCommand_lengthBackup = cmd.length
 
@@ -189,10 +189,10 @@ class WvBinder(
 		// --
 		// Error handling
 
-		concludeChanges_fail()
+		onConcludeChanges_fail()
 	}
 
-	private fun concludeChanges_fail() {
+	private fun onConcludeChanges_fail() {
 		val thrown = deferredException
 			?: AssertionError("Required value was null.")
 
