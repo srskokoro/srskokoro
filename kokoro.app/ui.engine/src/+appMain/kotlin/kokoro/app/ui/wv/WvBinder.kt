@@ -12,7 +12,8 @@ import korlibs.datastructure.IntDeque
 import kotlin.jvm.JvmField
 
 /**
- * Core hooks that must be called and managed by external code:
+ * Core methods acting as hooks that must be called and managed by external
+ * code:
  * - [onWebViewSetupReady]`()`
  * - [onConcludeChanges]`()`
  * - [onCallbackEvent]`()`
