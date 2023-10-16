@@ -33,7 +33,7 @@ class WvBinder(
 	//#region ID Binding
 
 	private val widgetIdPool = IntDeque()
-	private var widgetIdLastGen = -WIDGET_ID_INC
+	private var widgetIdLastGen = WIDGET_ID_ROOT
 
 	private val callbackIdPool = IntDeque()
 	private var callbackIdLastGen = -1
@@ -43,7 +43,7 @@ class WvBinder(
 		val idPool = widgetIdPool
 		if (idPool.isEmpty()) {
 			val newId = widgetIdLastGen + WIDGET_ID_INC
-			if (newId < 0) throw E_IdGenOverflow()
+			if (newId <= WIDGET_ID_ROOT) throw E_IdGenOverflow()
 			widgetIdLastGen = newId
 			return newId
 		}
@@ -111,12 +111,16 @@ class WvBinder(
 
 				if (status and WS_GARBAGE != 0) {
 					val widgetId = widget._widgetId
-					widget._widgetId = -1
-
-					if (widgetId < 0) {
-						assertUnreachable { "Widget already unbound" }
+					if (widgetId <= WIDGET_ID_ROOT) {
+						if (widgetId != WIDGET_ID_ROOT) {
+							assertUnreachable { "Widget already unbound" }
+						} else {
+							widget._widgetStatus = 0 // Consume
+							error("Should never unbind root")
+						}
 						continue
 					}
+					widget._widgetId = -1
 
 					cmd.append("D$(")
 					cmd.append(widgetId)

@@ -1,5 +1,7 @@
 package kokoro.app.ui.wv
 
+internal const val WIDGET_ID_ROOT = 0 // Zero is reserved for the root widget
+
 internal const val WIDGET_ID_SLOT_BITS = 4
 internal const val WIDGET_ID_INC = 1 shl WIDGET_ID_SLOT_BITS
 

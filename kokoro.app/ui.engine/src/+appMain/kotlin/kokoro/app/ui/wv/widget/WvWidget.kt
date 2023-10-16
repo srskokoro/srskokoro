@@ -3,6 +3,7 @@ package kokoro.app.ui.wv.widget
 import app.cash.redwood.Modifier
 import app.cash.redwood.widget.Widget
 import kokoro.app.ui.wv.UpdatesBuilder
+import kokoro.app.ui.wv.WIDGET_ID_ROOT
 import kokoro.app.ui.wv.WS_CORE_MASK
 import kokoro.app.ui.wv.WS_EXT_SHL
 import kokoro.app.ui.wv.WS_GARBAGE
@@ -13,8 +14,8 @@ import kokoro.app.ui.wv.WS_TRACKED
 import kokoro.app.ui.wv.WvBinder
 import kotlin.jvm.JvmField
 
-abstract class WvWidget(templId: Int, @JvmField val binder: WvBinder) : Widget<WvWidget> {
-	constructor(templKey: String, binder: WvBinder) : this(binder.tIdMapper.invoke(templKey), binder)
+abstract class WvWidget : Widget<WvWidget> {
+	@JvmField val binder: WvBinder
 
 	@PublishedApi @JvmField internal var _widgetId: Int
 	@PublishedApi @JvmField internal var _widgetStatus: Int
@@ -28,8 +29,18 @@ abstract class WvWidget(templId: Int, @JvmField val binder: WvBinder) : Widget<W
 	@PublishedApi @JvmField internal var _parent: WvWidgetChildren? = null
 	inline val parent get() = _parent
 
-	init {
-		val binder = binder
+
+	internal constructor(binder: WvBinder) {
+		this.binder = binder
+		_widgetId = WIDGET_ID_ROOT
+		_widgetStatus = 0
+	}
+
+	constructor(templKey: String, binder: WvBinder)
+		: this(binder.tIdMapper.invoke(templKey), binder)
+
+	constructor(templId: Int, binder: WvBinder) {
+		this.binder = binder
 		val widgetId = binder.obtainWidgetId_inline()
 
 		_widgetId = widgetId
