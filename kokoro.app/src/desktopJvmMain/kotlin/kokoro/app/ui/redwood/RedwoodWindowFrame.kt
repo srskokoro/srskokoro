@@ -2,10 +2,12 @@ package kokoro.app.ui.redwood
 
 import androidx.compose.runtime.*
 import app.cash.redwood.compose.RedwoodComposition
+import app.cash.redwood.ui.UiConfiguration
 import app.cash.redwood.widget.RedwoodView
 import app.cash.redwood.widget.Widget
 import kokoro.app.ui.BaseWindowFrame
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.awt.EventQueue
@@ -34,6 +36,21 @@ open class RedwoodWindowFrame : BaseWindowFrame {
 		_composition = RedwoodComposition(
 			mainScope + _frameClock + super.ref,
 			view, provider, onEndChanges,
+		)
+	}
+
+	/** @see composition */
+	fun <W : Any> init(
+		mainScope: CoroutineScope,
+		container: Widget.Children<W>,
+		uiConfigurations: StateFlow<UiConfiguration>,
+		provider: Widget.Provider<W>,
+		onEndChanges: () -> Unit = {},
+	) {
+		_composition?.cancel()
+		_composition = RedwoodComposition(
+			mainScope + _frameClock + super.ref,
+			container, uiConfigurations, provider, onEndChanges,
 		)
 	}
 
