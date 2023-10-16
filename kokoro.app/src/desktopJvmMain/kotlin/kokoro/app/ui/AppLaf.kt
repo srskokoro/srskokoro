@@ -21,7 +21,7 @@ internal inline fun ensureAppLaf() = @Suppress("DEPRECATION") AppLafSetup.maybeI
 
 /**
  * Should be set to match the current LAF, which isn't necessarily when the
- * system's dark mode changes.
+ * system changes dark mode.
  */
 private var _isDarkAppLaf = false
 internal inline val isDarkAppLaf get() = _isDarkAppLaf
