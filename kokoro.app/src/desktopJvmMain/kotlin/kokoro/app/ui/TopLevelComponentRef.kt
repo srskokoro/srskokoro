@@ -9,4 +9,7 @@ class TopLevelComponentRef<C : Component?>(component: C) : WeakReference<C>(comp
 	companion object Key : CoroutineContext.Key<TopLevelComponentRef<*>>
 
 	override val key: CoroutineContext.Key<*> get() = TopLevelComponentRef
+
+	override fun clear() {}
+	override fun enqueue() = false
 }
