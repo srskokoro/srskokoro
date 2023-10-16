@@ -3,4 +3,4 @@ package kokoro.app.ui.wv
 import org.cef.browser.CefBrowser
 
 @Suppress("ACTUAL_WITHOUT_EXPECT")
-actual typealias PlatformWebView = CefBrowser
+actual typealias JsEvaluator = CefBrowser
