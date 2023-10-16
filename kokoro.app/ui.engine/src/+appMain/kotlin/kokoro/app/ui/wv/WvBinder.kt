@@ -306,7 +306,7 @@ class WvBinder(
 			recycleCallbackId(callbackId)
 			return
 		}
-		throw AssertionError("Callback already unbound")
+		throw IllegalArgumentException("Callback already unbound for ID: $callbackId")
 	}
 
 	@Suppress("NOTHING_TO_INLINE")
