@@ -19,6 +19,8 @@ class WvBinder(
 
 	private val modifierBindingAction = ModifierBindingAction(this)
 
+	private var evaluator: JsEvaluator? = null
+
 	private var deferredException: Throwable? = null
 
 	fun deferException(ex: Throwable) {
@@ -94,6 +96,10 @@ class WvBinder(
 
 			layoutStack.add(widget)
 		}
+	}
+
+	fun onWebViewSetupReady(evaluator: JsEvaluator) {
+		this.evaluator = evaluator
 	}
 
 	var onConcludeChangesError: (ex: Throwable) -> Unit = { ex -> throw ex }
@@ -181,8 +187,23 @@ class WvBinder(
 		}
 
 		if (deferredException == null) {
-			bindingCommand_lengthBackup = 0
-			executeBindingCommand()
+			// NOTE: At this point, the current command string should be
+			// considered "committed" even if it won't actually be executed.
+
+			val evaluator = evaluator
+			if (evaluator != null) try {
+				val cmdStr = cmd.toString() // May throw OOM
+				cmd.setLength(0) // Consume (even if the code below fails)
+				evaluator.evaluateJs(cmdStr)
+			} catch (ex: Throwable) {
+				// NOTE: We didn't set this above since its value doesn't matter
+				// anyway if the code above succeeds. It'll also be re-set to a
+				// new value anyway every time the enclosing method is called.
+				bindingCommand_lengthBackup = 0
+				// Report error.
+				onConcludeChangesError.invoke(ex)
+			}
+
 			return // Early exit
 		}
 
@@ -214,17 +235,17 @@ class WvBinder(
 			widgets.clear()
 		}
 
-		try {
-			executeBindingCommand()
+		val evaluator = evaluator
+		if (evaluator != null) try {
+			val cmd = bindingCommand
+			val cmdStr = cmd.toString() // May throw OOM
+			cmd.setLength(0) // Consume (even if the code below fails)
+			evaluator.evaluateJs(cmdStr)
 		} catch (ex: Throwable) {
 			thrown.addSuppressed(ex)
 		}
 
 		onConcludeChangesError.invoke(thrown)
-	}
-
-	private fun executeBindingCommand() {
-		// TODO Send binding command to `WebView`
 	}
 
 	private class ModifierBindingAction(binder: WvBinder) : (Modifier.Element) -> Unit {
