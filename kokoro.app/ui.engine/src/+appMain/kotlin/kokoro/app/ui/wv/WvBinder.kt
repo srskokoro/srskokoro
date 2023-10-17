@@ -22,7 +22,7 @@ import kotlin.jvm.JvmField
  * - [onUnbindCallback]`()`
  */
 class WvBinder(
-	@JvmField val tIdMapper: TemplateIdMapper,
+	@JvmField val tIdMapper: WvTemplateIdMapper,
 ) {
 	@JvmField internal val bindingCommand = StringBuilder()
 	private var bindingCommand_lengthBackup: Int = 0
