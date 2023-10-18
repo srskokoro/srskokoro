@@ -4,8 +4,8 @@ import app.cash.redwood.Modifier
 import assertUnreachable
 import kokoro.app.ui.wv.modifier.GlobalModifier
 import kokoro.app.ui.wv.modifier.ModifierDelegate
-import kokoro.app.ui.wv.widget.WvRoot
-import kokoro.app.ui.wv.widget.WvRootChildren
+import kokoro.app.ui.wv.widget.WvRootWidget
+import kokoro.app.ui.wv.widget.WvRootWidgetChildren
 import kokoro.app.ui.wv.widget.WvWidget
 import kokoro.internal.collections.MapComputeFunction
 import kokoro.internal.collections.computeIfAbsent
@@ -31,8 +31,8 @@ class WvBinder(
 
 	private var evaluator: JsEvaluator? = null
 
-	val root = WvRoot(this)
-	val rootChildren = WvRootChildren(root)
+	val root = WvRootWidget(this)
+	val rootChildren = WvRootWidgetChildren(root)
 
 	private var deferredException: Throwable? = null
 
