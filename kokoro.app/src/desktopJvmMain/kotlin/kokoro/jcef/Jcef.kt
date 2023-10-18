@@ -8,6 +8,7 @@ import kokoro.internal.io.NioPath
 import kokoro.internal.io.toNioPath
 import me.friwi.jcefmaven.EnumOS
 import me.friwi.jcefmaven.EnumPlatform
+import me.friwi.jcefmaven.MavenCefAppHandlerAdapter
 import me.friwi.jcefmaven.impl.step.init.CefInitializer
 import org.cef.CefApp
 import org.cef.CefSettings
@@ -22,6 +23,14 @@ object Jcef {
 		System.getenv("APP_HOME") ?: error(ERROR_JCEF_BUNDLE_DIR_NOT_SET),
 		"jcef",
 	)
+
+	/**
+	 * NOTE: USE this INSTEAD OF `CefApp.addAppHandler()` in order to prevent
+	 * compatibility issues with macOS.
+	 */
+	fun setAppHandler(appHandler: MavenCefAppHandlerAdapter) {
+		CefApp.addAppHandler(appHandler)
+	}
 
 	inline val app: CefApp
 		get() = @Suppress("DEPRECATION") CefAppSetup.app
