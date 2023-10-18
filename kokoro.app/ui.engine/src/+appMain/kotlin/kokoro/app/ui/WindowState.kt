@@ -21,8 +21,6 @@ inline fun <T> WindowState.Companion.getExtra() =
 
 // --
 
-fun WindowState(): WindowState = WindowStateImpl()
-
 interface WindowState {
 
 	val args: List<Any?>
@@ -36,8 +34,7 @@ interface WindowState {
 	companion object
 }
 
-private class WindowStateImpl : WindowState {
-
+abstract class AbstractWindowState : WindowState {
 	override var args by mutableStateOf(emptyList<Any?>())
 
 	override fun updateArgs(args: List<Any?>) {

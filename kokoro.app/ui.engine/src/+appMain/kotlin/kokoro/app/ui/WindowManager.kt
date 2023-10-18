@@ -12,33 +12,26 @@ abstract class WindowManager {
 		val state: WindowState,
 	)
 
+	/**
+	 * CONTRACT: Must call [WindowSpec.onNewArgs]`()` with the newly created
+	 * [WindowState] before returning.
+	 */
 	protected abstract fun newWindowEntry(
 		specKey: String,
 		spec: WindowSpec,
-		state: WindowState,
+		args: List<Any?>,
 	): Entry
 
 	/// --
 
 	protected fun onLaunch(spec: WindowSpec, args: List<Any?>) {
-		val newSpec = spec
-		val specKey = newSpec.key
-		val oldEntry = entries[specKey]
-
-		@Suppress("NAME_SHADOWING")
-		val spec: WindowSpec
-		val state: WindowState
-		if (oldEntry == null) {
-			spec = newSpec; state = WindowState()
-			spec.onNewArgs(state, args)
+		val specKey = spec.key
+		val entry = entries[specKey]
+		if (entry != null) {
+			entry.spec.onNewArgs(entry.state, args)
 		} else {
-			spec = oldEntry.spec; state = oldEntry.state
-			spec.onNewArgs(state, args)
-			return // Skip code below
+			entries[specKey] = newWindowEntry(specKey, spec, args)
 		}
-
-		val entry = newWindowEntry(specKey, spec, state)
-		entries[specKey] = entry
 	}
 
 	protected fun onPost(spec: WindowSpec, args: List<Any?>) {
