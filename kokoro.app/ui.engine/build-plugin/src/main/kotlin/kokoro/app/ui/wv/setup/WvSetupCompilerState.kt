@@ -30,15 +30,15 @@ internal class WvSetupCompilerState(val lst: Entry, private val entries: Map<Str
 		for (line in context.content.lineSequence()) {
 			++ln
 
-			if (line.isBlank()) continue
-			if (line.startsWith('#')) {
-				if (line.startsWith("%include-base", 1)) {
-					context.base?.let { loadLst(it, seenPaths) }
-				}
+			if (line.isBlank() || line.startsWith('#')) continue
+
+			if (line.startsWith("include-base")) {
+				context.base?.let { loadLst(it, seenPaths) }
 				continue // Skip code below
 			}
 
-			val path = parseInputLineForPath(line)
+			if (!line.startsWith(IMPORT_DIRECTIVE)) throw E_UnknownDirective(context, ln, line)
+			val path = parseImportDirectiveForPath(line)
 			val entry = entries[path]
 				?: throw InvalidUserDataException("Error: ${context.sourceFile}:$ln:1 Referenced entry not found")
 
@@ -96,15 +96,15 @@ internal class WvSetupCompilerState(val lst: Entry, private val entries: Map<Str
 		for (line in context.content.lineSequence()) {
 			++ln
 
-			if (line.isBlank()) continue
-			if (line.startsWith('#')) {
-				if (line.startsWith("%include-base", 1)) {
-					context.base?.let { loadSpec(it, seenPaths) }
-				}
+			if (line.isBlank() || line.startsWith('#')) continue
+
+			if (line.startsWith("include-base")) {
+				context.base?.let { loadSpec(it, seenPaths) }
 				continue // Skip code below
 			}
 
-			val path = parseInputLineForPath(line)
+			if (!line.startsWith(IMPORT_DIRECTIVE)) throw E_UnknownDirective(context, ln, line)
+			val path = parseImportDirectiveForPath(line)
 			val entry = entries[path]
 				?: throw InvalidUserDataException("Error: ${context.sourceFile}:$ln:1 Referenced entry not found")
 
@@ -119,5 +119,14 @@ internal class WvSetupCompilerState(val lst: Entry, private val entries: Map<Str
 	}
 }
 
-@Suppress("NOTHING_TO_INLINE")
-private inline fun parseInputLineForPath(line: String) = line.trimEnd()
+private const val IMPORT_DIRECTIVE = "import "
+private const val IMPORT_DIRECTIVE_n = IMPORT_DIRECTIVE.length
+
+private fun parseImportDirectiveForPath(line: String) = line.substring(
+	IMPORT_DIRECTIVE_n,
+	line.indexOfLast { !it.isWhitespace() }.coerceAtLeast(0)
+)
+
+private fun E_UnknownDirective(context: Entry, ln: Int, line: String) = InvalidUserDataException(
+	"Error: ${context.sourceFile}:$ln:1 Unknown directive for line: $line"
+)
