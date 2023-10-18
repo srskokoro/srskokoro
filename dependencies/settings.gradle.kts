@@ -95,7 +95,7 @@ dependencyVersions {
 	plugin("app.cash.redwood.*", redwood)
 	plugin("app.cash.redwood.generator.*", redwood)
 
-	val voyager = "1.0.0-rc06" // https://github.com/adrielcafe/voyager/releases
+	val voyager = "1.0.0-rc07" // https://github.com/adrielcafe/voyager/releases
 	module("cafe.adriel.voyager:*", voyager)
 }
 
