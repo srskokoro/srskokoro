@@ -51,6 +51,4 @@ abstract class AbstractWindowState : WindowState {
 	override fun setExtra(value: Any?) {
 		extra = value
 	}
-
-	override var title by mutableStateOf("")
 }
