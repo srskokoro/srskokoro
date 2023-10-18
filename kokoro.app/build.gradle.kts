@@ -6,6 +6,7 @@ plugins {
 	id("conv.version")
 	id("conv.ktx.atomicfu")
 	id("kokoro.app.ui.wv.setup")
+	id("conv.redwood")
 }
 
 kotestConfigClass = "KotestConfig"
