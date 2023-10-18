@@ -41,14 +41,14 @@ abstract class AbstractWindowState : WindowState {
 		this.args = args
 	}
 
-	var extra by mutableStateOf<Any?>(null)
+	private var _extra by mutableStateOf<Any?>(null)
 
 	override fun <T> getExtra(): T {
 		@Suppress("UNCHECKED_CAST")
-		return extra as T
+		return _extra as T
 	}
 
 	override fun setExtra(value: Any?) {
-		extra = value
+		_extra = value
 	}
 }
