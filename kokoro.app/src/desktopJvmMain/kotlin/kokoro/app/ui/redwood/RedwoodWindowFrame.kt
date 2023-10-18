@@ -34,7 +34,7 @@ open class RedwoodWindowFrame : BaseWindowFrame {
 	) {
 		_composition?.cancel()
 		_composition = RedwoodComposition(
-			mainScope + _frameClock + super.ref,
+			wrapMainScope(mainScope),
 			view, provider, onEndChanges,
 		)
 	}
@@ -49,10 +49,14 @@ open class RedwoodWindowFrame : BaseWindowFrame {
 	) {
 		_composition?.cancel()
 		_composition = RedwoodComposition(
-			mainScope + _frameClock + super.ref,
-			container, uiConfigurations, provider, onEndChanges,
+			wrapMainScope(mainScope),
+			container, uiConfigurations,
+			provider, onEndChanges,
 		)
 	}
+
+	private fun wrapMainScope(mainScope: CoroutineScope) =
+		mainScope + (_frameClock + super.ref)
 
 	//#region Frame Clock Handling
 
