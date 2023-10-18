@@ -24,4 +24,5 @@ dependencies {
 	desktopJvmMainApi(project("jcef"))
 
 	commonMainImplementation("com.soywiz.korlibs.kds:kds")
+	appMainImplementation("cafe.adriel.voyager:voyager-core")
 }
