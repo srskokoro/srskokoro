@@ -147,7 +147,7 @@ private fun E_DuplicateTailNotAllowed(context: Entry, ln: Int) = InvalidUserData
 
 
 private fun E_UnsupportedEntryInLst(context: Entry, ln: Int, path: String) = InvalidUserDataException(
-	"Error: ${context.sourceFile}:$ln:1 Unsupported entry in `*${S.D_WV_LST}` file: $path"
+	"Error: ${context.sourceFile}:$ln:1 Unsupported entry in `*${S.D_LST}` file: $path"
 )
 
 private fun E_UnsupportedEntryInSpec(context: Entry, ln: Int, path: String) = InvalidUserDataException(
