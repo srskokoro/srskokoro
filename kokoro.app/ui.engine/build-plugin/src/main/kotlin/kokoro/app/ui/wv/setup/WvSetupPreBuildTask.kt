@@ -236,7 +236,7 @@ private fun generateForWvLst(target: File, change: FileChange) {
 
 	kt.append("public const val ")
 	appendIdentifierStart(kt, baseName)
-	kt.append("_wv_asset = \"")
+	kt.append("_wvjs = \"")
 	appendInDqString(kt, path.removeLast(N.LST))
 	kt.appendLine("${S.JS}\"")
 	kt.appendLine()
