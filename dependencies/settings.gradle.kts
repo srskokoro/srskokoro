@@ -74,7 +74,7 @@ dependencyVersions {
 
 	// --
 
-	val korge = "4.0.9" // https://github.com/korlibs/korge/releases
+	val korge = "4.0.10" // https://github.com/korlibs/korge/releases
 	module("com.soywiz.korlibs.kds:kds", korge)
 
 	module("com.squareup.okio:okio", "3.3.0")
