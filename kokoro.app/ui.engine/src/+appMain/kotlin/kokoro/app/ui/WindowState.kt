@@ -35,20 +35,21 @@ interface WindowState {
 }
 
 abstract class AbstractWindowState : WindowState {
-	override var args by mutableStateOf(emptyList<Any?>())
+	private var _args = mutableStateOf(emptyList<Any?>())
+	override val args get() = _args.value
 
 	override fun updateArgs(args: List<Any?>) {
-		this.args = args
+		_args.value = args
 	}
 
-	private var _extra by mutableStateOf<Any?>(null)
+	private var _extra = mutableStateOf<Any?>(null)
 
 	override fun <T> getExtra(): T {
 		@Suppress("UNCHECKED_CAST")
-		return _extra as T
+		return _extra.value as T
 	}
 
 	override fun setExtra(value: Any?) {
-		_extra = value
+		_extra.value = value
 	}
 }
