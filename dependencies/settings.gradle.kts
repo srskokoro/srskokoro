@@ -68,9 +68,9 @@ dependencyVersions {
 	module("androidx.core:core-ktx", "1.12.0")
 	module("androidx.activity:activity-ktx", "1.8.0")
 
-	val appcompat_version = "1.6.1" // https://developer.android.com/jetpack/androidx/releases/appcompat
-	module("androidx.appcompat:appcompat", appcompat_version)
-	module("androidx.appcompat:appcompat-resources", appcompat_version) // For loading and tinting drawables on older versions of the platform
+	val appcompat = "1.6.1" // https://developer.android.com/jetpack/androidx/releases/appcompat
+	module("androidx.appcompat:appcompat", appcompat)
+	module("androidx.appcompat:appcompat-resources", appcompat) // For loading and tinting drawables on older versions of the platform
 
 	// --
 
