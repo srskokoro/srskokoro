@@ -90,7 +90,9 @@ dependencyVersions {
 	module("com.github.Dansoftowner:jSystemThemeDetector", "3.8") // https://github.com/Dansoftowner/jSystemThemeDetector
 
 	val redwood = "0.7.0" // https://github.com/cashapp/redwood/releases
-	val jb_compose = "1.5.1" // See, https://github.com/cashapp/redwood/blob/0.7.0/gradle/libs.versions.toml#L6
+	// NOTE: Must be kept consistent with Redwood. See,
+	// https://github.com/cashapp/redwood/blob/0.7.0/gradle/libs.versions.toml#L6
+	val jb_compose = "1.5.1"
 	module("app.cash.redwood:*", redwood)
 	plugin("app.cash.redwood", redwood)
 	plugin("app.cash.redwood.*", redwood)
