@@ -8,6 +8,7 @@ import kokoro.app.ui.redwood.RedwoodWindowFrame
 import kokoro.jcef.Jcef
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.cef.CefClient
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
@@ -113,10 +114,11 @@ class AppWindowFrame(
 
 	// --
 
-	private val uiConfiguration = MutableStateFlow(newUiConfiguration())
+	private val _uiConfiguration = MutableStateFlow(newUiConfiguration())
+	val uiConfiguration: StateFlow<UiConfiguration> get() = _uiConfiguration
 
 	private fun updateUiConfiguration() {
-		uiConfiguration.value = newUiConfiguration()
+		_uiConfiguration.value = newUiConfiguration()
 	}
 
 	private fun newUiConfiguration(): UiConfiguration {
