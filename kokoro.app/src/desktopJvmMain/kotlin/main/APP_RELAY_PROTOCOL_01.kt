@@ -1,5 +1,6 @@
 package main
 
+import main.cli.engine.ExecutionState
 import okio.BufferedSource
 import okio.EOFException
 import java.io.IOException
@@ -9,7 +10,7 @@ import java.nio.channels.ClosedChannelException
 internal object APP_RELAY_PROTOCOL_01 {
 	const val ID = 1
 
-	fun shove(args: Array<out String>, buffer: okio.Buffer): Long {
+	fun cast(args: Array<out String>, buffer: okio.Buffer): Long {
 		if (ID > Byte.MAX_VALUE) throw AssertionError(
 			"Should be implemented as a varint at this point"
 		)
@@ -64,7 +65,7 @@ internal object APP_RELAY_PROTOCOL_01 {
 		return size
 	}
 
-	suspend fun consume(source: BufferedSource, dispatcher: AppDispatcher) {
+	fun consume(source: BufferedSource): ExecutionState {
 		val workingDir: String
 		val args: Array<String>
 
@@ -101,11 +102,10 @@ internal object APP_RELAY_PROTOCOL_01 {
 			}
 		}
 
-		@Suppress("BlockingMethodInNonBlockingContext")
 		// Close the client connection early, as we might be about to run for a
 		// very long time. Doing so may throw -- let it!
 		source.close()
 
-		dispatcher.dispatch(workingDir, args)
+		return establishClientMain(workingDir, args)
 	}
 }

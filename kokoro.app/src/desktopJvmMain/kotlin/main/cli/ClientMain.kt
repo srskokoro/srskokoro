@@ -1,19 +1,17 @@
-package kokoro.app.cli
+package main.cli
 
 import TODO
 import com.github.ajalt.clikt.core.subcommands
-import kotlinx.coroutines.CoroutineScope
+import main.cli.engine.BaseMain
 
-class Main constructor(
-	val isInitialMain: Boolean,
-) : BaseCommand(invokeWithoutSubcommand = true) {
+internal open class ClientMain : BaseMain() {
 	init {
 		subcommands(
 			Open(),
 		)
 	}
 
-	override suspend fun CoroutineScope.execute() {
+	override suspend fun execute() {
 		if (currentContext.invokedSubcommand != null) return
 		TODO { IMPLEMENT("Display 'collection selection' window") }
 	}
