@@ -16,8 +16,7 @@ fun main(args: Array<out String>) {
 		main.feed(currentDir, args)
 	} catch (ex: ExitMain) {
 		ex.throwAnySuppressed()
-		// Done. Do nothing else.
-		return
+		return // Done. Do nothing else.
 	}
 
 	val daemon = main.daemon
