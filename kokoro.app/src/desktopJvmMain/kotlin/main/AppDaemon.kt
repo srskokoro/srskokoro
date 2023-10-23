@@ -73,7 +73,7 @@ internal class AppDaemon(
 		try {
 			if (Files.deleteIfExists(bindPath)) {
 				// Case: last process didn't shut down cleanly.
-				processCrashCleanup()
+				cleanUpLastProcessCrash()
 			}
 			server.bind(bindAddress)
 			if (serverUnix == null) {
