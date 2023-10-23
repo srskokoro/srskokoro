@@ -4,6 +4,7 @@ import kokoro.app.AppBuild
 import kokoro.app.ui.StackTraceModal
 import kokoro.internal.DEBUG
 import kokoro.internal.closeInCatch
+import kokoro.internal.throwAnySuppressed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -150,17 +151,6 @@ internal class AppDaemon(
 	 */
 	class AbortClientConnection : CancellationException() {
 		override fun fillInStackTrace(): Throwable = this
-
-		fun throwAnySuppressed() {
-			val suppressed = suppressed
-			if (suppressed.isEmpty()) return
-
-			val ex = suppressed[0]
-			for (i in 1..<suppressed.size) {
-				ex.addSuppressed(suppressed[i])
-			}
-			throw ex
-		}
 	}
 
 	private fun sendVersionCode(client: SocketChannel) {

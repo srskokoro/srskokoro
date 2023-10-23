@@ -95,6 +95,10 @@ internal class AppRelay(sockDir: String) {
 			// may throw and interfere with our custom error handling.
 			sink.close() // May throw; let it!
 			return // Done!
+		} catch (ex: ExitMain) {
+			// If we're here, then we can safely assume that `client` was
+			// already closed for us. Simply rethrow the exception.
+			throw ex
 		} catch (ex: Throwable) {
 			client.closeInCatch(ex)
 			throw ex

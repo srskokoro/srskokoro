@@ -1,6 +1,7 @@
 package main
 
 import kokoro.app.ui.StackTraceModal
+import kokoro.internal.throwAnySuppressed
 import kotlinx.coroutines.launch
 import main.cli.PrimaryMain
 import java.awt.EventQueue
@@ -13,7 +14,8 @@ fun main(args: Array<out String>) {
 
 	val execState = try {
 		main.feed(currentDir, args)
-	} catch (_: ExitMain) {
+	} catch (ex: ExitMain) {
+		ex.throwAnySuppressed()
 		// Done. Do nothing else.
 		return
 	}

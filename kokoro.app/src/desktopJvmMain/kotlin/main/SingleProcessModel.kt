@@ -79,9 +79,6 @@ internal fun PrimaryMain.setUpSingleProcessModel() {
 
 			throw ExitMain() // Do a special exit.
 		}
-	} catch (ex: ExitMain) {
-		instanceChangeLock.release() // May throw; let it!
-		throw ex
 	} catch (ex: Throwable) {
 		instanceChangeLock.closeInCatch(ex)
 		throw ex
