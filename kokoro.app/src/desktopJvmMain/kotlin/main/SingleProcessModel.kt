@@ -76,7 +76,6 @@ internal fun PrimaryMain.setUpSingleProcessModel() {
 			instanceChangeLock.release()
 
 			relay.doForward(execState.args)
-
 			throw ExitMain() // Do a special exit.
 		}
 	} catch (ex: Throwable) {
