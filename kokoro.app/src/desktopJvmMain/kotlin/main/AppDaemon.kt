@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.swing.Swing
 import kotlinx.coroutines.withContext
 import main.SingleProcessModel.INSTANCE_CHANGE_LOCK_BYTE
@@ -88,7 +89,14 @@ internal class AppDaemon(
 	}
 
 	internal object ClientScope : CoroutineScope {
-		override val coroutineContext = SupervisorJob() + Dispatchers.Swing + StackTraceModal
+		private val supervisor = SupervisorJob()
+		override val coroutineContext = supervisor + Dispatchers.Swing + StackTraceModal
+
+		fun completeAndJoin() {
+			val supervisor = supervisor
+			supervisor.complete()
+			runBlocking { supervisor.join() }
+		}
 	}
 
 	fun doWorkLoop() {
@@ -127,6 +135,8 @@ internal class AppDaemon(
 			// Do nothing.
 		} catch (ex: Throwable) {
 			onServerCrashedWhileRunningApp(server, ex)
+		} finally {
+			scope.completeAndJoin()
 		}
 	}
 
