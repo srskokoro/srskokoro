@@ -2,6 +2,8 @@ package main
 
 import kokoro.app.ui.StackTraceModal
 import kokoro.internal.throwAnySuppressed
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import main.cli.PrimaryMain
 import java.awt.EventQueue
@@ -21,9 +23,10 @@ fun main(args: Array<out String>) {
 
 	val daemon = main.daemon
 	if (daemon != null) {
+		@OptIn(ExperimentalCoroutinesApi::class)
 		// The following won't throw here (but may, in a separate coroutine).
-		AppDaemon.ClientScope.launch {
-			daemon.handleAppInstance {
+		AppDaemon.ClientScope.launch(start = CoroutineStart.ATOMIC) {
+			daemon.handleAppInstance { // Requires `CoroutineStart.ATOMIC`
 				execState.transition()
 			}
 		}

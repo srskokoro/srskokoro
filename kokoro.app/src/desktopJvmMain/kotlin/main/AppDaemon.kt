@@ -102,7 +102,7 @@ internal class AppDaemon(
 				// The following won't throw here (but may, in a separate coroutine).
 				scope.launch(Dispatchers.IO, CoroutineStart.ATOMIC) {
 					try {
-						handleAppInstance {
+						handleAppInstance { // Requires `CoroutineStart.ATOMIC`
 							sendVersionCode(client)
 							val source = Channels.newInputStream(client).source().buffer()
 							val execState = when (val protocol = identifyRelayProtocol(source)) {
