@@ -17,11 +17,13 @@ fun main(args: Array<out String>) {
 
 	val daemon = main.daemon
 	if (daemon != null) {
+		// The following won't throw here (but may, in a separate coroutine).
 		AppDaemon.ClientScope.launch {
 			daemon.handleAppInstance {
 				execState.transition()
 			}
 		}
+
 		daemon.doWorkLoop() // Will block the current thread
 		return // Done. Skip code below.
 	}
