@@ -1,6 +1,5 @@
 package main
 
-import kokoro.app.ui.StackTraceModal
 import kokoro.internal.closeInCatch
 import main.SingleProcessModel.INSTANCE_CHANGE_LOCK_BYTE
 import main.SingleProcessModel.MASTER_INSTANCE_LOCK_BYTE
@@ -44,8 +43,6 @@ internal object SingleProcessModel {
  * NOTE: Ideally called in [PrimaryMain.run]`()`
  */
 internal fun PrimaryMain.setUpSingleProcessModel() {
-	Thread.setDefaultUncaughtExceptionHandler(StackTraceModal) // Installed early to help with debugging
-
 	val lockDir = defaultDataDir
 	val lockFile = File(lockDir, ".lock")
 

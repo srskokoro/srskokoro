@@ -1,10 +1,13 @@
 package main
 
+import kokoro.app.ui.StackTraceModal
 import kotlinx.coroutines.launch
 import main.cli.PrimaryMain
 import java.awt.EventQueue
 
 fun main(args: Array<out String>) {
+	Thread.setDefaultUncaughtExceptionHandler(StackTraceModal) // Installed early to help with debugging
+
 	val main = PrimaryMain()
 	val currentDir = System.getProperty("user.dir")
 
