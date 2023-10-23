@@ -12,12 +12,12 @@ import net.harawata.appdirs.AppDirsFactory
 
 internal abstract class BaseMain : BaseCommand(invokeWithoutSubcommand = true) {
 
-	val defaultDataDir by option("-d", envvar = "SRS_KOKORO_DATA")
-		.convert({ localization.pathMetavar() }, CompletionCandidates.Path) { it }
-		.defaultLazy {
-			AppDirsFactory.getInstance()
-				.getUserDataDir(AppBuildDesktop.APP_DATA_DIR_NAME, null, null, /* roaming = */false)
-		}
+	val defaultDataDir by option("-d", envvar = "SRS_KOKORO_DATA").convert(
+		{ localization.pathMetavar() }, CompletionCandidates.Path,
+	) { it }.defaultLazy {
+		AppDirsFactory.getInstance()
+			.getUserDataDir(AppBuildDesktop.APP_DATA_DIR_NAME, null, null, /* roaming = */false)
+	}
 
 
 	internal fun feed(workingDir: String, args: Array<out String>): ExecutionState {
