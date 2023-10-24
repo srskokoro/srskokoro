@@ -43,7 +43,7 @@ internal object SingleProcessModel {
  * NOTE: Ideally called in [PrimaryMain.run]`()`
  */
 internal fun PrimaryMain.setUpSingleProcessModel() {
-	val lockDir = defaultDataDir
+	val lockDir = mainDataDir
 	val lockFile = File(lockDir, ".lock")
 
 	// NOTE: Opens the lock file with `RandomAccessFile` so that we get the
