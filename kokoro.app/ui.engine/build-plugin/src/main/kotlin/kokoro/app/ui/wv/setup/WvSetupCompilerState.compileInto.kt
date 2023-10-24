@@ -10,6 +10,7 @@ import kokoro.app.ui.wv.setup.GenerationUtils.appendInDqString
 import kokoro.app.ui.wv.setup.GenerationUtils.appendKtPackageHeader
 import kokoro.app.ui.wv.setup.WvSetup.N
 import kokoro.app.ui.wv.setup.WvSetup.S
+import kokoro.app.ui.wv.setup.WvSetup.WV_LST_getId
 import org.gradle.api.logging.Logger
 import java.io.File
 import java.util.regex.Pattern
@@ -30,8 +31,7 @@ internal fun WvSetupCompilerState.compileInto(ktOutputDir: File, jsOutputDir: Fi
 
 	kt.append("public actual fun ")
 	appendIdentifierStart(kt, baseName)
-	// TODO! Should store function signature in a constant to ensure consistency
-	kt.append("_wv_getId(wvUnitKey: String): Int = when (wvUnitKey) {\n")
+	kt.append("$WV_LST_getId = when (wvUnitKey) {\n")
 
 	val js = StringBuilder("'use strict';(function(){\n")
 	stitchInto(kt, js)

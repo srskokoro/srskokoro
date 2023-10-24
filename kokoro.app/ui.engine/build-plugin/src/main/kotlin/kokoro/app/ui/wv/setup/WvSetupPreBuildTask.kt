@@ -7,6 +7,7 @@ import kokoro.app.ui.wv.setup.GenerationUtils.appendInDqString
 import kokoro.app.ui.wv.setup.GenerationUtils.appendKtPackageHeader
 import kokoro.app.ui.wv.setup.WvSetup.N
 import kokoro.app.ui.wv.setup.WvSetup.S
+import kokoro.app.ui.wv.setup.WvSetup.WV_LST_getId
 import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.ConfigurableFileCollection
@@ -243,7 +244,7 @@ private fun generateForWvLst(target: File, change: FileChange) {
 
 	kt.append("public expect fun ")
 	appendIdentifierStart(kt, baseName)
-	kt.appendLine("_wv_getId(wvUnitKey: String): Int") // TODO! Should store in a constant to ensure consistency
+	kt.appendLine(WV_LST_getId)
 
 	target.writeText(kt.toString()) // NOTE: Truncates if file already exists.
 }

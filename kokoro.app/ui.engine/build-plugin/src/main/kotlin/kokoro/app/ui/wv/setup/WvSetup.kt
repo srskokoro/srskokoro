@@ -82,6 +82,8 @@ internal object WvSetup {
 		const val D_WV_EXTERN_JS = S.D_WV_EXTERN_JS.length
 	}
 
+	const val WV_LST_getId = "_wv_getId(wvUnitKey: String): Int"
+
 	fun includeJsInputs(filterable: PatternFilterable) {
 		filterable.include("**/*${S.D_WV_CONST_JS}")
 		filterable.include("**/*${S.D_WV_UNIT_JS}")
