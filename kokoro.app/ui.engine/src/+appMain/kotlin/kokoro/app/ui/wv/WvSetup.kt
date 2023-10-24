@@ -1,6 +1,14 @@
 package kokoro.app.ui.wv
 
-data class WvSetup(
+abstract class WvSetup(
 	val wvJsAsset: String,
-	val wvUnitIdMapper: WvUnitIdMapper,
-)
+) : WvUnitIdMapper {
+	abstract override fun invoke(wvUnitKey: String): Int
+}
+
+inline fun WvSetup(
+	wvJsAsset: String,
+	crossinline wvUnitIdMapper: WvUnitIdMapper,
+) = object : WvSetup(wvJsAsset) {
+	override fun invoke(wvUnitKey: String) = wvUnitIdMapper.invoke(wvUnitKey)
+}
