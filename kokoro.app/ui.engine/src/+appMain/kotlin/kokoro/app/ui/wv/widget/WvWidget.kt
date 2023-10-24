@@ -39,8 +39,7 @@ abstract class WvWidget : Widget<WvWidget> {
 	constructor(wvUnitKey: String, binder: WvBinder)
 		: this(binder.wvUnitIdMapper.wvUnitId(wvUnitKey), binder)
 
-	// TODO! Don't expose this constructor
-	constructor(wvUnitId: Int, binder: WvBinder) {
+	private constructor(wvUnitId: Int, binder: WvBinder) {
 		this.binder = binder
 
 		val widgetId = binder.obtainWidgetId_inline()
