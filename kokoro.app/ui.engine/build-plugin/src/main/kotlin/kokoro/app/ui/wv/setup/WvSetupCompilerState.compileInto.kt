@@ -30,7 +30,8 @@ internal fun WvSetupCompilerState.compileInto(ktOutputDir: File, jsOutputDir: Fi
 
 	kt.append("public actual fun ")
 	appendIdentifierStart(kt, baseName)
-	kt.append("_wv_getId(templPath: String): Int = when (templPath) {\n")
+	// TODO! Should store function signature in a constant to ensure consistency
+	kt.append("_wv_getId(wvUnitKey: String): Int = when (wvUnitKey) {\n")
 
 	val js = StringBuilder("'use strict';(function(){\n")
 	stitchInto(kt, js)
@@ -96,7 +97,7 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 		appendJsEntryContent(js, effective)
 	}
 
-	var nextTemplId = 0
+	var nextUnitId = 0
 	for ((packagePath, packageEntry) in packageEntries) {
 		js.appendLine()
 		js.append(";//+ Source package: ")
@@ -108,8 +109,8 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 			js.appendLine(entry.content) // NOTE: No overrides (supposedly).
 		}
 
-		for (entry in packageEntry.templEntries) {
-			val id = nextTemplId++
+		for (entry in packageEntry.unitEntries) {
+			val id = nextUnitId++
 
 			kt.append('\t')
 			kt.append('"')
@@ -117,7 +118,7 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 			kt.append("\" -> ")
 			kt.appendLine(id)
 
-			val baseName = entry.name.removeLast(N.D_WV_TEMPL_JS)
+			val baseName = entry.name.removeLast(N.D_WV_UNIT_JS)
 
 			val effective = entry.getEffectiveEntry()
 			appendJsEntryHeaderLine(js, effective)

@@ -36,10 +36,11 @@ abstract class WvWidget : Widget<WvWidget> {
 		_widgetStatus = 0
 	}
 
-	constructor(templKey: String, binder: WvBinder)
-		: this(binder.tIdMapper.invoke(templKey), binder)
+	constructor(wvUnitKey: String, binder: WvBinder)
+		: this(binder.wvUnitIdMapper.invoke(wvUnitKey), binder)
 
-	constructor(templId: Int, binder: WvBinder) {
+	// TODO! Don't expose this constructor
+	constructor(wvUnitId: Int, binder: WvBinder) {
 		this.binder = binder
 
 		val widgetId = binder.obtainWidgetId_inline()
@@ -50,7 +51,7 @@ abstract class WvWidget : Widget<WvWidget> {
 
 		val cmd = binder.bindingCommand
 		cmd.append("C$(")
-		cmd.append(templId)
+		cmd.append(wvUnitId)
 		cmd.append(',')
 		cmd.append(widgetId)
 		cmd.appendLine(')')

@@ -5,7 +5,7 @@ import kokoro.app.ui.wv.ArgumentsBuilder
 
 abstract class ModifierDelegate<T : Modifier> {
 
-	abstract val templKey: String
+	abstract val wvUnitKey: String
 
 	abstract fun ArgumentsBuilder.onBind(modifier: T)
 
@@ -17,10 +17,10 @@ abstract class ModifierDelegate<T : Modifier> {
 
 	companion object {
 		inline operator fun <T : Modifier> invoke(
-			crossinline templKey: () -> String,
+			crossinline wvUnitKey: () -> String,
 			crossinline onBind: ArgumentsBuilder.(modifier: T) -> Unit,
 		) = object : ModifierDelegate<T>() {
-			override val templKey: String get() = templKey.invoke()
+			override val wvUnitKey: String get() = wvUnitKey.invoke()
 			override fun ArgumentsBuilder.onBind(modifier: T) = onBind.invoke(this, modifier)
 		}
 	}

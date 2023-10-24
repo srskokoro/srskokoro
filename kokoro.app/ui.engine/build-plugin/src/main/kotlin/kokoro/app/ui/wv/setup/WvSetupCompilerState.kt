@@ -17,7 +17,7 @@ internal class WvSetupCompilerState(val lst: Entry, private val entries: Map<Str
 
 	class PackageEntry {
 		val constEntries = LinkedList<Entry>()
-		val templEntries = LinkedList<Entry>()
+		val unitEntries = LinkedList<Entry>()
 	}
 
 	init {
@@ -85,7 +85,7 @@ internal class WvSetupCompilerState(val lst: Entry, private val entries: Map<Str
 	private fun loadSpec(context: Entry, seenPaths: MutableSet<String>) {
 		packageEntries.computeIfAbsent(context.packagePath) { PackageEntry() }.let { packageEntry ->
 			context.constPart?.let { packageEntry.constEntries.addLast(it) }
-			context.templPart?.let { packageEntry.templEntries.addLast(it) }
+			context.unitPart?.let { packageEntry.unitEntries.addLast(it) }
 		}
 
 		val entries = entries

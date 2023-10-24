@@ -56,8 +56,8 @@ abstract class WvSetupPreBuildTask @Inject constructor(
 		include("**/*${S.D_WV_CONST_JS}")
 		exclude("**/*!${S.D_WV_CONST_JS}")
 
-		include("**/*${S.D_WV_TEMPL_JS}")
-		exclude("**/*!${S.D_WV_TEMPL_JS}")
+		include("**/*${S.D_WV_UNIT_JS}")
+		exclude("**/*!${S.D_WV_UNIT_JS}")
 
 		include("**/*${S.D_WV_LST}")
 		exclude("**/*!${S.D_WV_LST}")
@@ -81,10 +81,10 @@ abstract class WvSetupPreBuildTask @Inject constructor(
 				if (handleForGeneration(target, change, forGeneration)) {
 					generateForWvConstJs(target, change)
 				}
-			} else if (path.endsWith(S.D_WV_TEMPL_JS)) {
+			} else if (path.endsWith(S.D_WV_UNIT_JS)) {
 				val target = outputDir.file("${path.removeLast(N.JS)}${S.KT}").asFile
 				if (handleForGeneration(target, change, forGeneration)) {
-					generateForWvTemplJs(target, change)
+					generateForWvUnitJs(target, change)
 				}
 			} else if (path.endsWith(S.D_WV_LST)) {
 				// WARNING: Should not have the same name as the file containing
@@ -200,7 +200,7 @@ private fun generateForWvConstJs(target: File, change: FileChange) {
 	target.writeText(kt.toString()) // NOTE: Truncates if file already exists.
 }
 
-private fun generateForWvTemplJs(target: File, change: FileChange) {
+private fun generateForWvUnitJs(target: File, change: FileChange) {
 	val path = change.normalizedPath
 	val pathSegments = path.split('/')
 
@@ -210,7 +210,7 @@ private fun generateForWvTemplJs(target: File, change: FileChange) {
 	appendKtPackageHeader(kt, pathSegments, 0, pathSegments_last)
 	kt.appendLine()
 
-	val baseName = pathSegments[pathSegments_last].removeLast(N.D_WV_TEMPL_JS)
+	val baseName = pathSegments[pathSegments_last].removeLast(N.D_WV_UNIT_JS)
 
 	kt.append("public const val t_")
 	appendIdentifierPartAfterStart(kt, baseName)
@@ -243,7 +243,7 @@ private fun generateForWvLst(target: File, change: FileChange) {
 
 	kt.append("public expect fun ")
 	appendIdentifierStart(kt, baseName)
-	kt.appendLine("_wv_getId(templPath: String): Int")
+	kt.appendLine("_wv_getId(wvUnitKey: String): Int") // TODO! Should store in a constant to ensure consistency
 
 	target.writeText(kt.toString()) // NOTE: Truncates if file already exists.
 }

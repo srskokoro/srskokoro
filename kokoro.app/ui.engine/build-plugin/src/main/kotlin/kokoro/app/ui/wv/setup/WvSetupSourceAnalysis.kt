@@ -25,7 +25,7 @@ internal class WvSetupSourceAnalysis {
 		const val MASK_WV_TYPE = FLAG_JS or FLAG_SPEC_PART or FLAG_LST or 0b111
 
 		const val WV_CONST_JS = FLAG_JS or FLAG_SPEC_PART or 0b111
-		const val WV_TEMPL_JS = FLAG_JS or FLAG_SPEC_PART or 0b110
+		const val WV_UNIT_JS = FLAG_JS or FLAG_SPEC_PART or 0b110
 
 		const val WV_HEAD_JS = FLAG_JS or 0b101
 		const val WV_TAIL_JS = FLAG_JS or 0b100
@@ -71,7 +71,7 @@ internal class WvSetupSourceAnalysis {
 		var override: Entry? = null
 
 		var constPart: Entry? = null
-		var templPart: Entry? = null
+		var unitPart: Entry? = null
 
 		fun getEffectiveEntry(): Entry = override?.getEffectiveEntry() ?: this
 	}
@@ -94,7 +94,7 @@ internal class WvSetupSourceAnalysis {
 		val overrides = LinkedList<Entry>()
 
 		val constParts = LinkedList<Entry>()
-		val templParts = LinkedList<Entry>()
+		val unitParts = LinkedList<Entry>()
 
 		inputFiles.visit(object : EmptyFileVisitor() {
 			override fun visitFile(visit: FileVisitDetails) {
@@ -112,7 +112,7 @@ internal class WvSetupSourceAnalysis {
 						if (isSourceFiles) throw E_OverrideCannotBeConst(entry.path, entry.sourceFile)
 						return // Skip (silently)
 					}
-					Stamp.WV_TEMPL_JS -> templParts.add(entry)
+					Stamp.WV_UNIT_JS -> unitParts.add(entry)
 					Stamp.WV_LST -> lstEntries.add(entry)
 					else -> if (stamp and Stamp.FLAG_OVERRIDE != 0) {
 						overrides.add(entry)
@@ -154,14 +154,14 @@ internal class WvSetupSourceAnalysis {
 			}
 		}
 
-		for (entry in templParts) {
+		for (entry in unitParts) {
 			val path = entry.path
 			val basePath_n = path.length - getFileExtLengthFromStamp(entry.stamp)
 			val targetPath = path.substring(0, basePath_n) + S.D_WV_SPEC
 
 			val parent = entries[targetPath]
 			if (parent != null && (parent.sourceFile != null) == isSourceFiles) {
-				parent.templPart = entry
+				parent.unitPart = entry
 			} else if (isSourceFiles) {
 				throw E_MissingSpecParent(path, entry.sourceFile)
 			}
@@ -175,8 +175,8 @@ private fun analyzeInputFileNameForStamp(name: String): Int {
 	if (name.endsWith(S.D_JS, ignoreCase = true)) run {
 		if (name.startsWith(S.CONST, (name.length - (N.CONST + N.D_JS)).also { i = it }, ignoreCase = true)) {
 			r = Stamp.WV_CONST_JS
-		} else if (name.startsWith(S.TEMPL, (name.length - (N.TEMPL + N.D_JS)).also { i = it }, ignoreCase = true)) {
-			r = Stamp.WV_TEMPL_JS
+		} else if (name.startsWith(S.UNIT, (name.length - (N.UNIT + N.D_JS)).also { i = it }, ignoreCase = true)) {
+			r = Stamp.WV_UNIT_JS
 		} else if (name.startsWith(S.HEAD, (name.length - (N.HEAD + N.D_JS)).also { i = it }, ignoreCase = true)) {
 			r = Stamp.WV_HEAD_JS
 		} else if (name.startsWith(S.TAIL, (name.length - (N.TAIL + N.D_JS)).also { i = it }, ignoreCase = true)) {
@@ -210,7 +210,7 @@ private fun analyzeInputFileNameForStamp(name: String): Int {
 
 private fun getFileExtLengthFromStamp(stamp: Int) = when (stamp and Stamp.MASK_WV_TYPE) {
 	Stamp.WV_CONST_JS -> N.D_WV_CONST_JS
-	Stamp.WV_TEMPL_JS -> N.D_WV_TEMPL_JS
+	Stamp.WV_UNIT_JS -> N.D_WV_UNIT_JS
 
 	Stamp.WV_HEAD_JS -> N.D_WV_HEAD_JS
 	Stamp.WV_TAIL_JS -> N.D_WV_TAIL_JS

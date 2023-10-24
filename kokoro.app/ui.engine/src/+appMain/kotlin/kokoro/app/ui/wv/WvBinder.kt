@@ -22,7 +22,7 @@ import kotlin.jvm.JvmField
  * - [onUnbindCallback]`()`
  */
 class WvBinder(
-	@JvmField val tIdMapper: WvTemplateIdMapper,
+	@JvmField val wvUnitIdMapper: WvUnitIdMapper,
 ) {
 	@JvmField internal val bindingCommand = StringBuilder()
 	private var bindingCommand_lengthBackup: Int = 0
@@ -263,7 +263,7 @@ class WvBinder(
 
 	private class ModifierBindingAction(binder: WvBinder) : (Modifier.Element) -> Unit {
 		private val out = binder.bindingCommand
-		private val tIdMapper = binder.tIdMapper
+		private val wvUnitIdMapper = binder.wvUnitIdMapper
 
 		private var widget: WvWidget? = null
 		private var oldModifierMap: LinkedHashMap<Int, Modifier.Element>? = null
@@ -304,7 +304,7 @@ class WvBinder(
 				else widget?._parent?.onBindScopedModifier(modifier)
 					?: return // Skip
 
-			val mId = tIdMapper.invoke(delegate.templKey)
+			val mId = wvUnitIdMapper.invoke(delegate.wvUnitKey)
 			val prev = oldModifierMap?.remove(mId)
 			if (prev == null || prev != modifier) {
 				out.append(mId); out.append(',')

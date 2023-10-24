@@ -18,7 +18,7 @@ internal object WvSetup {
 		const val BASE = "base"
 
 		const val CONST = "const"
-		const val TEMPL = "templ"
+		const val UNIT = "unit"
 
 		const val HEAD = "head"
 		const val TAIL = "tail"
@@ -35,7 +35,7 @@ internal object WvSetup {
 		const val D_WV_LST = "$D_WV_D$LST"
 
 		const val D_WV_CONST_JS = "$D_WV_H$CONST$D_JS"
-		const val D_WV_TEMPL_JS = "$D_WV_H$TEMPL$D_JS"
+		const val D_WV_UNIT_JS = "$D_WV_H$UNIT$D_JS"
 
 		const val D_WV_HEAD_JS = "$D_WV_H$HEAD$D_JS"
 		const val D_WV_TAIL_JS = "$D_WV_H$TAIL$D_JS"
@@ -57,7 +57,7 @@ internal object WvSetup {
 		const val BASE = S.BASE.length
 
 		const val CONST = S.CONST.length
-		const val TEMPL = S.TEMPL.length
+		const val UNIT = S.UNIT.length
 
 		const val HEAD = S.HEAD.length
 		const val TAIL = S.TAIL.length
@@ -74,7 +74,7 @@ internal object WvSetup {
 		const val D_WV_LST = S.D_WV_LST.length
 
 		const val D_WV_CONST_JS = S.D_WV_CONST_JS.length
-		const val D_WV_TEMPL_JS = S.D_WV_TEMPL_JS.length
+		const val D_WV_UNIT_JS = S.D_WV_UNIT_JS.length
 
 		const val D_WV_HEAD_JS = S.D_WV_HEAD_JS.length
 		const val D_WV_TAIL_JS = S.D_WV_TAIL_JS.length
@@ -84,7 +84,7 @@ internal object WvSetup {
 
 	fun includeJsInputs(filterable: PatternFilterable) {
 		filterable.include("**/*${S.D_WV_CONST_JS}")
-		filterable.include("**/*${S.D_WV_TEMPL_JS}")
+		filterable.include("**/*${S.D_WV_UNIT_JS}")
 
 		filterable.include("**/*${S.D_WV_HEAD_JS}")
 		filterable.include("**/*${S.D_WV_TAIL_JS}")
