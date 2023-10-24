@@ -22,6 +22,7 @@ internal object WvSetup {
 
 		const val HEAD = "head"
 		const val TAIL = "tail"
+
 		const val EXTERN = "extern"
 
 		const val D_WV_D = ".$WV."
@@ -38,6 +39,7 @@ internal object WvSetup {
 
 		const val D_WV_HEAD_JS = "$D_WV_H$HEAD$D_JS"
 		const val D_WV_TAIL_JS = "$D_WV_H$TAIL$D_JS"
+
 		const val D_WV_EXTERN_JS = "$D_WV_H$EXTERN$D_JS"
 	}
 
@@ -59,6 +61,7 @@ internal object WvSetup {
 
 		const val HEAD = S.HEAD.length
 		const val TAIL = S.TAIL.length
+
 		const val EXTERN = S.EXTERN.length
 
 		const val D_WV_D = S.D_WV_D.length
@@ -75,6 +78,7 @@ internal object WvSetup {
 
 		const val D_WV_HEAD_JS = S.D_WV_HEAD_JS.length
 		const val D_WV_TAIL_JS = S.D_WV_TAIL_JS.length
+
 		const val D_WV_EXTERN_JS = S.D_WV_EXTERN_JS.length
 	}
 
@@ -84,6 +88,7 @@ internal object WvSetup {
 
 		filterable.include("**/*${S.D_WV_HEAD_JS}")
 		filterable.include("**/*${S.D_WV_TAIL_JS}")
+
 		filterable.include("**/*${S.D_WV_EXTERN_JS}")
 	}
 
