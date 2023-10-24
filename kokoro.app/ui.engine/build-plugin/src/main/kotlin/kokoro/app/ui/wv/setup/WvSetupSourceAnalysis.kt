@@ -27,9 +27,9 @@ internal class WvSetupSourceAnalysis {
 		const val WV_CONST_JS = FLAG_JS or FLAG_SPEC_PART or 0b111
 		const val WV_TEMPL_JS = FLAG_JS or FLAG_SPEC_PART or 0b110
 
-		const val WV_EXTERN_JS = FLAG_JS or 0b101
-		const val WV_HEAD_JS = FLAG_JS or 0b100
-		const val WV_TAIL_JS = FLAG_JS or 0b011
+		const val WV_HEAD_JS = FLAG_JS or 0b101
+		const val WV_TAIL_JS = FLAG_JS or 0b100
+		const val WV_EXTERN_JS = FLAG_JS or 0b011
 
 		const val WV_SPEC = 0b010
 		const val WV_BASE_LST = FLAG_LST or 0b001
@@ -211,9 +211,9 @@ private fun getFileExtLengthFromStamp(stamp: Int) = when (stamp and Stamp.MASK_W
 	Stamp.WV_CONST_JS -> N.D_WV_CONST_JS
 	Stamp.WV_TEMPL_JS -> N.D_WV_TEMPL_JS
 
-	Stamp.WV_EXTERN_JS -> N.D_WV_EXTERN_JS
 	Stamp.WV_HEAD_JS -> N.D_WV_HEAD_JS
 	Stamp.WV_TAIL_JS -> N.D_WV_TAIL_JS
+	Stamp.WV_EXTERN_JS -> N.D_WV_EXTERN_JS
 
 	Stamp.WV_SPEC -> N.D_WV_SPEC
 	Stamp.WV_BASE_LST -> N.D_WV_BASE_LST
