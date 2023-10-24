@@ -1,3 +1,5 @@
 package kokoro.app.ui.wv
 
-typealias WvUnitIdMapper = (wvUnitKey: String) -> Int
+fun interface WvUnitIdMapper {
+	fun wvUnitId(wvUnitKey: String): Int
+}

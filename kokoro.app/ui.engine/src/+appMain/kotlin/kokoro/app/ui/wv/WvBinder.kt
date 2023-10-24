@@ -304,7 +304,7 @@ class WvBinder(
 				else widget?._parent?.onBindScopedModifier(modifier)
 					?: return // Skip
 
-			val mId = wvUnitIdMapper.invoke(delegate.wvUnitKey)
+			val mId = wvUnitIdMapper.wvUnitId(delegate.wvUnitKey)
 			val prev = oldModifierMap?.remove(mId)
 			if (prev == null || prev != modifier) {
 				out.append(mId); out.append(',')

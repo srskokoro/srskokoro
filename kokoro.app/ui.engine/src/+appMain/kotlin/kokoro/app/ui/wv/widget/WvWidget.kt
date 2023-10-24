@@ -37,7 +37,7 @@ abstract class WvWidget : Widget<WvWidget> {
 	}
 
 	constructor(wvUnitKey: String, binder: WvBinder)
-		: this(binder.wvUnitIdMapper.invoke(wvUnitKey), binder)
+		: this(binder.wvUnitIdMapper.wvUnitId(wvUnitKey), binder)
 
 	// TODO! Don't expose this constructor
 	constructor(wvUnitId: Int, binder: WvBinder) {
