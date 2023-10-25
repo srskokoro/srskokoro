@@ -14,6 +14,26 @@ inline fun hashCodeOfConcat(a: String, b: String): Int {
 }
 
 @Suppress("NOTHING_TO_INLINE")
+inline fun hashCodeOfConcat(hashOfPrefix: Int, suffix: String): Int {
+	return hashOfPrefix * fastPow31(suffix.length) + suffix.hashCode()
+}
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun hashCodeOfConcat(a: String, b: Char): Int {
+	return a.hashCode() * 31 + b.code
+}
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun hashCodeOfConcat(a: Char, b: String): Int {
+	return a.code * fastPow31(b.length) + b.hashCode()
+}
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun hashCodeOfConcat(a: Char, b: Char): Int {
+	return a.code * 31 + b.code
+}
+
+@Suppress("NOTHING_TO_INLINE")
 @PublishedApi
 internal inline fun fastPow31(n: Int): Int {
 	fastPow31Table.run {
