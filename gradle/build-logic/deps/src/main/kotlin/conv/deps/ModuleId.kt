@@ -2,7 +2,7 @@
 
 import conv.deps.serialization.cannotStore
 import conv.internal.support.from
-import conv.internal.support.hashCodeOfConcat
+import conv.internal.support.hashCodeWith
 import conv.internal.support.removeLast
 import conv.internal.support.until
 import org.gradle.api.artifacts.ModuleVersionSelector
@@ -127,7 +127,7 @@ sealed class ModuleId private constructor() {
 		override fun toString() = "$group:$name"
 		override fun toString(version: String) = "$group:$name:$version"
 
-		private val hashCode = hashCodeOfConcat(hashCodeOfConcat(group, ':'), name)
+		private val hashCode = group.hashCodeWith(':').hashCodeWith(name)
 		override fun hashCode() = hashCode
 
 		override fun equals(other: Any?) =

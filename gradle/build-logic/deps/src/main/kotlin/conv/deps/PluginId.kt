@@ -1,7 +1,7 @@
 package conv.deps
 
 import conv.deps.serialization.cannotStore
-import conv.internal.support.hashCodeOfConcat
+import conv.internal.support.hashCodeWith
 import conv.internal.support.removeLast
 import org.gradle.plugin.use.PluginId as GradlePluginId
 
@@ -72,7 +72,7 @@ sealed class PluginId private constructor() {
 	private class AnyName(val namespace: String) : PluginId() {
 		override fun toString() = "$namespace.$ANY_NAME"
 
-		private val hashCode = hashCodeOfConcat(namespace, ".$ANY_NAME")
+		private val hashCode = namespace.hashCodeWith(".$ANY_NAME")
 		override fun hashCode() = hashCode
 
 		override fun equals(other: Any?) =

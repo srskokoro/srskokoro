@@ -1,8 +1,14 @@
 package conv.internal.support
 
+/**
+ * Efficiently computes the following:
+ * ```
+ * (this + other).hashCode()
+ * ```
+ */
 @Suppress("NOTHING_TO_INLINE")
-inline fun hashCodeOfConcat(a: String, b: String): Int {
-	// The following computes the equivalent of `(a + b).hashCode()`, but
+inline fun String.hashCodeWith(other: String): Int {
+	// The following computes the equivalent of `(this + other).hashCode()`, but
 	// without actually concatenating the strings.
 	// - Possible because `java.lang.String.hashCode()` is stable and set in
 	// stone according to its docs -- see, https://stackoverflow.com/a/785150
@@ -10,27 +16,27 @@ inline fun hashCodeOfConcat(a: String, b: String): Int {
 	//   strings. See, https://github.com/ndru83/desugaring-java/blob/master/switch-case-internals.adoc
 	// - See also, “Are fixed-width integers distributive over multiplication?”
 	// on Stack Overflow -- https://stackoverflow.com/q/14189299
-	return a.hashCode() * fastPow31(b.length) + b.hashCode()
+	return hashCode() * fastPow31(other.length) + other.hashCode()
 }
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun hashCodeOfConcat(hashOfPrefix: Int, suffix: String): Int {
-	return hashOfPrefix * fastPow31(suffix.length) + suffix.hashCode()
+inline fun Int.hashCodeWith(other: String): Int {
+	return this * fastPow31(other.length) + other.hashCode()
 }
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun hashCodeOfConcat(a: String, b: Char): Int {
-	return a.hashCode() * 31 + b.code
+inline fun String.hashCodeWith(c: Char): Int {
+	return hashCode() * 31 + c.code
 }
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun hashCodeOfConcat(a: Char, b: String): Int {
-	return a.code * fastPow31(b.length) + b.hashCode()
+inline fun Char.hashCodeWith(other: String): Int {
+	return code * fastPow31(other.length) + other.hashCode()
 }
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun hashCodeOfConcat(a: Char, b: Char): Int {
-	return a.code * 31 + b.code
+inline fun Char.hashCodeWith(other: Char): Int {
+	return code * 31 + other.code
 }
 
 @Suppress("NOTHING_TO_INLINE")
