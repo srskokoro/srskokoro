@@ -19,7 +19,7 @@ dependencyVersions {
 	plugin("org.jetbrains.kotlin.*", kotlin)
 	module("org.jetbrains.kotlin:*", kotlin)
 
-	// https://github.com/LouisCAD/CompleteKotlin
+	// https://github.com/LouisCAD/CompleteKotlin/releases
 	plugin("com.louiscad.complete-kotlin", "1.1.0")
 
 	val android = "8.0.2" // Android Gradle Plugin (AGP)
