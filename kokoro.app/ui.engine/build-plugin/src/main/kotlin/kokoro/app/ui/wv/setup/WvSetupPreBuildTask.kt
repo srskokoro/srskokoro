@@ -213,9 +213,9 @@ private fun generateForWvUnitJs(target: File, change: FileChange) {
 
 	val baseName = pathSegments[pathSegments_last].removeLast(N.D_WV_UNIT_JS)
 
-	kt.append("public const val t_")
-	appendIdentifierPartAfterStart(kt, baseName)
-	kt.append(" = \"")
+	kt.append("public const val ")
+	appendIdentifierStart(kt, baseName)
+	kt.append("_wv_unit = \"")
 	appendInDqString(kt, path)
 	kt.appendLine('"')
 

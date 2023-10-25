@@ -123,15 +123,15 @@ private fun WvSetupCompilerState.stitchInto(ktCases: StringBuilder, jsBuilder: S
 			val effective = entry.getEffectiveEntry()
 			appendJsEntryHeaderLine(js, effective)
 
-			js.append("const t_")
-			appendIdentifierPartAfterStart(js, baseName)
-			js.append(" = ")
+			js.append("const ")
+			appendIdentifierStart(js, baseName)
+			js.append("_wv_id = ")
 			js.append(id)
 			js.appendLine(';')
 
-			js.append("const s_")
-			appendIdentifierPartAfterStart(js, baseName)
-			js.append(" = ")
+			js.append("const ")
+			appendIdentifierStart(js, baseName)
+			js.append("_wv_s = ")
 			js.appendLine("Symbol();")
 
 			js.appendLine("(function(){")
