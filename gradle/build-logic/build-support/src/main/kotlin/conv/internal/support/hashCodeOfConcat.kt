@@ -25,6 +25,11 @@ inline fun Int.hashCodeWith(other: String): Int {
 }
 
 @Suppress("NOTHING_TO_INLINE")
+inline fun Int.hashCodeWith(c: Char): Int {
+	return this * 31 + c.code
+}
+
+@Suppress("NOTHING_TO_INLINE")
 inline fun String.hashCodeWith(c: Char): Int {
 	return hashCode() * 31 + c.code
 }
