@@ -63,7 +63,6 @@ dependencies {
 	}
 	commonTestImplementation(project(":kokoro.lib.test.support"))
 
-	commonMainImplementation("org.jetbrains.kotlinx:atomicfu")
 	commonMainImplementation(project(":kokoro.lib.internal"))
 
 	appMainImplementation(project("redwood:compose"))
