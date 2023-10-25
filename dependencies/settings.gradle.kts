@@ -42,6 +42,7 @@ dependencyVersions {
 
 	val atomicfu = "0.22.0" // https://github.com/Kotlin/kotlinx-atomicfu/releases
 	module("org.jetbrains.kotlinx:atomicfu-gradle-plugin", atomicfu)
+	module("org.jetbrains.kotlinx:atomicfu", atomicfu)
 
 	// --
 
