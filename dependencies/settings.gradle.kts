@@ -16,12 +16,11 @@ dependencyVersions {
 	}
 
 	val kotlin = "1.9.10" // https://kotlinlang.org/docs/releases.html
-	"org.jetbrains.kotlin".let {
-		plugin("$it.*", kotlin)
-		module("$it:*", kotlin)
-	}
+	plugin("org.jetbrains.kotlin.*", kotlin)
+	module("org.jetbrains.kotlin:*", kotlin)
 
-	plugin("com.louiscad.complete-kotlin", "1.1.0") // https://github.com/LouisCAD/CompleteKotlin
+	// https://github.com/LouisCAD/CompleteKotlin
+	plugin("com.louiscad.complete-kotlin", "1.1.0")
 
 	val android = "8.0.2" // Android Gradle Plugin (AGP)
 	plugin("com.android.*", android)
