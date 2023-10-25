@@ -127,7 +127,7 @@ sealed class ModuleId private constructor() {
 		override fun toString() = "$group:$name"
 		override fun toString(version: String) = "$group:$name:$version"
 
-		private val hashCode = hashCodeOfConcat(group, name)
+		private val hashCode = hashCodeOfConcat(hashCodeOfConcat(group, ':'), name)
 		override fun hashCode() = hashCode
 
 		override fun equals(other: Any?) =
