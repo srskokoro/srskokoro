@@ -48,5 +48,6 @@ dependencies {
 	}
 	commonTestImplementation(project(":kokoro.lib.test.support"))
 
+	appMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 	appMainImplementation("com.squareup.okio:okio")
 }
