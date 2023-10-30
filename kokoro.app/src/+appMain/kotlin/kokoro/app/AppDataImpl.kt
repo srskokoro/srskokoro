@@ -38,7 +38,7 @@ internal object AppDataImpl {
 					return Json.decodeFromString<AppConfig>(
 						h.source().buffer().readUtf8()
 					)
-				} catch (ex: IOException) {
+				} catch (ex: Throwable) {
 					ex.printStackTrace()
 				}
 			}
