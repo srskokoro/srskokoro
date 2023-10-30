@@ -44,7 +44,7 @@ internal object AppDataImpl {
 			}
 			h.write(0, byteArrayOf(
 				'{'.code.toByte(),
-				'}'.code.toByte()
+				'}'.code.toByte(),
 			), 0, 2)
 			return AppConfig()
 		})
