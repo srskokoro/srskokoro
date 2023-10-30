@@ -15,12 +15,11 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.okio.decodeFromBufferedSource
 import kotlinx.serialization.json.okio.encodeToBufferedSink
+import okio.BufferedSource
 import okio.FileSystem
 import okio.IOException
 import okio.Path
 import okio.Path.Companion.toPath
-import okio.buffer
-import okio.use
 import kotlin.jvm.JvmField
 
 @Deprecated(SPECIAL_USE_DEPRECATION)
@@ -44,23 +43,45 @@ internal object AppDataImpl {
 		val mainDir = fs.canonicalize(init.toPath())
 		this.mainDir = mainDir
 
+		var isEmptyConfigFile = false
 		this.configPathTmp = mainDir / "config.json.tmp"
 		val configPath = mainDir / "config.json"
 		this.configPath = configPath
-		val config = fs.openReadWrite(configPath).use(fun(h): AppConfig {
-			if (h.size() > 0) try {
-				//val s = h.source().buffer().use { it.readUtf8() }
-				//return Json.decodeFromString(AppConfig.serializer(), s)
-				return h.source().buffer().use {
-					@OptIn(ExperimentalSerializationApi::class)
-					Json.decodeFromBufferedSource(AppConfig.serializer(), it)
-				}
-			} catch (ex: Throwable) {
-				if (DEBUG) throw ex
-				ex.printStackTrace()
+		val config: AppConfig = try {
+			fs.read(configPath, fun BufferedSource.(): AppConfig {
+				//return Json.decodeFromString(AppConfig.serializer(), readUtf8())
+				@OptIn(ExperimentalSerializationApi::class)
+				return Json.decodeFromBufferedSource(AppConfig.serializer(), this)
+			})
+		} catch (ex: Throwable) {
+			val m = try {
+				fs.metadataOrNull(configPath)
+			} catch (exx: Throwable) {
+				exx.addSuppressed(ex)
+				throw exx
 			}
-			return AppConfig()
-		})
+			run(fun() {
+				if (m != null) {
+					if (!m.isRegularFile) {
+						try {
+							fs.delete(configPath, false)
+						} catch (exx: Throwable) {
+							exx.addSuppressed(ex)
+							throw exx
+						}
+					} else {
+						val size = m.size
+						if (size != null && size > 0) {
+							if (DEBUG) throw ex
+							ex.printStackTrace()
+							return // Skip code below
+						}
+					}
+				}
+				isEmptyConfigFile = true
+			})
+			AppConfig()
+		}
 		this.config = MutableStateFlow(config)
 
 		this.collectionsDir = run(fun(): Path? {
@@ -77,6 +98,8 @@ internal object AppDataImpl {
 			}
 			return null
 		})
+
+		if (isEmptyConfigFile) scheduleConfigCommit()
 	}
 
 	init {
@@ -103,12 +126,17 @@ internal object AppDataImpl {
 
 				val fs = FileSystem.SYSTEM
 				val t = configPathTmp
-				//fs.write(t) { writeUtf8(s) }
-				fs.write(t) {
-					@OptIn(ExperimentalSerializationApi::class)
-					Json.encodeToBufferedSink(AppConfig.serializer(), forCommit, this)
+				try {
+					//fs.write(t) { writeUtf8(s) }
+					fs.write(t) {
+						@OptIn(ExperimentalSerializationApi::class)
+						Json.encodeToBufferedSink(AppConfig.serializer(), forCommit, this)
+					}
+					fs.atomicMove(t, configPath)
+				} catch (ex: Throwable) {
+					if (DEBUG) throw ex
+					ex.printStackTrace()
 				}
-				fs.atomicMove(t, configPath)
 
 				// NOTE: Once the following is set, we'll no longer be the only
 				// one who might be executing the piece of code following this.
