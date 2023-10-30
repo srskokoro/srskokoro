@@ -48,14 +48,7 @@ internal object AppDataImpl {
 		val configPath = mainDir / "config.json"
 		this.configPath = configPath
 		val config = fs.openReadWrite(configPath).use(fun(h): AppConfig {
-			if (h.size() <= 0) {
-				// Generate initial config file
-				h.write(0, byteArrayOf(
-					'{'.code.toByte(),
-					'}'.code.toByte(),
-				), 0, 2)
-			}
-			try {
+			if (h.size() > 0) try {
 				//val s = h.source().buffer().use { it.readUtf8() }
 				//return Json.decodeFromString(AppConfig.serializer(), s)
 				return h.source().buffer().use {
@@ -63,13 +56,6 @@ internal object AppDataImpl {
 					Json.decodeFromBufferedSource(AppConfig.serializer(), it)
 				}
 			} catch (ex: Throwable) {
-				if (DEBUG && try {
-						h.source().buffer().use { it.readUtf8() }.trim() == "{}"
-					} catch (exx: Throwable) {
-						ex.addSuppressed(exx)
-						true
-					}
-				) throw ex
 				ex.printStackTrace()
 			}
 			return AppConfig()
