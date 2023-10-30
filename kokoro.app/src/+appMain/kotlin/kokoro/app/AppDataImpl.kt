@@ -35,12 +35,8 @@ internal object AppDataImpl {
 		val config = fs.openReadWrite(mainDir / "config.json").use(fun(h): AppConfig {
 			if (h.size() > 0) {
 				try {
-					return h.source().buffer().use {
-						Json.decodeFromString(
-							AppConfig.serializer(),
-							it.readUtf8(),
-						)
-					}
+					val s = h.source().buffer().use { it.readUtf8() }
+					return Json.decodeFromString(AppConfig.serializer(), s)
 				} catch (ex: Throwable) {
 					ex.printStackTrace()
 				}
