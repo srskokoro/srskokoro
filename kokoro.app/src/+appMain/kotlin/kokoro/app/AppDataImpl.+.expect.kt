@@ -4,6 +4,9 @@ import kokoro.internal.SPECIAL_USE_DEPRECATION
 import kotlinx.coroutines.CoroutineScope
 import okio.Path
 
+/**
+ * CONTRACT: The dispatcher used must be [Dispatchers.IO][kotlinx.coroutines.IO].
+ */
 @Deprecated(SPECIAL_USE_DEPRECATION)
 internal expect val `AppDataImpl-config-commitScope`: CoroutineScope
 

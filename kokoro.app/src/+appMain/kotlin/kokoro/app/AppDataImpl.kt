@@ -1,9 +1,13 @@
 package kokoro.app
 
+import assert
 import kokoro.internal.SPECIAL_USE_DEPRECATION
 import kokoro.internal.io.SYSTEM
 import kokoro.internal.io.ensureDirs
 import kotlinx.atomicfu.atomic
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -70,6 +74,14 @@ internal object AppDataImpl {
 			}
 			return null
 		})
+	}
+
+	init {
+		assert {
+			@OptIn(ExperimentalStdlibApi::class)
+			(@Suppress("DEPRECATION") `AppDataImpl-config-commitScope`)
+				.coroutineContext[CoroutineDispatcher] == Dispatchers.IO
+		}
 	}
 
 	private val scheduleConfigCommit_launched = atomic(false)
