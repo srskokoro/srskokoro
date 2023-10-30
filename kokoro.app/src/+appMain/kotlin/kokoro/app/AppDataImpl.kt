@@ -56,6 +56,7 @@ internal object AppDataImpl {
 					Json.decodeFromBufferedSource(AppConfig.serializer(), it)
 				}
 			} catch (ex: Throwable) {
+				if (DEBUG) throw ex
 				ex.printStackTrace()
 			}
 			return AppConfig()
