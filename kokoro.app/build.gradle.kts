@@ -77,6 +77,7 @@ dependencies {
 	}
 
 	appMainImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
+	appMainImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json-okio")
 	appMainImplementation("org.jetbrains.kotlinx:kotlinx-serialization-cbor")
 
 	appMainImplementation("cafe.adriel.voyager:voyager-navigator")
