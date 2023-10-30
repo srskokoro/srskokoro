@@ -7,6 +7,7 @@ plugins {
 	id("conv.ktx.atomicfu")
 	id("kokoro.app.ui.wv.setup")
 	id("conv.redwood")
+	kotlin("plugin.serialization")
 }
 
 kotestConfigClass = "KotestConfig"
@@ -71,6 +72,9 @@ dependencies {
 		commonMainImplementation(it)
 		commonMainWvSetup(it)
 	}
+
+	appMainImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
+	appMainImplementation("org.jetbrains.kotlinx:kotlinx-serialization-cbor")
 
 	appMainImplementation("cafe.adriel.voyager:voyager-navigator")
 

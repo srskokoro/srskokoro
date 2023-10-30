@@ -18,6 +18,10 @@ dependencyVersions {
 	val kotlin = "1.9.10" // https://kotlinlang.org/docs/releases.html
 	plugin("org.jetbrains.kotlin.*", kotlin)
 	module("org.jetbrains.kotlin:*", kotlin)
+	plugin("org.jetbrains.kotlin.plugin.serialization", kotlin)
+	val kotlinx_serialization = "1.6.0" // https://github.com/Kotlin/kotlinx.serialization/releases
+	module("org.jetbrains.kotlinx:kotlinx-serialization-json", kotlinx_serialization)
+	module("org.jetbrains.kotlinx:kotlinx-serialization-cbor", kotlinx_serialization)
 
 	// https://github.com/LouisCAD/CompleteKotlin/releases
 	plugin("com.louiscad.complete-kotlin", "1.1.0")
