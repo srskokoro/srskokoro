@@ -7,10 +7,14 @@ import com.github.ajalt.clikt.parameters.options.convert
 import com.github.ajalt.clikt.parameters.options.defaultLazy
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.mordant.terminal.Terminal
+import kokoro.app.AppBuild
 import kokoro.app.AppBuildDesktop
 import net.harawata.appdirs.AppDirsFactory
 
-internal abstract class BaseMain : BaseCommand(invokeWithoutSubcommand = true) {
+internal abstract class BaseMain : BaseCommand(
+	name = System.getProperty("org.gradle.appname") ?: AppBuild.EXE_NAME,
+	invokeWithoutSubcommand = true,
+) {
 
 	val mainDataDir by option("-d", "--data", envvar = "SRS_KOKORO_DATA").convert(
 		{ localization.pathMetavar() }, CompletionCandidates.Path,

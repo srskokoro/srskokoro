@@ -11,6 +11,7 @@ kotestConfigClass = "KotestConfig"
 application {
 	mainClass.set("main.MainKt")
 	applicationDefaultJvmArgs = jcef.recommendedJvmArgs
+	applicationName = extra["kokoro.app.exe.name"] as String
 }
 
 afterEvaluate {

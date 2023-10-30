@@ -43,6 +43,8 @@ android {
 buildConfig.appMain {
 	internalObject("AppBuild") inPackage NAMESPACE
 
+	buildConfigField("String", "EXE_NAME", "\"${extra["kokoro.app.exe.name"]}\"")
+
 	buildConfigField("String", "TITLE", "\"$APP_TITLE\"")
 	buildConfigField("String", "TITLE_SHORT", "\"$APP_TITLE_SHORT\"")
 
