@@ -99,10 +99,10 @@ internal object AppDataImpl {
 			return null
 		})
 
-		if (isEmptyConfigFile) ConfigCommit.schedule()
+		if (isEmptyConfigFile) ConfigCommitter.schedule()
 	}
 
-	object ConfigCommit {
+	object ConfigCommitter {
 		init {
 			assert {
 				@OptIn(ExperimentalStdlibApi::class)
