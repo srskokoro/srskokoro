@@ -1,6 +1,7 @@
 package kokoro.app
 
 import assert
+import kokoro.internal.DEBUG
 import kokoro.internal.SPECIAL_USE_DEPRECATION
 import kokoro.internal.io.SYSTEM
 import kokoro.internal.io.ensureDirs
@@ -47,22 +48,30 @@ internal object AppDataImpl {
 		val configPath = mainDir / "config.json"
 		this.configPath = configPath
 		val config = fs.openReadWrite(configPath).use(fun(h): AppConfig {
-			if (h.size() > 0) {
-				try {
-					//val s = h.source().buffer().use { it.readUtf8() }
-					//return Json.decodeFromString(AppConfig.serializer(), s)
-					return h.source().buffer().use {
-						@OptIn(ExperimentalSerializationApi::class)
-						Json.decodeFromBufferedSource(AppConfig.serializer(), it)
-					}
-				} catch (ex: Throwable) {
-					ex.printStackTrace()
-				}
+			if (h.size() <= 0) {
+				// Generate initial config file
+				h.write(0, byteArrayOf(
+					'{'.code.toByte(),
+					'}'.code.toByte(),
+				), 0, 2)
 			}
-			h.write(0, byteArrayOf(
-				'{'.code.toByte(),
-				'}'.code.toByte(),
-			), 0, 2)
+			try {
+				//val s = h.source().buffer().use { it.readUtf8() }
+				//return Json.decodeFromString(AppConfig.serializer(), s)
+				return h.source().buffer().use {
+					@OptIn(ExperimentalSerializationApi::class)
+					Json.decodeFromBufferedSource(AppConfig.serializer(), it)
+				}
+			} catch (ex: Throwable) {
+				if (DEBUG && try {
+						h.source().buffer().use { it.readUtf8() }.trim() == "{}"
+					} catch (exx: Throwable) {
+						ex.addSuppressed(exx)
+						true
+					}
+				) throw ex
+				ex.printStackTrace()
+			}
 			return AppConfig()
 		})
 		this.config = MutableStateFlow(config)
