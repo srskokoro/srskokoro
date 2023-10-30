@@ -51,7 +51,7 @@ data class AppConfig(
 		 */
 		inline fun update(updateFunction: (AppConfig) -> AppConfig) {
 			@Suppress("DEPRECATION") AppDataImpl.config.update(updateFunction)
-			@Suppress("DEPRECATION") AppDataImpl.scheduleConfigCommit()
+			@Suppress("DEPRECATION") AppDataImpl.ConfigCommit.schedule()
 		}
 
 		/**
@@ -65,7 +65,7 @@ data class AppConfig(
 		 */
 		inline fun updateAndGet(updateFunction: (AppConfig) -> AppConfig): AppConfig {
 			val r = @Suppress("DEPRECATION") AppDataImpl.config.updateAndGet(updateFunction)
-			@Suppress("DEPRECATION") AppDataImpl.scheduleConfigCommit()
+			@Suppress("DEPRECATION") AppDataImpl.ConfigCommit.schedule()
 			return r
 		}
 
@@ -80,7 +80,7 @@ data class AppConfig(
 		 */
 		inline fun getAndUpdate(updateFunction: (AppConfig) -> AppConfig): AppConfig {
 			val r = @Suppress("DEPRECATION") AppDataImpl.config.getAndUpdate(updateFunction)
-			@Suppress("DEPRECATION") AppDataImpl.scheduleConfigCommit()
+			@Suppress("DEPRECATION") AppDataImpl.ConfigCommit.schedule()
 			return r
 		}
 	}

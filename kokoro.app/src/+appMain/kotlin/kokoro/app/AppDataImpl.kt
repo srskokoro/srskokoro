@@ -99,21 +99,22 @@ internal object AppDataImpl {
 			return null
 		})
 
-		if (isEmptyConfigFile) scheduleConfigCommit()
+		if (isEmptyConfigFile) ConfigCommit.schedule()
 	}
 
-	init {
-		assert {
-			@OptIn(ExperimentalStdlibApi::class)
-			(@Suppress("DEPRECATION") `AppDataImpl-config-commitScope`)
-				.coroutineContext[CoroutineDispatcher] == Dispatchers.IO
+	object ConfigCommit {
+		init {
+			assert {
+				@OptIn(ExperimentalStdlibApi::class)
+				(@Suppress("DEPRECATION") `AppDataImpl-config-commitScope`)
+					.coroutineContext[CoroutineDispatcher] == Dispatchers.IO
+			}
 		}
-	}
 
-	private val scheduleConfigCommit_launched = atomic(false)
+		private val isScheduled = atomic(false)
 
-	fun scheduleConfigCommit() {
-		if (scheduleConfigCommit_launched.compareAndSet(expect = false, true)) {
+		fun schedule() {
+			if (!isScheduled.compareAndSet(expect = false, true)) return
 			// At this point, we're the only thread who can execute the
 			// following piece of code.
 
@@ -140,9 +141,9 @@ internal object AppDataImpl {
 
 				// NOTE: Once the following is set, we'll no longer be the only
 				// one who might be executing the piece of code following this.
-				scheduleConfigCommit_launched.value = false
+				isScheduled.value = false
 
-				if (forCommit !== config.value) scheduleConfigCommit()
+				if (forCommit !== config.value) schedule()
 			}
 		}
 	}
