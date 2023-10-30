@@ -3,7 +3,9 @@ package kokoro.app
 import kokoro.internal.SPECIAL_USE_DEPRECATION
 import kokoro.internal.io.SYSTEM
 import kokoro.internal.io.ensureDirs
+import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import okio.FileSystem
 import okio.IOException
@@ -23,6 +25,8 @@ internal object AppDataImpl {
 	/** @see AppData.collectionsDir */
 	@JvmField val collectionsDir: Path?
 
+	private val configPathTmp: Path
+	private val configPath: Path
 	@JvmField val config: MutableStateFlow<AppConfig>
 
 	init {
@@ -32,7 +36,10 @@ internal object AppDataImpl {
 		val mainDir = fs.canonicalize(init.toPath())
 		this.mainDir = mainDir
 
-		val config = fs.openReadWrite(mainDir / "config.json").use(fun(h): AppConfig {
+		this.configPathTmp = mainDir / "config.json.tmp"
+		val configPath = mainDir / "config.json"
+		this.configPath = configPath
+		val config = fs.openReadWrite(configPath).use(fun(h): AppConfig {
 			if (h.size() > 0) {
 				try {
 					val s = h.source().buffer().use { it.readUtf8() }
@@ -63,6 +70,34 @@ internal object AppDataImpl {
 			}
 			return null
 		})
+	}
+
+	private val scheduleConfigCommit_launched = atomic(false)
+
+	fun scheduleConfigCommit() {
+		if (scheduleConfigCommit_launched.compareAndSet(expect = false, true)) {
+			// At this point, we're the only thread who can execute the
+			// following piece of code.
+
+			(@Suppress("DEPRECATION") `AppDataImpl-config-commitScope`).launch {
+				// At this point, we're still the only thread who can execute
+				// the following piece of code.
+
+				val forCommit = config.value
+				val s = Json.encodeToString(AppConfig.serializer(), forCommit)
+
+				val fs = FileSystem.SYSTEM
+				val t = configPathTmp
+				fs.write(t) { writeUtf8(s) }
+				fs.atomicMove(t, configPath)
+
+				// NOTE: Once the following is set, we'll no longer be the only
+				// one who might be executing the piece of code following this.
+				scheduleConfigCommit_launched.value = false
+
+				if (forCommit !== config.value) scheduleConfigCommit()
+			}
+		}
 	}
 }
 

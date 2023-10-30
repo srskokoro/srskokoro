@@ -2,9 +2,17 @@ package kokoro.app
 
 import assert
 import kokoro.internal.SPECIAL_USE_DEPRECATION
+import kokoro.internal.coroutines.RawCoroutineScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import main.AppDaemon
 import okio.Path
 import okio.Path.Companion.toPath
 import java.io.File
+
+@Deprecated(SPECIAL_USE_DEPRECATION)
+internal actual val `AppDataImpl-config-commitScope`: CoroutineScope =
+	RawCoroutineScope(AppDaemon.ClientScope.coroutineContext + Dispatchers.IO)
 
 @Deprecated(SPECIAL_USE_DEPRECATION)
 internal actual fun `AppDataImpl-collectionsDir-default`(): Path? = buildString(64) {
