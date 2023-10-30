@@ -44,6 +44,8 @@ internal object SingleProcessModel {
  */
 internal fun PrimaryMain.setUpSingleProcessModel() {
 	val lockDir = mainDataDir
+	File(lockDir).mkdirs()
+
 	val lockFile = File(lockDir, ".lock")
 
 	// NOTE: Opens the lock file with `RandomAccessFile` so that we get the
