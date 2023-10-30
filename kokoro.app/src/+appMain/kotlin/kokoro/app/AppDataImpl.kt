@@ -32,8 +32,8 @@ internal object AppDataImpl {
 	/** @see AppData.collectionsDir */
 	@JvmField val collectionsDir: Path?
 
-	private val configPathTmp: Path
-	private val configPath: Path
+	@JvmField internal val configPathTmp: Path
+	@JvmField internal val configPath: Path
 	@JvmField val config: MutableStateFlow<AppConfig>
 
 	init {
