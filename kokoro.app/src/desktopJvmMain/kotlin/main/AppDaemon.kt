@@ -276,6 +276,13 @@ private fun generateInetPortFile(target: Path, boundServer: ServerSocketChannel)
 	// Needs `DSYNC` here since otherwise, file writes can be delayed by the OS
 	// (even when properly closed) and we have to do a rename/move operation
 	// later to atomically publish our changes. See also, https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/package-summary.html#integrity
+	//
+	// UPDATE: Actually, `DSYNC` is probably unnecessary in our case. Doing a
+	// rename/move operation right after a successful file write is probably
+	// guaranteed sequential anyway, which is simply what we want here. We don't
+	// really care about the operations being lost in the event of an OS crash.
+	//
+	// TODO Re-evaluate whether we really do need `DSYNC` here.
 	FileChannel.open(tmp, StandardOpenOption.DSYNC, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING).use {
 		it.write(bb)
 	}
