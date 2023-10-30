@@ -1,5 +1,6 @@
 package main
 
+import kokoro.app.`AppDataImpl-mainDir-init`
 import kokoro.internal.closeInCatch
 import main.SingleProcessModel.INSTANCE_CHANGE_LOCK_BYTE
 import main.SingleProcessModel.MASTER_INSTANCE_LOCK_BYTE
@@ -45,6 +46,9 @@ internal object SingleProcessModel {
 internal fun PrimaryMain.setUpSingleProcessModel() {
 	val lockDir = mainDataDir
 	File(lockDir).mkdirs()
+
+	@Suppress("DEPRECATION")
+	`AppDataImpl-mainDir-init` = lockDir
 
 	val lockFile = File(lockDir, ".lock")
 

@@ -56,7 +56,7 @@ object Jcef {
 				log_severity = CefSettings.LogSeverity.LOGSEVERITY_DISABLE
 				// NOTE: Even if logging is disabled, provide a path still, in
 				// case JCEF/CEF doesn't honor our request for disabled logging.
-				log_file = AppData.cacheMain.toString() + File.separatorChar + "jcef.debug.log"
+				log_file = AppData.mainLogsDir.toString() + File.separatorChar + "jcef.debug.log"
 
 				// TODO How to handle locale changes while the app is already running?
 				locale = App.currentLocale().toLanguageTag()
