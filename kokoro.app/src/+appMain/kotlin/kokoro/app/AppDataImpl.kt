@@ -3,6 +3,7 @@ package kokoro.app
 import kokoro.internal.SPECIAL_USE_DEPRECATION
 import kokoro.internal.io.SYSTEM
 import kokoro.internal.io.ensureDirs
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.Json
 import okio.FileSystem
 import okio.IOException
@@ -22,13 +23,7 @@ internal object AppDataImpl {
 	/** @see AppData.collectionsDir */
 	@JvmField val collectionsDir: Path?
 
-	private var initConfigTmp: AppConfig?
-
-	internal fun consumeInitConfigTmp(): AppConfig {
-		val config = initConfigTmp!!
-		initConfigTmp = null
-		return config
-	}
+	@JvmField val config: MutableStateFlow<AppConfig>
 
 	init {
 		val init = @Suppress("DEPRECATION") `AppDataImpl-mainDir-init`
@@ -53,7 +48,7 @@ internal object AppDataImpl {
 			), 0, 2)
 			return AppConfig()
 		})
-		initConfigTmp = config
+		this.config = MutableStateFlow(config)
 
 		this.collectionsDir = run(fun(): Path? {
 			val it = config.collectionsPath?.toPath()
