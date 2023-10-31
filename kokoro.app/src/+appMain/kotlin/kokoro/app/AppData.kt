@@ -22,8 +22,11 @@ object AppData {
 	 * expected to never be transferred to other devices, e.g., device
 	 * identifiers meant to uniquely identify the device – see also,
 	 * “[Best practices for unique identifiers | Android Developers](https://developer.android.com/training/articles/user-data-ids)”
+	 *
+	 * NOTE: The [Path] value here is [canonical][FileSystem.canonicalize] (and
+	 * absolute).
 	 */
-	val mainDir = AppData_init_helper.mainDir
+	val mainDir: Path = AppData_init_helper.mainDir
 		?: throw Error("Function `${::AppData_init.name}()` has not been called")
 
 	val mainLogsDir: Path = mainDir / "logs"
