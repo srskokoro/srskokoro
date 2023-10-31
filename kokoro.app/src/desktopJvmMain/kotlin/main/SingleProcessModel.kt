@@ -1,12 +1,13 @@
 package main
 
-import kokoro.app.`AppDataImpl-mainDir-init`
+import kokoro.app.AppData_init
 import kokoro.internal.closeInCatch
 import main.SingleProcessModel.INSTANCE_CHANGE_LOCK_BYTE
 import main.SingleProcessModel.MASTER_INSTANCE_LOCK_BYTE
 import main.cli.ClientMain
 import main.cli.PrimaryMain
 import main.cli.engine.ExecutionState
+import okio.Path.Companion.toPath
 import java.io.File
 import java.io.RandomAccessFile
 import java.nio.channels.FileChannel
@@ -68,8 +69,7 @@ internal fun PrimaryMain.setUpSingleProcessModel() {
 		if (masterInstanceLock != null) {
 			// We're the first instance!
 
-			@Suppress("DEPRECATION")
-			`AppDataImpl-mainDir-init` = lockDir
+			AppData_init(lockDir.toPath())
 
 			daemon = AppDaemon(lockDir, lockChannel, masterInstanceLock)
 			instanceChangeLock.release()
