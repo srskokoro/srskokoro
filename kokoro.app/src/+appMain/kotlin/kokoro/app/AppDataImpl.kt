@@ -5,12 +5,13 @@ import kokoro.internal.DEBUG
 import kokoro.internal.SPECIAL_USE_DEPRECATION
 import kokoro.internal.io.SYSTEM
 import kokoro.internal.io.ensureDirs
-import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.okio.decodeFromBufferedSource
@@ -111,7 +112,7 @@ internal object AppDataImpl {
 			}
 		}
 
-		private val isScheduled = atomic(false)
+		@JvmField internal val isScheduled = MutableStateFlow(false)
 
 		fun schedule() {
 			if (!isScheduled.compareAndSet(expect = false, true)) return
@@ -144,6 +145,20 @@ internal object AppDataImpl {
 				isScheduled.value = false
 
 				if (forCommit !== config.value) schedule()
+			}
+		}
+
+		suspend fun awaitCommit() {
+			isScheduled.first { !it }
+		}
+
+		/** @see awaitCommit */
+		fun awaitCommitBlocking() {
+			if (isScheduled.value) {
+				val context = @Suppress("DEPRECATION") `AppDataImpl-config-commitScope`.coroutineContext
+				runBlocking(context) {
+					awaitCommit()
+				}
 			}
 		}
 	}

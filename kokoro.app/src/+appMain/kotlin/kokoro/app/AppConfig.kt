@@ -83,5 +83,13 @@ data class AppConfig(
 			@Suppress("DEPRECATION") AppDataImpl.ConfigCommitter.schedule()
 			return r
 		}
+
+		// --
+
+		suspend inline fun awaitCommit() =
+			@Suppress("DEPRECATION") AppDataImpl.ConfigCommitter.awaitCommit()
+
+		inline fun awaitCommitBlocking() =
+			@Suppress("DEPRECATION") AppDataImpl.ConfigCommitter.awaitCommitBlocking()
 	}
 }
