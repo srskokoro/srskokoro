@@ -36,6 +36,6 @@ fun main(args: Array<out String>) {
 	}
 
 	EventQueue.invokeLater {
-		execState.consumeMessages()
+		execState.consumeMessagesViaSwing()
 	}
 }

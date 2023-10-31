@@ -29,7 +29,9 @@ internal class ExecutionState(
 
 	var statusCode: Int? = null
 
-	private var hasError = false
+	var hasError = false
+		private set
+
 	private val output = StringBuilder()
 
 	override fun completePrintRequest(request: PrintRequest) {
@@ -43,10 +45,19 @@ internal class ExecutionState(
 
 	override fun readLineOrNull(hideInput: Boolean): String? = null
 
-	fun consumeMessages() {
-		assertThreadSwing()
+	fun consumeMessages(): CharSequence {
 		val sb = output
 		val m = sb.trim(); sb.clear()
+		return m
+	}
+
+	inline fun <T> consumeMessages(block: ExecutionState.(CharSequence) -> T): T {
+		return block(consumeMessages())
+	}
+
+	fun consumeMessagesViaSwing() {
+		assertThreadSwing()
+		val m = consumeMessages()
 		if (m.isNotEmpty()) {
 			Alerts.swing(null) {
 				statusCode?.let { title = "Status Code: $it" }
@@ -59,7 +70,7 @@ internal class ExecutionState(
 	}
 
 	suspend fun transition() {
-		consumeMessages()
+		consumeMessagesViaSwing()
 		for (cmd in pendingExecutions) {
 			cmd.execute()
 		}
