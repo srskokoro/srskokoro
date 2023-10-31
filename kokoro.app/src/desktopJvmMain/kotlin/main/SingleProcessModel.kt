@@ -47,9 +47,6 @@ internal fun PrimaryMain.setUpSingleProcessModel() {
 	val lockDir = mainDataDir
 	File(lockDir).mkdirs()
 
-	@Suppress("DEPRECATION")
-	`AppDataImpl-mainDir-init` = lockDir
-
 	val lockFile = File(lockDir, ".lock")
 
 	// NOTE: Opens the lock file with `RandomAccessFile` so that we get the
@@ -70,6 +67,9 @@ internal fun PrimaryMain.setUpSingleProcessModel() {
 		val masterInstanceLock = lockChannel.tryLock(MASTER_INSTANCE_LOCK_BYTE, /*size=*/1, /*shared=*/false)
 		if (masterInstanceLock != null) {
 			// We're the first instance!
+
+			@Suppress("DEPRECATION")
+			`AppDataImpl-mainDir-init` = lockDir
 
 			daemon = AppDaemon(lockDir, lockChannel, masterInstanceLock)
 			instanceChangeLock.release()
