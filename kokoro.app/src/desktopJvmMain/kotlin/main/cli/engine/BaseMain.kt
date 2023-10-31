@@ -7,12 +7,15 @@ import com.github.ajalt.clikt.parameters.options.convert
 import com.github.ajalt.clikt.parameters.options.defaultLazy
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.mordant.terminal.Terminal
-import kokoro.app.AppBuild
 import kokoro.app.AppBuildDesktop
 import net.harawata.appdirs.AppDirsFactory
 
-internal abstract class BaseMain : BaseCommand(
-	name = System.getProperty("org.gradle.appname") ?: AppBuild.EXE_NAME,
+/**
+ * @param name The name of the program to use in the help output. If not given,
+ * it is inferred from the class name.
+ */
+internal abstract class BaseMain(name: String?) : BaseCommand(
+	name = name,
 	invokeWithoutSubcommand = true,
 ) {
 
