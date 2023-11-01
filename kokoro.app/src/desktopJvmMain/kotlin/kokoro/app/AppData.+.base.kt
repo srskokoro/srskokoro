@@ -8,8 +8,8 @@ import okio.Path.Companion.toPath
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
-import java.nio.file.StandardCopyOption.ATOMIC_MOVE
-import java.nio.file.StandardCopyOption.REPLACE_EXISTING
+import java.nio.file.LinkOption.NOFOLLOW_LINKS
+import java.nio.file.StandardCopyOption.*
 import java.nio.file.StandardOpenOption.*
 
 actual fun AppData.findCollectionsDirs(): List<Path> {
@@ -53,13 +53,15 @@ actual fun AppData.findCollectionsDirs(): List<Path> {
 		}
 		r.add(entry.toPath())
 
-		// Atomically generate a file, by writing to a temporary first, followed
-		// by an atomic rename.
+		// Atomically edits file, by making a backup copy first, editing that
+		// copy, then finally doing an atomic rename/replace.
 		val lookupFileStr = lookupFile.path
+		val lookupPath = NioPath.of(lookupFileStr)
 		NioPath.of("${lookupFileStr}.tmp").let { tmp ->
-			Files.writeString(tmp, entry, DSYNC, CREATE, WRITE, TRUNCATE_EXISTING)
+			if (lookupFile.isFile) Files.copy(lookupPath, tmp, REPLACE_EXISTING, COPY_ATTRIBUTES, NOFOLLOW_LINKS)
+			Files.writeString(tmp, entry, DSYNC, CREATE, WRITE, APPEND)
 			// Atomically publish our changes via a rename/move operation
-			Files.move(tmp, NioPath.of(lookupFileStr), ATOMIC_MOVE, REPLACE_EXISTING)
+			Files.move(tmp, lookupPath, ATOMIC_MOVE, REPLACE_EXISTING)
 			// ^ Same as in `okio.NioSystemFileSystem.atomicMove()`
 		}
 	}
