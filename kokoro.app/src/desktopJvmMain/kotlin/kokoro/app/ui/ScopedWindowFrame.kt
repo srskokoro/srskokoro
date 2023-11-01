@@ -53,14 +53,18 @@ open class ScopedWindowFrame @JvmOverloads constructor(
 
 	val isDisposedPermanently: Boolean get() = _isDisposedPermanently.value
 
-	fun disposePermanently() {
+	open fun disposePermanently() {
 		if (_isDisposedPermanently.compareAndSet(expect = false, true)) {
-			disposeLightly()
-			scope.coroutineContext[Job]?.run { cancel(null) }
+			onDisposePermanently()
 		}
 	}
 
-	fun disposeLightly() = super.dispose()
+	protected open fun onDisposePermanently() {
+		disposeLightly()
+		scope.coroutineContext[Job]?.run { cancel(null) }
+	}
+
+	open fun disposeLightly() = super.dispose()
 
 	// --
 
