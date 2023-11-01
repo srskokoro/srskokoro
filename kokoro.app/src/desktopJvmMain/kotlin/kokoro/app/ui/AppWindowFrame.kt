@@ -1,29 +1,16 @@
 package kokoro.app.ui
 
 import androidx.compose.runtime.*
-import app.cash.redwood.ui.Size
-import app.cash.redwood.ui.UiConfiguration
-import app.cash.redwood.ui.dp
-import kokoro.app.ui.redwood.RedwoodWindowFrame
-import kokoro.jcef.Jcef
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import org.cef.CefClient
-import org.cef.browser.CefBrowser
-import org.cef.browser.CefFrame
-import org.cef.handler.CefLoadHandlerAdapter
-import java.awt.AWTEvent
-import java.awt.Component
+import kokoro.app.ui.wv.WvWindowFrame
 import java.awt.EventQueue
 import java.awt.GraphicsConfiguration
-import java.awt.event.ComponentEvent
 import kotlin.coroutines.CoroutineContext
 
 class AppWindowFrame @JvmOverloads constructor(
 	context: CoroutineContext = DEFAULT_CONTEXT,
 	spec: WindowSpec, args: List<Any?> = emptyList(),
 	gc: GraphicsConfiguration? = DEFAULT_GRAPHICS_CONFIGURATION,
-) : RedwoodWindowFrame(context, DEFAULT_TITLE, gc), WindowHost, AppLafListener {
+) : WvWindowFrame(context, DEFAULT_TITLE, gc), WindowHost, AppLafListener {
 
 	companion object {
 		init {
@@ -32,6 +19,15 @@ class AppWindowFrame @JvmOverloads constructor(
 			ensureAppLaf()
 		}
 	}
+
+	override val isDarkMode: Boolean
+		get() = isDarkAppLaf
+
+	override fun onAppLafUpdated() {
+		updateUiConfiguration()
+	}
+
+	// --
 
 	private val _state: WindowStateImpl
 	val state: WindowState get() = _state
@@ -59,90 +55,5 @@ class AppWindowFrame @JvmOverloads constructor(
 	override fun setTitle(title: String?) {
 		_state._title = title ?: ""
 		super.setTitle(title)
-	}
-
-	// --
-
-	class JcefState(
-		val client: CefClient,
-		val browser: CefBrowser,
-		val component: Component,
-	)
-
-	private var _jcef: JcefState? = null
-	val jcef get() = _jcef
-
-	override fun addNotify() {
-		if (_jcef == null) {
-			val client = Jcef.app.createClient()
-			client.addLoadHandler(object : CefLoadHandlerAdapter() {
-				override fun onLoadEnd(browser: CefBrowser?, frame: CefFrame?, httpStatusCode: Int) {
-					// TODO Maybe use `DOMContentLoaded` instead?
-					//  See, https://magpcss.org/ceforum/viewtopic.php?t=10277
-
-					// TODO Set up
-				}
-			})
-
-			// TODO Properly set up things
-			val browser = client.createBrowser("", false, false)
-
-			val component = browser.uiComponent
-			contentPane.add(component)
-
-			_jcef = JcefState(client, browser, component)
-		}
-
-		super.addNotify()
-	}
-
-	override fun removeNotify() {
-		// Do tear down in an order corresponding to the "reverse" of the order
-		// in which we set up things in `addNotify()`
-		super.removeNotify()
-
-		_jcef?.let { jcef ->
-			_jcef = null
-
-			contentPane.remove(jcef.component)
-			jcef.browser.close(true)
-			jcef.client.dispose()
-		}
-	}
-
-	// --
-
-	private val _uiConfiguration = MutableStateFlow(newUiConfiguration())
-	val uiConfiguration: StateFlow<UiConfiguration> get() = _uiConfiguration
-
-	private fun updateUiConfiguration() {
-		_uiConfiguration.value = newUiConfiguration()
-	}
-
-	private fun newUiConfiguration(): UiConfiguration {
-		val c = _jcef?.component ?: contentPane
-		val s = Size(c.width.dp, c.height.dp)
-		return UiConfiguration(
-			viewportSize = s,
-			darkMode = isDarkAppLaf,
-		)
-	}
-
-	// --
-
-	init {
-		enableEvents(AWTEvent.COMPONENT_EVENT_MASK)
-	}
-
-	override fun processComponentEvent(e: ComponentEvent) {
-		super.processComponentEvent(e)
-
-		if (e.id == ComponentEvent.COMPONENT_RESIZED) {
-			updateUiConfiguration()
-		}
-	}
-
-	override fun onAppLafUpdated() {
-		updateUiConfiguration()
 	}
 }
