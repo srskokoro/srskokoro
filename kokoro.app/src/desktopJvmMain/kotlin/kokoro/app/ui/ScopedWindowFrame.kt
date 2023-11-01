@@ -77,6 +77,6 @@ open class ScopedWindowFrame @JvmOverloads constructor(
 			throw E_AlreadyDisposedPermanently()
 		}
 	}
-
-	private fun E_AlreadyDisposedPermanently() = IllegalStateException("Already disposed (permanently)")
 }
+
+private fun E_AlreadyDisposedPermanently() = IllegalStateException("Already disposed (permanently)")
