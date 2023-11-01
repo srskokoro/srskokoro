@@ -23,13 +23,7 @@ class AppWindowFrame @JvmOverloads constructor(
 	context: CoroutineContext = DEFAULT_CONTEXT,
 	spec: WindowSpec, args: List<Any?> = emptyList(),
 	gc: GraphicsConfiguration? = DEFAULT_GRAPHICS_CONFIGURATION,
-	scopeFactory: ScopeFactory = DEFAULT_SCOPE_FACTORY,
-) : RedwoodWindowFrame(
-	context = context,
-	title = DEFAULT_TITLE,
-	gc = gc,
-	scopeFactory,
-), WindowHost, AppLafListener {
+) : RedwoodWindowFrame(context, DEFAULT_TITLE, gc), WindowHost, AppLafListener {
 
 	companion object {
 		init {

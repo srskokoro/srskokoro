@@ -14,27 +14,37 @@ open class ScopedWindowFrame @JvmOverloads constructor(
 	context: CoroutineContext = DEFAULT_CONTEXT,
 	title: String = DEFAULT_TITLE,
 	gc: GraphicsConfiguration? = DEFAULT_GRAPHICS_CONFIGURATION,
-	scopeFactory: ScopeFactory = DEFAULT_SCOPE_FACTORY,
 ) : BaseWindowFrame(title, gc) {
 
 	companion object {
 		inline val DEFAULT_CONTEXT get() = EmptyCoroutineContext
-		inline val DEFAULT_SCOPE_FACTORY: ScopeFactory get() = SupervisorScopeFactory
 	}
 
-	fun interface ScopeFactory {
-		fun onCreateScope(context: CoroutineContext): CoroutineScope
-	}
+	private var contextBeforeScopeCreated: CoroutineContext? = context
+	@Volatile private var _scope: CoroutineScope? = null
 
-	object SupervisorScopeFactory : ScopeFactory {
-		override fun onCreateScope(context: CoroutineContext) =
-			RawCoroutineScope(context, SupervisorJob(context[Job]))
-	}
+	val scope: CoroutineScope
+		get() {
+			// NOTE: Laid out similar to JVM implementation of `LazyThreadSafetyMode.SYNCHRONIZED`
 
-	val scope = @Suppress("LeakingThis") onCreateScope(scopeFactory, context)
+			val _v1 = _scope
+			if (_v1 != null) return _v1
 
-	protected open fun onCreateScope(scopeFactory: ScopeFactory, context: CoroutineContext): CoroutineScope {
-		return scopeFactory.onCreateScope(context)
+			return synchronized(this) {
+				val _v2 = _scope
+				if (_v2 != null) {
+					_v2
+				} else {
+					val _v3 = onCreateScope(contextBeforeScopeCreated!!)
+					contextBeforeScopeCreated = null
+					_scope = _v3
+					_v3
+				}
+			}
+		}
+
+	protected open fun onCreateScope(context: CoroutineContext): CoroutineScope {
+		return RawCoroutineScope(context, SupervisorJob(context[Job]))
 	}
 
 	// --

@@ -18,13 +18,8 @@ open class RedwoodWindowFrame @JvmOverloads constructor(
 	context: CoroutineContext = DEFAULT_CONTEXT,
 	title: String = DEFAULT_TITLE,
 	gc: GraphicsConfiguration? = DEFAULT_GRAPHICS_CONFIGURATION,
-	scopeFactory: ScopeFactory = DEFAULT_SCOPE_FACTORY,
-) : ScopedWindowFrame(
-	context = context,
-	title = title,
-	gc = gc,
-	scopeFactory,
-) {
+) : ScopedWindowFrame(context, title, gc) {
+
 	private var _composition: RedwoodComposition? = null
 	val composition: RedwoodComposition
 		get() = _composition ?: error("Must first call `init()`")
@@ -54,13 +49,13 @@ open class RedwoodWindowFrame @JvmOverloads constructor(
 		)
 	}
 
-	override fun onCreateScope(scopeFactory: ScopeFactory, context: CoroutineContext): CoroutineScope {
-		return super.onCreateScope(scopeFactory, context + (super.ref + FrameClock { repaint() }))
+	override fun onCreateScope(context: CoroutineContext): CoroutineScope {
+		return super.onCreateScope(context + (super.ref + _frameClock))
 	}
 
 	//#region Frame Clock Handling
 
-	private val _frameClock = scope.coroutineContext[MonotonicFrameClock] as FrameClock
+	private val _frameClock = FrameClock { repaint() }
 	val frameClock: MonotonicFrameClock get() = _frameClock
 
 	private val nanoTimeStart = System.nanoTime()
