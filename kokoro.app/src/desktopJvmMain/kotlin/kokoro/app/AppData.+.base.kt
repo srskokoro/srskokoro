@@ -1,10 +1,11 @@
 package kokoro.app
 
 import assert
-import kokoro.internal.DEBUG
 import kokoro.internal.io.NioPath
 import okio.Path
 import okio.Path.Companion.toPath
+import okio.buffer
+import okio.sink
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -15,6 +16,7 @@ import java.nio.file.StandardOpenOption.*
 actual fun AppData.findCollectionsDirs(): List<Path> {
 	val r = mutableListOf<Path>()
 
+	var hasBadEntries = false
 	val lookupFile = File(mainDir.toString() + File.separatorChar + "cols.lst")
 	if (lookupFile.exists()) lookupFile.useLines { seq ->
 		for (line in seq) {
@@ -27,12 +29,28 @@ actual fun AppData.findCollectionsDirs(): List<Path> {
 				File(line).canonicalPath
 			} catch (ex: IOException) {
 				ex.addSuppressed(IOException("Input path: $line"))
-				if (DEBUG) throw ex
 				ex.printStackTrace()
+				hasBadEntries = true
 				continue
 			}
 
 			r.add(entry.toPath())
+		}
+	}
+
+	if (hasBadEntries) {
+		// Regenerate file without the bad entries.
+
+		// Atomically generate a file, by writing to a temporary first, followed
+		// by an atomic rename.
+		val lookupFileStr = lookupFile.path
+		NioPath.of("${lookupFileStr}.tmp").let { tmp ->
+			Files.newOutputStream(tmp, DSYNC, CREATE, WRITE, TRUNCATE_EXISTING).sink().buffer().use { out ->
+				for (it in r) out.writeUtf8(it.toString())
+			}
+			// Atomically publish our changes via a rename/move operation
+			Files.move(tmp, NioPath.of(lookupFileStr), ATOMIC_MOVE, REPLACE_EXISTING)
+			// ^ Same as in `okio.NioSystemFileSystem.atomicMove()`
 		}
 	}
 
