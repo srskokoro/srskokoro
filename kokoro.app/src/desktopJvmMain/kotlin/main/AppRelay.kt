@@ -22,7 +22,7 @@ import java.nio.channels.FileChannel
 import java.nio.channels.SocketChannel
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.StandardOpenOption
+import java.nio.file.StandardOpenOption.READ
 import java.nio.file.attribute.BasicFileAttributes
 
 internal class AppRelay(sockDir: String) {
@@ -178,7 +178,7 @@ internal class AppRelay(sockDir: String) {
  */
 private fun readInetPortFile(target: Path): Int {
 	val bb = ByteBuffer.allocate(2)
-	FileChannel.open(target, StandardOpenOption.READ).use {
+	FileChannel.open(target, READ).use {
 		it.read(bb)
 	}
 	// Flip then get, to throw if not enough bytes read.

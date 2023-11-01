@@ -34,8 +34,9 @@ import java.nio.channels.ServerSocketChannel
 import java.nio.channels.SocketChannel
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.StandardCopyOption
-import java.nio.file.StandardOpenOption
+import java.nio.file.StandardCopyOption.ATOMIC_MOVE
+import java.nio.file.StandardCopyOption.REPLACE_EXISTING
+import java.nio.file.StandardOpenOption.*
 import java.util.concurrent.CancellationException
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -286,11 +287,11 @@ private fun generateInetPortFile(target: Path, boundServer: ServerSocketChannel)
 	// `FileDescriptor.sync()` before doing an atomic rename.
 	//
 	// TODO Re-evaluate whether we really do need `DSYNC` here.
-	FileChannel.open(tmp, StandardOpenOption.DSYNC, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING).use {
+	FileChannel.open(tmp, DSYNC, CREATE, WRITE, TRUNCATE_EXISTING).use {
 		it.write(bb)
 	}
 
 	// Atomically publish our changes via a rename/move operation
-	Files.move(tmp, target, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING)
+	Files.move(tmp, target, ATOMIC_MOVE, REPLACE_EXISTING)
 	// ^ Same as in `okio.NioSystemFileSystem.atomicMove()`
 }
