@@ -7,6 +7,7 @@ import okio.FileSystem
 import okio.IOException
 import okio.Path
 import kotlin.jvm.JvmField
+import kotlin.jvm.JvmStatic
 
 /**
  * WARNING: All access to this class will fail unless [AppData_init]`()` was
@@ -27,10 +28,10 @@ object AppData {
 	 * NOTE: The [Path] value here is [canonical][FileSystem.canonicalize] (and
 	 * absolute).
 	 */
-	val mainDir: Path = AppData_init_helper.mainDir
+	@JvmField val mainDir: Path = AppData_init_helper.mainDir
 		?: throw Error("Function `${::AppData_init.name}()` has not been called")
 
-	val mainLogsDir: Path get() = _mainLogsDir.value
+	@JvmStatic val mainLogsDir: Path get() = _mainLogsDir.value
 
 	private object _mainLogsDir {
 		@JvmField val value = (mainDir / "logs").ensureDirs()
