@@ -15,7 +15,7 @@ import java.nio.file.StandardOpenOption.*
 actual fun AppData.findCollectionsDirs(): List<Path> {
 	val r = mutableListOf<Path>()
 
-	val lookupFile = File(mainDir.toString() + File.separatorChar + "collections.lst")
+	val lookupFile = File(mainDir.toString() + File.separatorChar + "cols.lst")
 	if (lookupFile.exists()) lookupFile.useLines { seq ->
 		for (line in seq) {
 			if (line.startsWith('#')) continue
