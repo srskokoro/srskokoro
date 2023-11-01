@@ -26,6 +26,7 @@ actual fun AppData.findCollectionsDirs(): List<Path> {
 			val entry = try {
 				File(line).canonicalPath
 			} catch (ex: IOException) {
+				ex.addSuppressed(IOException("Input path: $line"))
 				if (DEBUG) throw ex
 				ex.printStackTrace()
 				continue
