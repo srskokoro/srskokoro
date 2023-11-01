@@ -282,6 +282,9 @@ private fun generateInetPortFile(target: Path, boundServer: ServerSocketChannel)
 	// guaranteed sequential anyway, which is simply what we want here. We don't
 	// really care about the operations being lost in the event of an OS crash.
 	//
+	// NOTE: `androidx.core.util.AtomicFile.finishWrite()` does perform a
+	// `FileDescriptor.sync()` before doing an atomic rename.
+	//
 	// TODO Re-evaluate whether we really do need `DSYNC` here.
 	FileChannel.open(tmp, StandardOpenOption.DSYNC, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING).use {
 		it.write(bb)
