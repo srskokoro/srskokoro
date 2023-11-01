@@ -6,11 +6,10 @@ import java.awt.event.WindowEvent
 import java.lang.ref.WeakReference
 import javax.swing.JFrame
 
-open class BaseWindowFrame : JFrame {
-	constructor() : super()
-	constructor(gc: GraphicsConfiguration?) : super(gc)
-	constructor(title: String?) : super(title)
-	constructor(title: String?, gc: GraphicsConfiguration?) : super(title, gc)
+open class BaseWindowFrame @JvmOverloads constructor(
+	title: String = DEFAULT_TITLE,
+	gc: GraphicsConfiguration? = DEFAULT_GRAPHICS_CONFIGURATION,
+) : JFrame(title, gc) {
 
 	init {
 		setUp()
@@ -21,6 +20,9 @@ open class BaseWindowFrame : JFrame {
 	}
 
 	companion object {
+		const val DEFAULT_TITLE = ""
+		inline val DEFAULT_GRAPHICS_CONFIGURATION: GraphicsConfiguration? get() = null
+
 		/** @see javax.swing.JOptionPane.getRootFrame */
 		val lastActive: BaseWindowFrame?
 			get() {

@@ -6,7 +6,6 @@ import app.cash.redwood.ui.UiConfiguration
 import app.cash.redwood.ui.dp
 import kokoro.app.ui.redwood.RedwoodWindowFrame
 import kokoro.jcef.Jcef
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.cef.CefClient
@@ -18,16 +17,21 @@ import java.awt.Component
 import java.awt.EventQueue
 import java.awt.GraphicsConfiguration
 import java.awt.event.ComponentEvent
+import kotlin.coroutines.CoroutineContext
 
-class AppWindowFrame(
-	private val mainScope: CoroutineScope,
-	private val spec: WindowSpec, args: List<Any?> = emptyList(),
-	gc: GraphicsConfiguration? = null,
-) : RedwoodWindowFrame(DEFAULT_TITLE, gc), WindowHost, AppLafListener {
+class AppWindowFrame @JvmOverloads constructor(
+	context: CoroutineContext = DEFAULT_CONTEXT,
+	spec: WindowSpec, args: List<Any?> = emptyList(),
+	gc: GraphicsConfiguration? = DEFAULT_GRAPHICS_CONFIGURATION,
+	scopeFactory: ScopeFactory = DEFAULT_SCOPE_FACTORY,
+) : RedwoodWindowFrame(
+	context = context,
+	title = DEFAULT_TITLE,
+	gc = gc,
+	scopeFactory,
+), WindowHost, AppLafListener {
 
 	companion object {
-		private const val DEFAULT_TITLE = ""
-
 		init {
 			// NOTE: LAFs need to be set up before window creation. The static
 			// initializer for the class is therefore the best place to do this.
