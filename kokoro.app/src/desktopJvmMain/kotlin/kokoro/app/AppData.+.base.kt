@@ -20,6 +20,9 @@ actual fun AppData.findCollectionsDirs(): List<Path> {
 		for (line in seq) {
 			if (line.startsWith('#')) continue
 
+			@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+			if ((line as java.lang.String).isBlank) continue
+
 			val entry = try {
 				File(line).canonicalPath
 			} catch (ex: IOException) {
