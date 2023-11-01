@@ -77,7 +77,12 @@ actual fun AppData.findCollectionsDirs(): List<Path> {
 		val lookupPath = NioPath.of(lookupFileStr)
 		NioPath.of("${lookupFileStr}.tmp").let { tmp ->
 			if (lookupFile.isFile) Files.copy(lookupPath, tmp, REPLACE_EXISTING, COPY_ATTRIBUTES, NOFOLLOW_LINKS)
-			Files.writeString(tmp, entry, DSYNC, CREATE, WRITE, APPEND)
+			val nonEmpty = lookupFile.length() > 0
+			Files.newOutputStream(tmp, DSYNC, CREATE, WRITE, APPEND).sink().buffer().use { out ->
+				if (nonEmpty) out.writeByte('\n'.code)
+				out.writeUtf8(entry)
+				out.writeByte('\n'.code)
+			}
 			// Atomically publish our changes via a rename/move operation
 			Files.move(tmp, lookupPath, ATOMIC_MOVE, REPLACE_EXISTING)
 			// ^ Same as in `okio.NioSystemFileSystem.atomicMove()`
