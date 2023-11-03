@@ -1,17 +1,22 @@
 package kokoro.jcef
 
+import androidx.annotation.GuardedBy
 import kokoro.app.App
 import kokoro.app.AppData
 import kokoro.internal.DEBUG
 import kokoro.internal.SPECIAL_USE_DEPRECATION
+import kokoro.internal.collections.fastForEach
 import kokoro.internal.io.NioPath
 import kokoro.internal.io.toNioPath
 import me.friwi.jcefmaven.EnumOS
 import me.friwi.jcefmaven.EnumPlatform
-import me.friwi.jcefmaven.MavenCefAppHandlerAdapter
 import me.friwi.jcefmaven.impl.step.init.CefInitializer
 import org.cef.CefApp
+import org.cef.CefApp.CefAppState
 import org.cef.CefSettings
+import org.cef.callback.CefCommandLine
+import org.cef.callback.CefSchemeRegistrar
+import org.cef.handler.CefAppHandlerAdapter
 import java.io.File
 import java.util.stream.Stream
 import kotlin.io.path.isSameFileAs
@@ -24,16 +29,62 @@ object Jcef {
 		"jcef",
 	)
 
-	/**
-	 * NOTE: USE this INSTEAD OF `CefApp.addAppHandler()` in order to prevent
-	 * compatibility issues with macOS.
-	 */
-	fun setAppHandler(appHandler: MavenCefAppHandlerAdapter) {
-		CefApp.addAppHandler(appHandler)
+	@GuardedBy("Jcef")
+	private var jcefAppInitialized = false
+
+	private val jcefStateObservers = ArrayList<JcefStateObserver>()
+
+	fun addStateObserver(observer: JcefStateObserver) {
+		synchronized(Jcef) {
+			if (jcefAppInitialized) throw E_JcefAppAlreadyInitialized()
+			jcefStateObservers.add(observer)
+		}
+	}
+
+	private val customSchemesRegistrants = ArrayList<JcefCustomSchemesRegistrant>()
+
+	fun addCustomSchemes(registrant: JcefCustomSchemesRegistrant) {
+		synchronized(Jcef) {
+			if (jcefAppInitialized) throw E_JcefAppAlreadyInitialized()
+			customSchemesRegistrants.add(registrant)
+		}
 	}
 
 	inline val app: CefApp
 		get() = @Suppress("DEPRECATION") CefAppSetup.app
+
+	private class AppHandler(
+		val jcefStateObservers: ArrayList<JcefStateObserver>,
+		val customSchemesRegistrants: ArrayList<JcefCustomSchemesRegistrant>,
+	) : CefAppHandlerAdapter(null) {
+
+		override fun stateHasChanged(state: CefAppState) {
+			jcefStateObservers.fastForEach {
+				it.onStateChanged(state)
+			}
+		}
+
+		override fun onContextInitialized() {
+			jcefStateObservers.fastForEach {
+				it.onContextInitialized()
+			}
+		}
+
+		override fun onRegisterCustomSchemes(registrar: CefSchemeRegistrar) {
+			customSchemesRegistrants.fastForEach {
+				it.onRegisterCustomSchemes(registrar)
+			}
+		}
+
+		/**
+		 * Necessary in order to prevent execution issues with macOS.
+		 *
+		 * @see me.friwi.jcefmaven.MavenCefAppHandlerAdapter
+		 */
+		override fun onBeforeCommandLineProcessing(process_type: String?, command_line: CefCommandLine?) {
+			@Suppress("DEPRECATION") CefAppSetup.app.onBeforeCommandLineProcessing(process_type, command_line)
+		}
+	}
 
 	@Deprecated(SPECIAL_USE_DEPRECATION)
 	@PublishedApi
@@ -41,11 +92,18 @@ object Jcef {
 		val app: CefApp
 
 		init {
-			if (CefApp.getState() != CefApp.CefAppState.NONE) {
+			synchronized(Jcef) { jcefAppInitialized = true }
+
+			if (CefApp.getState() != CefAppState.NONE) {
 				// Must not let someone else initialize `CefApp`, since we would
 				// like to exclusively customize `CefApp` only here.
 				error("Someone else initialized `CefApp`")
 			}
+
+			CefApp.addAppHandler(AppHandler(
+				jcefStateObservers,
+				customSchemesRegistrants,
+			))
 
 			val cefSettings = CefSettings().apply {
 				// Must be explicitly set to `false` or the entire UI (not just
@@ -122,4 +180,8 @@ private fun E_JcefBundleDirNotSet() = IllegalStateException(
 	directory or bundle), or set up environment variable "APP_HOME" (where
 	"APP_HOME/jcef" is the JCEF install directory).
 	""".trimIndent()
+)
+
+private fun E_JcefAppAlreadyInitialized() = IllegalStateException(
+	"No longer possible. JCEF app already initialized."
 )
