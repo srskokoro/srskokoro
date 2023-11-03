@@ -24,6 +24,7 @@ import kotlin.jvm.optionals.getOrNull
 
 object Jcef {
 
+	@JvmField
 	val bundleDir = System.getProperty("jcef.bundle")?.let { File(it) } ?: File(
 		System.getenv("APP_HOME") ?: throw E_JcefBundleDirNotSet(),
 		"jcef",
@@ -89,7 +90,7 @@ object Jcef {
 	@Deprecated(SPECIAL_USE_DEPRECATION)
 	@PublishedApi
 	internal object CefAppSetup {
-		val app: CefApp
+		@JvmField val app: CefApp
 
 		init {
 			synchronized(Jcef) { jcefAppInitialized = true }
