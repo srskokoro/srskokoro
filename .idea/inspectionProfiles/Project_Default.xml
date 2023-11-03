@@ -16,6 +16,7 @@
     <inspection_tool class="EnumEntryName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="namePattern" value="[\-_]*[A-Z][\-_A-Za-z\d]*" />
     </inspection_tool>
+    <inspection_tool class="FieldAccessNotGuarded" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="FunctionName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="namePattern" value="[\-_]*[A-Za-z][\-_A-Za-z\d]*" />
     </inspection_tool>
@@ -38,5 +39,6 @@
     <inspection_tool class="TestFunctionName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="namePattern" value="[\-_]*[A-Za-z][\-_A-Za-z\d]*" />
     </inspection_tool>
+    <inspection_tool class="UnknownGuard" enabled="true" level="WARNING" enabled_by_default="true" />
   </profile>
 </component>
