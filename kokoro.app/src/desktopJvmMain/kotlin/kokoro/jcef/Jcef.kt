@@ -60,8 +60,18 @@ object Jcef {
 	) : CefAppHandlerAdapter(null) {
 
 		override fun stateHasChanged(state: CefAppState) {
-			jcefStateObservers.fastForEach {
-				it.onStateChanged(state)
+			try {
+				jcefStateObservers.fastForEach {
+					it.onStateChanged(state)
+				}
+			} finally {
+				if (state == CefAppState.TERMINATED) {
+					val lock = CefAppTeardown.terminated_lock
+					synchronized(lock) {
+						CefAppTeardown.terminated = true
+						lock.notifyAll()
+					}
+				}
 			}
 		}
 
@@ -131,16 +141,32 @@ object Jcef {
 
 			this.app = CefInitializer.initialize(bundleDir, cefArgs, cefSettings)
 
-			Runtime.getRuntime().addShutdownHook(object : Thread() {
-				override fun run() = onJvmShutdown()
-			})
+			Runtime.getRuntime().addShutdownHook(CefAppTeardown())
+		}
+	}
+
+	private class CefAppTeardown : Thread(
+		null, null,
+		"CefAppTeardown",
+		0, false
+	) {
+		companion object {
+			@GuardedBy("terminated_lock")
+			@JvmField var terminated = false
+			@JvmField val terminated_lock = Object()
 		}
 
-		private fun onJvmShutdown() {
+		override fun run() {
 			app.dispose() // Expected to kill all JCEF helpers
 
-			// Kills JCEF helpers that should really not run anymore, to prevent
-			// leaking them when our process isn't even running anymore.
+			val lock = terminated_lock
+			synchronized(lock) {
+				while (!terminated)
+					lock.wait()
+			}
+
+			// Kills all JCEF helpers that should really not run anymore, to
+			// prevent leaking them when our process isn't even running anymore.
 			// - See also, https://bugs.openjdk.org/browse/JDK-4770092
 			killExtraneousJcefHelpers(ProcessHandle.current().descendants())
 		}
