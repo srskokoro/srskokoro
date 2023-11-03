@@ -49,6 +49,9 @@ dependencyVersions {
 	module("org.jetbrains.kotlinx:atomicfu-gradle-plugin", atomicfu)
 	module("org.jetbrains.kotlinx:atomicfu", atomicfu)
 
+	val androidx_annotation = "1.7.0"// https://developer.android.com/jetpack/androidx/releases/annotation
+	module("androidx.annotation:annotation", androidx_annotation)
+
 	// --
 
 	val slf4j = "2.0.7"

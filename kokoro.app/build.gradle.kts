@@ -68,6 +68,7 @@ dependencies {
 	commonTestImplementation(project(":kokoro.lib.test.support"))
 
 	commonMainImplementation(project(":kokoro.lib.internal"))
+	commonMainImplementation("androidx.annotation:annotation")
 
 	appMainImplementation(project("redwood:compose"))
 	appMainImplementation(project("redwood:widget"))
