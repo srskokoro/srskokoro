@@ -88,7 +88,8 @@ dependencyVersions {
 	val korge = "4.0.10" // https://github.com/korlibs/korge/releases
 	module("com.soywiz.korlibs.kds:kds", korge)
 
-	module("com.squareup.okio:okio", "3.3.0")
+	val okio = "3.6.0" // https://square.github.io/okio/changelog/
+	module("com.squareup.okio:okio", okio)
 
 	module("net.harawata:appdirs", "1.2.1") // https://github.com/harawata/appdirs
 	module("com.github.ajalt.clikt:clikt", "4.2.0") // https://github.com/ajalt/clikt/releases
