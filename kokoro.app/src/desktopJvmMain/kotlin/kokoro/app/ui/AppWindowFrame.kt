@@ -5,9 +5,10 @@ import kokoro.app.ui.wv.WvWindowFrame
 import java.awt.EventQueue
 import java.awt.GraphicsConfiguration
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 class AppWindowFrame @JvmOverloads constructor(
-	context: CoroutineContext = DEFAULT_CONTEXT,
+	context: CoroutineContext = EmptyCoroutineContext,
 	spec: WindowSpec, args: List<Any?> = emptyList(),
 	gc: GraphicsConfiguration? = DEFAULT_GRAPHICS_CONFIGURATION,
 ) : WvWindowFrame(context, DEFAULT_TITLE, gc), WindowHost, AppLafListener {

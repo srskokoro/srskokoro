@@ -11,14 +11,10 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 @Suppress("MemberVisibilityCanBePrivate")
 open class ScopedWindowFrame @JvmOverloads constructor(
-	context: CoroutineContext = DEFAULT_CONTEXT,
+	context: CoroutineContext = EmptyCoroutineContext,
 	title: String = DEFAULT_TITLE,
 	gc: GraphicsConfiguration? = DEFAULT_GRAPHICS_CONFIGURATION,
 ) : BaseWindowFrame(title, gc) {
-
-	companion object {
-		inline val DEFAULT_CONTEXT get() = EmptyCoroutineContext
-	}
 
 	private var contextBeforeScopeCreated: CoroutineContext? = context
 	@Volatile private var _scope: CoroutineScope? = null

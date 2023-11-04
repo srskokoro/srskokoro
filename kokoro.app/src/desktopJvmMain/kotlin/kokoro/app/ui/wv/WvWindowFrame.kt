@@ -16,9 +16,10 @@ import java.awt.Component
 import java.awt.GraphicsConfiguration
 import java.awt.event.ComponentEvent
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 open class WvWindowFrame @JvmOverloads constructor(
-	context: CoroutineContext = DEFAULT_CONTEXT,
+	context: CoroutineContext = EmptyCoroutineContext,
 	title: String = DEFAULT_TITLE,
 	gc: GraphicsConfiguration? = DEFAULT_GRAPHICS_CONFIGURATION,
 ) : ScopedWindowFrame(context, title, gc) {

@@ -13,9 +13,10 @@ import java.awt.EventQueue
 import java.awt.Graphics
 import java.awt.GraphicsConfiguration
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 open class RedwoodWindowFrame @JvmOverloads constructor(
-	context: CoroutineContext = DEFAULT_CONTEXT,
+	context: CoroutineContext = EmptyCoroutineContext,
 	title: String = DEFAULT_TITLE,
 	gc: GraphicsConfiguration? = DEFAULT_GRAPHICS_CONFIGURATION,
 ) : ScopedWindowFrame(context, title, gc) {
