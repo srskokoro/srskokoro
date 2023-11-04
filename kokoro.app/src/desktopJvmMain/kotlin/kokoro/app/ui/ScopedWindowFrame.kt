@@ -16,23 +16,29 @@ open class ScopedWindowFrame @JvmOverloads constructor(
 	gc: GraphicsConfiguration? = DEFAULT_GRAPHICS_CONFIGURATION,
 ) : BaseWindowFrame(title, gc) {
 
-	private var contextBeforeScopeCreated: CoroutineContext? = context
-	@Volatile private var _scope: CoroutineScope? = null
+	@Volatile private var _scope: CoroutineScope = PlaceholderCoroutineScope(context)
+
+	/** NOTE: Used as both a placeholder and a lock object. */
+	private class PlaceholderCoroutineScope(
+		@JvmField val contextBeforeActualScopeCreated: CoroutineContext
+	) : CoroutineScope {
+		override val coroutineContext: CoroutineContext
+			get() = throw AssertionError("Should be unreachable")
+	}
 
 	val scope: CoroutineScope
 		get() {
 			// NOTE: Laid out similar to JVM implementation of `LazyThreadSafetyMode.SYNCHRONIZED`
 
 			val _v1 = _scope
-			if (_v1 != null) return _v1
+			if (_v1 !is PlaceholderCoroutineScope) return _v1
 
-			return synchronized(this) {
+			return synchronized(_v1) {
 				val _v2 = _scope
-				if (_v2 != null) {
+				if (_v2 !== _v1) {
 					_v2
 				} else {
-					val _v3 = onCreateScope(contextBeforeScopeCreated!!)
-					contextBeforeScopeCreated = null
+					val _v3 = onCreateScope(_v1.contextBeforeActualScopeCreated)
 					_scope = _v3
 					_v3
 				}
