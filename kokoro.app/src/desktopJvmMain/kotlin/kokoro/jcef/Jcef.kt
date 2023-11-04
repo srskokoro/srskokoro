@@ -109,8 +109,8 @@ object Jcef {
 			}
 
 			CefApp.addAppHandler(AppHandler(
-				jcefStateObservers,
-				customSchemesRegistrants,
+				jcefStateObservers.apply { trimToSize() },
+				customSchemesRegistrants.apply { trimToSize() },
 			))
 
 			val cefSettings = CefSettings().apply {
