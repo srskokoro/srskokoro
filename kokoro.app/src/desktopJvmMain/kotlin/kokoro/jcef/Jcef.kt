@@ -60,18 +60,15 @@ object Jcef {
 	) : CefAppHandlerAdapter(null) {
 
 		override fun stateHasChanged(state: CefAppState) {
-			try {
-				jcefStateObservers.fastForEach {
-					it.onStateChanged(state)
+			if (state == CefAppState.TERMINATED) {
+				val lock = CefAppTeardown.terminated_lock
+				synchronized(lock) {
+					CefAppTeardown.terminated = true
+					lock.notifyAll()
 				}
-			} finally {
-				if (state == CefAppState.TERMINATED) {
-					val lock = CefAppTeardown.terminated_lock
-					synchronized(lock) {
-						CefAppTeardown.terminated = true
-						lock.notifyAll()
-					}
-				}
+			}
+			jcefStateObservers.fastForEach {
+				it.onStateChanged(state)
 			}
 		}
 
