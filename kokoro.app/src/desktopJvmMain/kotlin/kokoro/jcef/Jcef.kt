@@ -85,7 +85,7 @@ object Jcef {
 		}
 
 		/**
-		 * Necessary in order to prevent execution issues with macOS.
+		 * Necessary in order to avoid execution issues in macOS.
 		 *
 		 * @see me.friwi.jcefmaven.MavenCefAppHandlerAdapter
 		 */
