@@ -80,6 +80,9 @@ dependencyVersions {
 	module("androidx.appcompat:appcompat", appcompat)
 	module("androidx.appcompat:appcompat-resources", appcompat) // For loading and tinting drawables on older versions of the platform
 
+	val androidx_webkit = "1.8.0" // https://developer.android.com/jetpack/androidx/releases/webkit
+	module("androidx.webkit:webkit", androidx_webkit)
+
 	// --
 
 	val korge = "4.0.10" // https://github.com/korlibs/korge/releases

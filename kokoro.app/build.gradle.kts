@@ -88,6 +88,7 @@ dependencies {
 
 	androidMainApi("androidx.core:core-ktx")
 	androidMainApi("androidx.activity:activity-ktx")
+	androidMainApi("androidx.webkit:webkit")
 
 	appMainImplementation("com.squareup.okio:okio")
 	desktopJvmMainImplementation("net.harawata:appdirs")
