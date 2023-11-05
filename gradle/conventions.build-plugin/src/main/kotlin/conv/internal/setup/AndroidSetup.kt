@@ -2,22 +2,24 @@ package conv.internal.setup
 
 import com.android.build.api.dsl.ApplicationBaseFlavor
 import getOrNull
+import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Project
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.kotlin.dsl.extra
 
 internal fun Project.setUp(android: AndroidExtension): Unit = with(android) {
-	@Suppress("UnstableApiUsage")
-	project.extra.getOrNull<String>("conv.android.buildToolsVersion")?.let {
-		buildToolsVersion = it
-	}
+	val extra = project.extra
 
-	compileSdk = 33
+	@Suppress("UnstableApiUsage")
+	buildToolsVersion = extra.getGradleProp("conv.android.buildToolsVersion")
+
+	compileSdk = extra.getGradleProp("conv.android.compileSdk") { it.toInt() }
 
 	defaultConfig {
 		if (this is ApplicationBaseFlavor) {
-			targetSdk = 33
+			targetSdk = extra.getGradleProp("conv.android.targetSdk") { it.toInt() }
 		}
-		minSdk = 21
+		minSdk = extra.getGradleProp("conv.android.minSdk") { it.toInt() }
 	}
 
 	compileOptions {
@@ -35,3 +37,14 @@ internal fun Project.setUp(android: AndroidExtension): Unit = with(android) {
 		}
 	}
 }
+
+@Suppress("NOTHING_TO_INLINE")
+private inline fun ExtraPropertiesExtension.getGradleProp(propName: String) =
+	getGradleProp(propName) { it }
+
+private inline fun <R> ExtraPropertiesExtension.getGradleProp(propName: String, transform: (String) -> R) =
+	transform(getOrNull<String>(propName) ?: throw E_GradlePropRequired(propName))
+
+private fun E_GradlePropRequired(propName: String) = InvalidUserDataException(
+	"Gradle property required: $propName"
+)
