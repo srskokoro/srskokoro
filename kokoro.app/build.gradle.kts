@@ -76,6 +76,10 @@ dependencies {
 		commonMainImplementation(it)
 		commonMainWvSetup(it)
 	}
+	project("ui.framework").let {
+		commonMainImplementation(it)
+		commonMainWvSetup(it)
+	}
 
 	appMainImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
 	appMainImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json-okio")
