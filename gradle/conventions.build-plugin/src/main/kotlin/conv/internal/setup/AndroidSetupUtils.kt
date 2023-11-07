@@ -8,7 +8,7 @@ import org.gradle.kotlin.dsl.withType
  * @see AndroidAppExtension
  * @see AndroidLibExtension
  */
-internal typealias AndroidExtension = com.android.build.api.dsl.CommonExtension<*, *, *, *>
+internal typealias AndroidExtension = com.android.build.api.dsl.CommonExtension<*, *, *, *, *>
 
 /** @see AndroidExtension */
 internal typealias AndroidAppExtension = com.android.build.api.dsl.ApplicationExtension
