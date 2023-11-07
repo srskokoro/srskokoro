@@ -8,7 +8,7 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.kotlin.dsl.extra
 
 internal fun Project.setUp(android: AndroidExtension): Unit = with(android) {
-	val extra = extra
+	val extra = project.extra
 
 	@Suppress("UnstableApiUsage")
 	buildToolsVersion = extra.getGradleProp("conv.android.buildToolsVersion")
