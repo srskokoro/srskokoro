@@ -1,6 +1,5 @@
 import conv.internal.setup.*
 import conv.internal.util.*
-import conv.util.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
