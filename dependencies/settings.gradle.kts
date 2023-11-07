@@ -15,7 +15,7 @@ dependencyVersions {
 		vendor { ADOPTIUM }
 	}
 
-	val kotlin = "1.9.10" // https://kotlinlang.org/docs/releases.html
+	val kotlin = "1.9.20" // https://kotlinlang.org/docs/releases.html
 	plugin("org.jetbrains.kotlin.*", kotlin)
 	module("org.jetbrains.kotlin:*", kotlin)
 	plugin("org.jetbrains.kotlin.plugin.serialization", kotlin)
@@ -105,11 +105,14 @@ dependencyVersions {
 	// NOTE: Must be kept consistent with Redwood. See,
 	// https://github.com/cashapp/redwood/blob/0.7.0/gradle/libs.versions.toml#L6
 	val jb_compose = "1.5.1"
+	// The compose compiler plugin to use for Redwood -- https://github.com/cashapp/redwood/tree/0.7.0#custom-compose-compiler
+	val jb_compose_compiler = "1.5.3" // https://github.com/JetBrains/compose-multiplatform/blob/v1.5.10/gradle-plugins/compose/src/main/kotlin/org/jetbrains/compose/ComposeCompilerCompatibility.kt
 	module("app.cash.redwood:*", redwood)
 	plugin("app.cash.redwood", redwood)
 	plugin("app.cash.redwood.*", redwood)
 	plugin("app.cash.redwood.generator.*", redwood)
 	module("org.jetbrains.compose.runtime:*", jb_compose)
+	module("org.jetbrains.compose.compiler:compiler", jb_compose_compiler)
 
 	val voyager = "1.0.0-rc07" // https://github.com/adrielcafe/voyager/releases
 	module("cafe.adriel.voyager:*", voyager)
