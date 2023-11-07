@@ -16,6 +16,9 @@ application {
 
 afterEvaluate {
 	tasks.withType<JavaExec>().configureEach {
+		val project = project
+		val environment = environment
+
 		// Clear value inherited from `gradlew`; let it be null.
 		environment.remove("APP_HOME")
 
