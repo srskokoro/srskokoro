@@ -127,7 +127,7 @@ class WvSetupPlugin : Plugin<Project> {
 				compilation.project.afterEvaluate {
 					for (s in compilation.allKotlinSourceSets)
 						ic.extendsFrom(configurationSetup.initBucketConfiguration(s.name))
-					for (c in compilation.associateWith) for (s in c.allKotlinSourceSets)
+					for (c in compilation.associatedCompilations) for (s in c.allKotlinSourceSets)
 						ic.extendsFrom(configurationSetup.initBucketConfiguration(s.name))
 				}
 				// NOTE: The common source set isn't necessarily included above,
@@ -144,7 +144,7 @@ class WvSetupPlugin : Plugin<Project> {
 					val project = this.project
 					outputDir.set(project.layout.buildDirectory.dir(project.provider { "generated/$name" }))
 
-					classpath.from(ic, fun() = compilation.associateWith.map { c -> c.allKotlinSourceSets.map { it.wv.sourceDirectories } })
+					classpath.from(ic, fun() = compilation.associatedCompilations.map { c -> c.allKotlinSourceSets.map { it.wv.sourceDirectories } })
 					sourceDirectories.from(fun() = compilation.allKotlinSourceSets.map { it.wv.sourceDirectories })
 				}
 
