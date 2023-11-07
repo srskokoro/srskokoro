@@ -1,8 +1,7 @@
 import conv.internal.setup.*
 
 plugins {
-	id("conv.kt.mpp.lib")
-	id("kokoro.conv.kt.mpp.lib.hierarchy")
+	id("conv.kt.android.app")
 }
 
 kotestConfigClass = "KotestConfig"
@@ -10,7 +9,7 @@ kotestConfigClass = "KotestConfig"
 dependencies {
 	val deps = deps ?: return@dependencies
 	deps.bundles["testExtras"] *= {
-		commonTestImplementation(it)
+		testImplementation(it)
 	}
-	commonTestImplementation(project(":kokoro.lib.test.support"))
+	testImplementation(project(":kokoro.lib.test.support"))
 }

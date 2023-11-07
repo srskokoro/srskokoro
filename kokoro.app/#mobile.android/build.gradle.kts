@@ -1,11 +1,9 @@
 plugins {
-	id("conv.kt.android.app")
+	id("kokoro.conv.kt.android.app")
 	id("conv.version")
 }
 
 group = parent!!.group
-
-kotestConfigClass = "KotestConfig"
 
 android {
 	namespace = extra["kokoro.app.target.ns"] as String
@@ -25,10 +23,5 @@ android {
 }
 
 dependencies {
-	deps.bundles.testExtras *= {
-		testImplementation(it)
-	}
-	testImplementation(project(":kokoro.lib.test.support"))
-
 	implementation(project(":kokoro.app"))
 }

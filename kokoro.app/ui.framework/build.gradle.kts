@@ -6,17 +6,10 @@ plugins {
 	id("conv.redwood")
 }
 
-kotestConfigClass = "KotestConfig"
-
 val parent = project.parent!!
 android.autoNamespace(project, parent)
 
 dependencies {
-	deps.bundles.testExtras *= {
-		commonTestImplementation(it)
-	}
-	commonTestImplementation(project(":kokoro.lib.test.support"))
-
 	commonMainImplementation(project(":kokoro.lib.internal"))
 
 	appMainImplementation(parent.project("redwood:compose"))

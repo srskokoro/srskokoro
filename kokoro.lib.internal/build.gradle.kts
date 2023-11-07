@@ -5,8 +5,6 @@ plugins {
 	id("conv.version")
 }
 
-kotestConfigClass = "KotestConfig"
-
 kotlin {
 	/**
 	 * See 'build.targets.cf' to declare build targets, then use
@@ -43,11 +41,6 @@ buildConfig {
 }
 
 dependencies {
-	deps.bundles.testExtras *= {
-		commonTestImplementation(it)
-	}
-	commonTestImplementation(project(":kokoro.lib.test.support"))
-
 	appMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 	appMainImplementation("com.squareup.okio:okio")
 }

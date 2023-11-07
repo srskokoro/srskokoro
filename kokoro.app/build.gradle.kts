@@ -10,8 +10,6 @@ plugins {
 	kotlin("plugin.serialization")
 }
 
-kotestConfigClass = "KotestConfig"
-
 kotlin {
 	/**
 	 * See 'build.targets.cf' to declare build targets, then use
@@ -62,11 +60,6 @@ buildConfig.desktopMain {
 }
 
 dependencies {
-	deps.bundles.testExtras *= {
-		commonTestImplementation(it)
-	}
-	commonTestImplementation(project(":kokoro.lib.test.support"))
-
 	commonMainImplementation(project(":kokoro.lib.internal"))
 	commonMainImplementation("androidx.annotation:annotation")
 

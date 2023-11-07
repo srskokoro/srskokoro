@@ -4,8 +4,6 @@ plugins {
 	id("conv.version")
 }
 
-kotestConfigClass = "KotestConfig"
-
 kotlin {
 	/**
 	 * See 'build.targets.cf' to declare build targets, then use
@@ -29,10 +27,5 @@ android {
 }
 
 dependencies {
-	deps.bundles.testExtras *= {
-		commonTestImplementation(it)
-	}
-	commonTestImplementation(project(":kokoro.lib.test.support"))
-
 	commonMainImplementation(project(":kokoro.lib.internal"))
 }
