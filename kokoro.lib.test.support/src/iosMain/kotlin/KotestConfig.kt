@@ -1,6 +1,6 @@
 import kotlin.experimental.ExperimentalNativeApi
 
-actual class KotestConfig : BaseKotestConfig() {
+actual open class KotestConfig : BaseKotestConfig() {
 	override val parallelism
 		@OptIn(ExperimentalNativeApi::class)
 		get() = Platform.getAvailableProcessors() // WARNING: May throw `IllegalStateException`
