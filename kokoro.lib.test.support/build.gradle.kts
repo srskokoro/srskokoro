@@ -1,5 +1,6 @@
 plugins {
-	id("kokoro.conv.kt.mpp.lib.test")
+	id("conv.kt.mpp.lib.test")
+	id("kokoro.conv.kt.mpp.lib.hierarchy")
 	id("conv.kt.mpp.targets")
 }
 
