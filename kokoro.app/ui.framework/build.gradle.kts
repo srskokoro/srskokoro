@@ -1,5 +1,3 @@
-import conv.util.*
-
 plugins {
 	id("kokoro.conv.kt.mpp.lib")
 	id("kokoro.app.ui.wv.setup")
@@ -7,7 +5,6 @@ plugins {
 }
 
 val parent = project.parent!!
-android.autoNamespace(project, parent)
 
 dependencies {
 	commonMainImplementation(project(":kokoro.lib.internal"))
