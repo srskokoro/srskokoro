@@ -30,6 +30,6 @@ android {
 
 dependencies {
 	deps.bundles.testExtras *= {
-		commonTestImplementation(it)
+		commonTestApi(it)
 	}
 }
