@@ -17,18 +17,20 @@ import javax.swing.UIManager
 import javax.swing.UnsupportedLookAndFeelException
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun ensureAppLaf() = @Suppress("DEPRECATION") AppLafSetup.maybeInit()
+inline fun ensureAppLaf() = @Suppress("DEPRECATION") AppLafSetup.maybeInit()
 
 /**
  * Should be set to match the current LAF, which isn't necessarily when the
  * system changes dark mode.
  */
-private var _isDarkAppLaf = false
-internal inline val isDarkAppLaf get() = _isDarkAppLaf
+@Deprecated(SPECIAL_USE_DEPRECATION)
+@PublishedApi @JvmField internal var _isDarkAppLaf = false
+inline val isDarkAppLaf get() = @Suppress("DEPRECATION") _isDarkAppLaf
 
 // --
 
 @Deprecated(SPECIAL_USE_DEPRECATION)
+@PublishedApi
 internal object AppLafSetup :
 	Throwable(null, null, false, false),
 	Consumer<Boolean>, Runnable {
@@ -93,7 +95,9 @@ internal object AppLafSetup :
 
 	private fun updateLaf() {
 		val isDark = this.isDark
+		@Suppress("DEPRECATION")
 		_isDarkAppLaf = isDark
+
 		UIManager.setLookAndFeel(
 			if (!isDark) {
 				FlatLightLaf()
@@ -177,7 +181,8 @@ internal object AppLafSetup :
 		}
 	}
 
-	private fun wrapThrown(): UnsupportedLookAndFeelException {
+	@PublishedApi
+	internal fun wrapThrown(): UnsupportedLookAndFeelException {
 		assert({ "Expected: thrown while initializing" }) { nonInitStatus != null }
 		assert({ "Should be considered initialized by now" }) { hasInit }
 		val wrapper = UnsupportedLookAndFeelException("Failed to initialize look and feel")
