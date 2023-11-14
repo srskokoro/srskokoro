@@ -38,27 +38,6 @@ android {
 	}
 }
 
-buildConfig.appMain {
-	internalObject("AppBuild") inPackage NAMESPACE
-
-	buildConfigField("String", "EXE_NAME", "\"${extra["kokoro.app.exe.name"]}\"")
-
-	buildConfigField("String", "TITLE", "\"$APP_TITLE\"")
-	buildConfigField("String", "TITLE_SHORT", "\"$APP_TITLE_SHORT\"")
-
-	buildConfigField("String", "VERSION", "\"$version\"")
-	buildConfigField("int", "VERSION_CODE", "$versionCode")
-	if (versionCode == 0) throw InvalidUserDataException(
-		"Version code 0 (zero) should not be used"
-	)
-}
-
-buildConfig.desktopMain {
-	internalObject("AppBuildDesktop") inPackage NAMESPACE
-	buildConfigField("String", "APP_DATA_DIR_NAME", "\"SRSKokoro${if (isReleasing) "" else "-Dev"}\"")
-	buildConfigField("String", "USER_COLLECTIONS_DIR_NAME", "\"SRS Kokoro${if (isReleasing) "" else " (Dev)"}\"")
-}
-
 dependencies {
 	commonMainImplementation(project("core.base"))
 	commonMainImplementation(project("core.components"))
