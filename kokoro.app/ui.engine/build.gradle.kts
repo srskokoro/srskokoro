@@ -5,9 +5,10 @@ plugins {
 }
 
 dependencies {
-	commonMainImplementation(project(":kokoro.lib.internal"))
-
+	commonMainApi(project("core.api"))
 	desktopJvmMainApi(project("jcef"))
+
+	commonMainImplementation(project(":kokoro.lib.internal"))
 
 	commonMainImplementation("com.soywiz.korlibs.kds:kds")
 
