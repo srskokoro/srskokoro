@@ -8,6 +8,9 @@ dependencies {
 
 	commonMainImplementation(project(":kokoro.lib.internal"))
 
+	appMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+	desktopJvmMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing")
+
 	desktopJvmMainApi("com.formdev:flatlaf")
 	desktopJvmMainApi("com.formdev:flatlaf-extras")
 	// See, https://www.formdev.com/flatlaf/native-libraries/
