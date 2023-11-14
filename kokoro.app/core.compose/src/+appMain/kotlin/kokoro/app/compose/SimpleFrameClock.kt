@@ -1,10 +1,10 @@
 package kokoro.app.ui.compose
 
-import androidx.compose.runtime.MonotonicFrameClock
-import kotlin.coroutines.Continuation
-import kotlinx.coroutines.suspendCancellableCoroutine
+import androidx.compose.runtime.*
 import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.Continuation
 
 /** @see androidx.compose.runtime.BroadcastFrameClock */
 abstract class SimpleFrameClock : MonotonicFrameClock {
@@ -22,11 +22,11 @@ abstract class SimpleFrameClock : MonotonicFrameClock {
 	private var awaiters = ArrayList<FrameAwaiter<*>>()
 	private var spareList = ArrayList<FrameAwaiter<*>>()
 
-    /**
-     * Send a frame for time [timeNanos] to all current callers of [withFrameNanos].
+	/**
+	 * Send a frame for time [timeNanos] to all current callers of [withFrameNanos].
 	 * The `onFrame` callback for each caller is invoked synchronously during
 	 * the call to [sendFrame].
-     */
+	 */
 	fun sendFrame(timeNanos: Long) {
 		synchronized(lock) {
 			// Rotate the lists so that if a resumed continuation on an
