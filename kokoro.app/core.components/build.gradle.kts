@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-	val parent = parent!!
+	val parent = evaluatedParent
 	commonMainImplementation(parent.project("core.base"))
 
 	commonMainImplementation(project(":kokoro.lib.internal"))

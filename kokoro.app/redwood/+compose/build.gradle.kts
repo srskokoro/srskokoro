@@ -5,10 +5,10 @@ plugins {
 	id("conv.redwood.gen.compose")
 }
 
-val parent = project.parent!!
+val parent = evaluatedParent
 
 android {
-	val client = parent.parent!!
+	val client = parent.evaluatedParent
 	autoNamespace(project, client)
 }
 

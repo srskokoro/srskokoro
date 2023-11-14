@@ -4,7 +4,7 @@ plugins {
 	id("kokoro.jcef.bundler")
 }
 
-group = parent!!.group
+group = evaluatedParent.group
 
 application {
 	mainClass.set("main.MainKt")

@@ -6,10 +6,10 @@ plugins {
 	id("conv.kt.mpp.assets")
 }
 
-val parent = project.parent!!
+val parent = evaluatedParent
 
 android {
-	val client = parent.parent!!
+	val client = parent.evaluatedParent
 	autoNamespace(project, client)
 }
 

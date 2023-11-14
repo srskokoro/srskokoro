@@ -3,7 +3,7 @@ plugins {
 	id("conv.version")
 }
 
-group = parent!!.group
+group = evaluatedParent.group
 
 android {
 	namespace = extra["kokoro.app.target.ns"] as String

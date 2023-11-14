@@ -4,7 +4,7 @@ plugins {
 	id("conv.redwood")
 }
 
-val parent = project.parent!!
+val parent = evaluatedParent
 
 dependencies {
 	commonMainImplementation(project(":kokoro.lib.internal"))
