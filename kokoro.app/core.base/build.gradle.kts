@@ -1,5 +1,6 @@
 plugins {
 	id("kokoro.conv.kt.mpp.lib")
+	id("conv.kt.mpp.assets")
 }
 
 dependencies {
