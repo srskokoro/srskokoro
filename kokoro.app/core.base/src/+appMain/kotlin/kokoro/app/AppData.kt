@@ -17,6 +17,10 @@ import kotlin.jvm.JvmStatic
  */
 object AppData {
 
+	init {
+		AppData_platformInit()
+	}
+
 	/**
 	 * The primary directory for storing local app data.
 	 *
