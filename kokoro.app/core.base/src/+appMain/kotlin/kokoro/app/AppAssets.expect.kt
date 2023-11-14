@@ -2,6 +2,6 @@ package kokoro.app
 
 import okio.Source
 
-expect object AppAssets
+expect object LibAssets
 
-expect fun AppAssets.open(path: String): Source
+expect fun LibAssets.open(path: String): Source
