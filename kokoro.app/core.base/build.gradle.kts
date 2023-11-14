@@ -4,4 +4,6 @@ plugins {
 
 dependencies {
 	commonMainImplementation(project(":kokoro.lib.internal"))
+
+	appMainImplementation("com.squareup.okio:okio")
 }
