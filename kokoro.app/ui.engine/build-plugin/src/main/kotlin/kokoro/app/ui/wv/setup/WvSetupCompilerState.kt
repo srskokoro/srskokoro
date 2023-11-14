@@ -120,7 +120,7 @@ private const val IMPORT_DIRECTIVE_n = IMPORT_DIRECTIVE.length
 
 private fun parseImportDirectiveForPath(line: String) = line.substring(
 	IMPORT_DIRECTIVE_n,
-	line.indexOfLast { !it.isWhitespace() }.coerceAtLeast(0)
+	line.indexOfLast { !it.isWhitespace() } + 1
 )
 
 
