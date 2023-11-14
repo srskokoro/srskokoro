@@ -4,4 +4,7 @@ plugins {
 
 dependencies {
 	commonMainImplementation(project(":kokoro.lib.internal"))
+
+	androidMainApi("androidx.webkit:webkit")
+	appMainImplementation("com.squareup.okio:okio")
 }
