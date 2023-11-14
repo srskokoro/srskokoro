@@ -60,6 +60,9 @@ buildConfig.desktopMain {
 }
 
 dependencies {
+	commonMainImplementation(project("core.base"))
+	commonMainImplementation(project("core.components"))
+
 	commonMainImplementation(project(":kokoro.lib.internal"))
 	commonMainImplementation("androidx.annotation:annotation")
 
