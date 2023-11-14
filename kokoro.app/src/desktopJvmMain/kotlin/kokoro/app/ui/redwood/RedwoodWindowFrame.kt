@@ -5,8 +5,8 @@ import app.cash.redwood.compose.RedwoodComposition
 import app.cash.redwood.ui.UiConfiguration
 import app.cash.redwood.widget.RedwoodView
 import app.cash.redwood.widget.Widget
+import kokoro.app.compose.SimpleFrameClock
 import kokoro.app.ui.ScopedWindowFrame
-import kokoro.app.ui.compose.SimpleFrameClock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import java.awt.EventQueue

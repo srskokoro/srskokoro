@@ -1,4 +1,4 @@
-package kokoro.app.ui.compose
+package kokoro.app.compose
 
 import androidx.compose.runtime.*
 import kotlinx.atomicfu.locks.SynchronizedObject
