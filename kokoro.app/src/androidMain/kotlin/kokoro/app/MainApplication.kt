@@ -1,33 +1,10 @@
 package kokoro.app
 
-import android.app.Application
-import android.content.Context
 import android.content.res.Configuration
 import android.os.Build
 import java.util.Locale
-import kokoro.app.MainApplication.Singleton.instance as mainApplication
 
-class MainApplication : Application() {
-
-	override fun attachBaseContext(base: Context?) {
-		super.attachBaseContext(base)
-		instance = this
-	}
-
-	companion object {
-		private var instance: MainApplication? = null
-
-		fun getOrNull(): MainApplication? = instance
-
-		fun get(): MainApplication = mainApplication
-	}
-
-	private object Singleton {
-		@JvmField val instance: MainApplication =
-			getOrNull() ?: throw UninitializedPropertyAccessException(
-				"Main application was not initialized."
-			)
-	}
+class MainApplication : CoreApplication() {
 
 	override fun onConfigurationChanged(newConfig: Configuration) {
 		super.onConfigurationChanged(newConfig)

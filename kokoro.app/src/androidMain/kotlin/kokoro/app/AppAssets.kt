@@ -8,7 +8,7 @@ import java.io.InputStream
 actual object AppAssets {
 	// NOTE: If necessary, make this `volatile` and update on every application
 	// configuration change -- see, `Application.onConfigurationChanged()`
-	@JvmField val manager: AssetManager = MainApplication.get().assets
+	@JvmField val manager: AssetManager = CoreApplication.get().assets
 }
 
 actual fun AppAssets.open(path: String): Source = manager.open(path).source()
