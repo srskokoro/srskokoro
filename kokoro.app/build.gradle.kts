@@ -39,9 +39,9 @@ android {
 }
 
 dependencies {
-	commonMainImplementation(project("core.base"))
-	commonMainImplementation(project("core.components"))
-	commonMainImplementation(project("core.compose"))
+	commonMainApi(project("core.base"))
+	commonMainApi(project("core.components"))
+	commonMainApi(project("core.compose"))
 
 	commonMainImplementation(project(":kokoro.lib.internal"))
 	commonMainImplementation("androidx.annotation:annotation")
