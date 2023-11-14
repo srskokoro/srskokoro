@@ -1,8 +1,8 @@
 package kokoro.jcef
 
 import androidx.annotation.GuardedBy
-import kokoro.app.App
 import kokoro.app.AppData
+import kokoro.app.i18n.currentLocale
 import kokoro.internal.DEBUG
 import kokoro.internal.SPECIAL_USE_DEPRECATION
 import kokoro.internal.collections.fastForEach
@@ -125,7 +125,7 @@ object Jcef {
 				log_file = AppData.mainLogsDir.toString() + File.separatorChar + "jcef.debug.log"
 
 				// TODO How to handle locale changes while the app is already running?
-				locale = App.currentLocale().toLanguageTag()
+				locale = currentLocale().toLanguageTag()
 
 				// TODO
 				//cache_path = ...
