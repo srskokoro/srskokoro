@@ -44,7 +44,7 @@ dependencies {
 	commonMainApi(project("core.compose"))
 
 	commonMainImplementation(project(":kokoro.lib.internal"))
-	commonMainImplementation("androidx.annotation:annotation")
+	appMainImplementation("androidx.annotation:annotation")
 
 	appMainImplementation(project("redwood:compose"))
 	appMainImplementation(project("redwood:widget"))

@@ -10,7 +10,7 @@ dependencies {
 
 	commonMainImplementation(project(":kokoro.lib.internal"))
 
-	commonMainImplementation("com.soywiz.korlibs.kds:kds")
+	appMainImplementation("com.soywiz.korlibs.kds:kds")
 
 	appMainImplementation("org.jetbrains.compose.runtime:runtime")
 	appMainImplementation("org.jetbrains.compose.runtime:runtime-saveable")
