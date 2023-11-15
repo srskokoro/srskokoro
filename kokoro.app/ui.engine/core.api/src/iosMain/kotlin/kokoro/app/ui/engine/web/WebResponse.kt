@@ -37,7 +37,5 @@ actual class WebResponse actual constructor(
 		data = data,
 	)
 
-	actual companion object;
-
-	actual inline val isSwitchingWebContext: Boolean get() = common_isSwitchingWebContext
+	actual companion object
 }

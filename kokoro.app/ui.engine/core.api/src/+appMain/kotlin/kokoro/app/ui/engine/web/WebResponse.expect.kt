@@ -33,15 +33,12 @@ expect class WebResponse {
 	)
 
 	companion object
-
-	val isSwitchingWebContext: Boolean
 }
+
+inline val WebResponse.isSwitchingWebContext get() = this === WebResponse.forSwitchingWebContext()
 
 fun WebResponse.Companion.forSwitchingWebContext(): WebResponse = _forSwitchingWebContext
 private val _forSwitchingWebContext = WebResponse(null, null, nullSource())
-
-@PublishedApi
-internal inline val WebResponse.common_isSwitchingWebContext get() = this === WebResponse.forSwitchingWebContext()
 
 internal fun WebResponse.common_checkStatus(status: Int) {
 	if (RELEASE) return // Skip check on release builds!
