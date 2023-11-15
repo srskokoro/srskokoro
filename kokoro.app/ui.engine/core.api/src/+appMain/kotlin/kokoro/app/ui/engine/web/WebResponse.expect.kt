@@ -1,5 +1,6 @@
 package kokoro.app.ui.engine.web
 
+import kokoro.internal.RELEASE
 import okio.Source
 
 expect class WebResponse {
@@ -32,6 +33,8 @@ expect class WebResponse {
 }
 
 internal fun WebResponse.common_checkStatus(status: Int) {
+	if (RELEASE) return // Skip check on release builds!
+
 	// The following check is to ensure that `status` is consistent with the
 	// expected behavior on Android. See, `android.webkit.WebResourceResponse.setStatusCodeAndReasonPhrase()`
 	if (status < 100) throw IllegalArgumentException("status code can't be less than 100.")
