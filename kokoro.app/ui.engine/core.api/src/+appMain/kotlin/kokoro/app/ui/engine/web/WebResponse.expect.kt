@@ -8,6 +8,7 @@ expect class WebResponse {
 	val mimeType: String?
 	val encoding: String?
 	val headers: Map<String, String>
+	val dataLength: Long
 	val data: Source
 
 	constructor(
@@ -15,6 +16,7 @@ expect class WebResponse {
 		mimeType: String?,
 		encoding: String?,
 		headers: Map<String, String>,
+		dataLength: Long,
 		data: Source,
 	)
 
@@ -22,12 +24,14 @@ expect class WebResponse {
 		status: Int,
 		mimeType: String?,
 		encoding: String?,
+		dataLength: Long,
 		data: Source,
 	)
 
 	constructor(
 		mimeType: String?,
 		encoding: String?,
+		dataLength: Long,
 		data: Source,
 	)
 
