@@ -40,7 +40,7 @@ inline val WebResponse.isSwitchingWebContext get() = this === WebResponse.forSwi
 fun WebResponse.Companion.forSwitchingWebContext(): WebResponse = _forSwitchingWebContext
 private val _forSwitchingWebContext = WebResponse(null, null, nullSource())
 
-internal fun WebResponse.common_checkStatus(status: Int) {
+internal fun WebResponse_checkStatus_nonAndroid(status: Int) {
 	if (RELEASE) return // Skip check on release builds!
 
 	// The following check is to ensure that `status` is consistent with the

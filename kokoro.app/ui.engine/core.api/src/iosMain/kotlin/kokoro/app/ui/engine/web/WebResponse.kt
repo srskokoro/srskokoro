@@ -10,7 +10,7 @@ actual class WebResponse actual constructor(
 	actual val data: Source,
 ) {
 	init {
-		common_checkStatus(status)
+		WebResponse_checkStatus_nonAndroid(status)
 	}
 
 	actual constructor(
