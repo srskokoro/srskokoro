@@ -38,7 +38,7 @@ expect class WebResponse {
 inline val WebResponse.isSwitchingWebContext get() = this === WebResponse.forSwitchingWebContext()
 
 fun WebResponse.Companion.forSwitchingWebContext(): WebResponse = _forSwitchingWebContext
-private val _forSwitchingWebContext = WebResponse(null, null, nullSource())
+private val _forSwitchingWebContext = WebResponse(418 /* I'm a teapot */, null, null, nullSource())
 
 internal fun WebResponse_checkStatus_nonAndroid(status: Int) {
 	if (RELEASE) return // Skip check on release builds!
