@@ -55,6 +55,10 @@ actual class WebResponse {
 		)
 		this.data = data
 	}
+
+	actual companion object;
+
+	actual inline val isSwitchingWebContext: Boolean get() = common_isSwitchingWebContext
 }
 
 private fun getStatusMessage(status: Int): String {

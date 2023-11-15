@@ -36,4 +36,8 @@ actual class WebResponse actual constructor(
 		encoding = encoding,
 		data = data,
 	)
+
+	actual companion object;
+
+	actual inline val isSwitchingWebContext: Boolean get() = common_isSwitchingWebContext
 }
