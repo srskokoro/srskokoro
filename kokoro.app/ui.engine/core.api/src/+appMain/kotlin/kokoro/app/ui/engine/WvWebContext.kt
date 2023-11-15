@@ -7,6 +7,12 @@ import kokoro.app.ui.engine.web.WebResponse
 
 abstract class WvWebContext : WebContext, WebRequestHandler, WvUnitIdMapper {
 
+	companion object {
+		init {
+			WvWebContext_platformInit()
+		}
+	}
+
 	var fallbackWebRequestHandler = WebRequestHandler.NULL
 
 	final override fun onWebRequest(request: WebRequest): WebResponse? {
@@ -21,10 +27,4 @@ abstract class WvWebContext : WebContext, WebRequestHandler, WvUnitIdMapper {
 	abstract override suspend fun onJsMessage(what: Int, data: String): String
 
 	abstract override fun toWvUnitId(wvUnitKey: String): Int
-
-	companion object {
-		init {
-			WvWebContext_platformInit()
-		}
-	}
 }
