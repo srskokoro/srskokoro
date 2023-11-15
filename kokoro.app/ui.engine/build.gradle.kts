@@ -6,7 +6,6 @@ plugins {
 
 dependencies {
 	commonMainApi(project("core.api"))
-	desktopJvmMainApi(project("jcef"))
 
 	commonMainImplementation(project(":kokoro.lib.internal"))
 
