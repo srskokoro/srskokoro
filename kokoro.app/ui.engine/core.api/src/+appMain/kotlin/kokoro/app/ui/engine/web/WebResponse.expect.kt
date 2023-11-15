@@ -8,31 +8,31 @@ expect class WebResponse {
 	val mimeType: String?
 	val encoding: String?
 	val headers: Map<String, String>
-	val dataLength: Long
-	val data: Source
+	val contentLength: Long
+	val content: Source
 
 	constructor(
 		status: Int,
 		mimeType: String?,
 		encoding: String?,
 		headers: Map<String, String>,
-		dataLength: Long,
-		data: Source,
+		contentLength: Long,
+		content: Source,
 	)
 
 	constructor(
 		status: Int,
 		mimeType: String?,
 		encoding: String?,
-		dataLength: Long,
-		data: Source,
+		contentLength: Long,
+		content: Source,
 	)
 
 	constructor(
 		mimeType: String?,
 		encoding: String?,
-		dataLength: Long,
-		data: Source,
+		contentLength: Long,
+		content: Source,
 	)
 
 	companion object

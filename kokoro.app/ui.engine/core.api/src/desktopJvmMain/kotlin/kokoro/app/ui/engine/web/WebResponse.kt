@@ -7,8 +7,8 @@ actual class WebResponse actual constructor(
 	actual val mimeType: String?,
 	actual val encoding: String?,
 	actual val headers: Map<String, String>,
-	actual val dataLength: Long,
-	actual val data: Source,
+	actual val contentLength: Long,
+	actual val content: Source,
 ) {
 	init {
 		WebResponse_checkStatus_nonAndroid(status)
@@ -18,28 +18,28 @@ actual class WebResponse actual constructor(
 		status: Int,
 		mimeType: String?,
 		encoding: String?,
-		dataLength: Long,
-		data: Source,
+		contentLength: Long,
+		content: Source,
 	) : this(
 		status = status,
 		mimeType = mimeType,
 		encoding = encoding,
 		headers = emptyMap(),
-		dataLength = dataLength,
-		data,
+		contentLength = contentLength,
+		content,
 	)
 
 	actual constructor(
 		mimeType: String?,
 		encoding: String?,
-		dataLength: Long,
-		data: Source,
+		contentLength: Long,
+		content: Source,
 	) : this(
 		status = 200,
 		mimeType = mimeType,
 		encoding = encoding,
-		dataLength = dataLength,
-		data,
+		contentLength = contentLength,
+		content,
 	)
 
 	actual companion object

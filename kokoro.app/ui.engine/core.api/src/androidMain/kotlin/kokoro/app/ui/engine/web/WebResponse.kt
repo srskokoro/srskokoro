@@ -13,16 +13,16 @@ actual class WebResponse {
 	actual val mimeType: String? get() = platformValue.mimeType
 	actual val encoding: String? get() = platformValue.encoding
 	actual val headers: Map<String, String>
-	actual val dataLength: Long
-	actual val data: Source
+	actual val contentLength: Long
+	actual val content: Source
 
 	actual constructor(
 		status: Int,
 		mimeType: String?,
 		encoding: String?,
 		headers: Map<String, String>,
-		dataLength: Long,
-		data: Source,
+		contentLength: Long,
+		content: Source,
 	) {
 		platformValue = WebResourceResponse(
 			/* mimeType = */ mimeType,
@@ -32,51 +32,51 @@ actual class WebResponse {
 			/* responseHeaders = */
 			buildMap {
 				for ((k, v) in headers) put(k.lowercase(), v)
-				if (dataLength >= 0) setDataLengthHeader(dataLength)
+				if (contentLength >= 0) setContentLengthHeader(contentLength)
 			},
-			/* data = */ data.asInputStream(),
+			/* data = */ content.asInputStream(),
 		)
 		this.headers = headers
-		this.dataLength = dataLength
-		this.data = data
+		this.contentLength = contentLength
+		this.content = content
 	}
 
 	actual constructor(
 		status: Int,
 		mimeType: String?,
 		encoding: String?,
-		dataLength: Long,
-		data: Source,
+		contentLength: Long,
+		content: Source,
 	) {
 		platformValue = WebResourceResponse(
 			/* mimeType = */ mimeType,
 			/* encoding = */ encoding,
-			/* data = */ data.asInputStream(),
+			/* data = */ content.asInputStream(),
 		).also {
 			it.setStatusCodeAndReasonPhrase(status, getStatusMessage(status))
-			if (dataLength >= 0) it.setDataLengthAsLoneHeader(dataLength)
+			if (contentLength >= 0) it.setContentLengthAsLoneHeader(contentLength)
 		}
 		this.headers = emptyMap()
-		this.dataLength = dataLength
-		this.data = data
+		this.contentLength = contentLength
+		this.content = content
 	}
 
 	actual constructor(
 		mimeType: String?,
 		encoding: String?,
-		dataLength: Long,
-		data: Source,
+		contentLength: Long,
+		content: Source,
 	) {
 		platformValue = WebResourceResponse(
 			/* mimeType = */ mimeType,
 			/* encoding = */ encoding,
-			/* data = */ data.asInputStream(),
+			/* data = */ content.asInputStream(),
 		).also {
-			if (dataLength >= 0) it.setDataLengthAsLoneHeader(dataLength)
+			if (contentLength >= 0) it.setContentLengthAsLoneHeader(contentLength)
 		}
 		this.headers = emptyMap()
-		this.dataLength = dataLength
-		this.data = data
+		this.contentLength = contentLength
+		this.content = content
 	}
 
 	actual companion object
@@ -87,12 +87,12 @@ private fun getStatusMessage(status: Int): String {
 	return status.toString()
 }
 
-private fun WebResourceResponse.setDataLengthAsLoneHeader(dataLength: Long) {
+private fun WebResourceResponse.setContentLengthAsLoneHeader(dataLength: Long) {
 	assert { dataLength >= 0 }
 	responseHeaders = singletonMap("content-length", dataLength.toString())
 }
 
-private fun MutableMap<String, String>.setDataLengthHeader(dataLength: Long) {
+private fun MutableMap<String, String>.setContentLengthHeader(dataLength: Long) {
 	assert { dataLength >= 0 }
 	put("content-length", dataLength.toString())
 }
