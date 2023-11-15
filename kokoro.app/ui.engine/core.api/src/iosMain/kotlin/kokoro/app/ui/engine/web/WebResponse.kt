@@ -26,7 +26,7 @@ actual class WebResponse actual constructor(
 		encoding = encoding,
 		headers = emptyMap(),
 		dataLength = dataLength,
-		data = data,
+		data,
 	)
 
 	actual constructor(
@@ -39,7 +39,7 @@ actual class WebResponse actual constructor(
 		mimeType = mimeType,
 		encoding = encoding,
 		dataLength = dataLength,
-		data = data,
+		data,
 	)
 
 	actual companion object
