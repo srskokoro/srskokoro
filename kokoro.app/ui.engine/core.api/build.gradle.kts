@@ -3,6 +3,9 @@ plugins {
 }
 
 dependencies {
+	val unsafeParent = unsafeParent
+	desktopJvmMainApi(unsafeParent.project("jcef"))
+
 	commonMainImplementation(project(":kokoro.lib.internal"))
 
 	androidMainApi("androidx.webkit:webkit")
