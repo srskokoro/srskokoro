@@ -4,8 +4,11 @@ import kokoro.app.ui.engine.web.WebContext
 import kokoro.app.ui.engine.web.WebRequest
 import kokoro.app.ui.engine.web.WebRequestHandler
 import kokoro.app.ui.engine.web.WebResponse
+import kokoro.app.ui.engine.web.WebUriOrigin
 
-abstract class WvWebContext : WebContext, WebRequestHandler, WvUnitIdMapper {
+abstract class WvWebContext(
+	val interceptor: WebRequestHandler,
+) : WebContext, WebRequestHandler, WvUnitIdMapper {
 
 	companion object {
 		init {
@@ -13,13 +16,13 @@ abstract class WvWebContext : WebContext, WebRequestHandler, WvUnitIdMapper {
 		}
 	}
 
-	var fallbackWebRequestHandler = WebRequestHandler.NULL
+	abstract override fun shouldAllowUsageFromOrigin(sourceOrigin: WebUriOrigin): Boolean
 
 	final override fun onWebRequest(request: WebRequest): WebResponse? {
-		val response = onHandleWebRequest(request)
+		val response = interceptor.onWebRequest(request)
 		if (response != null) return response
 
-		return fallbackWebRequestHandler.onWebRequest(request)
+		return onHandleWebRequest(request)
 	}
 
 	abstract fun onHandleWebRequest(request: WebRequest): WebResponse?

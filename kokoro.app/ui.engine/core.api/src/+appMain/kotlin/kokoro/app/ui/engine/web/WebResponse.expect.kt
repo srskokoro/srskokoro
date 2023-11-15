@@ -1,7 +1,6 @@
 package kokoro.app.ui.engine.web
 
 import kokoro.internal.RELEASE
-import kokoro.internal.io.nullSource
 import okio.Source
 
 expect class WebResponse {
@@ -34,11 +33,6 @@ expect class WebResponse {
 
 	companion object
 }
-
-inline val WebResponse.isSwitchingWebContext get() = this === WebResponse.forSwitchingWebContext()
-
-fun WebResponse.Companion.forSwitchingWebContext(): WebResponse = _forSwitchingWebContext
-private val _forSwitchingWebContext = WebResponse(418 /* I'm a teapot */, null, null, nullSource())
 
 internal fun WebResponse_checkStatus_nonAndroid(status: Int) {
 	if (RELEASE) return // Skip check on release builds!
