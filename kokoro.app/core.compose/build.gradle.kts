@@ -5,8 +5,8 @@ plugins {
 }
 
 dependencies {
-	val parent = evaluatedParent
-	commonMainImplementation(parent.project("core.base"))
+	val unsafeParent = unsafeParent
+	commonMainImplementation(unsafeParent.project("core.base"))
 
 	commonMainImplementation(project(":kokoro.lib.internal"))
 

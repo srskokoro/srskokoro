@@ -4,14 +4,13 @@ plugins {
 	id("conv.redwood")
 }
 
-val parent = evaluatedParent
-
 dependencies {
+	val unsafeParent = unsafeParent
 	commonMainImplementation(project(":kokoro.lib.internal"))
 
-	appMainImplementation(parent.project("redwood:compose"))
-	appMainImplementation(parent.project("redwood:widget"))
-	parent.project("ui.engine").let {
+	appMainImplementation(unsafeParent.project("redwood:compose"))
+	appMainImplementation(unsafeParent.project("redwood:widget"))
+	unsafeParent.project("ui.engine").let {
 		commonMainImplementation(it)
 		commonMainWvSetup(it)
 	}
