@@ -9,6 +9,10 @@ actual class WebResponse actual constructor(
 	actual val headers: Map<String, String>,
 	actual val data: Source,
 ) {
+	init {
+		common_checkStatus(status)
+	}
+
 	actual constructor(
 		status: Int,
 		mimeType: String?,
