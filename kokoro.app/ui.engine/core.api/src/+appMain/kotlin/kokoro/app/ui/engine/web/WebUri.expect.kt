@@ -3,9 +3,13 @@ package kokoro.app.ui.engine.web
 import kotlin.jvm.JvmInline
 
 @JvmInline
-value class WebUri(val value: WebUriValue)
+value class WebUri(val value: WebUriValue) {
+	constructor(uri: String) : this(getWebUriValue(uri))
+}
 
 expect class WebUriValue
+
+internal expect fun getWebUriValue(uri: String): WebUriValue
 
 expect fun WebUri.scheme(): String?
 expect fun WebUri.schemeSpecificPart(raw: Boolean = false): String

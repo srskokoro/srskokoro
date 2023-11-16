@@ -3,6 +3,9 @@ package kokoro.app.ui.engine.web
 @Suppress("ACTUAL_WITHOUT_EXPECT")
 actual typealias WebUriValue = android.net.Uri
 
+@Suppress("NOTHING_TO_INLINE")
+internal actual inline fun getWebUriValue(uri: String) = WebUriValue.parse(uri)
+
 
 actual fun WebUri.scheme(): String? = value.scheme
 

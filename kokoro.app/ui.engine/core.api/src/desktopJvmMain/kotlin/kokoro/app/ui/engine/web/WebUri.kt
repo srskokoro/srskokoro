@@ -2,6 +2,9 @@ package kokoro.app.ui.engine.web
 
 actual typealias WebUriValue = java.net.URI
 
+@Suppress("NOTHING_TO_INLINE")
+internal actual inline fun getWebUriValue(uri: String) = WebUriValue(uri)
+
 
 actual fun WebUri.scheme(): String? = value.scheme
 

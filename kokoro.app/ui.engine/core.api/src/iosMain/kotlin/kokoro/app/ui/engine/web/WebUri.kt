@@ -2,6 +2,8 @@ package kokoro.app.ui.engine.web
 
 actual class WebUriValue
 
+internal actual fun getWebUriValue(uri: String): WebUriValue = TODO("Not yet implemented")
+
 actual fun WebUri.scheme(): String? = TODO("Not yet implemented")
 actual fun WebUri.schemeSpecificPart(raw: Boolean): String = TODO("Not yet implemented")
 
