@@ -107,11 +107,11 @@ sealed class ModuleId private constructor() {
 		override fun equals(other: Any?) =
 			if (this !== other) when (other) {
 				is ViaId -> id == other.id
-				is ViaGroupName -> equals2(other)
+				is ViaGroupName -> equals0(other)
 				else -> false
 			} else true
 
-		internal fun equals2(other: ViaGroupName) =
+		internal fun equals0(other: ViaGroupName) =
 			groupEnd == other.group.length &&
 				id.startsWith(other.group) &&
 				id.endsWith(other.name)
@@ -133,7 +133,7 @@ sealed class ModuleId private constructor() {
 		override fun equals(other: Any?) =
 			if (this !== other) when (other) {
 				is ViaGroupName -> group == other.group && name == other.name
-				is ViaId -> other.equals2(this)
+				is ViaId -> other.equals0(this)
 				else -> false
 			} else true
 	}
