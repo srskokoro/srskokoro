@@ -14,6 +14,8 @@ class InputStreamAsSource(
 
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun asInputStream() = inputStream
+
+	override fun toString() = "asSource($inputStream)"
 }
 
 fun Source.asInputStream(): InputStream {

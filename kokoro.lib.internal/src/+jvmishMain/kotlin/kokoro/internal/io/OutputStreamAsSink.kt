@@ -14,6 +14,8 @@ class OutputStreamAsSink(
 
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun asOutputStream() = outputStream
+
+	override fun toString() = "asSink($outputStream)"
 }
 
 fun Sink.asOutputStream(): OutputStream {

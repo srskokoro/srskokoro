@@ -7,7 +7,7 @@ import okio.Timeout
 
 fun voidSource(): Source = VoidSource
 
-private object VoidSource : Source {
+private data object VoidSource : Source {
 	override fun read(sink: Buffer, byteCount: Long): Long = -1L
 	override fun timeout(): Timeout = Timeout.NONE
 	override fun close() {}
@@ -18,7 +18,7 @@ private object VoidSource : Source {
  */
 fun voidSink(): Sink = VoidSink
 
-private object VoidSink : Sink {
+private data object VoidSink : Sink {
 	override fun write(source: Buffer, byteCount: Long) = source.skip(byteCount)
 	override fun flush() {}
 	override fun timeout() = Timeout.NONE
