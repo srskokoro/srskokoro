@@ -4,7 +4,7 @@ import kokoro.app.ui.engine.web.WebContext
 import kokoro.app.ui.engine.web.WebRequest
 import kokoro.app.ui.engine.web.WebRequestHandler
 import kokoro.app.ui.engine.web.WebResponse
-import kokoro.app.ui.engine.web.WebUriOrigin
+import kokoro.app.ui.engine.web.WebOrigin
 
 abstract class WvWebContext(
 	val interceptor: WebRequestHandler,
@@ -16,7 +16,7 @@ abstract class WvWebContext(
 		}
 	}
 
-	abstract override fun shouldAllowUsageFromOrigin(sourceOrigin: WebUriOrigin): Boolean
+	abstract override fun shouldAllowUsageFromOrigin(sourceOrigin: WebOrigin): Boolean
 
 	final override fun onWebRequest(request: WebRequest): WebResponse? {
 		val response = interceptor.onWebRequest(request)

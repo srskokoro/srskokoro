@@ -17,7 +17,7 @@ interface WebContext : WebRequestHandler {
 	 * is not called, it's up to the engine to decide whether or not to forbid
 	 * usage of this [WebContext] for handling the request.
 	 */
-	fun shouldAllowUsageFromOrigin(sourceOrigin: WebUriOrigin): Boolean
+	fun shouldAllowUsageFromOrigin(sourceOrigin: WebOrigin): Boolean
 
 	override fun onWebRequest(request: WebRequest): WebResponse?
 
