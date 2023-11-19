@@ -6,5 +6,5 @@ plugins {
 kotestConfigClass = "KotestConfig"
 
 dependencies {
-	commonTestImplementation(project(":kokoro.lib.test.support"))
+	commonTestImplementation(project(":kokoro.lib:test.support"))
 }
