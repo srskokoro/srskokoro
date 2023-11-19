@@ -10,7 +10,7 @@ actual fun WebUri.schemeSpecificPart(raw: Boolean): String = TODO("Not yet imple
 actual fun WebUri.authority(raw: Boolean): String? = TODO("Not yet implemented")
 actual fun WebUri.userInfo(raw: Boolean): String? = TODO("Not yet implemented")
 actual fun WebUri.host(): String? = TODO("Not yet implemented")
-actual fun WebUri.port(): Int = TODO("Not yet implemented")
+actual fun WebUri.port(raw: Boolean): Int = TODO("Not yet implemented")
 
 actual fun WebUri.path(raw: Boolean): String? = TODO("Not yet implemented")
 actual fun WebUri.query(raw: Boolean): String? = TODO("Not yet implemented")

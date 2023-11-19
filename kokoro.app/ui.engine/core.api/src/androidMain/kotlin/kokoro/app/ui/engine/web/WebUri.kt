@@ -1,5 +1,7 @@
 package kokoro.app.ui.engine.web
 
+import assert
+
 @Suppress("ACTUAL_WITHOUT_EXPECT")
 actual typealias WebUriValue = android.net.Uri
 
@@ -24,7 +26,22 @@ actual fun WebUri.userInfo(raw: Boolean): String? =
 
 actual fun WebUri.host(): String? = value.host
 
-actual fun WebUri.port(): Int = value.port
+actual fun WebUri.port(raw: Boolean): Int {
+	var port = value.port
+	if (raw) return port
+
+	if (port < 0) {
+		assert({
+			"Per docs, `${WebUriValue::getPort.name}()` can never return a negative integer < -1"
+		}) { port >= -1 }
+
+		val scheme = value.scheme
+		if (scheme != null) {
+			port = WebUri.getPortForScheme(scheme)
+		}
+	}
+	return port
+}
 
 
 actual fun WebUri.path(raw: Boolean): String? =
