@@ -40,7 +40,7 @@ import javax.inject.Inject
 
 private const val DEPENDENCY_VERSIONS_EXPORT_PATH = "build/deps.versions.dat"
 
-abstract class DependencyVersionsSpec internal constructor(val settings: Settings) : DependencyBundlesSpec(), ExtensionAware {
+abstract class DependencyVersionsSpec internal constructor(val settings: Settings) : ExtensionAware {
 	val jvm: JvmSetupSpec = extensions.create(::jvm.name)
 
 	val plugins: MutableMap<PluginId, Version> = HashMap()

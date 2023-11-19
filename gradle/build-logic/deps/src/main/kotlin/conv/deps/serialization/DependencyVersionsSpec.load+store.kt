@@ -5,11 +5,8 @@ import conv.deps.JvmSetupVendor
 import conv.deps.ModuleId
 import conv.deps.PluginId
 import conv.deps.Version
-import conv.deps.spec.DependencyBundleSpec
-import conv.deps.spec.DependencyBundlesSpec
 import conv.deps.spec.DependencyVersionsSpec
 import conv.internal.support.from
-import conv.internal.support.removeLast
 import conv.internal.support.until
 import org.gradle.api.InvalidUserDataException
 import java.io.BufferedReader
@@ -26,8 +23,7 @@ private const val SUB_PROP_INDICATOR_len = "$SUB_PROP_INDICATOR".length
 private const val HEADER_00_JVM = "[jvm]"
 private const val HEADER_01_PLUGINS = "[plugins]"
 private const val HEADER_02_MODULES = "[modules]"
-private const val HEADER_03_BUNDLES = "[bundles]"
-private const val HEADER_04_INCLUDES = "[includes]"
+private const val HEADER_03_INCLUDES = "[includes]"
 
 private const val PREFIX_JVM_00_VER = "ver$KEY_SEP"
 private const val PREFIX_JVM_00_VER_len = PREFIX_JVM_00_VER.length
@@ -79,10 +75,7 @@ private fun consumeHeader(state: ReaderState, header: String): Boolean {
 		HEADER_02_MODULES -> state.addFirst(
 			DependencyVersionsSpec::consumeModule
 		)
-		HEADER_03_BUNDLES -> state.addFirst {
-			consumeBundleName(state, it)
-		}
-		HEADER_04_INCLUDES -> state.addFirst {
+		HEADER_03_INCLUDES -> state.addFirst {
 			consumeInclude(state, it)
 		}
 		else -> return false
@@ -133,39 +126,6 @@ private fun DependencyVersionsSpec.consumeModule(line: String): Boolean {
 		val ver = line.from(nameEnd + 1)
 
 		modules.putIfAbsent(ModuleId.of_unsafe(group, name), Version.of_unsafe(ver))
-		return true
-	}
-	return false
-}
-
-private fun DependencyBundlesSpec.consumeBundleName(state: ReaderState, bundleHeader: String): Boolean {
-	if (bundleHeader.endsWith(KEY_SEP)) {
-		val name = bundleHeader.removeLast(KEY_SEP_len)
-		val spec = this.bundle_unsafe(name)
-		state.addFirst { spec.consumeBundleElement(it) }
-		return true
-	}
-	return false
-}
-
-private fun DependencyBundleSpec.consumeBundleElement(line: String): Boolean {
-	if (line.startsWith(SUB_PROP_INDICATOR)) {
-		val groupEnd = line.indexOf(':', startIndex = SUB_PROP_INDICATOR_len)
-		val group = line.from(SUB_PROP_INDICATOR_len, groupEnd) // Let it throw!
-
-		val nameEnd = line.indexOf(':', startIndex = groupEnd + 1)
-		val name: String
-
-		val ver: Version?
-		if (nameEnd < 0) {
-			name = line.from(groupEnd + 1)
-			ver = null
-		} else {
-			name = line.from(groupEnd + 1, nameEnd)
-			ver = Version.of_unsafe(line.from(nameEnd + 1))
-		}
-
-		modules.putIfAbsent(ModuleId.of_unsafe(group, name), ver)
 		return true
 	}
 	return false
@@ -235,23 +195,7 @@ private fun store(spec: DependencyVersionsSpec, writer: Writer): Int = writer.ru
 
 	// --
 	nl++; appendLine()
-	nl++; appendLine(HEADER_03_BUNDLES)
-
-	spec.bundles.forEach pass@{ (bundleName: String, bundleSpec) ->
-		if (cannotStore(bundleName)) return@pass // Skip
-
-		nl++
-		append(bundleName)
-		appendLine(KEY_SEP)
-
-		bundleSpec.modules.forEach { (moduleId, ver) ->
-			nl++; append(SUB_PROP_INDICATOR).appendLine(moduleId.toString(ver))
-		}
-	}
-
-	// --
-	nl++; appendLine()
-	nl++; appendLine(HEADER_04_INCLUDES)
+	nl++; appendLine(HEADER_03_INCLUDES)
 
 	val settingsDir = spec.settings.settingsDir.toPath()
 	spec.includes.forEach pass@{

@@ -29,7 +29,6 @@ android {
 }
 
 dependencies {
-	deps.bundles.testExtras *= {
-		commonMainApi(it)
-	}
+	commonMainApi("org.jetbrains.kotlinx:kotlinx-coroutines-test")
+	commonMainApi("io.kotest:kotest-property")
 }

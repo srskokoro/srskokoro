@@ -118,10 +118,3 @@ dependencyVersions {
 	val voyager = "1.0.0-rc07" // https://github.com/adrielcafe/voyager/releases
 	module("cafe.adriel.voyager:*", voyager)
 }
-
-dependencyBundles {
-	bundle("testExtras") {
-		module("org.jetbrains.kotlinx:kotlinx-coroutines-test")
-		module("io.kotest:kotest-property")
-	}
-}

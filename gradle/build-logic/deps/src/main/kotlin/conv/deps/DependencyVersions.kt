@@ -10,6 +10,4 @@ abstract class DependencyVersions internal constructor(spec: DependencyVersionsS
 
 	val plugins: Map<PluginId, Version> = spec.plugins
 	val modules: Map<ModuleId, Version> = spec.modules
-
-	val bundles: DependencyBundles = extensions.create(::bundles.name, spec)
 }

@@ -1,7 +1,6 @@
 @file:Suppress("PackageDirectoryMismatch")
 
 import conv.deps.DependencyVersionsSetup
-import conv.deps.spec.DependencyBundlesSpec
 import conv.deps.spec.DependencyVersionsSpec
 import org.gradle.api.initialization.Settings
 import org.gradle.kotlin.dsl.create
@@ -25,17 +24,6 @@ internal fun Settings.ensureDependencyVersions() = extensions.let {
 fun Settings.dependencyVersions(config: DependencyVersionsSpec.() -> Unit) {
 	// May throw. Thus, we can't be `inline` (or Gradle will report incorrect line numbers :P)
 	val spec = dependencyVersions
-	spec.config()
-}
-
-
-val Settings.dependencyBundles: DependencyBundlesSpec
-	// May throw. Thus, we can't be `inline` (or Gradle will report incorrect line numbers :P)
-	get() = dependencyVersions
-
-fun Settings.dependencyBundles(config: DependencyBundlesSpec.() -> Unit) {
-	// May throw. Thus, we can't be `inline` (or Gradle will report incorrect line numbers :P)
-	val spec = dependencyBundles
 	spec.config()
 }
 

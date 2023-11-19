@@ -19,12 +19,6 @@ internal fun failOnDuplicateModuleId(moduleId: Any): Nothing = throw InvalidUser
 	""".trimIndent()
 )
 
-internal fun failOnBundleName(name: Any): Nothing = throw InvalidUserDataException(
-	"""
-	Supplied bundle name "$name" is invalid.
-	""".trimIndent()
-)
-
 // --
 
 internal fun failOnPluginId(namespace: String, name: String): Nothing = failOnPluginId("$namespace.$name")
