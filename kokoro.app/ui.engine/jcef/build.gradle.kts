@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
 	implementation(project(":kokoro.app:core.base"))
-	implementation(project(":kokoro.lib.internal"))
+	implementation(project(":kokoro.lib:internal"))
 	implementation("androidx.annotation:annotation")
 	api(jcef.dependency)
 }

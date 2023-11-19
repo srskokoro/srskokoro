@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
 	val unsafeParent = unsafeParent
-	commonMainImplementation(project(":kokoro.lib.internal"))
+	commonMainImplementation(project(":kokoro.lib:internal"))
 
 	appMainImplementation(unsafeParent.project("redwood:compose"))
 	appMainImplementation(unsafeParent.project("redwood:widget"))

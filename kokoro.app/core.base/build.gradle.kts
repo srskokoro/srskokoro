@@ -31,7 +31,7 @@ buildConfig.desktopMain {
 }
 
 dependencies {
-	commonMainImplementation(project(":kokoro.lib.internal"))
+	commonMainImplementation(project(":kokoro.lib:internal"))
 
 	appMainApi("com.squareup.okio:okio")
 }

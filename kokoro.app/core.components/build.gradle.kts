@@ -7,7 +7,7 @@ dependencies {
 	val unsafeParent = unsafeParent
 	commonMainImplementation(unsafeParent.project("core.base"))
 
-	commonMainImplementation(project(":kokoro.lib.internal"))
+	commonMainImplementation(project(":kokoro.lib:internal"))
 
 	appMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 	desktopJvmMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing")
