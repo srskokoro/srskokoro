@@ -42,5 +42,5 @@ if (
 // application, such as the application ID used by the Android app.
 //
 childProjects.values.forEach {
-	it.group = "srs.kokoro"
+	it.group = "io.github.srskokoro"
 }
