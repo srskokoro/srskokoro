@@ -4,6 +4,8 @@ plugins {
 	id("conv.version")
 }
 
+base.archivesName.set("kokoro")
+
 kotlin {
 	/**
 	 * See 'build.targets.cf' to declare build targets, then use
