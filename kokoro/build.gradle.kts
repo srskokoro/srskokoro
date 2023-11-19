@@ -29,5 +29,5 @@ android {
 }
 
 dependencies {
-	commonMainImplementation(project(":kokoro.lib:internal"))
+	commonMainImplementation(project(":kokoro:internal"))
 }

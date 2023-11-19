@@ -7,7 +7,7 @@ plugins {
 dependencies {
 	commonMainApi(project("core.api"))
 
-	commonMainImplementation(project(":kokoro.lib:internal"))
+	commonMainImplementation(project(":kokoro:internal"))
 
 	appMainImplementation("com.soywiz.korlibs.kds:kds")
 
