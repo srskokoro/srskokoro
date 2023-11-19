@@ -106,7 +106,8 @@ dependencyVersions {
 	// https://github.com/cashapp/redwood/blob/0.7.0/gradle/libs.versions.toml#L6
 	val jb_compose = "1.5.1"
 	// The compose compiler plugin to use for Redwood -- https://github.com/cashapp/redwood/tree/0.7.0#custom-compose-compiler
-	val jb_compose_compiler = "1.5.3" // https://github.com/JetBrains/compose-multiplatform/blob/v1.5.10/gradle-plugins/compose/src/main/kotlin/org/jetbrains/compose/ComposeCompilerCompatibility.kt
+	// - See also, https://github.com/JetBrains/compose-multiplatform/blob/v1.5.10/gradle-plugins/compose/src/main/kotlin/org/jetbrains/compose/ComposeCompilerCompatibility.kt
+	val jb_compose_compiler = "1.5.3"
 	module("app.cash.redwood:*", redwood)
 	plugin("app.cash.redwood", redwood)
 	plugin("app.cash.redwood.*", redwood)
