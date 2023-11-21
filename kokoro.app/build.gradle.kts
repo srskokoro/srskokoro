@@ -10,6 +10,10 @@ plugins {
 	kotlin("plugin.serialization")
 }
 
+// NOTE: The `group` below is meant to be used by the application, such as the
+// application ID used by the Android app.
+group = extra["kokoro.app.group"] as String
+
 kotlin {
 	/**
 	 * See 'build.targets.cf' to declare build targets, then use

@@ -33,14 +33,3 @@ if (
 		task.setDependsOn(emptyList<Any?>()) // Clears task dependencies
 	}
 })))
-
-// NOTE: Only modify the `group` for direct subprojects of this project; let
-// Gradle automatically provide a unique `group` for subprojects of subprojects.
-// - See also, https://github.com/gradle/gradle/issues/847#issuecomment-1205001575
-//
-// NOTE: The `group` is meant to be used by both the library and the
-// application, such as the application ID used by the Android app.
-//
-childProjects.values.forEach {
-	it.group = "io.github.srskokoro"
-}

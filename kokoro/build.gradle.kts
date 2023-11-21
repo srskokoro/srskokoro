@@ -4,6 +4,7 @@ plugins {
 	id("conv.version")
 }
 
+group = extra["kokoro.group"] as String
 base.archivesName.set("kokoro")
 
 kotlin {
