@@ -2,7 +2,7 @@
 
 pluginManagement {
 	includeBuild("../#root")
-	includeBuild("../build-logic")
+	includeBuild("../build.logic")
 }
 plugins {
 	id("conv.plugins.settings")
@@ -10,5 +10,5 @@ plugins {
 
 dependencyResolutionManagement {
 	repositories.gradlePluginPortal()
-	includeBuild("../build-logic")
+	includeBuild("../build.logic")
 }

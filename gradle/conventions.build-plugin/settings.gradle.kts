@@ -2,7 +2,7 @@
 
 pluginManagement {
 	includeBuild("../#root")
-	includeBuild("../build-logic")
+	includeBuild("../build.logic")
 }
 plugins {
 	id("conv.conventions.settings")
@@ -10,7 +10,7 @@ plugins {
 
 dependencyResolutionManagement {
 	repositories.gradlePluginPortal()
-	includeBuild("../build-logic")
+	includeBuild("../build.logic")
 }
 
 gradle.rootProject {
