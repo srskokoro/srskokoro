@@ -8,4 +8,4 @@ gradle.rootProject {
 	group = "convention"
 }
 
-rootProject.name = "build-root"
+rootProject.name = "build.ground"
