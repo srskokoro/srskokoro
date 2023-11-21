@@ -8,4 +8,4 @@ dependencyResolutionManagement {
 	repositories.gradlePluginPortal()
 }
 
-include("build-support", "deps", "settings")
+include("build.support", "deps", "settings")

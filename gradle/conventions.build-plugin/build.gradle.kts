@@ -17,7 +17,7 @@ apply(plugin = "build.plugins.kt.dsl")
 
 dependencies {
 	implementation("convention:build.ground")
-	implementation("convention:build-support")
+	implementation("convention:build.support")
 	implementation("convention:deps")
 	implementation("convention:settings")
 

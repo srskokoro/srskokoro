@@ -14,7 +14,7 @@ gradlePlugin {
 dependencies {
 	compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin")
 
-	implementation("convention:build-support")
+	implementation("convention:build.support")
 	implementation("convention:settings")
 	implementation("convention:conventions")
 
