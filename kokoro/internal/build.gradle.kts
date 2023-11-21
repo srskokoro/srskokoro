@@ -5,6 +5,7 @@ plugins {
 	id("conv.version")
 }
 
+group = evaluatedParent.group
 base.archivesName.set("kokoro-internal")
 
 kotlin {
