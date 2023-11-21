@@ -4,7 +4,3 @@ plugins {
 	// subproject's classloader -- https://youtrack.jetbrains.com/issue/KT-46200
 	`kotlin-dsl` apply false
 }
-
-allprojects {
-	group = "build"
-}
