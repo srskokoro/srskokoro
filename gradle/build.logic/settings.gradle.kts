@@ -12,4 +12,4 @@ gradle.allprojects {
 	group = "build"
 }
 
-include("build.support", "deps", "settings")
+include("build.support", "dependencies", "settings")
