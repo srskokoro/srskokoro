@@ -6,5 +6,5 @@ plugins {
 }
 
 allprojects {
-	group = "convention"
+	group = "build"
 }

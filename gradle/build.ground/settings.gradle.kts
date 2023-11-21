@@ -5,7 +5,7 @@ dependencyResolutionManagement {
 }
 
 gradle.rootProject {
-	group = "convention"
+	group = "build"
 }
 
 rootProject.name = "build.ground"

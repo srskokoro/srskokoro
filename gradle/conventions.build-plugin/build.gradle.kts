@@ -16,10 +16,10 @@ kotlin {
 apply(plugin = "build.plugins.kt.dsl")
 
 dependencies {
-	implementation("convention:build.ground")
-	implementation("convention:build.support")
-	implementation("convention:deps")
-	implementation("convention:settings")
+	implementation("build:build.ground")
+	implementation("build:build.support")
+	implementation("build:deps")
+	implementation("build:settings")
 
 	// https://kotlinlang.org/docs/gradle-configure-project.html#versions-alignment-of-transitive-dependencies
 	platform("org.jetbrains.kotlin:kotlin-bom").let { bom ->
