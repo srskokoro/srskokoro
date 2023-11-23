@@ -7,5 +7,3 @@ dependencyResolutionManagement {
 gradle.rootProject {
 	group = "build"
 }
-
-rootProject.name = "build.ground"
