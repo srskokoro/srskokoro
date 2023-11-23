@@ -1,6 +1,7 @@
 ﻿@file:Suppress("PackageDirectoryMismatch")
 
 import org.gradle.api.GradleException
+import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleIdentifier
 import org.gradle.api.artifacts.ResolvableDependencies
@@ -16,15 +17,18 @@ import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.provideDelegate
 
 /**
- * Fails on transitive upgrade/downgrade of versions for dependencies under this
- * configuration that are direct dependencies of any project component (which
- * isn't necessarily the current project).
+ * Fails on transitive upgrade/downgrade of versions for dependencies under the
+ * given [configuration] that are direct dependencies of  any project component
+ * (which isn't necessarily the current project).
  *
  * Useful for solving the issue described in “[Effects of Gradle's default resolution behavior | Understanding Gradle #10 – Dependency Version Conflicts](https://youtu.be/YYWhfy6c2YQ?t=145)”
  *
- * @receiver A resolvable configuration.
- * @param gradle Non-null to enable. Null to disable.
+ * @param configuration A resolvable configuration.
+ * @param enable `true` to enable; `false` to disable.
  */
+fun Project.failOnDirectDependencyVersionGotcha(configuration: Configuration, enable: Boolean = true) =
+	configuration.failOnDirectDependencyVersionGotcha(if (enable) gradle else null)
+
 fun Configuration.failOnDirectDependencyVersionGotcha(gradle: Gradle?) =
 	failOnDirectDependencyVersionGotcha(gradle) { false }
 
