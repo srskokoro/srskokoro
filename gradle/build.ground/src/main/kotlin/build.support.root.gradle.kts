@@ -1,1 +1,5 @@
-apply(plugin = "lifecycle-base")
+plugins {
+	`lifecycle-base`
+}
+
+// Nothing (for now)

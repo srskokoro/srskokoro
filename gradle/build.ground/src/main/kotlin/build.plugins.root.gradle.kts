@@ -1,1 +1,5 @@
-apply(plugin = "build.support.root")
+plugins {
+	id("build.support.root")
+}
+
+// Nothing (for now)
