@@ -16,5 +16,4 @@ dependencyResolutionManagement {
 gradle.rootProject {
 	group = "convention"
 }
-
 rootProject.name = "conventions"
