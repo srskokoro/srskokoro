@@ -9,7 +9,6 @@ import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.diagnostics.AbstractDependencyReportTask
 import org.gradle.api.tasks.diagnostics.DependencyInsightReportTask
@@ -27,43 +26,43 @@ import org.gradle.kotlin.dsl.provideDelegate
  * @param enable `true` to enable; `false` to disable.
  */
 fun Project.failOnDirectDependencyVersionGotcha(configuration: Configuration, enable: Boolean = true) =
-	configuration.failOnDirectDependencyVersionGotcha(if (enable) gradle else null)
-
-fun Configuration.failOnDirectDependencyVersionGotcha(gradle: Gradle?) =
-	failOnDirectDependencyVersionGotcha(gradle) { false }
+	failOnDirectDependencyVersionGotcha(configuration, enable) { false }
 
 /**
  * See, [failOnDirectDependencyVersionGotcha]
  *
- * @param gradle Non-null to enable. Null to disable.
+ * @param configuration A resolvable configuration.
+ * @param enable `true` to enable; `false` to disable.
  * @param excludeAlreadyDeclared If `true`, dependencies already declared when
  * this method is called will be excluded from the check.
  */
-fun Configuration.failOnDirectDependencyVersionGotcha(gradle: Gradle?, excludeAlreadyDeclared: Boolean) {
+fun Project.failOnDirectDependencyVersionGotcha(configuration: Configuration, enable: Boolean = true, excludeAlreadyDeclared: Boolean) {
 	val excludeFilter: (ModuleIdentifier) -> Boolean = if (!excludeAlreadyDeclared) {
 		({ false })
 	} else {
-		val alreadyDeclared: Set<Pair<String, String>> = allDependencies
+		val alreadyDeclared: Set<Pair<String, String>> = configuration.allDependencies
 			.mapNotNullTo(mutableSetOf()) { dep -> dep.group?.let { it to dep.name } }
 
 		({ it.group to it.name in alreadyDeclared })
 	}
-	return failOnDirectDependencyVersionGotcha(gradle, excludeFilter)
+	return failOnDirectDependencyVersionGotcha(configuration, enable, excludeFilter)
 }
 
 /**
  * See, [failOnDirectDependencyVersionGotcha]
  *
- * @param gradle Non-null to enable. Null to disable.
+ * @param configuration A resolvable configuration.
+ * @param enable `true` to enable; `false` to disable.
  * @param excludeFilter A filter over the direct dependencies under this
  * configuration; it must return `true` if a dependency should be excluded from
  * the check.
  */
-fun Configuration.failOnDirectDependencyVersionGotcha(
-	gradle: Gradle? = null,
+fun Project.failOnDirectDependencyVersionGotcha(
+	configuration: Configuration,
+	enable: Boolean = true,
 	excludeFilter: (ModuleIdentifier) -> Boolean
 ) {
-	require(isCanBeResolved) {
+	require(configuration.isCanBeResolved) {
 		"Configuration must be resolvable: '$name'"
 	}
 
@@ -74,19 +73,18 @@ fun Configuration.failOnDirectDependencyVersionGotcha(
 	// Check if the extra property has ever been set (to any value) before.
 	val alreadySetUpBefore = extra.has(_failOnDirectDependencyVersionGotcha_isEnabled)
 
-	// Non-null `gradle` instance to enable. Null to disable.
-	extra[_failOnDirectDependencyVersionGotcha_isEnabled] = gradle != null
+	extra[_failOnDirectDependencyVersionGotcha_isEnabled] = enable
 
 	var failOnDirectDependencyVersionGotcha_excludeFilter: (ModuleIdentifier) -> Boolean by extra
 	failOnDirectDependencyVersionGotcha_excludeFilter = excludeFilter
 
 	if (alreadySetUpBefore) return
 
-	incoming.afterResolve {
+	configuration.incoming.afterResolve {
 		if (extra[_failOnDirectDependencyVersionGotcha_isEnabled] != true) {
 			return@afterResolve // Checks have been disabled
 		}
-		if (gradle != null) when (gradle.taskGraph.allTasks.lastOrNull()) {
+		when (gradle.taskGraph.allTasks.lastOrNull()) {
 			is AbstractDependencyReportTask,
 			is DependencyInsightReportTask,
 			-> return@afterResolve
