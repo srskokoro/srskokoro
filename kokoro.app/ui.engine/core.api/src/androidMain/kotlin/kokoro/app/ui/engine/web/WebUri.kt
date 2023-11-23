@@ -1,6 +1,6 @@
 package kokoro.app.ui.engine.web
 
-import assert
+import kokoro.internal.assert
 
 @Suppress("ACTUAL_WITHOUT_EXPECT")
 actual typealias WebUriValue = android.net.Uri

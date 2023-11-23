@@ -1,6 +1,6 @@
 package main.cli
 
-import TODO
+import kokoro.internal.TODO
 import main.cli.engine.BaseCommand
 
 internal class Open : BaseCommand(name = "open") {

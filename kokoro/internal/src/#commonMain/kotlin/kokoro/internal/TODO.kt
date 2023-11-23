@@ -1,4 +1,6 @@
-@file:Suppress("PackageDirectoryMismatch", "unused", "NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
+@file:Suppress("unused", "NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
+
+package kokoro.internal
 
 @DslMarker
 private annotation class TODOMarker

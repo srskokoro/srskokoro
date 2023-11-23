@@ -1,11 +1,11 @@
 ﻿package kokoro.app.ui
 
-import assert
 import kokoro.app.AppBuild
 import kokoro.app.ui.StackTraceModal.NONZERO_STATUS
 import kokoro.app.ui.StackTraceModalImpl.HEADLESS_NOTICE_FATAL_ERROR_ENCOUNTERED_TERMINATING
 import kokoro.app.ui.StackTraceModalImpl.awaitDismiss
 import kokoro.internal.anyError
+import kokoro.internal.assert
 import kokoro.internal.getSafeStackTrace
 import kokoro.internal.io.UnsafeCharArrayWriter
 import kokoro.internal.io.writeln

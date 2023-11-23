@@ -1,6 +1,6 @@
 package kokoro.app.ui.engine.web
 
-import assert
+import kokoro.internal.assert
 
 actual typealias WebUriValue = java.net.URI
 

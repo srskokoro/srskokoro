@@ -1,7 +1,7 @@
 package kokoro.internal.collections
 
-import assert
 import kokoro.internal.DEBUG
+import kokoro.internal.assert
 
 /**
  * Iterates through a [List] using the index and calls [action] for each item.

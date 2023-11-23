@@ -1,7 +1,7 @@
 package kokoro.app.ui.engine.web
 
 import android.webkit.WebResourceResponse
-import assert
+import kokoro.internal.assert
 import kokoro.internal.io.asInputStream
 import okio.Source
 import java.util.Collections.singletonMap

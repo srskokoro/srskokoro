@@ -1,12 +1,12 @@
 package main
 
-import assertUnreachable
 import kokoro.app.AppBuild
 import kokoro.app.ui.Alerts
 import kokoro.app.ui.ExitProcessNonZeroViaSwing
 import kokoro.app.ui.StackTraceModal
 import kokoro.app.ui.ifChoiceMatches
 import kokoro.app.ui.swing
+import kokoro.internal.assertUnreachable
 import kokoro.internal.closeInCatch
 import okio.sink
 import java.awt.EventQueue

@@ -1,12 +1,12 @@
 package kokoro.app.ui.wv
 
 import app.cash.redwood.Modifier
-import assertUnreachable
 import kokoro.app.ui.wv.modifier.GlobalModifier
 import kokoro.app.ui.wv.modifier.ModifierDelegate
 import kokoro.app.ui.wv.widget.WvRootWidget
 import kokoro.app.ui.wv.widget.WvRootWidgetChildren
 import kokoro.app.ui.wv.widget.WvWidget
+import kokoro.internal.assertUnreachable
 import kokoro.internal.collections.MapComputeFunction
 import kokoro.internal.collections.computeIfAbsent
 import korlibs.datastructure.FastIntMap

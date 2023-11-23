@@ -1,6 +1,6 @@
 package kokoro.app
 
-import assert
+import kokoro.internal.assert
 import kokoro.internal.io.NioPath
 import okio.Path
 import okio.Path.Companion.toPath
