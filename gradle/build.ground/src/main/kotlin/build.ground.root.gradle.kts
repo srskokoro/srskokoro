@@ -1,3 +1,1 @@
-plugins {
-	`lifecycle-base`
-}
+apply(plugin = "lifecycle-base")

@@ -1,3 +1,1 @@
-plugins {
-	id("build.ground.root")
-}
+apply(plugin = "build.ground.root")
