@@ -151,15 +151,13 @@ private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(exclude
 		"""
 		Could not resolve all dependencies for configuration '$name'.
 		Conflict(s) found for the following direct dependencies of project components:
-		""".trimIndent() +
-		failedSet.joinToString("", prefix = "\n") {
+		""".trimIndent() + failedSet.joinToString("", prefix = "\n") {
 			"""
 			- $it
 			  - from '${it.from}'
 			  - changed by '${it.selected.findFirstDependentWithMatchingVersion().from}'
 			""".replaceIndent("  ") + "\n"
-		} +
-		"""
+		} + """
 		Note:
 		  For each of the above, the version has been quietly changed by a transitive
 		  dependency, but the configuration's resolution strategy has forbidden this for
