@@ -10,9 +10,7 @@ import org.gradle.kotlin.dsl.extra
 internal fun Project.setUp(android: AndroidExtension): Unit = with(android) {
 	val extra = project.extra
 
-	@Suppress("UnstableApiUsage")
 	buildToolsVersion = extra.getGradleProp("conv.android.buildToolsVersion")
-
 	compileSdk = extra.getGradleProp("conv.android.compileSdk") { it.toInt() }
 
 	defaultConfig {
