@@ -6,7 +6,7 @@ dependencies {
 	compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin")
 
 	implementation("build:build.support")
-	implementation("convention:conventions")
+	implementation("build:conventions")
 
 	implementation("com.google.javascript:closure-compiler")
 }
