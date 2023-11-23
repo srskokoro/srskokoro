@@ -25,7 +25,7 @@ afterEvaluate {
 		systemProperty("jcef.bundle", jcefInstallTask.outputDir.get()
 			.asFile.let { File(it, "jcef") })
 
-		val buildDir = project.buildDir
+		val buildDir = project.layout.buildDirectory.get().asFile
 		environment["SRS_KOKORO_DATA"] = File(buildDir, "AppData/SRSKokoro-Dev")
 		environment["SRS_KOKORO_COLLECTIONS_DEFAULT"] = File(buildDir, "AppData/SRS Kokoro (Dev)")
 	}
