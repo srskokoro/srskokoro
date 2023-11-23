@@ -17,8 +17,7 @@ import org.gradle.kotlin.dsl.provideDelegate
 
 /**
  * Fails on transitive upgrade/downgrade of versions for dependencies under the
- * given [configuration] that are direct dependencies of  any project component
- * (which isn't necessarily the current project).
+ * given [configuration] that are direct dependencies of the current [project][Project].
  *
  * Useful for solving the issue described in “[Effects of Gradle's default resolution behavior | Understanding Gradle #10 – Dependency Version Conflicts](https://youtu.be/YYWhfy6c2YQ?t=145)”
  *
@@ -94,7 +93,8 @@ fun Project.failOnDirectDependencyVersionGotcha(
 }
 
 private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(excludeFilter: (ModuleIdentifier) -> Boolean) {
-	val depSet = resolutionResult.allDependencies
+	// Check only dependencies directly declared by the current project
+	val depSet = resolutionResult.root.dependencies
 
 	// Cache for selected components whose dependents we've already scanned
 	val selDependentsScanned = mutableSetOf<ResolvedComponentResult>()
@@ -159,7 +159,7 @@ private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(exclude
 		Note:
 		  For each of the above, the version has been quietly changed by a transitive
 		  dependency, but the configuration's resolution strategy has forbidden this for
-		  all direct dependencies of project components.
+		  all direct dependencies of the current project.
 		--
 		""".trimIndent()
 	)
