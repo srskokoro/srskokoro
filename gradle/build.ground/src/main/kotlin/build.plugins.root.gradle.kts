@@ -1,3 +1,3 @@
 plugins {
-	id("build.minimal.root")
+	id("build.ground.root")
 }
