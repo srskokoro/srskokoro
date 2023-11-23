@@ -1,6 +1,6 @@
 @file:Suppress("PackageDirectoryMismatch")
 
-import conv.internal.support.unsafeCast
+import build.internal.support.unsafeCast
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.add

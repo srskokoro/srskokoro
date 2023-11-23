@@ -1,7 +1,7 @@
 package conv.internal.util
 
-import conv.internal.support.unsafeCast
-import conv.internal.support.unsafeCastOrNull
+import build.internal.support.unsafeCast
+import build.internal.support.unsafeCastOrNull
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.ProjectEvaluationListener

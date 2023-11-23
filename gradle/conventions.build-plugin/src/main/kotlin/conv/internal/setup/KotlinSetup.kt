@@ -1,6 +1,6 @@
 package conv.internal.setup
 
-import conv.internal.support.removeFirst
+import build.internal.support.removeFirst
 import extraneousSources
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project

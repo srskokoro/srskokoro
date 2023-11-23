@@ -5,7 +5,7 @@ pluginManagement {
 	includeBuild("../build.logic")
 }
 plugins {
-	id("conv.conventions.settings")
+	id("build.conventions.settings")
 }
 
 dependencyResolutionManagement {

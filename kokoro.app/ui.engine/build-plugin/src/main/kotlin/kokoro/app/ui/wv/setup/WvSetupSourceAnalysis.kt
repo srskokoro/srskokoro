@@ -1,6 +1,6 @@
 package kokoro.app.ui.wv.setup
 
-import conv.internal.support.io.UnsafeCharArrayWriter
+import build.internal.support.io.UnsafeCharArrayWriter
 import kokoro.app.ui.wv.setup.WvSetup.N
 import kokoro.app.ui.wv.setup.WvSetup.S
 import kokoro.app.ui.wv.setup.WvSetupSourceAnalysis.Stamp

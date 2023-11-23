@@ -1,10 +1,9 @@
 package kokoro.app.ui.wv.setup
 
+import build.internal.support.removeLast
 import com.google.javascript.jscomp.CompilerOptions
 import com.google.javascript.jscomp.SourceFile
 import com.google.javascript.jscomp.SourceMap
-import conv.internal.support.removeLast
-import kokoro.app.ui.wv.setup.GenerationUtils.appendIdentifierPartAfterStart
 import kokoro.app.ui.wv.setup.GenerationUtils.appendIdentifierStart
 import kokoro.app.ui.wv.setup.GenerationUtils.appendInDqString
 import kokoro.app.ui.wv.setup.GenerationUtils.appendKtPackageHeader

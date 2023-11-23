@@ -2,7 +2,7 @@ pluginManagement {
 	includeBuild("gradle/build.logic")
 }
 plugins {
-	id("conv.settings")
+	id("build.settings")
 }
 
 rootProject.name = "srskokoro"

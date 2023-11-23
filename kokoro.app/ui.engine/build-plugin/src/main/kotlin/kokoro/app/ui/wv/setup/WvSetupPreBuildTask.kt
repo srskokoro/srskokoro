@@ -1,7 +1,6 @@
 package kokoro.app.ui.wv.setup
 
-import conv.internal.support.removeLast
-import kokoro.app.ui.wv.setup.GenerationUtils.appendIdentifierPartAfterStart
+import build.internal.support.removeLast
 import kokoro.app.ui.wv.setup.GenerationUtils.appendIdentifierStart
 import kokoro.app.ui.wv.setup.GenerationUtils.appendInDqString
 import kokoro.app.ui.wv.setup.GenerationUtils.appendKtPackageHeader

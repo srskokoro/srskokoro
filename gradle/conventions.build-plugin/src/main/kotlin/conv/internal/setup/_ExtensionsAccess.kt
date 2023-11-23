@@ -1,7 +1,7 @@
 package conv.internal.setup
 
-import conv.deps.DependencyVersions
-import conv.internal.support.unsafeCast
+import build.deps.DependencyVersions
+import build.internal.support.unsafeCast
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePluginExtension
