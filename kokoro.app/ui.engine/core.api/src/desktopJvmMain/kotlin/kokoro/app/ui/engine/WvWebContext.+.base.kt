@@ -20,6 +20,5 @@ internal actual fun WvWebContext_platformInit() {
 actual fun WvWebContext.Companion.appendOrigin(out: StringBuilder, webContextDomain: String): StringBuilder {
 	out.append("wv://")
 	out.append(webContextDomain)
-	out.append('/')
 	return out
 }
