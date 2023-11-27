@@ -54,10 +54,10 @@ dependencyVersions {
 
 	// --
 
-	val slf4j = "2.0.7"
+	val slf4j = "2.0.7" // https://www.slf4j.org/download.html
 	module("org.slf4j:*", slf4j)
 
-	val grgit = "5.2.1"
+	val grgit = "5.2.1" // https://github.com/ajoberstar/grgit/releases
 	plugin("org.ajoberstar.grgit", grgit)
 	plugin("org.ajoberstar.grgit.service", grgit)
 	module("org.ajoberstar.grgit:grgit-core", grgit)
@@ -73,8 +73,10 @@ dependencyVersions {
 
 	// --
 
-	module("androidx.core:core-ktx", "1.12.0")
-	module("androidx.activity:activity-ktx", "1.8.0")
+	val androidx_core = "1.12.0" // https://developer.android.com/jetpack/androidx/releases/core
+	module("androidx.core:core-ktx", androidx_core)
+	val androidx_activity = "1.8.0" // https://developer.android.com/jetpack/androidx/releases/activity
+	module("androidx.activity:activity-ktx", androidx_activity)
 
 	val appcompat = "1.6.1" // https://developer.android.com/jetpack/androidx/releases/appcompat
 	module("androidx.appcompat:appcompat", appcompat)
