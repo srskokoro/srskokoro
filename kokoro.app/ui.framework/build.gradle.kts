@@ -5,12 +5,12 @@ plugins {
 }
 
 dependencies {
-	val unsafeParent = unsafeParent
 	commonMainImplementation(project(":kokoro:internal"))
 
-	appMainImplementation(unsafeParent.project("redwood:compose"))
-	appMainImplementation(unsafeParent.project("redwood:widget"))
-	unsafeParent.project("ui.engine").let {
+	appMainImplementation(project(":kokoro.app:redwood:compose"))
+	appMainImplementation(project(":kokoro.app:redwood:widget"))
+
+	project(":kokoro.app:ui.engine").let {
 		commonMainImplementation(it)
 		commonMainWvSetup(it)
 	}
