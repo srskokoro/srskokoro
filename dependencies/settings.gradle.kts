@@ -19,7 +19,7 @@ dependencyVersions {
 	plugin("org.jetbrains.kotlin.*", kotlin)
 	module("org.jetbrains.kotlin:*", kotlin)
 	plugin("org.jetbrains.kotlin.plugin.serialization", kotlin)
-	val kotlinx_serialization = "1.6.0" // https://github.com/Kotlin/kotlinx.serialization/releases
+	val kotlinx_serialization = "1.6.1" // https://github.com/Kotlin/kotlinx.serialization/releases
 	module("org.jetbrains.kotlinx:kotlinx-serialization-json", kotlinx_serialization)
 	module("org.jetbrains.kotlinx:kotlinx-serialization-json-okio", kotlinx_serialization)
 	module("org.jetbrains.kotlinx:kotlinx-serialization-cbor", kotlinx_serialization)
@@ -31,7 +31,7 @@ dependencyVersions {
 	plugin("com.android.*", android)
 	module("com.android.tools.build:gradle", android)
 
-	val kotest = "5.6.2" // https://github.com/kotest/kotest/releases
+	val kotest = "5.8.0" // https://github.com/kotest/kotest/releases
 	plugin("io.kotest.multiplatform", kotest)
 	module("io.kotest:kotest-framework-multiplatform-plugin-gradle", kotest)
 	module("io.kotest:kotest-runner-junit5", kotest)
@@ -45,7 +45,7 @@ dependencyVersions {
 	module("org.jetbrains.kotlinx:kotlinx-coroutines-core", kotlinx_coroutines)
 	module("org.jetbrains.kotlinx:kotlinx-coroutines-swing", kotlinx_coroutines)
 
-	val atomicfu = "0.22.0" // https://github.com/Kotlin/kotlinx-atomicfu/releases
+	val atomicfu = "0.23.1" // https://github.com/Kotlin/kotlinx-atomicfu/releases
 	module("org.jetbrains.kotlinx:atomicfu-gradle-plugin", atomicfu)
 	module("org.jetbrains.kotlinx:atomicfu", atomicfu)
 
@@ -63,11 +63,11 @@ dependencyVersions {
 	module("org.ajoberstar.grgit:grgit-core", grgit)
 	module("org.ajoberstar.grgit:grgit-gradle", grgit)
 
-	val gmazzo_buildConfig = "4.1.2" // https://github.com/gmazzo/gradle-buildconfig-plugin
+	val gmazzo_buildConfig = "4.2.0" // https://github.com/gmazzo/gradle-buildconfig-plugin/releases
 	plugin("com.github.gmazzo.buildconfig", gmazzo_buildConfig)
 	module("com.github.gmazzo.buildconfig:plugin", gmazzo_buildConfig)
 
-	val closure_compiler = "v20230502" // https://github.com/google/closure-compiler/tags
+	val closure_compiler = "v20231112" // https://github.com/google/closure-compiler/tags
 	// - See also, https://github.com/gradle-webtools/gradle-minify-plugin
 	module("com.google.javascript:closure-compiler", closure_compiler)
 
@@ -75,7 +75,7 @@ dependencyVersions {
 
 	val androidx_core = "1.12.0" // https://developer.android.com/jetpack/androidx/releases/core
 	module("androidx.core:core-ktx", androidx_core)
-	val androidx_activity = "1.8.0" // https://developer.android.com/jetpack/androidx/releases/activity
+	val androidx_activity = "1.8.1" // https://developer.android.com/jetpack/androidx/releases/activity
 	module("androidx.activity:activity-ktx", androidx_activity)
 
 	val androidx_appcompat = "1.6.1" // https://developer.android.com/jetpack/androidx/releases/appcompat
@@ -93,15 +93,15 @@ dependencyVersions {
 	val okio = "3.6.0" // https://square.github.io/okio/changelog/
 	module("com.squareup.okio:okio", okio)
 
-	module("net.harawata:appdirs", "1.2.1") // https://github.com/harawata/appdirs
-	module("com.github.ajalt.clikt:clikt", "4.2.0") // https://github.com/ajalt/clikt/releases
+	module("net.harawata:appdirs", "1.2.2") // https://github.com/harawata/appdirs/releases
+	module("com.github.ajalt.clikt:clikt", "4.2.1") // https://github.com/ajalt/clikt/releases
 
 	// --
 
-	val flatlaf = "3.1.1"
-	module("com.formdev:flatlaf", flatlaf) // https://github.com/JFormDesigner/FlatLaf
+	val flatlaf = "3.2.5" // https://github.com/JFormDesigner/FlatLaf/releases
+	module("com.formdev:flatlaf", flatlaf)
 	module("com.formdev:flatlaf-extras", flatlaf) // https://github.com/JFormDesigner/FlatLaf/tree/main/flatlaf-extras
-	module("com.github.Dansoftowner:jSystemThemeDetector", "3.8") // https://github.com/Dansoftowner/jSystemThemeDetector
+	module("com.github.Dansoftowner:jSystemThemeDetector", "3.8") // https://github.com/Dansoftowner/jSystemThemeDetector/releases
 
 	val redwood = "0.7.0" // https://github.com/cashapp/redwood/releases
 	// NOTE: Must be kept consistent with Redwood. See,
@@ -117,6 +117,6 @@ dependencyVersions {
 	module("org.jetbrains.compose.runtime:*", jb_compose)
 	module("org.jetbrains.compose.compiler:compiler", jb_compose_compiler)
 
-	val voyager = "1.0.0-rc07" // https://github.com/adrielcafe/voyager/releases
+	val voyager = "1.0.0-rc10" // https://github.com/adrielcafe/voyager/releases
 	module("cafe.adriel.voyager:*", voyager)
 }
