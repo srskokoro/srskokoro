@@ -4,5 +4,8 @@ package kokoro.app.ui.engine
 internal actual inline fun WvWebContext_platformInit() = Unit
 
 actual fun WvWebContext.Companion.appendOrigin(out: StringBuilder, webContextDomain: String): StringBuilder {
-	return out.append("https://$webContextDomain.w/")
+	out.append("https://")
+	out.append(webContextDomain)
+	out.append(".w/")
+	return out
 }
