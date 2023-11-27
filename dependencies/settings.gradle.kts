@@ -15,7 +15,7 @@ dependencyVersions {
 		vendor { ADOPTIUM }
 	}
 
-	val kotlin = "1.9.20" // https://kotlinlang.org/docs/releases.html
+	val kotlin = "1.9.21" // https://kotlinlang.org/docs/releases.html
 	plugin("org.jetbrains.kotlin.*", kotlin)
 	module("org.jetbrains.kotlin:*", kotlin)
 	plugin("org.jetbrains.kotlin.plugin.serialization", kotlin)
@@ -106,8 +106,8 @@ dependencyVersions {
 	// https://github.com/cashapp/redwood/blob/0.7.0/gradle/libs.versions.toml#L6
 	val jb_compose = "1.5.1"
 	// The compose compiler plugin to use for Redwood -- https://github.com/cashapp/redwood/tree/0.7.0#custom-compose-compiler
-	// - See also, https://github.com/JetBrains/compose-multiplatform/blob/v1.5.10/gradle-plugins/compose/src/main/kotlin/org/jetbrains/compose/ComposeCompilerCompatibility.kt
-	val jb_compose_compiler = "1.5.3"
+	// - See also, https://github.com/JetBrains/compose-multiplatform/blob/v1.5.11/gradle-plugins/compose/src/main/kotlin/org/jetbrains/compose/ComposeCompilerCompatibility.kt
+	val jb_compose_compiler = "1.5.4"
 	module("app.cash.redwood:*", redwood)
 	plugin("app.cash.redwood", redwood)
 	plugin("app.cash.redwood.*", redwood)
