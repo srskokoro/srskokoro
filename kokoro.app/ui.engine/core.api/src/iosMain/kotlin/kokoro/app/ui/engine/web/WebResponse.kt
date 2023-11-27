@@ -5,7 +5,7 @@ import okio.Source
 actual class WebResponse actual constructor(
 	actual val status: Int,
 	actual val mimeType: String?,
-	actual val encoding: String?,
+	actual val charset: String?,
 	actual val headers: Map<String, String>,
 	actual val contentLength: Long,
 	actual val content: Source,
@@ -17,13 +17,13 @@ actual class WebResponse actual constructor(
 	actual constructor(
 		status: Int,
 		mimeType: String?,
-		encoding: String?,
+		charset: String?,
 		contentLength: Long,
 		content: Source,
 	) : this(
 		status = status,
 		mimeType = mimeType,
-		encoding = encoding,
+		charset = charset,
 		headers = emptyMap(),
 		contentLength = contentLength,
 		content,
@@ -31,13 +31,13 @@ actual class WebResponse actual constructor(
 
 	actual constructor(
 		mimeType: String?,
-		encoding: String?,
+		charset: String?,
 		contentLength: Long,
 		content: Source,
 	) : this(
 		status = 200,
 		mimeType = mimeType,
-		encoding = encoding,
+		charset = charset,
 		contentLength = contentLength,
 		content,
 	)

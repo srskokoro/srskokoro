@@ -6,7 +6,7 @@ import okio.Source
 expect class WebResponse {
 	val status: Int
 	val mimeType: String?
-	val encoding: String?
+	val charset: String?
 	val headers: Map<String, String>
 	val contentLength: Long
 	val content: Source
@@ -14,7 +14,7 @@ expect class WebResponse {
 	constructor(
 		status: Int,
 		mimeType: String?,
-		encoding: String?,
+		charset: String?,
 		headers: Map<String, String>,
 		contentLength: Long,
 		content: Source,
@@ -23,14 +23,14 @@ expect class WebResponse {
 	constructor(
 		status: Int,
 		mimeType: String?,
-		encoding: String?,
+		charset: String?,
 		contentLength: Long,
 		content: Source,
 	)
 
 	constructor(
 		mimeType: String?,
-		encoding: String?,
+		charset: String?,
 		contentLength: Long,
 		content: Source,
 	)

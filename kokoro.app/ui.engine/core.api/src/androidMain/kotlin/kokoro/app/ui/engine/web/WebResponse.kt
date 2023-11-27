@@ -11,7 +11,7 @@ actual class WebResponse {
 
 	actual val status: Int get() = platformValue.statusCode.let { if (it == 0) 200 else it }
 	actual val mimeType: String? get() = platformValue.mimeType
-	actual val encoding: String? get() = platformValue.encoding
+	actual val charset: String? get() = platformValue.encoding
 	actual val headers: Map<String, String>
 	actual val contentLength: Long
 	actual val content: Source
@@ -19,14 +19,14 @@ actual class WebResponse {
 	actual constructor(
 		status: Int,
 		mimeType: String?,
-		encoding: String?,
+		charset: String?,
 		headers: Map<String, String>,
 		contentLength: Long,
 		content: Source,
 	) {
 		platformValue = WebResourceResponse(
 			/* mimeType = */ mimeType,
-			/* encoding = */ encoding,
+			/* encoding = */ charset,
 			/* statusCode = */ status,
 			/* reasonPhrase = */ getStatusMessage(status),
 			/* responseHeaders = */
@@ -44,13 +44,13 @@ actual class WebResponse {
 	actual constructor(
 		status: Int,
 		mimeType: String?,
-		encoding: String?,
+		charset: String?,
 		contentLength: Long,
 		content: Source,
 	) {
 		platformValue = WebResourceResponse(
 			/* mimeType = */ mimeType,
-			/* encoding = */ encoding,
+			/* encoding = */ charset,
 			/* data = */ content.asInputStream(),
 		).also {
 			it.setStatusCodeAndReasonPhrase(status, getStatusMessage(status))
@@ -63,13 +63,13 @@ actual class WebResponse {
 
 	actual constructor(
 		mimeType: String?,
-		encoding: String?,
+		charset: String?,
 		contentLength: Long,
 		content: Source,
 	) {
 		platformValue = WebResourceResponse(
 			/* mimeType = */ mimeType,
-			/* encoding = */ encoding,
+			/* encoding = */ charset,
 			/* data = */ content.asInputStream(),
 		).also {
 			if (contentLength >= 0) it.setContentLengthAsLoneHeader(contentLength)
