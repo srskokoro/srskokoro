@@ -78,9 +78,9 @@ dependencyVersions {
 	val androidx_activity = "1.8.0" // https://developer.android.com/jetpack/androidx/releases/activity
 	module("androidx.activity:activity-ktx", androidx_activity)
 
-	val appcompat = "1.6.1" // https://developer.android.com/jetpack/androidx/releases/appcompat
-	module("androidx.appcompat:appcompat", appcompat)
-	module("androidx.appcompat:appcompat-resources", appcompat) // For loading and tinting drawables on older versions of the platform
+	val androidx_appcompat = "1.6.1" // https://developer.android.com/jetpack/androidx/releases/appcompat
+	module("androidx.appcompat:appcompat", androidx_appcompat)
+	module("androidx.appcompat:appcompat-resources", androidx_appcompat) // For loading and tinting drawables on older versions of the platform
 
 	val androidx_webkit = "1.8.0" // https://developer.android.com/jetpack/androidx/releases/webkit
 	module("androidx.webkit:webkit", androidx_webkit)
