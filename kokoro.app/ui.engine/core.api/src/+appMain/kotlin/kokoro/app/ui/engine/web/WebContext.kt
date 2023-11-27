@@ -1,5 +1,10 @@
 package kokoro.app.ui.engine.web
 
+/**
+ * A special mechanism bound to a specific [web origin][WebOrigin], used for
+ * handling requests that target that origin and for satisfying special JS
+ * messages.
+ */
 interface WebContext : WebRequestHandler {
 
 	/**
