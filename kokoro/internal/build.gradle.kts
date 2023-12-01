@@ -44,6 +44,7 @@ buildConfig {
 }
 
 dependencies {
+	appMainImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core")
 	appMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 	appMainImplementation("com.squareup.okio:okio")
 }
