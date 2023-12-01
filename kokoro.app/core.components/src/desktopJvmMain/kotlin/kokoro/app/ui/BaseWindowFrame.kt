@@ -37,10 +37,9 @@ open class BaseWindowFrame @JvmOverloads constructor(
 	@JvmField protected val ref = TopLevelComponentRef(this)
 
 	override fun processWindowEvent(e: WindowEvent) {
-		super.processWindowEvent(e)
-
 		if (e.id == WindowEvent.WINDOW_ACTIVATED) {
 			lastActiveRef = ref
 		}
+		super.processWindowEvent(e)
 	}
 }
