@@ -9,13 +9,12 @@ import kotlin.jvm.JvmName
 import kotlin.reflect.KClass
 
 sealed interface WindowId<A : WindowArgs> {
+	val classFqn: String
+
 	val rootId: RootId<A>
 	val instanceKey: String?
 
 	abstract class RootId<A : WindowArgs> @PublishedApi internal constructor() : WindowId<A> {
-		/** @see WindowId.classFqn */
-		abstract val classFqn: String
-
 		final override val rootId: RootId<A> get() = this
 		final override val instanceKey: String? get() = null
 
@@ -41,12 +40,11 @@ sealed interface WindowId<A : WindowArgs> {
 	}
 }
 
-inline val WindowId<*>.classFqn: String get() = rootId.classFqn
-
 private data class InstancedWindowId<A : WindowArgs>(
 	override val rootId: WindowId.RootId<A>,
 	override val instanceKey: String,
 ) : WindowId<A> {
+	override val classFqn: String get() = rootId.classFqn
 	override fun toString() = rootId.toString(instanceKey)
 }
 
