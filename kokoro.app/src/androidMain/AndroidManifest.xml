@@ -10,7 +10,8 @@
 		android:hasFragileUserData="true"
 		android:appCategory="productivity"
 		android:label="${APP_TITLE}"
-		android:name=".MainApplication">
+		android:name=".MainApplication"
+		android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
 		<!--
 		TODO Re-allow auto-backup but exclude our local app data from cloud backup
 		-->

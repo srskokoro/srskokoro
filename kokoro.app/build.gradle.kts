@@ -73,6 +73,7 @@ dependencies {
 	androidMainApi("androidx.core:core-ktx")
 	androidMainApi("androidx.activity:activity-ktx")
 	androidMainApi("androidx.fragment:fragment-ktx")
+	androidMainApi("androidx.appcompat:appcompat")
 	androidMainApi("androidx.webkit:webkit")
 
 	appMainImplementation("com.squareup.okio:okio")
