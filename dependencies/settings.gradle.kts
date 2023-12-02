@@ -82,6 +82,8 @@ dependencyVersions {
 	module("androidx.core:core-ktx", androidx_core)
 	val androidx_activity = "1.8.1" // https://developer.android.com/jetpack/androidx/releases/activity
 	module("androidx.activity:activity-ktx", androidx_activity)
+	val androidx_fragment = "1.6.2" // https://developer.android.com/jetpack/androidx/releases/fragment
+	module("androidx.fragment:fragment-ktx", androidx_fragment)
 
 	val androidx_appcompat = "1.6.1" // https://developer.android.com/jetpack/androidx/releases/appcompat
 	module("androidx.appcompat:appcompat", androidx_appcompat)
