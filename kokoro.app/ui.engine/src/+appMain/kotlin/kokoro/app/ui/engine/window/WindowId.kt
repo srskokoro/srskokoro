@@ -14,16 +14,14 @@ sealed interface WindowId<A : WindowArgs> {
 	val rootId: RootId<A>
 	val instanceKey: String?
 
+	/**
+	 * See also, “[Plugin-generated serializer | kotlinx.serialization/docs/serializers.md · Kotlin/kotlinx.serialization | GitHub](https://github.com/Kotlin/kotlinx.serialization/blob/v1.6.1/docs/serializers.md#plugin-generated-serializer)”
+	 */
+	fun SerializersModule.argsSerializer(): KSerializer<A>
+
 	abstract class RootId<A : WindowArgs> @PublishedApi internal constructor() : WindowId<A> {
 		final override val rootId: RootId<A> get() = this
 		final override val instanceKey: String? get() = null
-
-		/**
-		 * See also, “[Plugin-generated serializer | kotlinx.serialization/docs/serializers.md · Kotlin/kotlinx.serialization | GitHub](https://github.com/Kotlin/kotlinx.serialization/blob/v1.6.1/docs/serializers.md#plugin-generated-serializer)”
-		 */
-		abstract fun SerializersModule.argsSerializer(): KSerializer<A>
-
-		// --
 
 		final override fun toString() = toString(null)
 
@@ -44,7 +42,13 @@ private data class InstancedWindowId<A : WindowArgs>(
 	override val rootId: WindowId.RootId<A>,
 	override val instanceKey: String,
 ) : WindowId<A> {
+
 	override val classFqn: String get() = rootId.classFqn
+
+	override fun SerializersModule.argsSerializer(): KSerializer<A> {
+		return with(rootId) { argsSerializer() }
+	}
+
 	override fun toString() = rootId.toString(instanceKey)
 }
 
