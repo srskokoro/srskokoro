@@ -25,6 +25,10 @@ dependencyVersions {
 	module("org.jetbrains.kotlinx:kotlinx-serialization-json-okio", kotlinx_serialization)
 	module("org.jetbrains.kotlinx:kotlinx-serialization-cbor", kotlinx_serialization)
 
+	val poko = "0.15.1" // https://github.com/drewhamilton/Poko#download
+	// See also, https://github.com/drewhamilton/Poko/blob/main/CHANGELOG.md
+	plugin("dev.drewhamilton.poko", poko)
+
 	// https://github.com/LouisCAD/CompleteKotlin/releases
 	plugin("com.louiscad.complete-kotlin", "1.1.0")
 

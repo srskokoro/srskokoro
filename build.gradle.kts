@@ -10,6 +10,7 @@ plugins {
 	id("com.android.library") apply false
 	id("io.kotest.multiplatform") apply false
 	id("app.cash.redwood") apply false
+	id("dev.drewhamilton.poko") apply false
 
 	id("com.louiscad.complete-kotlin")
 }
