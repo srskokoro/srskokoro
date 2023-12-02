@@ -21,5 +21,7 @@ dependencies {
 	appMainImplementation("org.jetbrains.compose.runtime:runtime-saveable")
 	appMainImplementation("app.cash.redwood:redwood-widget")
 
+	appMainApi("org.jetbrains.kotlinx:kotlinx-serialization-core")
+
 	appMainImplementation("cafe.adriel.voyager:voyager-core")
 }
