@@ -3,8 +3,7 @@ plugins {
 }
 
 dependencies {
-	val unsafeParent = unsafeParent
-	desktopJvmMainApi(unsafeParent.project("jcef"))
+	desktopJvmMainApi(project(":kokoro.app:ui.engine:jcef"))
 
 	commonMainImplementation(project(":kokoro:internal"))
 
