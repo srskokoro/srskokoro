@@ -24,17 +24,6 @@ sealed interface WindowId<A : WindowArgs> {
 		final override val instanceKey: String? get() = null
 
 		final override fun toString() = toString(null)
-
-		internal fun toString(instanceKeyOverride: String?) = buildString {
-			append("WindowId<*>(classFqn=")
-			append(classFqn)
-			if (instanceKeyOverride != null) {
-				append(", instanceKey=")
-				append(instanceKeyOverride)
-			}
-			append(")@")
-			append(this@RootId.identityHashCode().toUInt().toString(16))
-		}
 	}
 }
 
@@ -50,6 +39,19 @@ private data class InstancedWindowId<A : WindowArgs>(
 	}
 
 	override fun toString() = rootId.toString(instanceKey)
+}
+
+private fun WindowId.RootId<*>.toString(instanceKeyOverride: String?): String {
+	val out = StringBuilder()
+	out.append("WindowId<*>(classFqn=")
+	out.append(classFqn)
+	if (instanceKeyOverride != null) {
+		out.append(", instanceKey=")
+		out.append(instanceKeyOverride)
+	}
+	out.append(")@")
+	out.append(identityHashCode().toUInt().toString(16))
+	return out.toString()
 }
 
 // --
