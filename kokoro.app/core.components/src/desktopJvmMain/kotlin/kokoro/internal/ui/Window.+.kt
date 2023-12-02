@@ -69,7 +69,7 @@ fun Window.ensureBounded(maxDiv: Int) {
 		windowHeight
 	}
 
-	if (shouldResize) setSize(newWidth, newHeight)
+	if (shouldResize) this.setSize(newWidth, newHeight)
 
 	// ---===--- ---===--- ---===---
 
