@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
+import kotlin.jvm.JvmName
 
 // TODO! Remove `kokoro.app.ui.WindowSpec` as it has been replaced already
 abstract class WindowCore<A : WindowArgs> {
@@ -74,6 +75,7 @@ abstract class WindowCore<A : WindowArgs> {
 
 		companion object {
 			@Suppress("NOTHING_TO_INLINE")
+			@JvmName("invoke_nothing")
 			inline operator fun invoke(busId: Int): StatusBus<Nothing?> = invoke(busId = busId) { NullableNothingSerializer() }
 
 			inline operator fun <reified T> invoke(busId: Int): StatusBus<T> = invoke(busId = busId) { serializer<T>() }

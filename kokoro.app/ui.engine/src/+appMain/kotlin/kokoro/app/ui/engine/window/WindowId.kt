@@ -57,6 +57,7 @@ private fun WindowId.RootId<*>.toString(instanceKeyOverride: String?): String {
 // --
 
 @Suppress("NOTHING_TO_INLINE")
+@JvmName("WindowId_nothing")
 inline fun WindowId(clazz: KClass<out WindowCore<Nothing?>>): WindowId.RootId<Nothing?> = WindowId(clazz) { NullableNothingSerializer() }
 
 inline fun <reified A : WindowArgs> WindowId(clazz: KClass<out WindowCore<A>>): WindowId.RootId<A> = WindowId(clazz) { serializer<A>() }
