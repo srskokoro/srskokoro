@@ -24,7 +24,7 @@ buildConfig.appMain {
 	)
 }
 
-buildConfig.desktopMain {
+buildConfig.desktopAppMain {
 	publicObject("AppBuildDesktop") inPackage NAMESPACE
 	buildConfigField("String", "APP_DATA_DIR_NAME", "\"SRSKokoro${if (isReleasing) "" else "-Dev"}\"")
 	buildConfigField("String", "USER_COLLECTIONS_DIR_NAME", "\"SRS Kokoro${if (isReleasing) "" else " (Dev)"}\"")

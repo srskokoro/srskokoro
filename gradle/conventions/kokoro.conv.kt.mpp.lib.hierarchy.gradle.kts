@@ -25,8 +25,8 @@ kotlin {
 
 		val (appMain, appTest) = derive("app", commonMain, commonTest)
 
-		val (desktopMain, desktopTest) = derive("desktop", appMain, appTest)
-		val (mobileMain, mobileTest) = derive("mobile", appMain, appTest)
+		val (desktopAppMain, desktopAppTest) = derive("desktopApp", appMain, appTest)
+		val (mobileAppMain, mobileAppTest) = derive("mobileApp", appMain, appTest)
 
 		// --
 
@@ -40,14 +40,14 @@ kotlin {
 
 		// --
 
-		val androidMain/**/ by getting { dependsOn(jvmishMain); dependsOn(mobileMain) }
-		val androidUnitTest by getting { dependsOn(jvmishTest); dependsOn(mobileTest) }
+		val androidMain/**/ by getting { dependsOn(jvmishMain); dependsOn(mobileAppMain) }
+		val androidUnitTest by getting { dependsOn(jvmishTest); dependsOn(mobileAppTest) }
 
-		val desktopJvmMain by getting { dependsOn(jvmishMain); dependsOn(desktopMain) }
-		val desktopJvmTest by getting { dependsOn(jvmishTest); dependsOn(desktopTest) }
+		val desktopJvmMain by getting { dependsOn(jvmishMain); dependsOn(desktopAppMain) }
+		val desktopJvmTest by getting { dependsOn(jvmishTest); dependsOn(desktopAppTest) }
 
-		with(iosMain) { dependsOn(mobileMain) }
-		with(iosTest) { dependsOn(mobileTest) }
+		with(iosMain) { dependsOn(mobileAppMain) }
+		with(iosTest) { dependsOn(mobileAppTest) }
 
 		val iosX64Main by getting { dependsOn(iosMain) }
 		val iosX64Test by getting { dependsOn(iosTest) }
