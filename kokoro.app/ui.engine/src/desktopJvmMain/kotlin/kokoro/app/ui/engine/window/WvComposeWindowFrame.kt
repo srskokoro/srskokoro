@@ -90,17 +90,23 @@ abstract class WvComposeWindowFrame @JvmOverloads constructor(
 			// TODO Hook some logging, so that we can detect errors, just like
 			//  in the JCEF Maven example app.
 
+			// Must be initialized before all other JCEF interactions, as the
+			// following would not only create a new `CefClient` but also
+			// initialize `CefApp` and link with the native library. At the time
+			// of writing, there is no other way to force that without also
+			// creating at least one `CefClient`.
+			val client = Jcef.app.createClient()
+
+			val setup = setup
+			val contexts = setup.contexts
+
 			val coroutineContext = scope.coroutineContext
 			val messageRouterScope = RawCoroutineScope(
 				coroutineContext + Dispatchers.Default,
 				SupervisorJob(coroutineContext[Job]),
 			)
 
-			val setup = setup
-			val contexts = setup.contexts
 			val messageRouter = CefMessageRouter.create(JcefMessageRouterHandler(contexts, messageRouterScope))
-
-			val client = Jcef.app.createClient()
 			client.addMessageRouter(messageRouter)
 
 			client.addRequestHandler(JcefRequestHandler(contexts))
