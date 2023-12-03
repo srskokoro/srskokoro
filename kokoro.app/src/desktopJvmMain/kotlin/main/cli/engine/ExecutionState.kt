@@ -4,8 +4,7 @@ import com.github.ajalt.mordant.rendering.AnsiLevel
 import com.github.ajalt.mordant.terminal.PrintRequest
 import com.github.ajalt.mordant.terminal.TerminalInfo
 import com.github.ajalt.mordant.terminal.TerminalInterface
-import kokoro.app.ui.Alerts
-import kokoro.app.ui.swing
+import kokoro.app.ui.swingAlert
 import kokoro.internal.ui.assertThreadSwing
 import java.util.LinkedList
 
@@ -59,13 +58,13 @@ internal class ExecutionState(
 		assertThreadSwing()
 		val m = consumeMessages()
 		if (m.isNotEmpty()) {
-			Alerts.swing(null) {
+			swingAlert({
 				statusCode?.let { title = "Status Code: $it" }
 				// TODO Output in a selectable monospaced text area instead.
 				//  - NOTE: The `message` field here accepts Swing components.
 				message = m
 				if (hasError) style { ERROR }
-			}
+			})
 		}
 	}
 

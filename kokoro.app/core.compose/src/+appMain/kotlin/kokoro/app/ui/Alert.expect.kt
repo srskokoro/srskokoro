@@ -1,31 +1,50 @@
 package kokoro.app.ui
 
+import androidx.compose.runtime.*
 import kokoro.app.AppBuild
-import kokoro.internal.SPECIAL_USE_DEPRECATION
 import kotlin.math.max
 
 //#region
 
-object Alerts
+@Composable
+inline fun Alert(
+	spec: AlertSpec.() -> Unit,
+	interceptor: AlertInterceptor = AlertInterceptor.DEFAULT,
+	crossinline recipient: (AlertButton?) -> Unit = {},
+) = Alert(AlertSpec().apply(spec), interceptor, recipient)
 
-suspend inline fun Alerts.await(spec: AlertSpec.() -> Unit) = await(AlertHandler.DEFAULT, spec)
-
-suspend inline fun Alerts.await(spec: AlertSpec) = await(AlertHandler.DEFAULT, spec)
-
-suspend inline fun Alerts.await(handler: AlertHandler, spec: AlertSpec.() -> Unit) = await(handler, AlertSpec().apply(spec))
-
-expect suspend fun Alerts.await(handler: AlertHandler, spec: AlertSpec): AlertButton?
+/**
+ * ### Implementation notes
+ *
+ * Upon displaying the alert, changing the arguments given won't cause the alert
+ * to be dismissed and/or re-displayed. It will only be dismissed by removing
+ * this composable from the composition on next recompose. Once the alert is
+ * dismissed, it can be re-displayed by re-introducing this composable to the
+ * composition.
+ */
+@Composable
+expect inline fun Alert(
+	spec: AlertSpec,
+	interceptor: AlertInterceptor = AlertInterceptor.DEFAULT,
+	crossinline recipient: (AlertButton?) -> Unit = {},
+)
 
 //#endregion
 
 //#region Callbacks
 
-fun interface AlertHandler {
+interface AlertInterceptor {
 
 	fun onShow(token: AlertToken)
 
 	companion object {
-		val DEFAULT = AlertHandler { }
+		val DEFAULT = AlertInterceptor { }
+	}
+}
+
+inline fun AlertInterceptor(crossinline onShow: (token: AlertToken) -> Unit) = object : AlertInterceptor {
+	override fun onShow(token: AlertToken) {
+		onShow.invoke(token)
 	}
 }
 
@@ -171,7 +190,6 @@ data class AlertButtonOverride(
 	override val textOverride: Any,
 ) : AlertButton
 
-@Deprecated(SPECIAL_USE_DEPRECATION)
 internal object AlertButtonImplCommon {
 	const val TEXT_DEFAULT_CustomAction = "\u22EF" // Midline horizontal ellipsis
 }

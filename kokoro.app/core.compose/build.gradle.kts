@@ -8,6 +8,7 @@ dependencies {
 	commonMainImplementation(project(":kokoro:internal"))
 
 	commonMainImplementation(project(":kokoro.app:core.base"))
+	commonMainImplementation(project(":kokoro.app:core.components"))
 
 	appMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 	desktopJvmMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing")

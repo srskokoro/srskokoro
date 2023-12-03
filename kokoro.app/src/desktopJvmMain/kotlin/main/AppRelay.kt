@@ -1,11 +1,10 @@
 package main
 
 import kokoro.app.AppBuild
-import kokoro.app.ui.Alerts
 import kokoro.app.ui.ExitProcessNonZeroViaSwing
 import kokoro.app.ui.StackTraceModal
 import kokoro.app.ui.ifChoiceMatches
-import kokoro.app.ui.swing
+import kokoro.app.ui.swingAlert
 import kokoro.internal.assertUnreachable
 import kokoro.internal.closeInCatch
 import okio.sink
@@ -121,7 +120,7 @@ internal class AppRelay(sockDir: String) {
 			}
 
 			EventQueue.invokeLater {
-				Alerts.swing(null) {
+				swingAlert({
 					when (versionOrErrorCode) {
 						E_SERVICE_HALT -> "Service halt" to "The application " +
 							"service terminated before it could process the " +
@@ -149,7 +148,7 @@ internal class AppRelay(sockDir: String) {
 					}
 					style { ERROR }
 					buttons { if (cause != null) OK(null, "Details") else OK }
-				}.ifChoiceMatches({ CustomAction }) {
+				}).ifChoiceMatches({ CustomAction }) {
 					if (cause != null) {
 						StackTraceModal.print(cause)
 					} else {

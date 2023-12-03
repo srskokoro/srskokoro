@@ -1,8 +1,15 @@
 package kokoro.app.ui
 
+import androidx.compose.runtime.*
+
 //#region
 
-actual suspend fun Alerts.await(handler: AlertHandler, spec: AlertSpec): AlertButton? = TODO("Not yet implemented")
+@Composable
+actual inline fun Alert(
+	spec: AlertSpec,
+	interceptor: AlertInterceptor,
+	crossinline recipient: (AlertButton?) -> Unit,
+): Unit = TODO("Not yet implemented")
 
 //#endregion
 

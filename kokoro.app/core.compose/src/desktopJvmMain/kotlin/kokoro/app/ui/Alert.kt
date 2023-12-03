@@ -1,5 +1,6 @@
 package kokoro.app.ui
 
+import androidx.compose.runtime.*
 import com.formdev.flatlaf.FlatLaf
 import kokoro.app.i18n.Locale
 import kokoro.internal.ui.DummyComponent
@@ -8,9 +9,6 @@ import kokoro.internal.ui.assertThreadSwing
 import kokoro.internal.ui.checkThreadSwing
 import kokoro.internal.ui.ensureBounded
 import kokoro.internal.ui.repack
-import kotlinx.coroutines.CancellableContinuation
-import kotlinx.coroutines.CompletionHandler
-import kotlinx.coroutines.suspendCancellableCoroutine
 import java.awt.Component
 import java.awt.Dialog
 import java.awt.Dimension
@@ -21,6 +19,7 @@ import java.awt.Window
 import java.awt.event.ActionEvent
 import java.awt.event.KeyEvent
 import java.util.LinkedList
+import java.util.concurrent.atomic.AtomicReference
 import javax.swing.Icon
 import javax.swing.JButton
 import javax.swing.JComponent
@@ -32,56 +31,115 @@ import javax.swing.LayoutStyle
 import javax.swing.UIDefaults
 import javax.swing.UIManager
 import javax.swing.WindowConstants
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.CoroutineContext
 import kotlin.math.max
 
 //#region
 
-actual suspend fun Alerts.await(handler: AlertHandler, spec: AlertSpec): AlertButton? {
-	return suspendCancellableCoroutine { continuation ->
-		val impl = AlertAwaitImpl(handler, spec, continuation)
-		if (EventQueue.isDispatchThread()) impl.run()
-		else EventQueue.invokeLater(impl)
+@Composable
+actual inline fun Alert(
+	spec: AlertSpec,
+	interceptor: AlertInterceptor,
+	crossinline recipient: (AlertButton?) -> Unit,
+) {
+	@OptIn(InternalComposeApi::class)
+	val applyContext = currentComposer.applyCoroutineContext
+	remember {
+		AlertImpl(object : AlertImpl.State(spec, interceptor, applyContext) {
+			override fun onDismiss(choice: AlertButton?) {
+				recipient.invoke(choice)
+			}
+		})
 	}
 }
 
-private class AlertAwaitImpl(
-	private val client: AlertHandler, private val spec: AlertSpec,
-	private val continuation: CancellableContinuation<AlertButton?>,
-) : AlertHandler, Runnable {
+@PublishedApi
+internal class AlertImpl(private var state: State?) : RememberObserver, Runnable {
 
-	override fun run() {
-		val continuation = continuation
-		val value: AlertButton? = try {
-			val parent = continuation.context[TopLevelComponentRef]?.get()
-			Alerts.swing(this, parent, spec)
-		} catch (ex: Throwable) {
-			continuation.resumeWithException(ex)
-			return
-		}
-		continuation.resume(value)
+	override fun onRemembered() {
+		if (EventQueue.isDispatchThread()) run()
+		else EventQueue.invokeLater(this)
 	}
 
-	override fun onShow(token: AlertToken) {
-		continuation.invokeOnCancellation(token as AlertTokenImpl)
-		client.onShow(token)
+	override fun run() {
+		val state = state ?: return // Exit! -- `onForgotten()` already called.
+
+		// The following will block and spawn a secondary event loop
+		val choice = swingAlert(state.spec, state, state.applyContext[TopLevelComponentRef]?.get())
+
+		state.onDismiss(choice)
+		this.state = null // Free up to allow GC
+	}
+
+	override fun onForgotten() {
+		state?.dispose()
+		state = null
+	}
+
+	override fun onAbandoned() {
+		/** Nothing else to do as [onRemembered] was not called. */
+		state = null
+	}
+
+	abstract class State(
+		val spec: AlertSpec,
+		private val interceptor: AlertInterceptor,
+		val applyContext: CoroutineContext,
+	) : AlertInterceptor, AtomicReference<AlertToken?>() {
+
+		override fun onShow(token: AlertToken) {
+			if (compareAndSet(null, token)) {
+				interceptor.onShow(token)
+			} else {
+				token.dismiss()
+			}
+		}
+
+		fun dispose() {
+			compareAndExchange(null, Dummy)
+				?.dismiss() // Dismiss any `token` already set (if any)
+		}
+
+		private object Dummy : AlertToken {
+			override fun dismiss(choice: AlertButton?) = Unit
+		}
+
+		abstract fun onDismiss(choice: AlertButton?)
 	}
 }
 
 //#endregion
 
-//#region Counterpart in "Swing"
+//#region Non-composable counterpart
 
-inline fun Alerts.swing(parent: Component?, spec: AlertSpec.() -> Unit) = swing(AlertHandler.DEFAULT, parent, spec)
+inline fun swingAlert(
+	spec: AlertSpec.() -> Unit,
+	parent: Component? = null,
+) = swingAlert(spec, AlertInterceptor.DEFAULT, parent)
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun Alerts.swing(parent: Component?, spec: AlertSpec) = swing(AlertHandler.DEFAULT, parent, spec)
+inline fun swingAlert(
+	spec: AlertSpec,
+	parent: Component? = null,
+) = swingAlert(spec, AlertInterceptor.DEFAULT, parent)
 
-inline fun Alerts.swing(handler: AlertHandler, parent: Component?, spec: AlertSpec.() -> Unit) = swing(handler, parent, AlertSpec().apply(spec))
+@Suppress("NOTHING_TO_INLINE")
+inline fun swingAlert(
+	spec: AlertSpec,
+	interceptor: AlertInterceptor = AlertInterceptor.DEFAULT,
+) = swingAlert(spec, interceptor, null)
 
-@Suppress("UnusedReceiverParameter")
-fun Alerts.swing(handler: AlertHandler, parent: Component?, spec: AlertSpec): AlertButton? {
+inline fun swingAlert(
+	spec: AlertSpec.() -> Unit,
+	interceptor: AlertInterceptor = AlertInterceptor.DEFAULT,
+	parent: Component? = null,
+) = swingAlert(AlertSpec().apply(spec), interceptor, parent)
+
+fun swingAlert(
+	spec: AlertSpec,
+	interceptor: AlertInterceptor,
+	parent: Component?,
+): AlertButton? {
 	checkThreadSwing()
 	ensureAppLaf()
 
@@ -150,7 +208,7 @@ fun Alerts.swing(handler: AlertHandler, parent: Component?, spec: AlertSpec): Al
 
 	// NOTE: The following not only gives the client code an opportunity to
 	// dismiss the dialog, but also, to dismiss it before it could be shown.
-	handler.onShow(AlertTokenImpl(dialog, pane))
+	interceptor.onShow(AlertTokenImpl(dialog, pane))
 
 	// Before we proceed, check that we're not disposed yet (since the last
 	// operation above may have triggered an early disposal).
@@ -197,10 +255,8 @@ private fun playSystemSound(messageType: Int) {
 private class AlertTokenImpl(
 	private val dialog: JDialog,
 	private val pane: JOptionPane,
-) : AlertToken, Runnable, CompletionHandler {
+) : AlertToken, Runnable {
 	private var deferredValue: AlertButton? = null
-
-	override fun invoke(cause: Throwable?) = dismiss()
 
 	override fun dismiss(choice: AlertButton?) {
 		// The following 'write' is guaranteed to *happen before* the
@@ -265,7 +321,7 @@ actual enum class AlertChoice : AlertButton {
 		override fun AlertButtonInflater.getMnemonic(): Int = getMnemonic("OptionPane.noButtonMnemonic")
 	},
 	CustomAction {
-		override fun AlertButtonInflater.getText(): String = @Suppress("DEPRECATION") AlertButtonImplCommon.TEXT_DEFAULT_CustomAction
+		override fun AlertButtonInflater.getText(): String = AlertButtonImplCommon.TEXT_DEFAULT_CustomAction
 		override fun AlertButtonInflater.getIcon(): Icon? = null
 		override fun AlertButtonInflater.getMnemonic(): Int = 0
 	},
