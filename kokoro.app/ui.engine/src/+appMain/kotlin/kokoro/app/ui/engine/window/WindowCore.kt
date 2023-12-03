@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
+import kotlin.jvm.JvmField
 import kotlin.jvm.JvmName
 
 // TODO! Remove `kokoro.app.ui.WindowSpec` as it has been replaced already
@@ -69,8 +70,7 @@ abstract class WindowCore<A : WindowArgs> {
 		TODO("Not yet implemented")
 	}
 
-	abstract class StatusBus<T> @PublishedApi internal constructor() {
-		abstract val busId: Int
+	abstract class StatusBus<T> @PublishedApi internal constructor(@JvmField val busId: Int) {
 		abstract fun SerializersModule.valueSerializer(): KSerializer<T>?
 
 		companion object {
@@ -80,8 +80,7 @@ abstract class WindowCore<A : WindowArgs> {
 
 			inline operator fun <reified T> invoke(busId: Int): StatusBus<T> = invoke(busId = busId) { serializer<T>() }
 
-			inline operator fun <T> invoke(busId: Int, crossinline serializer: SerializersModule.() -> KSerializer<T>?) = object : StatusBus<T>() {
-				override val busId get() = busId
+			inline operator fun <T> invoke(busId: Int, crossinline serializer: SerializersModule.() -> KSerializer<T>?) = object : StatusBus<T>(busId) {
 				override fun SerializersModule.valueSerializer() = serializer()
 			}
 		}
