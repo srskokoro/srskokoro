@@ -8,6 +8,7 @@ import kokoro.internal.SPECIAL_USE_DEPRECATION
 import kokoro.internal.collections.fastForEach
 import kokoro.internal.io.NioPath
 import kokoro.internal.io.toNioPath
+import kokoro.internal.system.CleanProcessExit
 import me.friwi.jcefmaven.EnumOS
 import me.friwi.jcefmaven.EnumPlatform
 import me.friwi.jcefmaven.impl.step.init.CefInitializer
@@ -138,22 +139,20 @@ object Jcef {
 
 			this.app = CefInitializer.initialize(bundleDir, cefArgs, cefSettings)
 
-			Runtime.getRuntime().addShutdownHook(CefAppTeardown())
+			CleanProcessExit.addHook(CPE_RANK, CefAppTeardown())
 		}
 	}
 
-	private class CefAppTeardown : Thread(
-		null, null,
-		"CefAppTeardown",
-		0, false
-	) {
+	const val CPE_RANK = 100
+
+	private class CefAppTeardown : CleanProcessExit.Hook {
 		companion object {
 			@GuardedBy("terminated_lock")
 			@JvmField var terminated = false
 			@JvmField val terminated_lock = Object()
 		}
 
-		override fun run() {
+		override fun onCleanup() {
 			app.dispose() // Expected to kill all JCEF helpers
 
 			val lock = terminated_lock
