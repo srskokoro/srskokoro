@@ -75,9 +75,13 @@ object CleanProcessExit {
 		CleanProcessExit::class.simpleName,
 		0, false,
 	) {
-		override fun run() {
+		@Throws(IllegalThreadStateException::class)
+		override fun start() {
 			isExiting = true
+			super.start()
+		}
 
+		override fun run() {
 			val entries = hooks.entries.toTypedArray()
 			// Sort by the set `rank` value
 			entries.sortBy { it.value.get().toInt() }
