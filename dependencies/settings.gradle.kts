@@ -11,7 +11,7 @@ dependencyVersionsSetup {
 
 dependencyVersions {
 	jvm {
-		ver = 17
+		ver = 21
 		vendor { ADOPTIUM }
 	}
 
