@@ -1,6 +1,7 @@
 package kokoro.app.ui
 
 import kokoro.app.ui.ExitProcessNonZeroViaSwing.Companion.install
+import kokoro.internal.system.cleanProcessExit
 import kokoro.internal.ui.assertThreadSwing
 import java.awt.AWTEvent
 import java.awt.EventQueue
@@ -9,7 +10,6 @@ import java.awt.Window
 import java.awt.event.AWTEventListener
 import java.awt.event.WindowEvent
 import java.util.IdentityHashMap
-import kotlin.system.exitProcess
 
 /**
  * A mechanism that can be installed to ensure that the process will exit with a
@@ -34,11 +34,6 @@ class ExitProcessNonZeroViaSwing private constructor(private val toolkit: Toolki
 			val listener = ExitProcessNonZeroViaSwing(toolkit)
 			toolkit.addAWTEventListener(listener, AWTEvent.WINDOW_EVENT_MASK)
 			if (listener.openedWindows.isEmpty()) listener.tryExitSoon()
-		}
-
-		@Suppress("NOTHING_TO_INLINE") // Why not? It's `private` code anyway :P
-		private inline fun exitNow(): Nothing {
-			exitProcess(StackTraceModal.NONZERO_STATUS)
 		}
 	}
 
@@ -76,7 +71,7 @@ class ExitProcessNonZeroViaSwing private constructor(private val toolkit: Toolki
 				EventQueue.invokeLater(this)
 			} else {
 				// Done! Exit now!
-				exitNow()
+				cleanProcessExit(StackTraceModal.NONZERO_STATUS)
 			}
 		}
 	}

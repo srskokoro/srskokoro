@@ -10,6 +10,7 @@ import kokoro.internal.getSafeStackTrace
 import kokoro.internal.io.UnsafeCharArrayWriter
 import kokoro.internal.io.writeln
 import kokoro.internal.printSafeStackTrace
+import kokoro.internal.system.cleanProcessExit
 import kokoro.internal.ui.NopCloseUiAction
 import kokoro.internal.ui.ensureBounded
 import kokoro.internal.ui.repack
@@ -162,7 +163,8 @@ private class StackTraceModalEvent(target: Throwable, extra: (Writer) -> Unit) :
 						// to the next code below.
 					} else {
 						System.err.println(HEADLESS_NOTICE_FATAL_ERROR_ENCOUNTERED_TERMINATING)
-						exitProcess(NONZERO_STATUS)
+						cleanProcessExit(NONZERO_STATUS)
+						return
 					}
 
 					val deferredFailure = current.deferredFailures.poll()
@@ -186,7 +188,7 @@ private class StackTraceModalEvent(target: Throwable, extra: (Writer) -> Unit) :
 					toString()
 				})
 			} finally {
-				exitProcess(NONZERO_STATUS)
+				cleanProcessExit(NONZERO_STATUS)
 			}
 		} else {
 			prev.next = this
@@ -309,7 +311,7 @@ private object StackTraceModalImpl {
 
 		if (gotError || pane.value == QUIT_NOW) {
 			// User requested to quit now
-			exitProcess(NONZERO_STATUS)
+			cleanProcessExit(NONZERO_STATUS)
 		}
 	}
 
