@@ -110,11 +110,11 @@ object CleanProcessExit {
 		fun onCleanup()
 	}
 
-	private const val EXEC_HOOK_MARK = -1L
+	internal const val EXEC_HOOK_MARK = -1L
 
-	@Volatile private var isExiting = false
+	@Volatile internal var isExiting = false
 
-	private val hooks = ConcurrentHashMap<Hook, AtomicLong>()
+	@JvmField internal val hooks = ConcurrentHashMap<Hook, AtomicLong>()
 
 	fun addHook(hook: Hook, rank: Int) {
 		val x = rank.toLong() and 0xFFFF_FFFF // Ensure non-negative as `Long`
