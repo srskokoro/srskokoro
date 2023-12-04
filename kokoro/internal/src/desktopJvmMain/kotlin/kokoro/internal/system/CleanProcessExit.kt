@@ -97,7 +97,7 @@ object CleanProcessExit {
 
 	init {
 		// Reduce the risk of "lost unpark" due to classloading, as recommended
-		// by `LockSupport` docs. See also, https://bugs.openjdk.org/browse/JDK-8074773?focusedId=13621169#comment-13621169
+		// by `LockSupport` docs. See also, https://tinyurl.com/JDK-8074773
 		LockSupport::class.java
 	}
 
