@@ -31,6 +31,10 @@ object CleanProcessExit {
 
 	@JvmField @Volatile var statusCode: Int = 0
 
+	@Volatile internal var _isExiting = false
+
+	val isExiting: Boolean get() = _isExiting
+
 	@JvmField val THREAD = ExitThread()
 
 	/**
@@ -77,7 +81,7 @@ object CleanProcessExit {
 	) {
 		@Throws(IllegalThreadStateException::class)
 		override fun start() {
-			isExiting = true
+			_isExiting = true
 			super.start()
 		}
 
@@ -116,8 +120,6 @@ object CleanProcessExit {
 
 	internal const val EXEC_HOOK_MARK = -1L
 
-	@Volatile internal var isExiting = false
-
 	@JvmField internal val hooks = ConcurrentHashMap<Hook, AtomicLong>()
 
 	fun addHook(hook: Hook, rank: Int) {
@@ -125,7 +127,7 @@ object CleanProcessExit {
 		val rankBox = AtomicLong(x)
 
 		hooks[hook] = rankBox
-		if (!isExiting) return // Early return. Skip code below.
+		if (!_isExiting) return // Early return. Skip code below.
 
 		// The primary purpose of the enclosing function is to ensure that the
 		// given hook will execute eventually. However, the execution of hooks
@@ -150,7 +152,7 @@ object CleanProcessExit {
 
 	fun removeHook(hook: Hook) {
 		val rankBox = hooks.remove(hook)
-		if (!isExiting) return // Early return. Skip code below.
+		if (!_isExiting) return // Early return. Skip code below.
 
 		// The primary purpose of the enclosing function is to prevent the hook
 		// from executing. However, the execution of hooks has already begun.
