@@ -43,11 +43,11 @@ object CleanProcessExit {
 
 	val isExiting: Boolean get() = _isExiting.get()
 
-	@PublishedApi @JvmField internal val THREAD: CleanProcessExitThread
+	@PublishedApi @JvmField internal val exitThread: CleanProcessExitThread
 
 	init {
 		val t = CleanProcessExitThread()
-		THREAD = t
+		exitThread = t
 
 		// Ensure "max priority" for when started by a shutdown hook (see below)
 		t.priority = Thread.MAX_PRIORITY
@@ -59,7 +59,7 @@ object CleanProcessExit {
 	 */
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun run() {
-		THREAD.start()
+		exitThread.start()
 	}
 
 	/**
@@ -87,7 +87,7 @@ object CleanProcessExit {
 	// --
 
 	/**
-	 * The `Runtime` shutdown hook for starting [THREAD], just in case [THREAD]
+	 * The `Runtime` shutdown hook for starting [exitThread], just in case [exitThread]
 	 * won't be started manually.
 	 */
 	@JvmField internal val shutdownHook: Thread
@@ -103,7 +103,7 @@ object CleanProcessExit {
 
 	init {
 		val starter = Runnable {
-			THREAD.start()
+			exitThread.start()
 
 			while (!shutdownHook_allowTerminate)
 				LockSupport.park()
