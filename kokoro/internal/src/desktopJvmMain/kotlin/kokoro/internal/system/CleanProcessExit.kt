@@ -93,6 +93,14 @@ object CleanProcessExit {
 
 			exitProcess(statusCode)
 		}
+
+		companion object {
+			private val ROOT_THREAD_GROUP = run(fun(): ThreadGroup {
+				var g: ThreadGroup = currentThread().threadGroup
+				while (true) g = g.parent ?: break
+				return g
+			})
+		}
 	}
 
 	// --
@@ -171,12 +179,6 @@ object CleanProcessExit {
 			throw E_HooksAlreadyRunning()
 		}
 	}
+
+	private fun E_HooksAlreadyRunning() = IllegalStateException("Hooks already running")
 }
-
-private val ROOT_THREAD_GROUP = run(fun(): ThreadGroup {
-	var g: ThreadGroup = Thread.currentThread().threadGroup
-	while (true) g = g.parent ?: break
-	return g
-})
-
-private fun E_HooksAlreadyRunning() = IllegalStateException("Hooks already running")
