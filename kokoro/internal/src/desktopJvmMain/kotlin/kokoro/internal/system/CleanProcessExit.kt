@@ -29,7 +29,7 @@ inline fun cleanProcessExitBlocking(statusCode: Int): Nothing {
 
 object CleanProcessExit {
 
-	@JvmField @Volatile var statusCode: Int = 0
+	@Volatile @JvmField var statusCode: Int = 0
 
 	internal val _isExiting = AtomicBoolean(false)
 
