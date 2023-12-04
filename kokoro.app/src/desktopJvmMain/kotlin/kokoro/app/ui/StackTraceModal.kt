@@ -33,7 +33,6 @@ import javax.swing.JScrollPane
 import javax.swing.JTextArea
 import javax.swing.WindowConstants
 import kotlin.coroutines.CoroutineContext
-import kotlin.system.exitProcess
 
 object StackTraceModal : CoroutineExceptionHandler, Thread.UncaughtExceptionHandler {
 	const val NONZERO_STATUS = 1
