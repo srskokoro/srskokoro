@@ -8,8 +8,8 @@ import kokoro.internal.system.CleanProcessExit.shutdownHook
 import kokoro.internal.system.CleanProcessExit.shutdownHook_allowTerminate
 import kokoro.internal.system.CleanProcessExit.statusCode
 import kokoro.internal.system.CleanProcessExitThread.Companion.ROOT_THREAD_GROUP
-import kotlinx.atomicfu.atomic
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.locks.LockSupport
 
@@ -45,9 +45,9 @@ object CleanProcessExit {
 
 	@Volatile @JvmField var statusCode: Int = 0
 
-	@JvmField internal val _isExiting = atomic(false)
+	@JvmField internal val _isExiting = AtomicBoolean(false)
 
-	val isExiting: Boolean get() = _isExiting.value
+	val isExiting: Boolean get() = _isExiting.get()
 
 	@PublishedApi @JvmField internal val exitThread: CleanProcessExitThread
 
@@ -98,7 +98,7 @@ object CleanProcessExit {
 		val rankBox = AtomicLong(x)
 
 		hooks[hook] = rankBox
-		if (!_isExiting.value) return // Early return. Skip code below.
+		if (!_isExiting.get()) return // Early return. Skip code below.
 
 		// The primary purpose of the enclosing function is to ensure that the
 		// given hook will execute eventually. However, the execution of hooks
@@ -123,7 +123,7 @@ object CleanProcessExit {
 
 	fun removeHook(hook: Hook) {
 		val rankBox = hooks.remove(hook)
-		if (!_isExiting.value) return // Early return. Skip code below.
+		if (!_isExiting.get()) return // Early return. Skip code below.
 
 		// The primary purpose of the enclosing function is to prevent the hook
 		// from executing. However, the execution of hooks has already begun.
