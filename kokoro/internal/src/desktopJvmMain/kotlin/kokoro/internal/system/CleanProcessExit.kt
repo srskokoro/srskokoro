@@ -1,7 +1,13 @@
 package kokoro.internal.system
 
 import kokoro.internal.assert
-import kokoro.internal.system.CleanProcessExit.ExitThread.Companion.ROOT_THREAD_GROUP
+import kokoro.internal.system.CleanProcessExit.EXEC_HOOK_MARK
+import kokoro.internal.system.CleanProcessExit._isExiting
+import kokoro.internal.system.CleanProcessExit.hooks
+import kokoro.internal.system.CleanProcessExit.shutdownHook
+import kokoro.internal.system.CleanProcessExit.shutdownHook_allowTerminate
+import kokoro.internal.system.CleanProcessExit.statusCode
+import kokoro.internal.system.CleanProcessExitThread.Companion.ROOT_THREAD_GROUP
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
@@ -37,10 +43,10 @@ object CleanProcessExit {
 
 	val isExiting: Boolean get() = _isExiting.get()
 
-	@JvmField val THREAD: ExitThread
+	@JvmField val THREAD: CleanProcessExitThread
 
 	init {
-		val t = ExitThread()
+		val t = CleanProcessExitThread()
 		THREAD = t
 
 		// Ensure "max priority" for when started by a shutdown hook (see below)
@@ -115,46 +121,6 @@ object CleanProcessExit {
 			Runtime.getRuntime().addShutdownHook(h)
 		} catch (ex: Throwable) {
 			ROOT_THREAD_GROUP.uncaughtException(Thread.currentThread(), ex)
-		}
-	}
-
-	class ExitThread internal constructor() : Thread(
-		ROOT_THREAD_GROUP, null,
-		CleanProcessExit::class.simpleName,
-		0, false,
-	) {
-		override fun start() {
-			if (_isExiting.compareAndSet(false, true)) {
-				super.start()
-			}
-		}
-
-		override fun run() {
-			val entries = hooks.entries.toTypedArray()
-			// Sort by the set `rank` value
-			entries.sortBy { it.value.get().toInt() }
-
-			for ((hook, rankBox) in entries) {
-				val x = rankBox.get()
-				if (x >= 0 && rankBox.compareAndSet(x, EXEC_HOOK_MARK)) try {
-					hook.onCleanup()
-				} catch (ex: Throwable) {
-					ROOT_THREAD_GROUP.uncaughtException(this, ex)
-				}
-			}
-
-			shutdownHook_allowTerminate = true
-			LockSupport.unpark(shutdownHook)
-
-			Runtime.getRuntime().exit(statusCode)
-		}
-
-		companion object {
-			@JvmField internal val ROOT_THREAD_GROUP = run(fun(): ThreadGroup {
-				var g: ThreadGroup = currentThread().threadGroup
-				while (true) g = g.parent ?: break
-				return g
-			})
 		}
 	}
 
@@ -234,4 +200,44 @@ object CleanProcessExit {
 	}
 
 	private fun E_HooksAlreadyRunning() = IllegalStateException("Hooks already running")
+}
+
+class CleanProcessExitThread internal constructor() : Thread(
+	ROOT_THREAD_GROUP, null,
+	CleanProcessExit::class.simpleName,
+	0, false,
+) {
+	override fun start() {
+		if (_isExiting.compareAndSet(false, true)) {
+			super.start()
+		}
+	}
+
+	override fun run() {
+		val entries = hooks.entries.toTypedArray()
+		// Sort by the set `rank` value
+		entries.sortBy { it.value.get().toInt() }
+
+		for ((hook, rankBox) in entries) {
+			val x = rankBox.get()
+			if (x >= 0 && rankBox.compareAndSet(x, EXEC_HOOK_MARK)) try {
+				hook.onCleanup()
+			} catch (ex: Throwable) {
+				ROOT_THREAD_GROUP.uncaughtException(this, ex)
+			}
+		}
+
+		shutdownHook_allowTerminate = true
+		LockSupport.unpark(shutdownHook)
+
+		Runtime.getRuntime().exit(statusCode)
+	}
+
+	companion object {
+		@JvmField internal val ROOT_THREAD_GROUP = run(fun(): ThreadGroup {
+			var g: ThreadGroup = currentThread().threadGroup
+			while (true) g = g.parent ?: break
+			return g
+		})
+	}
 }
