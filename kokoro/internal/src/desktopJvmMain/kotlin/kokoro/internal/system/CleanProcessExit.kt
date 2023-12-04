@@ -58,11 +58,12 @@ object CleanProcessExit {
 	fun blockUntilExit(): Nothing {
 		while (true) {
 			try {
-				THREAD.join()
+				@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+				val o = hooks as Object
+				synchronized(o) { o.wait() }
 			} catch (_: InterruptedException) {
-				continue
+				// Ignore
 			}
-			throw AssertionError("Should be unreachable")
 		}
 	}
 
