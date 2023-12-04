@@ -2,6 +2,7 @@ package kokoro.internal.system
 
 import kokoro.internal.assert
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.system.exitProcess
 
@@ -31,9 +32,9 @@ object CleanProcessExit {
 
 	@JvmField @Volatile var statusCode: Int = 0
 
-	@Volatile internal var _isExiting = false
+	internal val _isExiting = AtomicBoolean(false)
 
-	val isExiting: Boolean get() = _isExiting
+	val isExiting: Boolean get() = _isExiting.get()
 
 	@JvmField val THREAD = ExitThread()
 
@@ -42,12 +43,9 @@ object CleanProcessExit {
 	 * @see THREAD
 	 * @see runBlocking
 	 */
-	fun run() {
-		try {
-			THREAD.start()
-		} catch (_: IllegalThreadStateException) {
-			// Already started
-		}
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun run() {
+		THREAD.start()
 	}
 
 	/**
@@ -79,10 +77,10 @@ object CleanProcessExit {
 		CleanProcessExit::class.simpleName,
 		0, false,
 	) {
-		@Throws(IllegalThreadStateException::class)
 		override fun start() {
-			_isExiting = true
-			super.start()
+			if (_isExiting.compareAndSet(false, true)) {
+				super.start()
+			}
 		}
 
 		override fun run() {
@@ -127,7 +125,7 @@ object CleanProcessExit {
 		val rankBox = AtomicLong(x)
 
 		hooks[hook] = rankBox
-		if (!_isExiting) return // Early return. Skip code below.
+		if (!_isExiting.get()) return // Early return. Skip code below.
 
 		// The primary purpose of the enclosing function is to ensure that the
 		// given hook will execute eventually. However, the execution of hooks
@@ -152,7 +150,7 @@ object CleanProcessExit {
 
 	fun removeHook(hook: Hook) {
 		val rankBox = hooks.remove(hook)
-		if (!_isExiting) return // Early return. Skip code below.
+		if (!_isExiting.get()) return // Early return. Skip code below.
 
 		// The primary purpose of the enclosing function is to prevent the hook
 		// from executing. However, the execution of hooks has already begun.
