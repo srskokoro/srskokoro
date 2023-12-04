@@ -4,7 +4,6 @@ import kokoro.internal.assert
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
-import kotlin.system.exitProcess
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun cleanProcessExit() {
@@ -96,7 +95,7 @@ object CleanProcessExit {
 				}
 			}
 
-			exitProcess(statusCode)
+			Runtime.getRuntime().exit(statusCode)
 		}
 
 		companion object {
