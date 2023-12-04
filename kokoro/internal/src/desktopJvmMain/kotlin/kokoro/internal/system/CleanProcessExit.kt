@@ -39,7 +39,7 @@ object CleanProcessExit {
 
 	@Volatile @JvmField var statusCode: Int = 0
 
-	internal val _isExiting = AtomicBoolean(false)
+	@JvmField internal val _isExiting = AtomicBoolean(false)
 
 	val isExiting: Boolean get() = _isExiting.get()
 
