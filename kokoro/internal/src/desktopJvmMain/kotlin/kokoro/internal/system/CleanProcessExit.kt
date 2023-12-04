@@ -43,7 +43,7 @@ object CleanProcessExit {
 
 	val isExiting: Boolean get() = _isExiting.get()
 
-	@JvmField val THREAD: CleanProcessExitThread
+	@PublishedApi @JvmField internal val THREAD: CleanProcessExitThread
 
 	init {
 		val t = CleanProcessExitThread()
@@ -55,7 +55,6 @@ object CleanProcessExit {
 
 	/**
 	 * @see statusCode
-	 * @see THREAD
 	 * @see runBlocking
 	 */
 	@Suppress("NOTHING_TO_INLINE")
@@ -65,7 +64,6 @@ object CleanProcessExit {
 
 	/**
 	 * @see statusCode
-	 * @see THREAD
 	 * @see run
 	 */
 	@Suppress("NOTHING_TO_INLINE")
