@@ -73,15 +73,7 @@ object CleanProcessExit {
 	}
 
 	fun blockUntilExit(): Nothing {
-		while (true) {
-			try {
-				@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-				val o = _isExiting as Object
-				synchronized(o) { o.wait() }
-			} catch (_: InterruptedException) {
-				// Ignore
-			}
-		}
+		while (true) LockSupport.park()
 	}
 
 	// --
