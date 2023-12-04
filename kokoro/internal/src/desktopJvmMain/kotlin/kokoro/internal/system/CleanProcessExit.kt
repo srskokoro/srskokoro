@@ -31,6 +31,8 @@ object CleanProcessExit {
 
 	@JvmField @Volatile var statusCode: Int = 0
 
+	@JvmField val THREAD = ExitThread()
+
 	/**
 	 * @see statusCode
 	 * @see THREAD
@@ -68,7 +70,7 @@ object CleanProcessExit {
 		}
 	}
 
-	@JvmField val THREAD: Thread = object : Thread(
+	class ExitThread internal constructor() : Thread(
 		ROOT_THREAD_GROUP, null,
 		CleanProcessExit::class.simpleName,
 		0, false,
