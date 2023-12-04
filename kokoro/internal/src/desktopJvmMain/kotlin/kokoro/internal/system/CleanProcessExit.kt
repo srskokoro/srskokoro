@@ -45,9 +45,9 @@ object CleanProcessExit {
 
 	@Volatile @JvmField var statusCode: Int = 0
 
-	@JvmField internal val _isExiting = AtomicBoolean(false)
+	@PublishedApi @JvmField internal val _isExiting = AtomicBoolean(false)
 
-	val isExiting: Boolean get() = _isExiting.get()
+	inline val isExiting: Boolean get() = _isExiting.get()
 
 	@PublishedApi @JvmField internal val exitThread: CleanProcessExitThread
 
