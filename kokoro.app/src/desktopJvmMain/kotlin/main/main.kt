@@ -33,7 +33,9 @@ fun main(args: Array<out String>) {
 		}
 
 		daemon.doWorkLoop() // Will block the current thread
-		cleanProcessExit() // Ensure "clean exit" hooks would run
+
+		// Ensure "clean exit" hooks would run before `Runtime` shutdown hooks.
+		cleanProcessExit()
 		return // Done. Skip code below.
 	}
 
