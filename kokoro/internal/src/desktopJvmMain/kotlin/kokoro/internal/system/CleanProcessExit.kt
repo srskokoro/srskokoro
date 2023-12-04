@@ -84,38 +84,6 @@ object CleanProcessExit {
 
 	// --
 
-	/**
-	 * The `Runtime` shutdown hook for starting [exitThread] automatically, just
-	 * in case it won't be started manually.
-	 */
-	@JvmField internal val shutdownHook: Thread
-
-	@Volatile // -- intended to be used with `LockSupport`
-	@JvmField internal var shutdownHook_allowTerminate = false
-
-	init {
-		val starter = Runnable {
-			exitThread.start()
-
-			while (!shutdownHook_allowTerminate)
-				LockSupport.park()
-		}
-
-		val h = Thread.ofVirtual()
-			.inheritInheritableThreadLocals(false)
-			.unstarted(starter)
-
-		shutdownHook = h
-
-		try {
-			Runtime.getRuntime().addShutdownHook(h)
-		} catch (ex: Throwable) {
-			ROOT_THREAD_GROUP.uncaughtException(Thread.currentThread(), ex)
-		}
-	}
-
-	// --
-
 	fun interface Hook {
 
 		fun onCleanup()
@@ -190,6 +158,38 @@ object CleanProcessExit {
 	}
 
 	private fun E_HooksAlreadyRunning() = IllegalStateException("Hooks already running")
+
+	// --
+
+	/**
+	 * The `Runtime` shutdown hook for starting [exitThread] automatically, just
+	 * in case it won't be started manually.
+	 */
+	@JvmField internal val shutdownHook: Thread
+
+	@Volatile // -- intended to be used with `LockSupport`
+	@JvmField internal var shutdownHook_allowTerminate = false
+
+	init {
+		val starter = Runnable {
+			exitThread.start()
+
+			while (!shutdownHook_allowTerminate)
+				LockSupport.park()
+		}
+
+		val h = Thread.ofVirtual()
+			.inheritInheritableThreadLocals(false)
+			.unstarted(starter)
+
+		shutdownHook = h
+
+		try {
+			Runtime.getRuntime().addShutdownHook(h)
+		} catch (ex: Throwable) {
+			ROOT_THREAD_GROUP.uncaughtException(Thread.currentThread(), ex)
+		}
+	}
 }
 
 class CleanProcessExitThread internal constructor() : Thread(
