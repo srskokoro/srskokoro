@@ -2,6 +2,7 @@ package kokoro.internal.system
 
 import kokoro.internal.assert
 import kokoro.internal.system.CleanProcessExit.EXEC_HOOK_MARK
+import kokoro.internal.system.CleanProcessExit.Hook
 import kokoro.internal.system.CleanProcessExit._isExiting
 import kokoro.internal.system.CleanProcessExit.hooks
 import kokoro.internal.system.CleanProcessExit.shutdownHook
@@ -12,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.locks.LockSupport
+import kotlin.collections.MutableMap.MutableEntry
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun cleanProcessExit() {
@@ -205,12 +207,14 @@ class CleanProcessExitThread internal constructor() : Thread(
 
 	override fun run() {
 		val entries = hooks.entries.toTypedArray()
+
 		// Sort by the set `rank` value
-		entries.sortWith { a, b ->
+		val comparator = Comparator<MutableEntry<Hook, AtomicLong>> { a, b ->
 			val x = a.value.get().toInt()
 			val y = b.value.get().toInt()
 			x.compareTo(y)
 		}
+		entries.sortWith(comparator)
 
 		for ((hook, rankBox) in entries) {
 			val x = rankBox.get()
