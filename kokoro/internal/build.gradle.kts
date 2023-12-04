@@ -3,6 +3,7 @@ plugins {
 	id("conv.kt.mpp.targets")
 	id("conv.gmazzo.buildconfig")
 	id("conv.version")
+	id("conv.ktx.atomicfu")
 }
 
 group = evaluatedParent.group
