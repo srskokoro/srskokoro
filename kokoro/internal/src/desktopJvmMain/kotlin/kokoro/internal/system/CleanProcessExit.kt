@@ -1,9 +1,11 @@
 package kokoro.internal.system
 
 import kokoro.internal.assert
+import kokoro.internal.system.CleanProcessExit.ExitThread.Companion.ROOT_THREAD_GROUP
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
+import java.util.concurrent.locks.LockSupport
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun cleanProcessExit() {
@@ -35,7 +37,15 @@ object CleanProcessExit {
 
 	val isExiting: Boolean get() = _isExiting.get()
 
-	@JvmField val THREAD = ExitThread()
+	@JvmField val THREAD: ExitThread
+
+	init {
+		val t = ExitThread()
+		THREAD = t
+
+		// Ensure "max priority" for when started by a shutdown hook (see below)
+		t.priority = Thread.MAX_PRIORITY
+	}
 
 	/**
 	 * @see statusCode
@@ -70,6 +80,44 @@ object CleanProcessExit {
 		}
 	}
 
+	// --
+
+	/**
+	 * The `Runtime` shutdown hook for starting [THREAD], just in case [THREAD]
+	 * won't be started manually.
+	 */
+	@JvmField internal val shutdownHook: Thread
+
+	@Volatile // -- intended to be used with `LockSupport`
+	@JvmField internal var shutdownHook_allowTerminate = false
+
+	init {
+		// Reduce the risk of "lost unpark" due to classloading, as recommended
+		// by `LockSupport` docs. See also, https://bugs.openjdk.org/browse/JDK-8074773?focusedId=13621169#comment-13621169
+		LockSupport::class.java
+	}
+
+	init {
+		val starter = Runnable {
+			THREAD.start()
+
+			while (!shutdownHook_allowTerminate)
+				LockSupport.park()
+		}
+
+		val h = Thread.ofVirtual()
+			.inheritInheritableThreadLocals(false)
+			.unstarted(starter)
+
+		shutdownHook = h
+
+		try {
+			Runtime.getRuntime().addShutdownHook(h)
+		} catch (ex: Throwable) {
+			ROOT_THREAD_GROUP.uncaughtException(Thread.currentThread(), ex)
+		}
+	}
+
 	class ExitThread internal constructor() : Thread(
 		ROOT_THREAD_GROUP, null,
 		CleanProcessExit::class.simpleName,
@@ -95,11 +143,14 @@ object CleanProcessExit {
 				}
 			}
 
+			shutdownHook_allowTerminate = true
+			LockSupport.unpark(shutdownHook)
+
 			Runtime.getRuntime().exit(statusCode)
 		}
 
 		companion object {
-			private val ROOT_THREAD_GROUP = run(fun(): ThreadGroup {
+			@JvmField internal val ROOT_THREAD_GROUP = run(fun(): ThreadGroup {
 				var g: ThreadGroup = currentThread().threadGroup
 				while (true) g = g.parent ?: break
 				return g
