@@ -119,7 +119,7 @@ object CleanProcessExit {
 
 	@JvmField internal val hooks = ConcurrentHashMap<Hook, AtomicLong>()
 
-	fun addHook(hook: Hook, rank: Int) {
+	fun addHook(rank: Int, hook: Hook) {
 		val x = rank.toLong() and 0xFFFF_FFFF // Ensure non-negative as `Long`
 		val rankBox = AtomicLong(x)
 
