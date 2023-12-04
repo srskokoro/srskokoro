@@ -87,8 +87,8 @@ object CleanProcessExit {
 	// --
 
 	/**
-	 * The `Runtime` shutdown hook for starting [exitThread], just in case [exitThread]
-	 * won't be started manually.
+	 * The `Runtime` shutdown hook for starting [exitThread] automatically, just
+	 * in case it won't be started manually.
 	 */
 	@JvmField internal val shutdownHook: Thread
 
