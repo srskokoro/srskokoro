@@ -206,7 +206,11 @@ class CleanProcessExitThread internal constructor() : Thread(
 	override fun run() {
 		val entries = hooks.entries.toTypedArray()
 		// Sort by the set `rank` value
-		entries.sortBy { it.value.get().toInt() }
+		entries.sortWith { a, b ->
+			val x = a.value.get().toInt()
+			val y = b.value.get().toInt()
+			x.compareTo(y)
+		}
 
 		for ((hook, rankBox) in entries) {
 			val x = rankBox.get()
