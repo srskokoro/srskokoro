@@ -210,9 +210,7 @@ class CleanProcessExitThread internal constructor() : Thread(
 
 		// Sort by the set `rank` value
 		val comparator = Comparator<MutableEntry<Hook, AtomicLong>> { a, b ->
-			val x = a.value.get().toInt()
-			val y = b.value.get().toInt()
-			x.compareTo(y)
+			a.value.get().toInt().compareTo(b.value.get().toInt())
 		}
 		entries.sortWith(comparator)
 
