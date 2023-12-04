@@ -55,11 +55,12 @@ object CleanProcessExit {
 		blockUntilExit()
 	}
 
+	private val BLOCKER = Object()
+
 	fun blockUntilExit(): Nothing {
 		while (true) {
 			try {
-				@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-				val o = hooks as Object
+				val o = BLOCKER
 				synchronized(o) { o.wait() }
 			} catch (_: InterruptedException) {
 				// Ignore
