@@ -37,6 +37,12 @@ inline fun cleanProcessExitBlocking(statusCode: Int): Nothing {
 
 object CleanProcessExit {
 
+	init {
+		// Reduce the risk of "lost unpark" due to classloading, as recommended
+		// by `LockSupport` docs. See also, https://tinyurl.com/JDK-8074773
+		LockSupport::class.java
+	}
+
 	@Volatile @JvmField var statusCode: Int = 0
 
 	@JvmField internal val _isExiting = AtomicBoolean(false)
@@ -86,12 +92,6 @@ object CleanProcessExit {
 
 	@Volatile // -- intended to be used with `LockSupport`
 	@JvmField internal var shutdownHook_allowTerminate = false
-
-	init {
-		// Reduce the risk of "lost unpark" due to classloading, as recommended
-		// by `LockSupport` docs. See also, https://tinyurl.com/JDK-8074773
-		LockSupport::class.java
-	}
 
 	init {
 		val starter = Runnable {
