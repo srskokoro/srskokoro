@@ -155,7 +155,9 @@ private class StackTraceModalEvent(target: Throwable, extra: (Writer) -> Unit) :
 					echoStackTrace(stackTrace)
 
 					if (!GraphicsEnvironment.isHeadless()) {
-						awaitDismiss(stackTrace, gotError)
+						if (awaitDismiss(stackTrace, gotError)) {
+							return // User requested to quit now
+						}
 					} else if (!gotError) {
 						// Make it so that `poll()` would return `null`
 						current.deferredFailures.addLast(null)
@@ -216,7 +218,7 @@ private object StackTraceModalImpl {
 	private const val QUIT_NOW = "Quit now"
 	private const val IGNORE = "Ignore"
 
-	fun awaitDismiss(stackTrace: String, gotError: Boolean) {
+	fun awaitDismiss(stackTrace: String, gotError: Boolean): Boolean {
 		ensureAppLaf()
 
 		val content = JPanel()
@@ -312,7 +314,9 @@ private object StackTraceModalImpl {
 		if (gotError || pane.value == QUIT_NOW) {
 			// User requested to quit now
 			cleanProcessExit(NONZERO_STATUS)
+			return true
 		}
+		return false
 	}
 
 	private fun playSystemSound() {
