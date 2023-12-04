@@ -1,6 +1,7 @@
 package main
 
 import kokoro.app.ui.StackTraceModal
+import kokoro.internal.system.cleanProcessExit
 import kokoro.internal.throwAnySuppressed
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,6 +33,7 @@ fun main(args: Array<out String>) {
 		}
 
 		daemon.doWorkLoop() // Will block the current thread
+		cleanProcessExit() // Ensure "clean exit" hooks would run
 		return // Done. Skip code below.
 	}
 
