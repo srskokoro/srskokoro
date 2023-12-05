@@ -273,11 +273,19 @@ private object StackTraceModalImpl {
 		layout.setHorizontalGroup(hg)
 		layout.setVerticalGroup(vg)
 
-		val pane = JOptionPane(
-			content, JOptionPane.ERROR_MESSAGE,
-			JOptionPane.DEFAULT_OPTION, null,
+		val pane = object : JOptionPane(
+			content, ERROR_MESSAGE,
+			DEFAULT_OPTION, null,
 			options, defaultOption,
-		)
+		) {
+			override fun setValue(newValue: Any?) {
+				if (newValue == QUIT_NOW) {
+					// User requested to quit now
+					cleanProcessExit(NONZERO_STATUS)
+				}
+				super.setValue(newValue)
+			}
+		}
 
 		val parent = BaseWindowFrame.lastActive
 		pane.componentOrientation = (parent ?: JOptionPane.getRootFrame()).componentOrientation
@@ -310,12 +318,7 @@ private object StackTraceModalImpl {
 				"user is to quit the application now."
 		}) { !gotError || pane.value == QUIT_NOW }
 
-		if (gotError || pane.value == QUIT_NOW) {
-			// User requested to quit now
-			cleanProcessExit(NONZERO_STATUS)
-			return true
-		}
-		return false
+		return pane.value == QUIT_NOW
 	}
 
 	private fun playSystemSound() {
