@@ -20,6 +20,7 @@ import java.awt.Dialog
 import java.awt.Font
 import java.awt.GraphicsEnvironment
 import java.awt.Toolkit
+import java.awt.Window
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.awt.event.InvocationEvent
@@ -346,13 +347,38 @@ private object StackTraceModalImpl {
 		private fun E_Unsupported_createDialog() = UnsupportedOperationException("Use `${OptionPane::class.simpleName}.${::dialog.name}` instead")
 
 		override fun setValue(newValue: Any?) {
-			if (newValue == QUIT_NOW) {
-				// User requested to quit now
-				cleanProcessExit(NONZERO_STATUS)
+			val oldValue = value
+			if (oldValue == QUIT_NOW) {
+				return // Ignore `newValue`; Prevent further changes.
 			}
 			super.setValue(newValue)
+
+			val d = dialog
+			if (newValue == QUIT_NOW) {
+				// User requested to quit now
+				// --
+
+				// NOTE: We shouldn't close the dialog yet, in order to avoid
+				// the user from interacting with anything else (when the
+				// process is already scheduled for exiting). However, we should
+				// really dispose our dialog, or there will be a noticeable
+				// delay while attempting to exit the runtime. To resolve this,
+				// simply dispose all other windows, before finally disposing
+				// our dialog.
+				for (w in Window.getOwnerlessWindows()) {
+					if (w != d) w.dispose()
+				}
+				d.dispose()
+
+				// Do this last, so as to not worry about the EDT being affected
+				// by the AWT shutdown hook.
+				cleanProcessExit(NONZERO_STATUS)
+
+				return // Done. Skip code below.
+			}
+
 			if (newValue != null && newValue != UNINITIALIZED_VALUE) {
-				dialog.dispose()
+				d.dispose()
 			}
 		}
 	}
