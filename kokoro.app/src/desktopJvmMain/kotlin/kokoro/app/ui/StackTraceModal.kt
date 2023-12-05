@@ -13,24 +13,31 @@ import kokoro.internal.printSafeStackTrace
 import kokoro.internal.system.cleanProcessExit
 import kokoro.internal.ui.NopCloseUiAction
 import kokoro.internal.ui.ensureBounded
-import kokoro.internal.ui.repack
 import kotlinx.coroutines.CoroutineExceptionHandler
+import java.awt.BorderLayout
 import java.awt.Component
 import java.awt.Dialog
 import java.awt.Font
 import java.awt.GraphicsEnvironment
 import java.awt.Toolkit
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
 import java.awt.event.InvocationEvent
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
 import java.io.Writer
 import java.util.LinkedList
 import javax.swing.GroupLayout
 import javax.swing.GroupLayout.DEFAULT_SIZE
 import javax.swing.GroupLayout.PREFERRED_SIZE
+import javax.swing.JDialog
 import javax.swing.JLabel
 import javax.swing.JOptionPane
 import javax.swing.JPanel
+import javax.swing.JRootPane
 import javax.swing.JScrollPane
 import javax.swing.JTextArea
+import javax.swing.UIManager
 import javax.swing.WindowConstants
 import kotlin.coroutines.CoroutineContext
 
@@ -217,6 +224,9 @@ private object StackTraceModalImpl {
 	private const val QUIT_NOW = "Quit now"
 	private const val IGNORE = "Ignore"
 
+	private const val MESSAGE_TYPE = JOptionPane.ERROR_MESSAGE
+	private const val DIALOG_STYLE = JRootPane.ERROR_DIALOG
+
 	fun awaitDismiss(stackTrace: String, gotError: Boolean): Boolean {
 		ensureAppLaf()
 
@@ -273,45 +283,16 @@ private object StackTraceModalImpl {
 		layout.setHorizontalGroup(hg)
 		layout.setVerticalGroup(vg)
 
-		val pane = object : JOptionPane(
-			content, ERROR_MESSAGE,
-			DEFAULT_OPTION, null,
-			options, defaultOption,
-		) {
-			override fun setValue(newValue: Any?) {
-				if (newValue == QUIT_NOW) {
-					// User requested to quit now
-					cleanProcessExit(NONZERO_STATUS)
-				}
-				super.setValue(newValue)
-			}
-		}
+		val pane = OptionPane(
+			parent = BaseWindowFrame.lastActive,
+			title = AppBuild.TITLE + titleSuffix,
+			message = content,
+			options = options,
+			defaultOption,
+		)
 
-		val parent = BaseWindowFrame.lastActive
-		pane.componentOrientation = (parent ?: JOptionPane.getRootFrame()).componentOrientation
-
-		// Necessary to prevent `Esc` key "close" action (which is otherwise
-		// still enabled even if `defaultCloseOperation` is configured).
-		NopCloseUiAction.addTo(pane.actionMap)
-
-		// NOTE: Deliberately not parented to anyone, so that it gets its own
-		// entry in the system taskbar.
-		pane.createDialog(AppBuild.TITLE + titleSuffix).apply {
-			defaultCloseOperation = WindowConstants.DO_NOTHING_ON_CLOSE
-			modalityType = Dialog.ModalityType.TOOLKIT_MODAL
-
-			// Set this first, since on some platforms, changing the resizable
-			// state affects the insets of the dialog.
-			isResizable = true
-			repack() // Necessary in case the insets changed
-
-			ensureBounded(2)
-			setLocationRelativeTo(parent)
-
-			playSystemSound()
-			isVisible = true
-			dispose()
-		}
+		playSystemSound()
+		pane.dialog.isVisible = true
 
 		assert({
 			"Either we don't have an `Error` or the only option given to the " +
@@ -335,5 +316,112 @@ private object StackTraceModalImpl {
 
 		// Fallback, and for other desktop platforms:
 		toolkit.beep()
+	}
+
+	private class OptionPane(
+		parent: Component?,
+		title: String?,
+		message: Any?,
+		options: Array<out Any?>?,
+		initialValue: Any
+	) : JOptionPane(
+		message, MESSAGE_TYPE, DEFAULT_OPTION,
+		null, options, initialValue,
+	) {
+		// WARNING: This `init` block must be run before initializing `dialog`.
+		init {
+			componentOrientation = (parent ?: getRootFrame()).componentOrientation
+		}
+
+		val dialog = OptionPaneDialog(this, parent, title)
+
+		override fun createDialog(title: String?): JDialog {
+			throw E_Unsupported_createDialog()
+		}
+
+		override fun createDialog(parentComponent: Component?, title: String?): JDialog {
+			throw E_Unsupported_createDialog()
+		}
+
+		private fun E_Unsupported_createDialog() = UnsupportedOperationException("Use `${OptionPane::class.simpleName}.${::dialog.name}` instead")
+
+		override fun setValue(newValue: Any?) {
+			if (newValue == QUIT_NOW) {
+				// User requested to quit now
+				cleanProcessExit(NONZERO_STATUS)
+			}
+			super.setValue(newValue)
+			if (newValue != null && newValue != UNINITIALIZED_VALUE) {
+				dialog.dispose()
+			}
+		}
+	}
+
+	private class OptionPaneDialog(
+		pane: OptionPane,
+		parent: Component?,
+		title: String?,
+	) : JDialog(
+		// NOTE: Deliberately not parented to anyone, so that it gets its own
+		// entry in the system taskbar.
+		null as Dialog?, title, ModalityType.TOOLKIT_MODAL,
+	) {
+		init {
+			defaultCloseOperation = WindowConstants.DO_NOTHING_ON_CLOSE
+			// Necessary to prevent `Esc` key "close" action (which is otherwise
+			// still enabled even if `defaultCloseOperation` is configured).
+			NopCloseUiAction.addTo(pane.actionMap)
+
+			// The following setup was based on `javax.swing.JOptionPane.createDialog(String)`
+			// --
+
+			componentOrientation = pane.componentOrientation
+			val contentPane = contentPane
+
+			contentPane.layout = BorderLayout()
+			contentPane.add(pane, BorderLayout.CENTER)
+			if (isDefaultLookAndFeelDecorated()) {
+				val supportsWindowDecorations = UIManager.getLookAndFeel().supportsWindowDecorations
+				if (supportsWindowDecorations) {
+					isUndecorated = true
+					pane.rootPane.windowDecorationStyle = DIALOG_STYLE
+				}
+			}
+
+			// Set this first, since on some platforms, changing the resizable
+			// state affects the insets of the dialog.
+			isResizable = true
+			pack()
+
+			ensureBounded(2)
+			setLocationRelativeTo(parent)
+
+			val adapter: WindowAdapter = object : WindowAdapter() {
+				private var gotFocus = false
+				override fun windowClosing(we: WindowEvent) {
+					pane.value = null
+				}
+
+				override fun windowClosed(e: WindowEvent) {
+					this@OptionPaneDialog.contentPane.removeAll()
+				}
+
+				override fun windowGainedFocus(we: WindowEvent) {
+					// Once window gets focus, set initial focus
+					if (!gotFocus) {
+						pane.selectInitialValue()
+						gotFocus = true
+					}
+				}
+			}
+			addWindowListener(adapter)
+			addWindowFocusListener(adapter)
+			addComponentListener(object : ComponentAdapter() {
+				override fun componentShown(ce: ComponentEvent) {
+					// reset value to ensure closing works properly
+					pane.value = JOptionPane.UNINITIALIZED_VALUE
+				}
+			})
+		}
 	}
 }
