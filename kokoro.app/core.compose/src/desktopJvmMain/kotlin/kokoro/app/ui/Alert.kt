@@ -437,7 +437,7 @@ internal class AlertButtonInflater {
 			return pref
 		}
 
-		override fun fireActionPerformed(event: ActionEvent) {
+		override fun fireActionPerformed(event: ActionEvent?) {
 			paneRef.pane?.value = template
 		}
 
