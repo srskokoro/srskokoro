@@ -1,52 +1,53 @@
-﻿package conv.version
+package conv.version
 
-import isReleasing
 import org.ajoberstar.grgit.gradle.GrgitService
-import org.gradle.api.file.ProjectLayout
-import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
-import org.gradle.api.reflect.HasPublicType
-import org.gradle.kotlin.dsl.typeOf
-import java.io.ByteArrayInputStream
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.ValueSource
+import org.gradle.api.provider.ValueSourceParameters
+import java.io.File
+import java.io.FileInputStream
+import java.io.Serializable
 import java.util.Properties
 
-internal abstract class InternalVersionLoader(
-	grgitService: Provider<GrgitService>,
-	layout: ProjectLayout,
-	providers: ProviderFactory,
-) : HasPublicType {
+internal data class InternalVersion(val name: String?, val code: Int) : Serializable
 
-	override fun getPublicType() = typeOf<Any>()
+internal abstract class InternalVersionLoader : @Suppress("UnstableApiUsage") ValueSource<InternalVersion, InternalVersionLoader.Parameters> {
 
-	val version: String?
-	val versionCode: Int
+	interface Parameters : @Suppress("UnstableApiUsage") ValueSourceParameters {
+		val grgitService: Property<GrgitService>
+		val rootProjectDir: DirectoryProperty
+		val releasing: Property<Boolean>
+	}
 
-	init {
-		val propsBytes = providers.fileContents(
-			layout.projectDirectory.run {
-				file("version.properties").takeIf { it.asFile.isFile }
-					?: file("gradle/version.properties")
-			}
-		).asBytes.orNull
+	override fun obtain(): InternalVersion {
+		val parameters = parameters
+		val rootProjectDir = parameters.rootProjectDir.get().asFile
 
-		if (propsBytes != null) ByteArrayInputStream(propsBytes).use { stream ->
+		val propsFile = File(rootProjectDir, "version.properties").takeIf { it.isFile }
+			?: File(rootProjectDir, "gradle/version.properties").takeIf { it.isFile }
+
+		var versionName: String?
+		var versionCode: Int
+
+		if (propsFile != null) FileInputStream(propsFile).use { stream ->
 			val props = Properties()
 			props.load(stream)
-			var version = props["LATEST_RELEASE"] as String?
-			var versionCode = (props["LATEST_RELEASE_CODE"] as String?)?.toIntOrNull() ?: 0
-			if (!providers.isReleasing) {
-				version?.let {
-					val headId = grgitService.get().grgit.head().abbreviatedId
-					version = "$it+commit#$headId"
+			versionName = props["LATEST_RELEASE"] as String?
+			versionCode = (props["LATEST_RELEASE_CODE"] as String?)?.toIntOrNull() ?: 0
+			if (!parameters.releasing.get()) {
+				versionName?.let {
+					val headId = parameters.grgitService.get().grgit.head().abbreviatedId
+					versionName = "$it+commit#$headId"
 				}
 				versionCode += NON_RELEASE_CODE_INCREMENT
 			}
-			this.version = version
-			this.versionCode = versionCode
 		} else {
-			this.version = null
-			this.versionCode = 0
+			versionName = null
+			versionCode = 0
 		}
+
+		return InternalVersion(versionName, versionCode)
 	}
 }
 
