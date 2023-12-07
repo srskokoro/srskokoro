@@ -165,19 +165,13 @@ abstract class WvComposeWindowFrame @JvmOverloads constructor(
 
 				if (origin != null) {
 					val context = jcef.contexts.getWebContext(origin)
-					if (context != null) {
-						val binder = WvBinder(
-							if (context is WvUnitIdMapper) context
-							else WvUnitIdMapper.NULL,
-							jcef.browser,
-						)
-
+					if (context is WvUnitIdMapper) {
+						val binder = WvBinder(context, jcef.browser)
 						val widgets = setup.onNewComposition(binder)
 						composition = RedwoodComposition(
 							scope, binder.rootChildren, _uiConfiguration,
 							widgets, binder::onConcludeChanges,
 						)
-
 						this.composition = composition
 						return@synchronized
 					}
