@@ -1,10 +1,10 @@
 package kokoro.app.ui.engine
 
 import kokoro.app.ui.engine.web.WebContext
+import kokoro.app.ui.engine.web.WebOrigin
 import kokoro.app.ui.engine.web.WebRequest
 import kokoro.app.ui.engine.web.WebRequestHandler
 import kokoro.app.ui.engine.web.WebResponse
-import kokoro.app.ui.engine.web.WebOrigin
 
 abstract class WvWebContext(
 	val interceptor: WebRequestHandler,
