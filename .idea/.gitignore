@@ -3,12 +3,12 @@
 
 # IntelliJ IDEA / Android Studio "Ignore Exceptions"
 # - See, https://tips.seebrock3r.me/e28c24fc07aa
-!/vcs.xml
+!/codeStyles/
+!/copyright/
 !/fileTemplates/
 !/inspectionProfiles/
-!/scopes/
-!/codeStyles/
-!/encodings.xml
-!/copyright/
-#!/compiler.xml
 !/runConfigurations/
+!/scopes/
+#!/compiler.xml
+!/encodings.xml
+!/vcs.xml
