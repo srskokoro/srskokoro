@@ -1,6 +1,6 @@
 package kokoro.app.ui.engine.web
 
-interface WebContextResolver {
+fun interface WebContextResolver {
 
 	fun getWebContext(origin: WebOrigin): WebContext?
 }

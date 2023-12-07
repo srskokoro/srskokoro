@@ -70,4 +70,30 @@ class WebOrigin {
 				&& host == other.host
 				&& port == other.port
 		} else true
+
+	fun equals(scheme: String, host: String): Boolean {
+		run<Unit> {
+			if (this.scheme != scheme) return@run
+			if (this.host != host) return@run
+			if (this.port != WebUri.getPortForScheme(scheme)) return@run
+			return true
+		}
+		return false
+	}
+
+	fun equals(scheme: String, host: String, port: Int): Boolean {
+		run<Unit> {
+			if (this.scheme != scheme) return@run
+			if (this.host != host) return@run
+
+			this.port.let {
+				if (it == port) return true // Early exit
+
+				if (port >= 0) return@run
+				if (it != WebUri.getPortForScheme(scheme)) return@run
+			}
+			return true
+		}
+		return false
+	}
 }

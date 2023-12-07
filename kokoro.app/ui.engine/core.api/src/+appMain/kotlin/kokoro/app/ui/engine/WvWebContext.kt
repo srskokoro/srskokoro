@@ -10,6 +10,8 @@ abstract class WvWebContext(
 	val interceptor: WebRequestHandler,
 ) : WebContext, WebRequestHandler, WvUnitIdMapper {
 
+	constructor() : this(WebRequestHandler.NULL)
+
 	companion object {
 		init {
 			WvWebContext_platformInit()
