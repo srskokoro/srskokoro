@@ -216,11 +216,9 @@ private fun Project.setUpAssetsConvDummy(kotlin: KotlinMultiplatformExtension): 
 	}.get()
 }
 
-@Suppress("UnstableApiUsage")
-internal abstract class AssetsConvDummyNameValueSource :
-	ValueSource<String, AssetsConvDummyNameValueSource.Parameters> {
+internal abstract class AssetsConvDummyNameValueSource : @Suppress("UnstableApiUsage") ValueSource<String, AssetsConvDummyNameValueSource.Parameters> {
 
-	interface Parameters : ValueSourceParameters {
+	interface Parameters : @Suppress("UnstableApiUsage") ValueSourceParameters {
 		val dummyDirProperty: DirectoryProperty
 	}
 
