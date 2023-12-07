@@ -2,7 +2,6 @@ plugins {
 	id("kokoro.conv.kt.mpp.lib")
 	id("conv.kt.mpp.targets")
 	id("conv.kt.mpp.assets")
-	id("conv.gmazzo.buildconfig")
 	id("conv.version")
 	id("conv.ktx.atomicfu")
 	id("kokoro.app.ui.wv.setup")
