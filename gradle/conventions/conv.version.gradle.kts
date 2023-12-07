@@ -1,10 +1,5 @@
 import conv.version.InternalVersion
 import conv.version.InternalVersionLoader
-import org.ajoberstar.grgit.gradle.GrgitService
-
-plugins {
-	id("org.ajoberstar.grgit.service")
-}
 
 run<Unit> {
 	val rootProject = rootProject
@@ -16,12 +11,10 @@ run<Unit> {
 	var internalVersion = xs.findByName(internalVersion__name) as InternalVersion?
 	if (internalVersion == null) {
 		val providers = rootProject.providers
-		val grgitService: Provider<GrgitService> = grgitService.service
 
 		@Suppress("UnstableApiUsage", "USELESS_CAST")
 		internalVersion = providers.of(InternalVersionLoader::class) {
 			val parameters = parameters
-			parameters.grgitService.set(grgitService)
 			parameters.rootProjectDir.set(rootProject.layout.projectDirectory)
 			parameters.releasing.set(providers.isReleasing)
 		}.get() as InternalVersion

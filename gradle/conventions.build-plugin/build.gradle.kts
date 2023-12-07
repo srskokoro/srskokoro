@@ -33,8 +33,6 @@ dependencies {
 	implementation("io.kotest:kotest-framework-api") // So that we get access to, e.g., `io.kotest.core.internal.KotestEngineProperties`
 	implementation("io.kotest:kotest-framework-multiplatform-plugin-gradle")
 
-	implementation("org.ajoberstar.grgit:grgit-core")
-	implementation("org.ajoberstar.grgit:grgit-gradle")
 	implementation("com.github.gmazzo.buildconfig:plugin")
 	implementation("org.jetbrains.kotlinx:atomicfu-gradle-plugin")
 

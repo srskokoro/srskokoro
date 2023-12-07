@@ -62,12 +62,6 @@ dependencyVersions {
 	val slf4j = "2.0.7" // https://www.slf4j.org/download.html
 	module("org.slf4j:*", slf4j)
 
-	val grgit = "5.2.1" // https://github.com/ajoberstar/grgit/releases
-	plugin("org.ajoberstar.grgit", grgit)
-	plugin("org.ajoberstar.grgit.service", grgit)
-	module("org.ajoberstar.grgit:grgit-core", grgit)
-	module("org.ajoberstar.grgit:grgit-gradle", grgit)
-
 	val gmazzo_buildConfig = "4.2.0" // https://github.com/gmazzo/gradle-buildconfig-plugin/releases
 	plugin("com.github.gmazzo.buildconfig", gmazzo_buildConfig)
 	module("com.github.gmazzo.buildconfig:plugin", gmazzo_buildConfig)
