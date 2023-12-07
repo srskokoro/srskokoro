@@ -164,13 +164,19 @@ object Jcef {
 			// Kills all JCEF helpers that should really not run anymore, to
 			// prevent leaking them when our process isn't even running anymore.
 			// - See also, https://bugs.openjdk.org/browse/JDK-4770092
-			killExtraneousJcefHelpers(ProcessHandle.current().descendants())
+			killDescendantJcefHelpers()
 		}
 	}
 
-	fun killExtraneousJcefHelpers() {
-		killExtraneousJcefHelpers(ProcessHandle.allProcesses())
-	}
+	fun killDescendantJcefHelpers() = killAllJcefHelpers(
+		ProcessHandle.current().descendants(),
+		detachedOnly = false, // From `descendants()` (and thus not yet detached)
+	)
+
+	fun killExtraneousJcefHelpers() = killAllJcefHelpers(
+		ProcessHandle.allProcesses(),
+		detachedOnly = true, // Avoid killing a `jcef_helper` process that is still in use
+	)
 
 	// CONTRACT: The value here must match that of `ProcessHandle.info().command()`
 	private val jcefHelperPath: NioPath = File(bundleDir, when (EnumPlatform.getCurrentPlatform().os!!) {
@@ -179,18 +185,21 @@ object Jcef {
 		EnumOS.LINUX -> "jcef_helper" // TODO Verify if this is correct
 	}).toNioPath().toAbsolutePath()
 
-	fun killExtraneousJcefHelpers(processes: Stream<ProcessHandle>) {
-		val jcefHelperPath = jcefHelperPath
+	private fun killAllJcefHelpers(processes: Stream<ProcessHandle>, detachedOnly: Boolean) {
 		// TODO-FIXME Verify that our handling for non-Windows OS is correct
-		for (p in processes) {
-			val command = p.info().command().getOrNull() ?: continue
-			try {
-				val commandPath = command.toNioPath().toAbsolutePath()
-				if (commandPath.isSameFileAs(jcefHelperPath)) {
-					p.destroy()
+		processes.forEach { p ->
+			p.info().command().getOrNull()?.let { command ->
+				try {
+					val commandPath = command.toNioPath().toAbsolutePath()
+					if (commandPath.isSameFileAs(jcefHelperPath)) {
+						if (!detachedOnly || p.parent().isEmpty) {
+							p.descendants().forEach(ProcessHandle::destroy)
+							p.destroy()
+						}
+					}
+				} catch (ex: Throwable) {
+					if (DEBUG) throw ex
 				}
-			} catch (ex: Throwable) {
-				if (DEBUG) throw ex
 			}
 		}
 	}
