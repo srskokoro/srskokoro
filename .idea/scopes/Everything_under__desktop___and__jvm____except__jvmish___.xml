@@ -1,3 +1,0 @@
-<component name="DependencyValidationManager">
-  <scope name="Everything under 'desktop*' and 'jvm*' (except 'jvmish*')" pattern="file[*.desktop*]:*/||file[*.jvm*]:*/&amp;&amp;!file[*.jvmish*]:*/" />
-</component>

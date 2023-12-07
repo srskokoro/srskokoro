@@ -1,7 +1,0 @@
-targets:
-# Example entry:
-#- <target>[:<name>]
-
-customSourceSets:
-# Example entry:
-#- <name>
