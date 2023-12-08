@@ -1,3 +1,3 @@
 plugins {
-	`lifecycle-base`
+	id("build.root")
 }
