@@ -5,12 +5,12 @@ import kotlin.test.assertContentEquals
 
 class `test fastPow31` {
 	companion object {
-		private val TEST_RANGE = 0..<256
+		private val TEST_RANGE = 0 until 256
 	}
 
 	private fun naivePow31Calc(n: Int): Int {
 		var x = 1
-		for (i in 0..<n) x *= 31
+		for (i in 0 until n) x *= 31
 		return x
 	}
 
