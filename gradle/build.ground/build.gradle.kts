@@ -30,6 +30,9 @@ with(Build) {
 }
 
 dependencies {
+	compileOnly(gradleApi())
+	compileOnly(gradleKotlinDsl())
+
 	implementation(kotlin("gradle-plugin"))
 	implementation("org.gradle.kotlin", "gradle-kotlin-dsl-plugins", expectedKotlinDslPluginsVersion)
 }
