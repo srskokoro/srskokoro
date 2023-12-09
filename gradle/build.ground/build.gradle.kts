@@ -30,9 +30,6 @@ with(Build) {
 }
 
 dependencies {
-	gradleApi().let { compileOnly(it); testImplementation(it) }
-	gradleKotlinDsl().let { compileOnly(it); testImplementation(it) }
-
 	implementation(kotlin("gradle-plugin"))
 	implementation("org.gradle.kotlin", "gradle-kotlin-dsl-plugins", expectedKotlinDslPluginsVersion)
 }
