@@ -14,3 +14,6 @@ dependencyResolutionManagement {
 gradle.allprojects {
 	group = "build"
 }
+
+include(":support")
+project(":support").projectDir = File(settingsDir, "../build.support")
