@@ -29,6 +29,14 @@ with(Build) {
 	}
 }
 
+// NOTE: We explicitly depend on the following because... paranoia
+dependencies {
+	implementation(gradleApi())
+	testImplementation(gradleApi())
+	implementation(gradleKotlinDsl())
+	testImplementation(gradleKotlinDsl())
+}
+
 dependencies {
 	implementation(kotlin("gradle-plugin"))
 	implementation("org.gradle.kotlin", "gradle-kotlin-dsl-plugins", expectedKotlinDslPluginsVersion)
