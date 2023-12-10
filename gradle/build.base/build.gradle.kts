@@ -29,7 +29,36 @@ with(Build) {
 	}
 }
 
+// --
+
+val AGP_COMPILE_ONLY_VERSION = "8.1.4"
+
+val KOTEST_VERSION = "5.8.0"
+val ASSERTK_VERSION = "0.28.0"
+
+fun buildConfigData() = """
+const val ${::KOTEST_VERSION.name} = "$KOTEST_VERSION"
+const val ${::ASSERTK_VERSION.name} = "$ASSERTK_VERSION"
+""".trimIndent()
+
+kotlin.sourceSets.main {
+	kotlin.srcDir(tasks.register("config") {
+		val outputDir = project.layout.buildDirectory.dir("generated/$name")
+		outputs.dir(outputDir)
+		doFirst {
+			File(outputDir.get().asFile, "config.kt").outputStream()
+				.use { it.write(buildConfigData().encodeToByteArray()) }
+		}
+	})
+}
+
 dependencies {
 	implementation(kotlin("gradle-plugin"))
 	implementation("org.gradle.kotlin", "gradle-kotlin-dsl-plugins", expectedKotlinDslPluginsVersion)
+
+	implementation(platform("io.kotest:kotest-bom:$KOTEST_VERSION"))
+	implementation("io.kotest:kotest-framework-api") // So that we get access to, e.g., `io.kotest.core.internal.KotestEngineProperties`
+	implementation("io.kotest:kotest-framework-multiplatform-plugin-gradle")
+
+	compileOnly("com.android.tools.build", "gradle", AGP_COMPILE_ONLY_VERSION)
 }

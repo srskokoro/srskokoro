@@ -1,7 +1,11 @@
 @file:Suppress("UnstableApiUsage")
 
 dependencyResolutionManagement {
-	repositories.gradlePluginPortal()
+	repositories {
+		gradlePluginPortal()
+		mavenCentral()
+		google()
+	}
 }
 
 gradle.rootProject {
