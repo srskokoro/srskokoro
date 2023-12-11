@@ -15,6 +15,11 @@ val BaseProps = loadBaseProps("../../dependencies/base.properties")
 val KOTLIN_VERSION: String by BaseProps
 val KOTLIN_LANGUAGE_VERSION: String by BaseProps
 
+val AGP_VERSION: String by BaseProps
+
+val KOTEST_VERSION: String by BaseProps
+val ASSERTK_VERSION: String by BaseProps
+
 dependencies {
 	// NOTICE: Any project used as build logic (or as contributor of build
 	// plugins) should not use a `kotlin("stdlib")` higher than `embeddedKotlin("stdlib")`,
@@ -49,6 +54,14 @@ dependencies {
 	// applied anywhere under that project's parent build.
 	implementation(embeddedKotlin("gradle-plugin"))
 	implementation("org.gradle.kotlin", "gradle-kotlin-dsl-plugins", expectedKotlinDslPluginsVersion)
+
+	// --
+
+	api(enforcedPlatform("io.kotest:kotest-bom:$KOTEST_VERSION"))
+	implementation("io.kotest:kotest-framework-api") // So that we get access to, e.g., `io.kotest.core.internal.KotestEngineProperties`
+	implementation("io.kotest:kotest-framework-multiplatform-plugin-gradle")
+
+	compileOnly("com.android.tools.build", "gradle", AGP_VERSION)
 }
 
 // --
