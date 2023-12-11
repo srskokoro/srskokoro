@@ -17,3 +17,4 @@ gradle.allprojects {
 
 include(":support")
 project(":support").projectDir = File(settingsDir, "../build.support")
+include(":support:kt.dsl")
