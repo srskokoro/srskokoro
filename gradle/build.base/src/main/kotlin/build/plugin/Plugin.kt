@@ -1,4 +1,4 @@
-package build.support.gradle
+package build.plugin
 
 /**
  * @see org.gradle.api.Plugin
