@@ -40,9 +40,9 @@ dependencies {
 	// taking in those dependencies. And that, we expect that all other
 	// consumers of this project is also for setting up some build logic.
 	// Therefore, we don't have to wait for Gradle to enforce the described
-	// "strict" `embeddedKotlinVersion` above: we can do it ourselves now, very
-	// early on in the build sequence (instead of waiting for Gradle to do it
-	// unreliably for us much later on in the build sequence).
+	// "strict" `embeddedKotlinVersion` said above: we can do it ourselves now,
+	// very early on in the build sequence (instead of waiting for Gradle to do
+	// it unreliably for us much later on in the build sequence).
 	api(kotlin("stdlib", "$embeddedKotlinVersion!!"))
 
 	// WARNING: Both `stdlib` and KGP must be consistent with `kotlin-dsl`
