@@ -1,4 +1,4 @@
-package build.support.kt.dsl
+package build.support.gradle
 
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.internal.extensibility.DefaultExtraPropertiesExtension

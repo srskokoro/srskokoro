@@ -1,4 +1,4 @@
-package build.support.kt.dsl
+package build.support.gradle
 
 /**
  * @see org.gradle.api.Plugin

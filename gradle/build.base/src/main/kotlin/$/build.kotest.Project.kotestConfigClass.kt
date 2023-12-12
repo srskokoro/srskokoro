@@ -1,6 +1,6 @@
 @file:Suppress("PackageDirectoryMismatch")
 
-import build.support.kt.dsl.getOrNull
+import build.support.gradle.getOrNull
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.extra
 
