@@ -1,3 +1,3 @@
 plugins {
-	id("build.support.kt.jvm")
+	id("build.support.kt.mpp")
 }
