@@ -1,8 +1,8 @@
 package build.plugins
 
+import build.api.ProjectPlugin
 import build.api.dsl.model.compileOnlyTestImpl
 import build.api.dsl.model.implementation
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-abstract class _plugin : Plugin<Project> {
+abstract class _plugin : ProjectPlugin {
 	override fun apply(project: Project) {
 		project.apply {
 			plugin("java-gradle-plugin")
