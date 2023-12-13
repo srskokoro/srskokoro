@@ -45,7 +45,7 @@ internal abstract class PluginsAutoRegistrant : ValueSource<Set<String>, Plugins
 		val pluginsDir: DirectoryProperty
 	}
 
-	override fun obtain(): Set<String> = mutableSetOf<String>().also { output ->
+	override fun obtain() = mutableSetOf<String>().also { output ->
 		parameters.pluginsDir.asFileTree.visit(object : EmptyFileVisitor() {
 			override fun visitFile(visit: FileVisitDetails) {
 				val relativePath = visit.relativePath
