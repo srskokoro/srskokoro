@@ -30,3 +30,11 @@ inline fun ExtensionContainer.x() = ExtensionContainerDelegate(this)
 inline fun <reified T> ExtensionContainer.x(name: String): T = getByName(name) as T
 
 inline fun <reified T> ExtensionContainer.x(name: String, noinline configure: T.() -> Unit): Unit = configure(name, configure)
+
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun ExtensionContainerDelegate.x() = xs().x()
+
+inline fun <reified T> ExtensionContainerDelegate.x(name: String): T = xs().x(name)
+
+inline fun <reified T> ExtensionContainerDelegate.x(name: String, noinline configure: T.() -> Unit): Unit = xs().x(name, configure)
