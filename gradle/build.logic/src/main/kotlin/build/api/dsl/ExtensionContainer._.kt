@@ -17,8 +17,9 @@ inline fun <R> ExtensionContainer.getOrNull(name: String): R? {
 	return findByName(name) as R?
 }
 
-inline fun <R> ExtensionContainer.getOrElse(name: String, defaultValue: ExtensionContainer.(name: String) -> R): R =
-	getOrNull(name) ?: defaultValue(name)
+inline fun <R> ExtensionContainer.getOrElse(name: String, defaultValue: ExtensionContainer.(name: String) -> R): R {
+	return getOrNull(name) ?: defaultValue(name)
+}
 
 inline fun <reified R : Any> ExtensionContainer.getOrAdd(name: String, defaultValue: ExtensionContainer.(name: String) -> R): R = getOrElse(name) {
 	val extension = defaultValue(name)
