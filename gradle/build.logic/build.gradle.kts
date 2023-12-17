@@ -10,7 +10,6 @@ plugins {
 }
 
 group = "build"
-base.archivesName.set("logic")
 
 val pluginsDir = "src/main/plugins"
 
