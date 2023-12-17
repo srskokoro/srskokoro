@@ -22,13 +22,13 @@ private const val SETTINGS_BUILDS_LST = "settings.builds.lst"
 
 class _plugin : SettingsPlugin {
 
-	override fun apply(settings: Settings) {
+	override fun Settings.applyPlugin() {
 		val gradlePropsPropagationPaths = LinkedHashSet<String>()
 		val includedPluginBuilds = LinkedHashSet<String>()
 		val includedBuilds = LinkedHashSet<String>()
 
-		settings.providers.of(BuildsListLinesSource::class.java) {
-			parameters.settingsDir.set(settings.settingsDir)
+		providers.of(BuildsListLinesSource::class.java) {
+			parameters.settingsDir.set(settingsDir)
 		}.get().forEach { line ->
 			var end = line.length
 			var gradleProps_i = end - (GRADLE_PROPERTIES.length + 1)
@@ -59,9 +59,9 @@ class _plugin : SettingsPlugin {
 			}
 		}
 
-		propagateGradleProps(settings.settingsDir, gradlePropsPropagationPaths)
-		includePluginBuilds(settings, includedPluginBuilds)
-		includeBuilds(settings, includedBuilds)
+		propagateGradleProps(settingsDir, gradlePropsPropagationPaths)
+		includePluginBuilds(this, includedPluginBuilds)
+		includeBuilds(this, includedBuilds)
 	}
 
 	private fun propagateGradleProps(settingsDir: File, destinationPaths: LinkedHashSet<String>) {
