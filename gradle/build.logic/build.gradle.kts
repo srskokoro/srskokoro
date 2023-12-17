@@ -14,6 +14,7 @@ val pluginsDir = "src/main/plugins"
 gradlePlugin {
 	plugins {
 		addPlugin("build.plugins")
+		addPlugin("build.root")
 		addPlugin("build.settings.buildslist")
 	}
 }
