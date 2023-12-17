@@ -17,6 +17,7 @@ class _plugin : ProjectPlugin {
 		apply {
 			plugin("java-gradle-plugin")
 			plugin("org.gradle.kotlin.kotlin-dsl.base")
+			plugin<build.kt.base._plugin>()
 		}
 		apply_()
 	}
