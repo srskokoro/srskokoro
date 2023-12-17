@@ -13,8 +13,11 @@ val pluginsDir = "src/main/plugins"
 
 gradlePlugin {
 	plugins {
+		addPlugin("build.kt.base")
+
 		addPlugin("build.plugins")
 		addPlugin("build.root")
+
 		addPlugin("build.settings.buildslist")
 	}
 }
