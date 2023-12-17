@@ -4,11 +4,24 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.ExtensionContainer
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun Any.x() = (this as ExtensionAware).extensions.x()
+inline fun Any.xs() = (this as ExtensionAware).xs()
 
-inline fun <reified T> Any.x(name: String): T = (this as ExtensionAware).extensions.x(name)
+@Suppress("NOTHING_TO_INLINE")
+inline fun ExtensionAware.xs() = extensions
 
-inline fun <reified T> Any.x(name: String, noinline configure: T.() -> Unit): Unit = (this as ExtensionAware).extensions.x(name, configure)
+@Suppress("NOTHING_TO_INLINE")
+inline fun ExtensionContainer.xs() = this
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun ExtensionContainerScope.xs() = extensions
+
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun Any.x() = xs().x()
+
+inline fun <reified T> Any.x(name: String): T = xs().x(name)
+
+inline fun <reified T> Any.x(name: String, noinline configure: T.() -> Unit): Unit = xs().x(name, configure)
 
 
 @Suppress("NOTHING_TO_INLINE")
