@@ -7,8 +7,4 @@ import org.gradle.api.Project
  */
 abstract class ProjectPluginApply(
 	apply: Project.() -> Unit,
-) : ProjectPlugin, PluginApply<Project>(apply) {
-
-	@Suppress("RedundantOverride", "PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-	override fun apply(project: Project) = super.apply(project)
-}
+) : ProjectPlugin, PluginApply<Project>(apply)

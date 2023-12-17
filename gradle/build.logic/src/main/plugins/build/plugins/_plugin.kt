@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 class _plugin : ProjectPlugin {
-	override fun apply(project: Project) {
-		project.apply {
+	override fun Project.applyPlugin() {
+		apply {
 			plugin("java-gradle-plugin")
 			plugin("org.gradle.kotlin.kotlin-dsl.base")
 		}
-		project.pluginApply()
+		apply_()
 	}
 }
 
@@ -41,7 +41,7 @@ internal object Build {
 	const val JAVAC_RELEASE_OPT = "--release=8"
 }
 
-internal fun Project.pluginApply() {
+internal fun Project.apply_() {
 	installPluginsAutoRegistrant()
 
 	tasks {

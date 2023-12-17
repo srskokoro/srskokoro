@@ -1,7 +1,5 @@
 package build.api
 
-import org.gradle.api.Plugin
-
 /**
  * @see org.gradle.api.Plugin
  */
@@ -10,9 +8,9 @@ abstract class PluginApply<T : Any>(
 ) : Plugin<T> {
 
 	/**
-	 * @see Plugin.apply
+	 * @see org.gradle.api.Plugin.apply
 	 */
-	override fun apply(target: T) {
-		apply.invoke(target)
+	override fun T.applyPlugin() {
+		apply.invoke(this)
 	}
 }
