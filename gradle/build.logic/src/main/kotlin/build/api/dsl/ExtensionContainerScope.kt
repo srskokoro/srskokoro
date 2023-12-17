@@ -5,7 +5,7 @@ import org.gradle.kotlin.dsl.*
 import kotlin.reflect.KProperty
 
 @JvmInline
-value class ExtensionContainerScope(val extensions: ExtensionContainer) : ExtensionContainer by extensions {
+value class ExtensionContainerScope(val extensions: ExtensionContainer) {
 
 	inline operator fun <reified T> getValue(thisRef: Any?, property: KProperty<*>): T {
 		return extensions.getByName(property.name) as T
