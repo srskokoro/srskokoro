@@ -3,6 +3,13 @@ package build.api.dsl
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.internal.extensibility.DefaultExtraPropertiesExtension
 
+@Suppress("NOTHING_TO_INLINE")
+inline fun <R> ExtraPropertiesExtension.getOrThrow(name: String): R {
+	@Suppress("UNCHECKED_CAST")
+	// NOTE: The cast below throws on non-null incompatible types (as intended).
+	return get(name) as R
+}
+
 fun <R> ExtraPropertiesExtension.getOrNull(name: String): R? {
 	@Suppress("UNCHECKED_CAST")
 	return (if (this is DefaultExtraPropertiesExtension) {
