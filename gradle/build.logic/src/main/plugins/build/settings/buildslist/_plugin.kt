@@ -118,7 +118,7 @@ internal abstract class BuildsListLinesSource : ValueSource<List<String>, Builds
 		val settingsDir: DirectoryProperty
 	}
 
-	override fun obtain() = mutableListOf<String>().also { output ->
+	override fun obtain() = mutableListOf<String>().also { out ->
 		val settingsDir = parameters.settingsDir.get().asFile
 		File(settingsDir, SETTINGS_BUILDS_LST).let { lst ->
 			if (!lst.isFile) return@let
@@ -127,7 +127,7 @@ internal abstract class BuildsListLinesSource : ValueSource<List<String>, Builds
 				when (it[0]) {
 					'!', '#' -> return@forEachLine
 				}
-				output.add(it.trimEnd())
+				out.add(it.trimEnd())
 			}
 		}
 	}

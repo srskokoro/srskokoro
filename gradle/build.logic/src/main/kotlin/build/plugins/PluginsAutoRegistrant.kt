@@ -46,7 +46,7 @@ internal abstract class PluginsAutoRegistrant : ValueSource<Set<String>, Plugins
 		val pluginsDir: DirectoryProperty
 	}
 
-	override fun obtain() = mutableSetOf<String>().also { output ->
+	override fun obtain() = mutableSetOf<String>().also { out ->
 		parameters.pluginsDir.asFileTree.visit(object : EmptyFileVisitor() {
 			override fun visitFile(visit: FileVisitDetails) {
 				val relativePath = visit.relativePath
@@ -55,7 +55,7 @@ internal abstract class PluginsAutoRegistrant : ValueSource<Set<String>, Plugins
 				if (n <= 1 || segments[--n] != "$PLUGIN_CLASS.kt") {
 					throw InvalidUserDataException("Only `$PLUGIN_CLASS.kt` files are supported.\n- Invalid file: $relativePath")
 				}
-				output.add(buildString {
+				out.add(buildString {
 					append(segments[0])
 					for (i in 1 until n)
 						append('.').append(segments[i])
