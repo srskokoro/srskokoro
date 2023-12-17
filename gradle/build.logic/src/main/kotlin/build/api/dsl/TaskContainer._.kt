@@ -1,5 +1,7 @@
 package build.api.dsl
 
+import org.gradle.api.Action
+import org.gradle.api.Task
 import org.gradle.api.UnknownTaskException
 import org.gradle.api.tasks.TaskContainer
 
@@ -12,3 +14,6 @@ fun TaskContainer.maybeRegister(name: String) = try {
 } catch (_: UnknownTaskException) {
 	register(name)
 }
+
+fun TaskContainer.maybeRegister(name: String, configuration: Action<in Task>) =
+	maybeRegister(name).configure(configuration)
