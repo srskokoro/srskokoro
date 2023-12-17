@@ -4,4 +4,14 @@ plugins {
 	id("build.root")
 }
 
-tasks.check { dependOnTaskFromIncludedBuildsOrFail() }
+gradle.includedBuilds(
+	"build.logic",
+	"conventions.base",
+	"conventions",
+	"plugins",
+).let { testableBuilds ->
+	tasks {
+		check { dependOnTaskFromIncludedBuildsOrFail(testableBuilds) }
+		register("test") { dependOnTaskFromIncludedBuildsOrFail(testableBuilds) }
+	}
+}
