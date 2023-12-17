@@ -22,7 +22,7 @@ gradlePlugin {
 	}
 }
 
-//#region Build setup
+//#region Complex build setup
 
 internal object Build {
 	const val PLUGIN_CLASS = "_plugin"
