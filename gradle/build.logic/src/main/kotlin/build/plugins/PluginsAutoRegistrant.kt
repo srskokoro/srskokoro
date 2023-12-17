@@ -1,5 +1,6 @@
 package build.plugins
 
+import build.api.addExtraneousSourceTo
 import build.api.dsl.model.gradlePlugin
 import build.api.dsl.model.kotlinJvm
 import build.api.dsl.model.kotlinSourceSets
@@ -18,7 +19,7 @@ import org.gradle.api.provider.ValueSourceParameters
 internal fun Project.installPluginsAutoRegistrant() {
 	kotlinJvm.kotlinSourceSets.named("main", fun(main) = main.project.run {
 		val pluginsDir = file("src/${main.name}/plugins")
-		objects.sourceDirectorySet("plugins", "plugins").run {
+		objects.addExtraneousSourceTo(main, "plugins").run {
 			srcDir(pluginsDir)
 			include("**/$PLUGIN_CLASS.kt")
 			main.kotlin.source(this)
