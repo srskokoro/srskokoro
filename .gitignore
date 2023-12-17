@@ -33,3 +33,8 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Exclude auto-generated properties files -- see, `settings.builds.lst`
+/gradle/conventions/base/gradle.properties
+/gradle/conventions/gradle.properties
+/gradle/plugins/gradle.properties
