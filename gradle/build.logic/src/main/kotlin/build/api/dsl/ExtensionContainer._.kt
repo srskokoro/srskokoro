@@ -4,6 +4,13 @@ import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.kotlin.dsl.*
 
 @Suppress("NOTHING_TO_INLINE")
+inline fun <R> ExtensionContainer.getOrThrow(name: String): R {
+	@Suppress("UNCHECKED_CAST")
+	// NOTE: The cast below throws on non-null incompatible types (as intended).
+	return getByName(name) as R
+}
+
+@Suppress("NOTHING_TO_INLINE")
 inline fun <R> ExtensionContainer.getOrNull(name: String): R? {
 	@Suppress("UNCHECKED_CAST")
 	// NOTE: The cast below throws on non-null incompatible types (as intended).
