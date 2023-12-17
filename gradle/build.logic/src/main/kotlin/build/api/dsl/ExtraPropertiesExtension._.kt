@@ -12,11 +12,8 @@ fun <R> ExtraPropertiesExtension.getOrNull(name: String): R? {
 	} else null) as R? // NOTE: This cast throws on non-null incompatible types (as intended).
 }
 
-inline fun <R> ExtraPropertiesExtension.getOrElse(name: String, defaultValue: ExtraPropertiesExtension.(name: String) -> R): R {
-	@Suppress("UNCHECKED_CAST")
-	// NOTE: The cast below throws on non-null incompatible types (as intended).
-	return getOrNull(name) as R? ?: defaultValue(name)
-}
+inline fun <R> ExtraPropertiesExtension.getOrElse(name: String, defaultValue: ExtraPropertiesExtension.(name: String) -> R): R =
+	getOrNull(name) ?: defaultValue(name)
 
 inline fun <R> ExtraPropertiesExtension.getOrAdd(name: String, defaultValue: ExtraPropertiesExtension.(name: String) -> R): R = getOrElse(name) {
 	val value = defaultValue(name)
