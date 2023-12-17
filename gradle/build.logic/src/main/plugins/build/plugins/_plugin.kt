@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-abstract class _plugin : ProjectPlugin {
+class _plugin : ProjectPlugin {
 	override fun apply(project: Project) {
 		project.apply {
 			plugin("java-gradle-plugin")
