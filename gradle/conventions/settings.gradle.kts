@@ -3,6 +3,11 @@ pluginManagement {
 	includeBuild("../conventions/base")
 }
 
+@Suppress("UnstableApiUsage")
+dependencyResolutionManagement {
+	repositories.gradlePluginPortal()
+}
+
 gradle.rootProject {
 	group = "conventions"
 }
