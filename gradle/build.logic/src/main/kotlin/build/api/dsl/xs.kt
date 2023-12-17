@@ -13,7 +13,7 @@ inline fun ExtensionAware.xs() = extensions
 inline fun ExtensionContainer.xs() = this
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun ExtensionContainerScope.xs() = extensions
+inline fun ExtensionContainerDelegate.xs() = extensions
 
 
 @Suppress("NOTHING_TO_INLINE")
@@ -25,7 +25,7 @@ inline fun <reified T> Any.x(name: String, noinline configure: T.() -> Unit): Un
 
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun ExtensionContainer.x() = ExtensionContainerScope(this)
+inline fun ExtensionContainer.x() = ExtensionContainerDelegate(this)
 
 inline fun <reified T> ExtensionContainer.x(name: String): T = getByName(name) as T
 

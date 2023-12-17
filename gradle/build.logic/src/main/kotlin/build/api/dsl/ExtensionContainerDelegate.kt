@@ -5,7 +5,7 @@ import org.gradle.kotlin.dsl.*
 import kotlin.reflect.KProperty
 
 @JvmInline
-value class ExtensionContainerScope(val extensions: ExtensionContainer) {
+value class ExtensionContainerDelegate(val extensions: ExtensionContainer) {
 
 	inline operator fun <reified T> getValue(thisRef: Any?, property: KProperty<*>): T {
 		return extensions.getByName(property.name) as T
@@ -16,5 +16,5 @@ value class ExtensionContainerScope(val extensions: ExtensionContainer) {
 	}
 
 	@Suppress("NOTHING_TO_INLINE")
-	inline operator fun provideDelegate(thisRef: Any?, property: KProperty<*>): ExtensionContainerScope = this
+	inline operator fun provideDelegate(thisRef: Any?, property: KProperty<*>): ExtensionContainerDelegate = this
 }
