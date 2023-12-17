@@ -22,15 +22,28 @@ private const val SETTINGS_BUILDS_LST = "settings.builds.lst"
 
 class _plugin : SettingsPlugin {
 
+	private data class Entry(
+		val buildPath: String,
+		val customName: String?,
+	)
+
 	override fun Settings.applyPlugin() {
 		val gradlePropsPropagationPaths = LinkedHashSet<String>()
-		val includedPluginBuilds = LinkedHashSet<String>()
-		val includedBuilds = LinkedHashSet<String>()
+		val includedPluginBuilds = LinkedHashSet<Entry>()
+		val includedBuilds = LinkedHashSet<Entry>()
 
 		providers.of(BuildsListLinesSource::class.java) {
 			parameters.settingsDir.set(settingsDir)
 		}.get().forEach { line ->
 			var end = line.length
+			val customName = run(fun(): String? {
+				if (line.endsWith('>')) {
+					end = line.lastIndexOf('<')
+					if (end >= 0) return line.substring(end + 1, line.length - 1)
+				}
+				return null
+			})
+
 			var gradleProps_i = end - (GRADLE_PROPERTIES.length + 1)
 			if (gradleProps_i >= 0) {
 				val c = line[gradleProps_i]
@@ -44,10 +57,10 @@ class _plugin : SettingsPlugin {
 			val start: Int
 			if (line.startsWith(TYPE_PLUGIN_BUILD)) {
 				start = TYPE_PLUGIN_BUILD.length
-				includedPluginBuilds.add(line.substring(start, end))
+				includedPluginBuilds.add(Entry(line.substring(start, end), customName))
 			} else if (line.startsWith(TYPE_BUILD)) {
 				start = TYPE_BUILD.length
-				includedBuilds.add(line.substring(start, end))
+				includedBuilds.add(Entry(line.substring(start, end), customName))
 			} else if (line.startsWith(TYPE_PROP) && gradleProps_i >= 0) {
 				start = TYPE_PROP.length
 			} else {
@@ -55,7 +68,7 @@ class _plugin : SettingsPlugin {
 			}
 
 			if (gradleProps_i >= 0) {
-				gradlePropsPropagationPaths.add(line.substring(start))
+				gradlePropsPropagationPaths.add(line.substring(start, end + (GRADLE_PROPERTIES.length + 1)))
 			}
 		}
 
@@ -67,21 +80,35 @@ class _plugin : SettingsPlugin {
 	private fun propagateGradleProps(settingsDir: File, destinationPaths: LinkedHashSet<String>) {
 		val propsFile = File(settingsDir, "gradle.properties")
 		val props = Properties().apply { load(propsFile.inputStream()) }
-		destinationPaths.forEach { dest ->
-			transformFileAtomic(propsFile, settingsDir.safeResolve(dest)) {
-				props.store(Channels.newOutputStream(it), " Auto-generated file. DO NOT EDIT!")
+		for (dest in destinationPaths) transformFileAtomic(propsFile, settingsDir.safeResolve(dest)) {
+			props.store(Channels.newOutputStream(it), " Auto-generated file. DO NOT EDIT!")
+		}
+	}
+
+	private fun includePluginBuilds(settings: Settings, rootProjects: LinkedHashSet<Entry>) {
+		settings.pluginManagement {
+			for ((path, name) in rootProjects) {
+				if (name == null) {
+					includeBuild(path)
+				} else {
+					includeBuild(path) {
+						this.name = name
+					}
+				}
 			}
 		}
 	}
 
-	private fun includePluginBuilds(settings: Settings, rootProjects: LinkedHashSet<String>) {
-		settings.pluginManagement {
-			rootProjects.forEach(::includeBuild)
+	private fun includeBuilds(settings: Settings, rootProjects: LinkedHashSet<Entry>) {
+		for ((path, name) in rootProjects) {
+			if (name == null) {
+				settings.includeBuild(path)
+			} else {
+				settings.includeBuild(path) {
+					this.name = name
+				}
+			}
 		}
-	}
-
-	private fun includeBuilds(settings: Settings, rootProjects: LinkedHashSet<String>) {
-		rootProjects.forEach(settings::includeBuild)
 	}
 }
 
@@ -100,7 +127,7 @@ internal abstract class BuildsListLinesSource : ValueSource<List<String>, Builds
 				when (it[0]) {
 					'!', '#' -> return@forEachLine
 				}
-				output.add(it)
+				output.add(it.trimEnd())
 			}
 		}
 	}
