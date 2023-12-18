@@ -5,8 +5,4 @@ plugins {
 	id("build.settings.buildslist")
 }
 
-dependencyResolutionManagement {
-	includeBuild("gradle/build.logic")
-}
-
 rootProject.name = "srskokoro"

@@ -2,12 +2,12 @@
 
 pluginManagement {
 	includeBuild("../build.logic")
-	includeBuild("../conventions.base")
+}
+plugins {
+	id("build.settings.buildslist")
 }
 
 dependencyResolutionManagement {
-	includeBuild("../build.logic")
-	includeBuild("../conventions.base")
 	repositories.gradlePluginPortal()
 }
 
