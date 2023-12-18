@@ -1,4 +1,5 @@
-@Suppress("UnstableApiUsage")
+@file:Suppress("UnstableApiUsage")
+
 dependencyResolutionManagement {
 	repositories.gradlePluginPortal()
 }
