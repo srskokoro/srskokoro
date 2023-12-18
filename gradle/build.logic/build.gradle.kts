@@ -18,6 +18,7 @@ gradlePlugin {
 		addPlugin("build.plugins.base")
 		addPlugin("build.root")
 
+		addPlugin("build.dotbuild")
 		addPlugin("build.settings.buildslist")
 	}
 }

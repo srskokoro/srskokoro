@@ -3,6 +3,9 @@
 pluginManagement {
 	includeBuild("../build.logic")
 }
+plugins {
+	id("build.dotbuild")
+}
 
 dependencyResolutionManagement {
 	includeBuild("../build.logic")
