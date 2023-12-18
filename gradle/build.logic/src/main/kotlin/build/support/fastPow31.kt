@@ -9,7 +9,7 @@ fun fastPow31(n: Int): Int {
 // From,
 // - https://gist.github.com/apangin/91c07684635893e3f1d5
 // - https://stackoverflow.com/a/35671374
-internal fun fastPow31Calc(n: Int): Int {
+private fun fastPow31Calc(n: Int): Int {
 	var x = 31
 	var y = n
 	var result = if (y and 1 != 0) x else 1
