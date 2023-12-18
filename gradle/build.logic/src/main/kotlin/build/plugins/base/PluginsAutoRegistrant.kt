@@ -1,8 +1,8 @@
-package build.plugins
+package build.plugins.base
 
 import build.api.addExtraneousSourceTo
 import build.api.dsl.model.gradlePlugin
-import build.plugins.PluginsAutoRegistrant.Companion.PLUGIN_CLASS
+import build.plugins.base.PluginsAutoRegistrant.Companion.PLUGIN_CLASS
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.EmptyFileVisitor
