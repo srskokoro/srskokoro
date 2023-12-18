@@ -23,3 +23,8 @@ fun DependencyHandler.compileOnlyTestImpl(dependencyNotation: Any) {
 	compileOnly(dependencyNotation)
 	testImplementation(dependencyNotation)
 }
+
+fun DependencyHandler.compileOnlyApiTestImpl(dependencyNotation: Any) {
+	compileOnlyApi(dependencyNotation)
+	testImplementation(dependencyNotation)
+}
