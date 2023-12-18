@@ -15,7 +15,7 @@ class _plugin : ProjectPlugin {
 			val tasks = tasks
 
 			tasks.named("check").configure { dependOnTaskFromSubProjects() }
-			tasks.maybeRegister("test").configure { dependOnTaskFromSubProjects() }
+			tasks.maybeRegisterTestLifecycleTask().configure { dependOnTaskFromSubProjects() }
 
 			tasks.named("clean").configure { dependOnTaskFromSubProjects() }
 		}

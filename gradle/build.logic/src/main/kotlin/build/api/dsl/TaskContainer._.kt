@@ -5,6 +5,9 @@ import org.gradle.api.Task
 import org.gradle.api.UnknownTaskException
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.*
+import org.gradle.language.base.plugins.LifecycleBasePlugin
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun TaskContainer.maybeRegister(name: String) = maybeRegister<Task>(name)
@@ -44,3 +47,23 @@ fun <T : Task> TaskContainer.maybeRegister(name: String, type: Class<T>, configu
 		register(name, type, configuration)
 	}
 }
+
+
+fun TaskContainer.maybeRegisterTestLifecycleTask(): TaskProvider<out Task> {
+	return try {
+		// NOTE: Rather than check via `getNames()`, it's better to just let the
+		// following throw (and catch the exception), since `getNames()` seems
+		// to be not optimized for repeated access (as it may return a different
+		// instance every time).
+		named("test")
+	} catch (_: UnknownTaskException) {
+		register<Test>("test") {
+			group = LifecycleBasePlugin.VERIFICATION_GROUP
+			testClassesDirs = project.files()
+		}
+	}
+}
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun TaskContainer.maybeRegisterTestLifecycleTask(configuration: Action<in Task>) =
+	maybeRegisterTestLifecycleTask().apply { configure(configuration) }
