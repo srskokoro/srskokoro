@@ -14,10 +14,10 @@ class _plugin : ProjectPlugin {
 		afterEvaluate {
 			val tasks = tasks
 
-			tasks.named("check").configure { dependOnTaskFromSubProjects() }
-			tasks.maybeRegisterTestLifecycleTask().configure { dependOnTaskFromSubProjects() }
+			tasks.named("check") { dependOnTaskFromSubProjects() }
+			tasks.maybeRegisterTestLifecycleTask { dependOnTaskFromSubProjects() }
 
-			tasks.named("clean").configure { dependOnTaskFromSubProjects() }
+			tasks.named("clean") { dependOnTaskFromSubProjects() }
 		}
 	}
 }
