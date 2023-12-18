@@ -1,5 +1,6 @@
 pluginManagement {
-	includeBuild("../../build.logic")
+	includeBuild("../build.logic")
+	includeBuild("../conventions.base")
 }
 
 @Suppress("UnstableApiUsage")
@@ -8,6 +9,5 @@ dependencyResolutionManagement {
 }
 
 gradle.rootProject {
-	group = "conventions"
+	group = "build"
 }
-rootProject.name = "conventions.base"
