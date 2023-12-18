@@ -7,7 +7,7 @@ plugins {
 gradle.includedBuilds(
 	"build.logic",
 	"conventions.base",
-	"conventions",
+	"conventions.plugins",
 	"plugins",
 ).let { testableBuilds ->
 	tasks {
