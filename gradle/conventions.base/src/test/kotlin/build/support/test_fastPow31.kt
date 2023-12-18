@@ -15,16 +15,9 @@ class test_fastPow31 {
 		return x
 	}
 
-	@Test fun `fastPow31Calc(N) == naivePow31Calc(N)`() {
+	@Test fun `fastPow31(N) == naivePow31Calc(N)`() {
 		assertContentEquals(
 			TEST_RANGE.map { naivePow31Calc(it) },
-			TEST_RANGE.map { fastPow31Calc(it) },
-		)
-	}
-
-	@Test fun `fastPow31(N) == fastPow31Calc(N)`() {
-		assertContentEquals(
-			TEST_RANGE.map { fastPow31Calc(it) },
 			TEST_RANGE.map { fastPow31(it) },
 		)
 	}
