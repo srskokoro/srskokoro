@@ -48,6 +48,17 @@ fun <T : Task> TaskContainer.maybeRegister(name: String, type: Class<T>, configu
 	}
 }
 
+// --
+
+fun TaskContainer.registerTestTask() = register<Test>("test") {
+	group = LifecycleBasePlugin.VERIFICATION_GROUP
+	testClassesDirs = project.files()
+}
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun TaskContainer.registerTestTask(configuration: Action<in Test>) =
+	registerTestTask().apply { configure(configuration) }
+
 
 fun TaskContainer.maybeRegisterTestTask(): TaskProvider<out Task> {
 	return try {
@@ -57,10 +68,7 @@ fun TaskContainer.maybeRegisterTestTask(): TaskProvider<out Task> {
 		// instance every time).
 		named("test")
 	} catch (_: UnknownTaskException) {
-		register<Test>("test") {
-			group = LifecycleBasePlugin.VERIFICATION_GROUP
-			testClassesDirs = project.files()
-		}
+		registerTestTask()
 	}
 }
 
