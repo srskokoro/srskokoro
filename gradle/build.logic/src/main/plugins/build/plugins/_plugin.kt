@@ -4,6 +4,8 @@ import build.api.ProjectPlugin
 import build.api.dsl.model.compileOnlyTestImpl
 import build.api.dsl.model.implementation
 import build.api.dsl.model.kotlinSourceSets
+import build.api.dsl.model.test
+import build.api.dsl.model.testImplementation
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
@@ -59,10 +61,15 @@ internal fun Project.apply_() {
 			languageVersion.set(kotlinVersion)
 			freeCompilerArgs.add("-Xjvm-default=all")
 		})
+		test {
+			useJUnitPlatform()
+		}
 	}
 
 	dependencies {
 		compileOnlyTestImpl(embeddedKotlin("gradle-plugin"))
 		implementation("org.gradle.kotlin:gradle-kotlin-dsl-plugins:$expectedKotlinDslPluginsVersion")
+
+		testImplementation(embeddedKotlin("test"))
 	}
 }
