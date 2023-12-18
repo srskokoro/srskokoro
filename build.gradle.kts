@@ -11,7 +11,7 @@ gradle.includedBuilds(
 ).let { testableBuilds ->
 	tasks {
 		check { dependOnTaskFromIncludedBuildsOrFail(testableBuilds) }
-		maybeRegisterTestTask { dependOnTaskFromIncludedBuildsOrFail(testableBuilds) }
+		registerTestTask { dependOnTaskFromIncludedBuildsOrFail(testableBuilds) }
 
 		clean { dependOnTaskFromIncludedBuildsOrFail(testableBuilds) }
 	}
