@@ -9,6 +9,8 @@ plugins {
 	`kotlin-dsl-base`
 }
 
+group = "build"
+
 val pluginsDir = "src/main/plugins"
 
 gradlePlugin {

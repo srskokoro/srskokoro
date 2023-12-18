@@ -11,7 +11,3 @@ dependencyResolutionManagement {
 	includeBuild("../build.logic")
 	repositories.gradlePluginPortal()
 }
-
-gradle.rootProject {
-	group = "build"
-}
