@@ -1,4 +1,4 @@
-package build.plugins
+package build.plugins.base
 
 import build.api.ProjectPlugin
 import build.api.dsl.model.api
