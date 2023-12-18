@@ -5,6 +5,8 @@ pluginManagement {
 
 @Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
+	includeBuild("../build.logic")
+	includeBuild("../conventions.base")
 	repositories.gradlePluginPortal()
 }
 
