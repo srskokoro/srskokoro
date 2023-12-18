@@ -49,7 +49,7 @@ fun <T : Task> TaskContainer.maybeRegister(name: String, type: Class<T>, configu
 }
 
 
-fun TaskContainer.maybeRegisterTestLifecycleTask(): TaskProvider<out Task> {
+fun TaskContainer.maybeRegisterTestTask(): TaskProvider<out Task> {
 	return try {
 		// NOTE: Rather than check via `getNames()`, it's better to just let the
 		// following throw (and catch the exception), since `getNames()` seems
@@ -65,5 +65,5 @@ fun TaskContainer.maybeRegisterTestLifecycleTask(): TaskProvider<out Task> {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun TaskContainer.maybeRegisterTestLifecycleTask(configuration: Action<in Task>) =
-	maybeRegisterTestLifecycleTask().apply { configure(configuration) }
+inline fun TaskContainer.maybeRegisterTestTask(configuration: Action<in Task>) =
+	maybeRegisterTestTask().apply { configure(configuration) }
