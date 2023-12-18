@@ -3,6 +3,7 @@ package build.plugins
 import build.api.ProjectPlugin
 import build.api.dsl.model.compileOnlyTestImpl
 import build.api.dsl.model.implementation
+import build.api.dsl.model.kotlinSourceSets
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
@@ -43,7 +44,7 @@ internal object Build {
 }
 
 internal fun Project.apply_() {
-	installPluginsAutoRegistrant()
+	kotlinSourceSets.named("main", ::installPluginsAutoRegistrant)
 
 	tasks {
 		withType<JavaCompile>().configureEach {
