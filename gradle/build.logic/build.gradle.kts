@@ -94,7 +94,13 @@ fun DependencyHandler.compileOnlyTestImpl(dependencyNotation: Any) {
 //#endregion
 //#endregion
 
+tasks.test {
+	useJUnitPlatform()
+}
+
 dependencies {
 	compileOnlyTestImpl(embeddedKotlin("gradle-plugin"))
 	implementation("org.gradle.kotlin:gradle-kotlin-dsl-plugins:$expectedKotlinDslPluginsVersion")
+
+	testImplementation(embeddedKotlin("test"))
 }
