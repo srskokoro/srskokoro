@@ -14,6 +14,7 @@ import java.util.Properties
 
 private const val GRADLE_PROPERTIES = "gradle.properties"
 
+private const val TYPE_PLUGIN_BUILD_PLUS = "plugin-build+:"
 private const val TYPE_PLUGIN_BUILD = "plugin-build:"
 private const val TYPE_BUILD = "build:"
 private const val TYPE_PROP = "prop:"
@@ -55,7 +56,12 @@ class _plugin : SettingsPlugin {
 			}
 
 			val start: Int
-			if (line.startsWith(TYPE_PLUGIN_BUILD)) {
+			if (line.startsWith(TYPE_PLUGIN_BUILD_PLUS)) {
+				start = TYPE_PLUGIN_BUILD_PLUS.length
+				val entry = Entry(line.substring(start, end), customName)
+				includedPluginBuilds.add(entry)
+				includedBuilds.add(entry)
+			} else if (line.startsWith(TYPE_PLUGIN_BUILD)) {
 				start = TYPE_PLUGIN_BUILD.length
 				includedPluginBuilds.add(Entry(line.substring(start, end), customName))
 			} else if (line.startsWith(TYPE_BUILD)) {
