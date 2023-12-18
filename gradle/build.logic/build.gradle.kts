@@ -86,8 +86,8 @@ fun NamedDomainObjectContainer<PluginDeclaration>.addPlugin(name: String) {
 	}
 }
 
-fun DependencyHandler.compileOnlyTestImpl(dependencyNotation: Any) {
-	compileOnly(dependencyNotation)
+fun DependencyHandler.compileOnlyApiTestImpl(dependencyNotation: Any) {
+	compileOnlyApi(dependencyNotation)
 	testImplementation(dependencyNotation)
 }
 
@@ -99,8 +99,8 @@ tasks.test {
 }
 
 dependencies {
-	compileOnlyTestImpl(embeddedKotlin("gradle-plugin"))
-	implementation("org.gradle.kotlin:gradle-kotlin-dsl-plugins:$expectedKotlinDslPluginsVersion")
+	compileOnlyApiTestImpl(embeddedKotlin("gradle-plugin"))
+	api("org.gradle.kotlin:gradle-kotlin-dsl-plugins:$expectedKotlinDslPluginsVersion")
 
 	testImplementation(embeddedKotlin("test"))
 }

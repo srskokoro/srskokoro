@@ -1,15 +1,13 @@
 package build.plugins
 
 import build.api.ProjectPlugin
-import build.api.dsl.model.compileOnlyTestImpl
-import build.api.dsl.model.implementation
+import build.api.dsl.model.api
 import build.api.dsl.model.kotlinSourceSets
 import build.api.dsl.model.test
 import build.api.dsl.model.testImplementation
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
-import org.gradle.kotlin.dsl.support.expectedKotlinDslPluginsVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
@@ -67,9 +65,7 @@ internal fun Project.apply_() {
 	}
 
 	dependencies {
-		compileOnlyTestImpl(embeddedKotlin("gradle-plugin"))
-		implementation("org.gradle.kotlin:gradle-kotlin-dsl-plugins:$expectedKotlinDslPluginsVersion")
-
+		api("build:build.logic")
 		testImplementation(embeddedKotlin("test"))
 	}
 }
