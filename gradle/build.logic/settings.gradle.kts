@@ -6,3 +6,7 @@ dependencyResolutionManagement {
 gradle.rootProject {
 	group = "build"
 }
+
+gradle.allprojects {
+	layout.buildDirectory.set(file(".build"))
+}

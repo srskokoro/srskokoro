@@ -9,6 +9,7 @@
 
 # Gradle files
 .gradle/
+.build/
 **/build/
 !**/*src/*/*/build/
 
