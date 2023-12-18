@@ -2,7 +2,6 @@ package build.plugins
 
 import build.api.addExtraneousSourceTo
 import build.api.dsl.model.gradlePlugin
-import build.api.dsl.model.kotlinJvm
 import build.api.dsl.model.kotlinSourceSets
 import build.plugins.PluginsAutoRegistrant.Companion.PLUGIN_CLASS
 import org.gradle.api.InvalidUserDataException
@@ -17,7 +16,7 @@ import org.gradle.api.provider.ValueSourceParameters
  * @see PluginsAutoRegistrant
  */
 internal fun Project.installPluginsAutoRegistrant() {
-	kotlinJvm.kotlinSourceSets.named("main", fun(main) = main.project.run {
+	kotlinSourceSets.named("main", fun(main) = main.project.run {
 		val pluginsDir = file("src/${main.name}/plugins")
 		objects.addExtraneousSourceTo(main, "plugins").run {
 			srcDir(pluginsDir)
