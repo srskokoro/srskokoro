@@ -1,6 +1,7 @@
 package build.settings.buildslist
 
 import build.api.SettingsPlugin
+import build.support.from
 import build.support.io.safeResolve
 import build.support.io.transformFileAtomic
 import org.gradle.api.InvalidUserDataException
@@ -40,7 +41,7 @@ class _plugin : SettingsPlugin {
 			val customName = run(fun(): String? {
 				if (line.endsWith('>')) {
 					end = line.lastIndexOf('<')
-					if (end >= 0) return line.substring(end + 1, line.length - 1)
+					if (end >= 0) return line.from(end + 1, line.length - 1)
 				}
 				return null
 			})
@@ -58,15 +59,15 @@ class _plugin : SettingsPlugin {
 			val start: Int
 			if (line.startsWith(TYPE_PLUGIN_BUILD_PLUS)) {
 				start = TYPE_PLUGIN_BUILD_PLUS.length
-				val entry = Entry(line.substring(start, end), customName)
+				val entry = Entry(line.from(start, end), customName)
 				includedPluginBuilds.add(entry)
 				includedBuilds.add(entry)
 			} else if (line.startsWith(TYPE_PLUGIN_BUILD)) {
 				start = TYPE_PLUGIN_BUILD.length
-				includedPluginBuilds.add(Entry(line.substring(start, end), customName))
+				includedPluginBuilds.add(Entry(line.from(start, end), customName))
 			} else if (line.startsWith(TYPE_BUILD)) {
 				start = TYPE_BUILD.length
-				includedBuilds.add(Entry(line.substring(start, end), customName))
+				includedBuilds.add(Entry(line.from(start, end), customName))
 			} else if (line.startsWith(TYPE_PROP) && gradleProps_i >= 0) {
 				start = TYPE_PROP.length
 			} else {
@@ -74,7 +75,7 @@ class _plugin : SettingsPlugin {
 			}
 
 			if (gradleProps_i >= 0) {
-				gradlePropsPropagationPaths.add(line.substring(start, end + (GRADLE_PROPERTIES.length + 1)))
+				gradlePropsPropagationPaths.add(line.from(start, end + (GRADLE_PROPERTIES.length + 1)))
 			}
 		}
 
