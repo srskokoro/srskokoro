@@ -6,6 +6,7 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption.ATOMIC_MOVE
 import java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import java.nio.file.StandardOpenOption.*
+import java.nio.file.FileSystemException as NioFileSystemException
 
 inline fun transformFileAtomic(
 	source: File,
@@ -47,8 +48,7 @@ inline fun transformFileAtomic(
 		}
 		transformFileAtomic_finish(outputModMs, tmp, destination)
 	} catch (ex: Throwable) {
-		tmp.delete()
-		throw ex
+		throw transformFileAtomic_error(source, destination, tmp, ex)
 	}
 
 	return true
@@ -80,4 +80,16 @@ internal fun transformFileAtomic_finish(outputModMs: Long, tmp: File, destinatio
 	// Atomically publish our changes via a rename/move operation
 	Files.move(tmp.toPath(), destination.toPath(), ATOMIC_MOVE, REPLACE_EXISTING)
 	// ^ Same as in `okio.NioSystemFileSystem.atomicMove()`
+}
+
+@PublishedApi
+internal fun transformFileAtomic_error(source: File, destination: File, tmp: File, cause: Throwable): Throwable {
+	try {
+		tmp.delete()
+	} catch (ex: Throwable) {
+		cause.addSuppressed(ex)
+	}
+	return if (cause is Error) cause
+	else NioFileSystemException(source.path, destination.path, null)
+		.apply { initCause(cause) }
 }
