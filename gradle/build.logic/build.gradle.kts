@@ -11,8 +11,6 @@ plugins {
 
 group = "build"
 
-val pluginsDir = "src/main/plugins"
-
 gradlePlugin {
 	plugins {
 		addPlugin("build.kt.base")
@@ -29,6 +27,7 @@ gradlePlugin {
 //#region Complex build setup
 
 internal object Build {
+	const val PLUGINS_DIR = "src/main/plugins"
 	const val PLUGIN_CLASS = "_plugin"
 
 	// NOTE: The following ensures that our convention plugins are always
@@ -52,7 +51,7 @@ internal object Build {
 kotlin.sourceSets {
 	main {
 		project.objects.sourceDirectorySet("plugins", "plugins").run {
-			srcDir(pluginsDir)
+			srcDir(Build.PLUGINS_DIR)
 			include("**/${Build.PLUGIN_CLASS}.kt")
 			kotlin.source(this)
 		}
@@ -79,7 +78,7 @@ tasks {
 fun NamedDomainObjectContainer<PluginDeclaration>.addPlugin(name: String) {
 	create(name) {
 		buildString {
-			append(pluginsDir)
+			append(Build.PLUGINS_DIR)
 			for (it in name.split('.')) append('/').append(it)
 			append('/').append("${Build.PLUGIN_CLASS}.kt")
 		}.let {
