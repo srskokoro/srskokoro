@@ -61,6 +61,7 @@ internal fun Project.apply_() {
 		})
 		test {
 			useJUnitPlatform()
+			jvmArgs("-ea") // Also enables stacktrace recovery for kotlinx coroutines
 		}
 	}
 
