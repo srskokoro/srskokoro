@@ -87,7 +87,8 @@ class _plugin : SettingsPlugin {
 	private fun propagateGradleProps(settingsDir: File, destinationPaths: LinkedHashSet<String>) {
 		val propsFile = File(settingsDir, "gradle.properties")
 		val props = Properties().apply { load(propsFile.inputStream()) }
-		for (dest in destinationPaths) transformFileAtomic(propsFile, settingsDir.safeResolve(dest)) {
+		val sourceModMs = propsFile.lastModified()
+		for (dest in destinationPaths) transformFileAtomic(sourceModMs, settingsDir.safeResolve(dest)) {
 			props.store(Channels.newOutputStream(it), " Auto-generated file. DO NOT EDIT!")
 		}
 	}
