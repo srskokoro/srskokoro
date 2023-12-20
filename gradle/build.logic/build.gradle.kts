@@ -24,6 +24,12 @@ gradlePlugin {
 	}
 }
 
+/**
+ * NOTE: The setup of this build is similar to [build.plugins.base._plugin] and
+ * should be kept consistent with that (as much as possible).
+ */
+object _eat_comment_
+
 //#region Complex build setup
 
 internal object Build {
@@ -99,6 +105,7 @@ fun DependencyHandler.compileOnlyApiTestImpl(dependencyNotation: Any) {
 
 tasks.test {
 	useJUnitPlatform()
+	jvmArgs("-ea") // Also enables stacktrace recovery for kotlinx coroutines
 }
 
 dependencies {
