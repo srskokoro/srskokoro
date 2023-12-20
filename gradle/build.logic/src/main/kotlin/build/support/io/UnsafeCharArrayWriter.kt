@@ -26,9 +26,7 @@ class UnsafeCharArrayWriter : CharArrayWriter {
 		if (offset or length < 0 || length > value.size - offset) {
 			throw IndexOutOfBoundsException()
 		}
-		if (length == 0) {
-			return
-		}
+		if (length == 0) return
 		val newCount = count + length
 		if (newCount > buf.size) {
 			buf = Arrays.copyOf(buf, max(buf.size shl 1, newCount))
