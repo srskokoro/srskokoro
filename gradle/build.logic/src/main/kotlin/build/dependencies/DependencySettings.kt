@@ -1,5 +1,6 @@
 package build.dependencies
 
+import build.api.provider.sources.FileModTimeSource
 import build.support.getFileUri
 import build.support.io.UnsafeCharArrayWriter
 import build.support.io.safeResolve
@@ -127,7 +128,8 @@ abstract class DependencySettings internal constructor(val settings: Settings) :
 		val settingsFile = s.serviceOf<SettingsLocation>().settingsFile!!
 		val targetFile = File(s.settingsDir, EXPORT_PATH)
 
-		DepsCoderInvalidate.runOn(targetFile, s.serviceOf<ProviderFactory>())
+		val providers = s.serviceOf<ProviderFactory>()
+		DepsCoderInvalidate.runOn(targetFile, providers)
 
 		transformFileAtomic(settingsFile, targetFile) { fc ->
 			val out = UnsafeCharArrayWriter(DEFAULT_BUFFER_SIZE)
@@ -143,6 +145,10 @@ abstract class DependencySettings internal constructor(val settings: Settings) :
 			else "Preserved likely up-to-date dependency settings export: {}"
 			Logger.logger.info(m, targetFile)
 		}
+
+		// Ensure that the configuration cache would get invalidated if our
+		// output file would be tampered or deleted externally.
+		FileModTimeSource.get(targetFile, providers)
 	}
 
 	internal fun setUpForUsageInProjects() {
