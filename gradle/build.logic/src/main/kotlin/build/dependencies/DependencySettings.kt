@@ -98,7 +98,7 @@ abstract class DependencySettings internal constructor(val settings: Settings) :
 		internal const val EXPORT_PATH = ".gradle/deps.dat"
 
 		private fun Settings.resolve(path: Any?): File {
-			val unresolved = when (path) {
+			val unresolved: File = when (path) {
 				is String -> File(path)
 				is File -> path
 				is Path -> path.toFile()
