@@ -4,7 +4,6 @@ import java.io.CharArrayWriter
 import java.io.Writer
 import java.nio.CharBuffer
 import java.util.Arrays
-import java.util.Objects
 import kotlin.math.max
 import kotlin.math.min
 
@@ -24,7 +23,9 @@ class UnsafeCharArrayWriter : CharArrayWriter {
 	}
 
 	override fun write(value: CharArray, offset: Int, length: Int) {
-		Objects.checkFromIndexSize(offset, length, value.size)
+		if (offset or length < 0 || length > value.size - offset) {
+			throw IndexOutOfBoundsException()
+		}
 		if (length == 0) {
 			return
 		}
