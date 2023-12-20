@@ -11,7 +11,7 @@ import java.nio.file.FileSystemException as NioFileSystemException
 inline fun transformFileAtomic(
 	source: File,
 	destination: File,
-	generator: (FileChannel) -> Unit,
+	crossinline generator: (FileChannel) -> Unit,
 ): Boolean = transformFileAtomic(
 	source.lastModified(),
 	destination,
@@ -21,7 +21,8 @@ inline fun transformFileAtomic(
 inline fun transformFileAtomic(
 	sourceModMs: Long,
 	destination: File,
-	generator: (FileChannel) -> Unit,
+	// NOTE: Using `crossinline` here prevents non-local returns.
+	crossinline generator: (FileChannel) -> Unit,
 ): Boolean {
 	var outputModMs = sourceModMs
 
