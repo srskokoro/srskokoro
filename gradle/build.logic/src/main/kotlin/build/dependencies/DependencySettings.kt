@@ -69,14 +69,14 @@ abstract class DependencySettings internal constructor(val settings: Settings) :
 	fun includeBuild(rootProject: Any) {
 		val s = settings
 		val resolved = s.file(rootProject) // May throw
-		s.includeBuild(rootProject)
+		s.includeBuild(resolved)
 		prioritizeForLoad(resolved)
 	}
 
 	fun includeBuild(rootProject: Any, configuration: Action<ConfigurableIncludedBuild>) {
 		val s = settings
 		val resolved = s.file(rootProject) // May throw
-		s.includeBuild(rootProject, configuration)
+		s.includeBuild(resolved, configuration)
 		prioritizeForLoad(resolved)
 	}
 
