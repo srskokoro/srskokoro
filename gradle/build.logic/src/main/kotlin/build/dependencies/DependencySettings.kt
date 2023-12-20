@@ -2,7 +2,6 @@ package build.dependencies
 
 import build.support.getFileUri
 import build.support.io.UnsafeCharArrayWriter
-import build.support.io.isNonEmptyDirectory
 import build.support.io.safeResolve
 import build.support.io.transformFileAtomic
 import dependencySettings__name
@@ -219,16 +218,10 @@ private fun E_DependencySettingsNotFound(rootProject: File): InvalidUserDataExce
 			- Please call `${DependencySettings::export.name}()` or `${DependencySettings::exportOnly.name}()` in the `$dependencySettings__name` block of
 			that project's settings file.
 			""".trimIndent()
-		} else if (rootProject.isNonEmptyDirectory()) {
+		} else {
 			"""
 			The specified root project does not have a `settings.gradle` file (and is thus
 			unlikely to contribute a dependency settings).
-			- Root project: $rootProjectUri
-			""".trimIndent()
-		} else {
-			"""
-			The specified root project is empty (and is thus unlikely to contribute a
-			dependency settings).
 			- Root project: $rootProjectUri
 			""".trimIndent()
 		}
