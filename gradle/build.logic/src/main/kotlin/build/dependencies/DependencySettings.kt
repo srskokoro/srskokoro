@@ -2,6 +2,7 @@ package build.dependencies
 
 import build.support.getFileUri
 import build.support.io.UnsafeCharArrayWriter
+import build.support.io.safeResolve
 import build.support.io.transformFileAtomic
 import dependencySettings__name
 import org.gradle.api.Action
@@ -108,7 +109,7 @@ abstract class DependencySettings internal constructor(val settings: Settings) :
 				}
 				else -> throw IllegalArgumentException("Cannot convert to File: $path")
 			}
-			return settingsDir.resolve(unresolved)
+			return settingsDir.safeResolve(unresolved)
 		}
 	}
 
