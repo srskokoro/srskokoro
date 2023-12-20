@@ -130,7 +130,7 @@ abstract class DependencySettings internal constructor(val settings: Settings) :
 		val providers = s.providers
 		DepsCoderInvalidate.runOn(targetFile, providers)
 
-		transformFileAtomic(settingsFile, targetFile) { fc ->
+		providers.transformFileAtomic(settingsFile, targetFile) { fc ->
 			val out = UnsafeCharArrayWriter(DEFAULT_BUFFER_SIZE)
 
 			DepsEncoder(this@DependencySettings, out)

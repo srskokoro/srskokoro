@@ -1,6 +1,7 @@
 package build.settings.buildslist
 
 import build.api.SettingsPlugin
+import build.api.provider.runUntracked
 import build.support.from
 import build.support.io.safeResolve
 import build.support.io.transformFileAtomic
@@ -79,12 +80,13 @@ class _plugin : SettingsPlugin {
 			}
 		}
 
-		propagateGradleProps(settingsDir, gradlePropsPropagationPaths)
+		propagateGradleProps(this, gradlePropsPropagationPaths)
 		includePluginBuilds(this, includedPluginBuilds)
 		includeBuilds(this, includedBuilds)
 	}
 
-	private fun propagateGradleProps(settingsDir: File, destinationPaths: LinkedHashSet<String>) {
+	private fun propagateGradleProps(settings: Settings, destinationPaths: LinkedHashSet<String>): Unit = settings.runUntracked {
+		val settingsDir = settings.settingsDir
 		val propsFile = File(settingsDir, "gradle.properties")
 		val props = Properties().apply { load(propsFile.inputStream()) }
 		val sourceModMs = propsFile.lastModified()
