@@ -12,8 +12,18 @@ inline fun transformFileAtomic(
 	source: File,
 	destination: File,
 	generator: (FileChannel) -> Unit,
+): Boolean = transformFileAtomic(
+	source.lastModified(),
+	destination,
+	generator,
+)
+
+inline fun transformFileAtomic(
+	sourceModMs: Long,
+	destination: File,
+	generator: (FileChannel) -> Unit,
 ): Boolean {
-	var outputModMs = source.lastModified()
+	var outputModMs = sourceModMs
 
 	// NOTE:
 	// - `lastModified()` is `0L` for nonexistent files.
