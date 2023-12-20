@@ -7,6 +7,10 @@ import java.util.Arrays
 import kotlin.math.max
 import kotlin.math.min
 
+/**
+ * A counterpart of [CharArrayWriter] that is non-synchronized and exposes its
+ * underlying array for outside access.
+ */
 class UnsafeCharArrayWriter : CharArrayWriter {
 
 	constructor() : super()
