@@ -23,9 +23,6 @@ class UnsafeCharArrayWriter : CharArrayWriter {
 	}
 
 	override fun write(value: CharArray, offset: Int, length: Int) {
-		if (offset or length < 0 || length > value.size - offset) {
-			throw IndexOutOfBoundsException()
-		}
 		if (length == 0) return
 		val newCount = count + length
 		if (newCount > buf.size) {
