@@ -52,7 +52,7 @@ abstract class DependencySettings internal constructor(val settings: Settings) :
 
 	fun Props.load(propertiesFile: Any?) {
 		val s = settings
-		val resolved = s.file(propertiesFile) // May throw
+		val resolved = s.resolve(propertiesFile) // May throw
 		s.serviceOf<ProviderFactory>().of(FileBytesValueSource::class.java) {
 			parameters.file.set(resolved)
 		}.get().let {
@@ -68,14 +68,14 @@ abstract class DependencySettings internal constructor(val settings: Settings) :
 
 	fun includeBuild(rootProject: Any) {
 		val s = settings
-		val resolved = s.file(rootProject) // May throw
+		val resolved = s.resolve(rootProject) // May throw
 		s.includeBuild(resolved)
 		prioritizeForLoad(resolved)
 	}
 
 	fun includeBuild(rootProject: Any, configuration: Action<ConfigurableIncludedBuild>) {
 		val s = settings
-		val resolved = s.file(rootProject) // May throw
+		val resolved = s.resolve(rootProject) // May throw
 		s.includeBuild(resolved, configuration)
 		prioritizeForLoad(resolved)
 	}
@@ -97,7 +97,7 @@ abstract class DependencySettings internal constructor(val settings: Settings) :
 	companion object {
 		internal const val EXPORT_PATH = ".gradle/deps.dat"
 
-		private fun Settings.file(path: Any?): File {
+		private fun Settings.resolve(path: Any?): File {
 			val unresolved = when (path) {
 				is String -> File(path)
 				is File -> path
