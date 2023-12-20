@@ -29,9 +29,10 @@ inline fun transformFileAtomic(
 	}
 
 	// NOTE: The following handles an edge case where the source file gets
-	// modified yet still have the same timestamp as before, simply because the
-	// wall-clock time is the same as the source file's current timestamp.
-	if (outputModMs >= System.currentTimeMillis()) {
+	// modified concurrently yet still have the same timestamp as what we got,
+	// simply because the wall-clock time is the same as (or less than) the
+	// source file's current timestamp.
+	if (System.currentTimeMillis() <= outputModMs) {
 		// At this point, the source file might have been modified while we're
 		// already running (or the source file's timestamp may have been
 		// maliciously set to the future). Anyway, force regeneration of the
