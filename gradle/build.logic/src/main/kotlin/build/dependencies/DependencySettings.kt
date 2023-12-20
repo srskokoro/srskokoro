@@ -16,7 +16,6 @@ import org.gradle.api.internal.provider.sources.FileBytesValueSource
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.api.provider.ProviderFactory
 import org.gradle.initialization.SettingsLocation
 import org.gradle.kotlin.dsl.support.serviceOf
 import setUpDeps
@@ -54,7 +53,7 @@ abstract class DependencySettings internal constructor(val settings: Settings) :
 	fun Props.load(propertiesFile: Any?) {
 		val s = settings
 		val resolved = s.resolve(propertiesFile) // May throw
-		s.serviceOf<ProviderFactory>().of(FileBytesValueSource::class.java) {
+		s.providers.of(FileBytesValueSource::class.java) {
 			parameters.file.set(resolved)
 		}.get().let {
 			Properties().apply {
@@ -128,7 +127,7 @@ abstract class DependencySettings internal constructor(val settings: Settings) :
 		val settingsFile = s.serviceOf<SettingsLocation>().settingsFile!!
 		val targetFile = File(s.settingsDir, EXPORT_PATH)
 
-		val providers = s.serviceOf<ProviderFactory>()
+		val providers = s.providers
 		DepsCoderInvalidate.runOn(targetFile, providers)
 
 		transformFileAtomic(settingsFile, targetFile) { fc ->
