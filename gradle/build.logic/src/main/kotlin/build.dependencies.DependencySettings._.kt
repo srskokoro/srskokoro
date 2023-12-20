@@ -26,20 +26,12 @@ fun DependencySettings.module(group: String, name: String, version: String) {
 
 // --
 
-private fun E_DuplicatePropKey(key: Any) = InvalidUserDataException(
-	"""
-	Cannot add prop "$key" as a prop with that key already exists.
-	""".trimIndent()
+private fun E_DuplicateEntry(kind: String, name: Any, nameKind: String) = InvalidUserDataException(
+	"Cannot add $kind \"$name\" as a $kind with that $nameKind already exists."
 )
 
-private fun E_DuplicatePluginId(pluginId: Any) = InvalidUserDataException(
-	"""
-	Cannot add plugin "$pluginId" as a plugin with that name already exists.
-	""".trimIndent()
-)
+private fun E_DuplicatePropKey(key: String) = E_DuplicateEntry("prop", key, "key")
 
-private fun E_DuplicateModuleId(moduleId: Any) = InvalidUserDataException(
-	"""
-	Cannot add module "$moduleId" as a module with that name already exists.
-	""".trimIndent()
-)
+private fun E_DuplicatePluginId(pluginId: Any) = E_DuplicateEntry("plugin", pluginId, "name")
+
+private fun E_DuplicateModuleId(moduleId: Any) = E_DuplicateEntry("module", moduleId, "name")
