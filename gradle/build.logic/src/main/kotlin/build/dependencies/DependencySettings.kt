@@ -21,7 +21,6 @@ import org.gradle.kotlin.dsl.support.serviceOf
 import setUpDeps
 import java.io.ByteArrayInputStream
 import java.io.File
-import java.nio.charset.StandardCharsets
 import java.nio.file.Path
 import java.util.LinkedList
 import java.util.Properties
@@ -128,6 +127,8 @@ abstract class DependencySettings internal constructor(val settings: Settings) :
 		val settingsFile = s.serviceOf<SettingsLocation>().settingsFile!!
 		val targetFile = File(s.settingsDir, EXPORT_PATH)
 
+		DepsCoderInvalidate.runOn(targetFile, s.serviceOf<ProviderFactory>())
+
 		transformFileAtomic(settingsFile, targetFile) { fc ->
 			val out = UnsafeCharArrayWriter(DEFAULT_BUFFER_SIZE)
 
@@ -135,7 +136,7 @@ abstract class DependencySettings internal constructor(val settings: Settings) :
 				.encodeFully()
 
 			val cb = out.getUnsafeCharBuffer()
-			val bb = StandardCharsets.UTF_8.encode(cb)
+			val bb = DepsCoder_charset.encode(cb)
 			fc.write(bb)
 		}.let {
 			val m = if (it) "Generated new dependency settings export: {}"
@@ -179,8 +180,9 @@ abstract class DependencySettings internal constructor(val settings: Settings) :
 					val targetDir = dirProvider.dir(includedRoot)
 					val targetFile = targetDir.file(EXPORT_PATH)
 
-					val data = providers.fileContents(targetFile).asText.orNull
-						?: throw E_DependencySettingsNotFound(targetDir.asFile)
+					val data = (providers.fileContents(targetFile).asBytes.orNull
+						?: throw E_DependencySettingsNotFound(targetDir.asFile))
+						.toString(DepsCoder_charset)
 
 					DepsDecoder(this@DependencySettings, data, targetDir.asFile)
 						.decodeFully()

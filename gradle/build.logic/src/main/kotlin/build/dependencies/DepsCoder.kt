@@ -5,19 +5,35 @@ import build.support.io.UnsafeCharArrayWriter
 import build.support.lineInfoUriAt
 import org.gradle.api.InvalidUserDataException
 import java.io.File
+import java.nio.charset.StandardCharsets
 import java.nio.file.Path
 
+// NOTE: `PC` stands for "prefix character"
 private const val PC_PROP = 'X'
 private const val PC_PLUGIN = 'P'
 private const val PC_MODULE = 'M'
 private const val PC_INCLUDE = 'I'
 
+/**
+ * @see DepsCoder_checksum
+ */
+internal const val DepsCoder_version = "#$DepsCoder_checksum"
+
+internal val DepsCoder_charset = StandardCharsets.UTF_8
+
+/**
+ * @see DepsDecoder
+ * @see DepsCoder_version
+ * @see DepsCoder_checksum
+ */
 internal class DepsEncoder(
 	private val deps: DependencySettings,
 	private val out: UnsafeCharArrayWriter,
 ) {
 	fun encodeFully() {
 		val out = out
+		out.appendLine(DepsCoder_version)
+
 		val deps = deps
 		deps.props.forEach { (k, v) -> out.encodeEntry(PC_PROP, k, v) }
 		deps.plugins.forEach { (id, v) -> out.encodeEntry(PC_PLUGIN, id.toString(), v) }
@@ -66,6 +82,11 @@ internal class DepsEncoder(
 	}
 }
 
+/**
+ * @see DepsEncoder
+ * @see DepsCoder_version
+ * @see DepsCoder_checksum
+ */
 internal class DepsDecoder(
 	private val deps: DependencySettings,
 	private val data: String,
