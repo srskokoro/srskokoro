@@ -31,6 +31,9 @@ sealed class ModuleId private constructor() {
 		}
 
 		fun of(group: String, name: String): ModuleId {
+			// NOTE: The bitwise-AND of two negatives (i.e., two set sign bits)
+			// is a negative. On the other hand, if at least one is positive,
+			// the result of the bitwise-AND would be positive.
 			if (group.indexOf(':') and name.indexOf(':') >= 0) {
 				throw E_InvalidModuleId(group, name)
 			}
