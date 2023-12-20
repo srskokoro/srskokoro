@@ -18,3 +18,9 @@ fun File.safeResolve(relative: File): File {
 	return if (r.isAbsolute) r
 	else File(this, r.path)
 }
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun File.isEmptyDirectory() = toPath().isEmptyDirectory()
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun File.isNonEmptyDirectory() = toPath().isNonEmptyDirectory()

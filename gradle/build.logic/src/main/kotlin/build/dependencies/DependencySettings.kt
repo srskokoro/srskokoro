@@ -2,10 +2,12 @@ package build.dependencies
 
 import build.support.getFileUri
 import build.support.io.UnsafeCharArrayWriter
+import build.support.io.isNonEmptyDirectory
 import build.support.io.safeResolve
 import build.support.io.transformFileAtomic
 import dependencySettings__name
 import org.gradle.api.Action
+import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Project
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.initialization.ConfigurableIncludedBuild
@@ -20,7 +22,6 @@ import org.gradle.kotlin.dsl.support.serviceOf
 import setUpDeps
 import java.io.ByteArrayInputStream
 import java.io.File
-import java.io.FileNotFoundException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
 import java.util.LinkedList
@@ -180,7 +181,7 @@ abstract class DependencySettings internal constructor(val settings: Settings) :
 					val targetFile = targetDir.file(EXPORT_PATH)
 
 					val data = providers.fileContents(targetFile).asText.orNull
-						?: throw E_DependencySettingsNotExported(includedRoot)
+						?: throw E_DependencySettingsNotFound(targetDir.asFile)
 
 					DepsDecoder(this@DependencySettings, data, targetDir.asFile)
 						.decodeFully()
@@ -205,11 +206,31 @@ abstract class DependencySettings internal constructor(val settings: Settings) :
 	}
 }
 
-private fun E_DependencySettingsNotExported(includedRoot: String) = FileNotFoundException(
-	"""
-	The specified root project did not export its dependency settings.
-	- Root project: ${getFileUri(includedRoot)}
-	- Please call `${DependencySettings::export.name}()` or `${DependencySettings::exportOnly.name}()` in the `$dependencySettings__name` block of
-	that project's settings file.
-	""".trimIndent()
-)
+private fun E_DependencySettingsNotFound(rootProject: File): InvalidUserDataException {
+	val rootProjectUri = getFileUri(rootProject)
+	return InvalidUserDataException(
+		if (
+			File(rootProject, "settings.gradle.kts").exists() ||
+			File(rootProject, "settings.gradle").exists()
+		) {
+			"""
+			The specified root project did not export its dependency settings.
+			- Root project: $rootProjectUri
+			- Please call `${DependencySettings::export.name}()` or `${DependencySettings::exportOnly.name}()` in the `$dependencySettings__name` block of
+			that project's settings file.
+			""".trimIndent()
+		} else if (rootProject.isNonEmptyDirectory()) {
+			"""
+			The specified root project does not have a `settings.gradle` file (and is thus
+			unlikely to contribute a dependency settings).
+			- Root project: $rootProjectUri
+			""".trimIndent()
+		} else {
+			"""
+			The specified root project is empty (and is thus unlikely to contribute a
+			dependency settings).
+			- Root project: $rootProjectUri
+			""".trimIndent()
+		}
+	)
+}
