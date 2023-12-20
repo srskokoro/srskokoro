@@ -24,9 +24,10 @@ inline fun transformFileAtomic(
 	// for forced (re)generation, even if the destination file already exists.
 	if (destination.lastModified() == outputModMs && outputModMs != 0L) {
 		return false // The destination file is likely up-to-date!
-	} else {
-		// The destination file likely needs (re)generation!
 	}
+	// Otherwise, the destination file likely needs (re)generation!
+
+	// --
 
 	// NOTE: The following handles an edge case where the source file gets
 	// modified concurrently yet still have the same timestamp as what we got,
