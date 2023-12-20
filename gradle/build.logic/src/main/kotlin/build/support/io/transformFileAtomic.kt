@@ -49,7 +49,7 @@ inline fun transformFileAtomic(
 		}
 		transformFileAtomic_finish(outputModMs, tmp, destination)
 	} catch (ex: Throwable) {
-		throw transformFileAtomic_error(source, destination, tmp, ex)
+		throw transformFileAtomic_error(destination, tmp, ex)
 	}
 
 	return true
@@ -84,13 +84,13 @@ internal fun transformFileAtomic_finish(outputModMs: Long, tmp: File, destinatio
 }
 
 @PublishedApi
-internal fun transformFileAtomic_error(source: File, destination: File, tmp: File, cause: Throwable): Throwable {
+internal fun transformFileAtomic_error(destination: File, tmp: File, cause: Throwable): Throwable {
 	try {
 		tmp.delete()
 	} catch (ex: Throwable) {
 		cause.addSuppressed(ex)
 	}
 	return if (cause is Error) cause
-	else NioFileSystemException(source.path, destination.path, null)
+	else NioFileSystemException(destination.path)
 		.apply { initCause(cause) }
 }
