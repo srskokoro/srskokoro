@@ -1,6 +1,7 @@
 import org.gradle.kotlin.dsl.support.expectedKotlinDslPluginsVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion as KotlinCompileVersion
 
@@ -54,13 +55,11 @@ internal object Build {
 	const val JAVAC_RELEASE_OPT = "--release=8"
 }
 
-kotlin.sourceSets {
-	main {
-		project.objects.sourceDirectorySet("plugins", "plugins").run {
-			srcDir(Build.PLUGINS_DIR)
-			include("**/${Build.PLUGIN_CLASS}.kt")
-			kotlin.source(this)
-		}
+configureMain {
+	project.objects.sourceDirectorySet("plugins", "plugins").run {
+		srcDir(Build.PLUGINS_DIR)
+		include("**/${Build.PLUGIN_CLASS}.kt")
+		kotlin.source(this)
 	}
 }
 
@@ -92,6 +91,12 @@ fun NamedDomainObjectContainer<PluginDeclaration>.addPlugin(name: String) {
 		}
 		id = name
 		implementationClass = "$name.${Build.PLUGIN_CLASS}"
+	}
+}
+
+fun configureMain(action: Action<in KotlinSourceSet>) {
+	kotlin.sourceSets {
+		named("main", action)
 	}
 }
 
