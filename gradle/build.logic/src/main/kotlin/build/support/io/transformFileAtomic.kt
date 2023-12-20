@@ -1,5 +1,7 @@
 package build.support.io
 
+import build.api.provider.callUntracked
+import org.gradle.api.provider.ProviderFactory
 import java.io.File
 import java.nio.channels.FileChannel
 import java.nio.file.Files
@@ -8,6 +10,25 @@ import java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import java.nio.file.StandardOpenOption.*
 import java.nio.file.FileSystemException as NioFileSystemException
 
+/**
+ * @see ProviderFactory.callUntracked
+ */
+inline fun ProviderFactory.transformFileAtomic(
+	source: File,
+	destination: File,
+	crossinline generator: (FileChannel) -> Unit,
+): Boolean = callUntracked {
+	build.support.io.transformFileAtomic(
+		source,
+		destination,
+		generator,
+	)
+}
+
+/**
+ * @see ProviderFactory.callUntracked
+ * @see ProviderFactory.transformFileAtomic
+ */
 inline fun transformFileAtomic(
 	source: File,
 	destination: File,
@@ -18,6 +39,10 @@ inline fun transformFileAtomic(
 	generator,
 )
 
+/**
+ * @see ProviderFactory.callUntracked
+ * @see ProviderFactory.transformFileAtomic
+ */
 inline fun transformFileAtomic(
 	sourceModMs: Long,
 	destination: File,
