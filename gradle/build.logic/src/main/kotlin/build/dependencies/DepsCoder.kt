@@ -115,6 +115,7 @@ internal class DepsDecoder(
 					continue
 				}
 				'\n', '\r' -> continue
+				' ', '\t' -> {}
 				else -> if (!c.isWhitespace()) throw E_UnexpectedChar()
 			}
 			consumeBlankLine()
