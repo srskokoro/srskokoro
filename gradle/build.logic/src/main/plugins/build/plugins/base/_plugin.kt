@@ -7,6 +7,7 @@ import build.api.dsl.model.test
 import build.api.dsl.model.testImplementation
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.internal.logging.slf4j.ContextAwareTaskLogger
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
@@ -58,6 +59,13 @@ internal fun Project.apply_() {
 			apiVersion.set(kotlinVersion)
 			languageVersion.set(kotlinVersion)
 			freeCompilerArgs.add("-Xjvm-default=all")
+
+			/** @see org.gradle.kotlin.dsl.plugins.dsl.KotlinDslCompilerPlugins */
+			task.setWarningRewriter(@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+			org.gradle.kotlin.dsl.plugins.dsl.ExperimentalCompilerWarningSilencer(listOf(
+				"-XXLanguage:+DisableCompatibilityModeForNewInference",
+				"-XXLanguage:-TypeEnhancementImprovementsInStrictMode",
+			)))
 		})
 		test {
 			useJUnitPlatform()
@@ -69,4 +77,9 @@ internal fun Project.apply_() {
 		api("build:build.logic")
 		testImplementation(embeddedKotlin("test"))
 	}
+}
+
+/** @see org.gradle.kotlin.dsl.plugins.dsl.KotlinDslCompilerPlugins.setWarningRewriter */
+private fun KotlinCompile.setWarningRewriter(rewriter: ContextAwareTaskLogger.MessageRewriter?) {
+	(logger as ContextAwareTaskLogger).setMessageRewriter(rewriter)
 }
