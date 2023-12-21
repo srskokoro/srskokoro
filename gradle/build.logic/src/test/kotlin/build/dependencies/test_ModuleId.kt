@@ -5,7 +5,6 @@ import kotlin.test.assertEquals
 
 class test_ModuleId {
 
-	@Suppress("INVISIBLE_MEMBER")
 	@Test fun `of_unsafe(ID) == of(ID)`() {
 		val id = "foo:bar"
 		assertEquals(
@@ -14,7 +13,6 @@ class test_ModuleId {
 		)
 	}
 
-	@Suppress("INVISIBLE_MEMBER")
 	@Test fun `of_unsafe(GROUP, NAME) == of(GROUP, NAME)`() {
 		val group = "foo"
 		val name = "bar"
