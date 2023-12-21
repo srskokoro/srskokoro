@@ -1,5 +1,6 @@
 package build.support.io
 
+import build.api.provider.UntrackedScope
 import build.api.provider.callUntracked
 import org.gradle.api.provider.ProviderFactory
 import java.io.File
@@ -16,9 +17,9 @@ import java.nio.file.FileSystemException as NioFileSystemException
 inline fun ProviderFactory.transformFileAtomic(
 	source: File,
 	destination: File,
-	crossinline generator: (FileChannel) -> Unit,
+	crossinline generator: UntrackedScope.(FileChannel) -> Unit,
 ): Boolean = callUntracked {
-	build.support.io.transformFileAtomic(
+	transformFileAtomic(
 		source,
 		destination,
 		generator,
@@ -29,10 +30,10 @@ inline fun ProviderFactory.transformFileAtomic(
  * @see ProviderFactory.callUntracked
  * @see ProviderFactory.transformFileAtomic
  */
-inline fun transformFileAtomic(
+inline fun UntrackedScope.transformFileAtomic(
 	source: File,
 	destination: File,
-	crossinline generator: (FileChannel) -> Unit,
+	crossinline generator: UntrackedScope.(FileChannel) -> Unit,
 ): Boolean = transformFileAtomic(
 	source.lastModified(),
 	destination,
@@ -43,11 +44,11 @@ inline fun transformFileAtomic(
  * @see ProviderFactory.callUntracked
  * @see ProviderFactory.transformFileAtomic
  */
-inline fun transformFileAtomic(
+inline fun UntrackedScope.transformFileAtomic(
 	sourceModMs: Long,
 	destination: File,
 	// NOTE: Using `crossinline` here prevents non-local returns.
-	crossinline generator: (FileChannel) -> Unit,
+	crossinline generator: UntrackedScope.(FileChannel) -> Unit,
 ): Boolean {
 	var outputModMs = sourceModMs
 
@@ -82,7 +83,7 @@ inline fun transformFileAtomic(
 	val tmp = transformFileAtomic_initTmp(destination)
 	try {
 		transformFileAtomic_initFc(tmp).use {
-			generator.invoke(it)
+			generator(it)
 		}
 		transformFileAtomic_finish(outputModMs, tmp, destination)
 	} catch (ex: Throwable) {
