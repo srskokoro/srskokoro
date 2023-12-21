@@ -9,7 +9,7 @@ fun fastPow31(n: Int): Int {
 // From,
 // - https://gist.github.com/apangin/91c07684635893e3f1d5
 // - https://stackoverflow.com/a/35671374
-private fun fastPow31Calc(n: Int): Int {
+internal fun fastPow31Calc(n: Int): Int {
 	var x = 31
 	var y = n
 	var result = if (y and 1 != 0) x else 1
@@ -31,6 +31,8 @@ private fun fastPow31Calc(n: Int): Int {
  *   println()
  * }
  * ```
+ *
+ * @see fastPow31Table_n
  */
 private val fastPow31Table = intArrayOf(
 	1, 31, 961, 29791, 923521, 28629151, 887503681, 1742810335,
@@ -42,3 +44,5 @@ private val fastPow31Table = intArrayOf(
 	-7759359, -240540129, 1133190593, 769170015, -1925533311, 438009503, 693392705, 20337375,
 	630458625, -1930619105, 280349889, 100911967, -1166696319, -1807847521, -208698303, 2120287199,
 )
+
+internal val fastPow31Table_n get() = fastPow31Table.size
