@@ -37,4 +37,5 @@ google-services.json
 
 # Exclude auto-generated properties files -- see, `settings.builds.lst`
 /dependencies/gradle.properties
+/gradle/support/gradle.properties
 /gradle/plugins/gradle.properties

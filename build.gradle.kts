@@ -6,6 +6,7 @@ plugins {
 
 gradle.includedBuilds(
 	"build.logic",
+	"support",
 	"plugins",
 ).let { testableBuilds ->
 	tasks {

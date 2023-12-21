@@ -9,13 +9,8 @@ plugins {
 }
 
 dependencyResolutionManagement {
-	includeBuild("../build.logic")
-	includeBuild("../support")
 	repositories.gradlePluginPortal()
 }
 dependencySettings {
 	includeBuild("../../dependencies")
 }
-
-include(":conventions")
-project(":conventions").projectDir = file("../conventions")
