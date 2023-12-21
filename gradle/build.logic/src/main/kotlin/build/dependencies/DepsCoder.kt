@@ -19,7 +19,7 @@ private const val PC_INCLUDE = 'I'
  */
 internal const val DepsCoder_version = "#$DepsCoder_checksum"
 
-internal val DepsCoder_charset = StandardCharsets.UTF_8
+@JvmField internal val DepsCoder_charset = StandardCharsets.UTF_8
 
 /**
  * @see DepsDecoder
