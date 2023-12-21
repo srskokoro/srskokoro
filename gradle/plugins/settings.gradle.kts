@@ -2,7 +2,6 @@
 
 pluginManagement {
 	includeBuild("../build.logic")
-	includeBuild("../conventions.base")
 }
 plugins {
 	id("build.dependencies")
@@ -10,12 +9,12 @@ plugins {
 }
 
 dependencyResolutionManagement {
-	includeBuild("../conventions.base")
+	includeBuild("../build.logic")
 	repositories.gradlePluginPortal()
 }
 dependencySettings {
 	includeBuild("../../dependencies")
 }
 
-include(":conventions.plugins")
-project(":conventions.plugins").projectDir = file("../conventions.plugins")
+include(":conventions")
+project(":conventions").projectDir = file("../conventions")

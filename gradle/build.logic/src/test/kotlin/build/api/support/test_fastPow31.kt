@@ -6,7 +6,6 @@ import kotlin.test.assertContentEquals
 class test_fastPow31 {
 
 	companion object {
-		@Suppress("INVISIBLE_MEMBER")
 		private val TEST_RANGE = 0 until fastPow31Table_n * 2
 	}
 
@@ -16,7 +15,6 @@ class test_fastPow31 {
 		return x
 	}
 
-	@Suppress("INVISIBLE_MEMBER")
 	@Test fun `fastPow31(N) == naivePow31Calc(N)`() {
 		assertContentEquals(
 			TEST_RANGE.map { naivePow31Calc(it) },
@@ -24,7 +22,6 @@ class test_fastPow31 {
 		)
 	}
 
-	@Suppress("INVISIBLE_MEMBER")
 	@Test fun `fastPow31Calc(N) == fastPow31(N)`() {
 		assertContentEquals(
 			TEST_RANGE.map { fastPow31(it) },
