@@ -1,4 +1,4 @@
-package build.support
+package build.api.support
 
 /**
  * Same as [String.substring]`(start)` but useful for improving readability,

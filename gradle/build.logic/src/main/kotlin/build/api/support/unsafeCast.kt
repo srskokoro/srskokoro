@@ -1,4 +1,4 @@
-package build.support
+package build.api.support
 
 inline fun <reified T> Any?.unsafeCast() = this as T
 

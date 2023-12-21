@@ -2,9 +2,9 @@ package build.settings.buildslist
 
 import build.api.SettingsPlugin
 import build.api.provider.runUntracked
-import build.support.from
-import build.support.io.safeResolve
-import build.support.io.transformFileAtomic
+import build.api.support.from
+import build.api.support.io.safeResolve
+import build.api.support.io.transformFileAtomic
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.initialization.Settings

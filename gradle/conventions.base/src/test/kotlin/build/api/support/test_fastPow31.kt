@@ -1,4 +1,4 @@
-package build.support
+package build.api.support
 
 import kotlin.test.Test
 import kotlin.test.assertContentEquals

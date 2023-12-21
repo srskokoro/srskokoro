@@ -1,4 +1,4 @@
-package build.support
+package build.api.support
 
 fun fastPow31(n: Int): Int {
 	val t = fastPow31Table

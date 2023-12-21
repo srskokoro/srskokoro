@@ -1,8 +1,8 @@
 package build.dependencies
 
-import build.support.from
-import build.support.hashCodeWith
-import build.support.until
+import build.api.support.from
+import build.api.support.hashCodeWith
+import build.api.support.until
 import org.gradle.api.IllegalDependencyNotation
 
 sealed class ModuleId private constructor() {
