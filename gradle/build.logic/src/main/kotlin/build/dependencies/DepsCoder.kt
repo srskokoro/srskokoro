@@ -1,8 +1,8 @@
 package build.dependencies
 
+import build.api.support.io.UnsafeCharArrayWriter
+import build.api.support.lineInfoUriAt
 import build.dependencies.DependencySettings.Companion.EXPORT_PATH
-import build.support.io.UnsafeCharArrayWriter
-import build.support.lineInfoUriAt
 import org.gradle.api.InvalidUserDataException
 import java.io.File
 import java.nio.charset.StandardCharsets

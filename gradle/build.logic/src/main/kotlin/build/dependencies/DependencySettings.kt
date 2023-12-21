@@ -1,10 +1,10 @@
 package build.dependencies
 
 import build.api.provider.sources.FileModTimeSource
-import build.support.getFileUri
-import build.support.io.UnsafeCharArrayWriter
-import build.support.io.safeResolve
-import build.support.io.transformFileAtomic
+import build.api.support.getFileUri
+import build.api.support.io.UnsafeCharArrayWriter
+import build.api.support.io.safeResolve
+import build.api.support.io.transformFileAtomic
 import dependencySettings__name
 import org.gradle.api.Action
 import org.gradle.api.InvalidUserDataException
