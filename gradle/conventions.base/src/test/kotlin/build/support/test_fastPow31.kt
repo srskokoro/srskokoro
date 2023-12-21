@@ -6,7 +6,7 @@ import kotlin.test.assertContentEquals
 class test_fastPow31 {
 
 	companion object {
-		private val TEST_RANGE = 0 until 256
+		private val TEST_RANGE = 0 until 512
 	}
 
 	private fun naivePow31Calc(n: Int): Int {
