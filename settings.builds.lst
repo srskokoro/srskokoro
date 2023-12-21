@@ -1,2 +1,3 @@
 prop:dependencies/gradle.properties
+build:gradle/support/gradle.properties
 plugin-build:gradle/plugins/gradle.properties
