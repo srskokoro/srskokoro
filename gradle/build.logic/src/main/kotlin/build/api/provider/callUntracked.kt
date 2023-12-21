@@ -14,7 +14,7 @@ import kotlin.contracts.contract
  * @see Settings.callUntracked
  */
 @OptIn(ExperimentalContracts::class)
-inline fun <R> ProviderFactory.callUntracked(crossinline block: () -> R): R {
+inline fun <R> ProviderFactory.callUntracked(crossinline block: UntrackedScope.() -> R): R {
 	contract {
 		callsInPlace(block, InvocationKind.EXACTLY_ONCE)
 	}
@@ -31,7 +31,7 @@ inline fun <R> ProviderFactory.callUntracked(crossinline block: () -> R): R {
  * @see ProviderFactory.callUntracked
  */
 @OptIn(ExperimentalContracts::class)
-inline fun <R> Project.callUntracked(crossinline block: () -> R): R {
+inline fun <R> Project.callUntracked(crossinline block: UntrackedScope.() -> R): R {
 	contract {
 		callsInPlace(block, InvocationKind.EXACTLY_ONCE)
 	}
@@ -44,7 +44,7 @@ inline fun <R> Project.callUntracked(crossinline block: () -> R): R {
  * @see ProviderFactory.callUntracked
  */
 @OptIn(ExperimentalContracts::class)
-inline fun <R> Settings.callUntracked(crossinline block: () -> R): R {
+inline fun <R> Settings.callUntracked(crossinline block: UntrackedScope.() -> R): R {
 	contract {
 		callsInPlace(block, InvocationKind.EXACTLY_ONCE)
 	}
