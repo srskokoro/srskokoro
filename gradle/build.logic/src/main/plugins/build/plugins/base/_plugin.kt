@@ -40,7 +40,7 @@ internal object Build {
 	// currently expects that, or it'll complain stuffs like "cannot inline
 	// bytecode built with JVM target <higher version>…" etc., when the build
 	// isn't even complaining that.
-	val KOTLIN_JVM_TARGET = JvmTarget.JVM_1_8
+	inline val KOTLIN_JVM_TARGET get() = JvmTarget.JVM_1_8
 	const val JAVAC_RELEASE_OPT = "--release=8"
 }
 
