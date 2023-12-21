@@ -3,6 +3,9 @@ import build.dependencies.ModuleId
 import build.dependencies.PluginId
 import org.gradle.api.InvalidUserDataException
 
+@Suppress("NOTHING_TO_INLINE")
+inline fun DependencySettings.prop(key: String, value: Any) = prop(key, value.toString())
+
 fun DependencySettings.prop(key: String, value: String) {
 	if (props.putIfAbsent(key, value) != null)
 		throw E_DuplicatePropKey(key)
