@@ -217,4 +217,9 @@ dependencies {
 	api("org.gradle.kotlin:gradle-kotlin-dsl-plugins:$expectedKotlinDslPluginsVersion")
 
 	testImplementation(embeddedKotlin("test"))
+
+	// NOTE: Deliberately not `api` since it's used only for compiling our test
+	// utilities which should really only be referenced during tests (by both
+	// the current project and its consumers).
+	compileOnly(gradleTestKit())
 }

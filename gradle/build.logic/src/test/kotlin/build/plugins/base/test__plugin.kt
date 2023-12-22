@@ -1,7 +1,7 @@
 package build.plugins.base
 
 import build.test.io.TestTmpDir
-import build.test.io.TestTmpDir.buildProject
+import build.test.io.buildProject
 import org.gradle.kotlin.dsl.*
 import kotlin.test.Test
 import kotlin.test.assertTrue

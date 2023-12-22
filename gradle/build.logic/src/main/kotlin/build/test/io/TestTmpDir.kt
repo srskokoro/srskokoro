@@ -1,6 +1,5 @@
 package build.test.io
 
-import org.gradle.testfixtures.ProjectBuilder
 import java.io.File
 
 @Suppress("MemberVisibilityCanBePrivate")
@@ -22,22 +21,4 @@ object TestTmpDir {
 	fun from(testInstance: Any) = of(testInstance::class.java)
 
 	fun from(testInstance: Any, subPath: String) = of(testInstance::class.java, subPath)
-
-	// --
-
-	private object _gradleUserHome {
-		val value = named(".gradleUserHome")
-	}
-
-	val gradleUserHome: File get() = _gradleUserHome.value
-
-	fun projectBuilder() = ProjectBuilder.builder().withGradleUserHomeDir(gradleUserHome)
-
-	fun projectBuilder(projectDir: File?) = projectBuilder().withProjectDir(projectDir)
-
-	inline fun buildProject(configure: ProjectBuilder.() -> Unit = {}) =
-		projectBuilder().apply(configure).build()
-
-	inline fun buildProject(projectDir: File?, configure: ProjectBuilder.() -> Unit = {}) =
-		projectBuilder(projectDir).apply(configure).build()
 }
