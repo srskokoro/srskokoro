@@ -45,6 +45,9 @@ internal object Build {
 	const val PLUGINS_DIR = "src/main/plugins"
 	const val PLUGIN_CLASS = "_plugin"
 
+	/** @see build.test.io.TestTmpDir.TEST_IO_TMPDIR_SYS_PROP */
+	const val TEST_IO_TMPDIR_SYS_PROP = "build.test.io.tmpdir"
+
 	// NOTE: The following ensures that our convention plugins are always
 	// compiled with a consistent JVM bytecode target version. Otherwise, the
 	// compiled output would vary depending on the current JDK running Gradle.
@@ -98,6 +101,17 @@ tasks {
 			))
 		)
 	})
+	withType<Test>().configureEach {
+		val taskTmpDir = temporaryDir
+
+		val ioTmpDir = File(taskTmpDir, "io")
+		ioTmpDir.mkdir() // …or Gradle will warn us about its nonexistence
+		systemProperty("java.io.tmpdir", ioTmpDir)
+
+		val buildTmpDir = File(taskTmpDir, "b")
+		buildTmpDir.mkdir()
+		systemProperty(Build.TEST_IO_TMPDIR_SYS_PROP, buildTmpDir)
+	}
 }
 
 //#region Utilities

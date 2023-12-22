@@ -1,13 +1,16 @@
 package build.support.kt.base
 
 import build.api.ProjectPlugin
+import build.test.io.TestTmpDir.TEST_IO_TMPDIR_SYS_PROP
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.api.tasks.testing.Test
 import org.gradle.internal.logging.slf4j.ContextAwareTaskLogger
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.File
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion as KotlinCompileVersion
 
 /**
@@ -71,5 +74,16 @@ private fun Project.apply_() {
 				))
 			)
 		})
+		withType<Test>().configureEach {
+			val taskTmpDir = temporaryDir
+
+			val ioTmpDir = File(taskTmpDir, "io")
+			ioTmpDir.mkdir() // …or Gradle will warn us about its nonexistence
+			systemProperty("java.io.tmpdir", ioTmpDir)
+
+			val buildTmpDir = File(taskTmpDir, "b")
+			buildTmpDir.mkdir()
+			systemProperty(TEST_IO_TMPDIR_SYS_PROP, buildTmpDir)
+		}
 	}
 }
