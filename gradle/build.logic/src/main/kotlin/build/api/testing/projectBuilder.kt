@@ -1,4 +1,4 @@
-package build.test.io
+package build.api.testing
 
 import org.gradle.testfixtures.ProjectBuilder
 import java.io.File
