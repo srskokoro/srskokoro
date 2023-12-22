@@ -6,82 +6,37 @@ import build.api.dsl.model.kotlinSourceSets
 import build.api.dsl.model.test
 import build.api.dsl.model.testImplementation
 import org.gradle.api.Project
-import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.internal.logging.slf4j.ContextAwareTaskLogger
 import org.gradle.kotlin.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+/**
+ * NOTE: The setup of this plugin, along with [build.support.kt.jvm._plugin] and
+ * [build.support.kt.base._plugin], should be similar to the `build.gradle.kts`
+ * file of the project compiling this plugin. It should be kept consistent with
+ * that as much as possible.
+ */
 class _plugin : ProjectPlugin {
+
+	/**
+	 * WARNING: Before making changes to this plugin, please see first the NOTE
+	 * provided with this [_plugin] class.
+	 */
 	override fun Project.applyPlugin() {
 		apply {
+			plugin<build.support.kt.jvm._plugin>()
 			plugin("java-gradle-plugin")
 			plugin("org.gradle.kotlin.kotlin-dsl.base")
-			plugin<build.kt.base._plugin>()
 		}
-		apply_()
-	}
-}
 
-internal object Build {
-	// NOTE: The following ensures that our convention plugins are always
-	// compiled with a consistent JVM bytecode target version. Otherwise, the
-	// compiled output would vary depending on the current JDK running Gradle.
-	// Now, we don't want to alter the JVM toolchain, since not only that it
-	// would download an entirely separate JDK, but it would also affect our
-	// dependencies, e.g., it would force a specific variant of our dependencies
-	// to be selected in order to conform to the current JDK (and it would
-	// otherwise throw if it can't do so). We want none of that hassle when we
-	// just want our target bytecode to be consistent. Additionally, not only
-	// that we want consistency, we also want the output's bytecode version to
-	// be as low as it can reasonably be, i.e., Java `1.8`, as Android Studio
-	// currently expects that, or it'll complain stuffs like "cannot inline
-	// bytecode built with JVM target <higher version>…" etc., when the build
-	// isn't even complaining that.
-	inline val KOTLIN_JVM_TARGET get() = JvmTarget.JVM_1_8
-	const val JAVAC_RELEASE_OPT = "--release=8"
-}
+		kotlinSourceSets.named("main", ::installPluginsAutoRegistrant)
 
-internal fun Project.apply_() {
-	kotlinSourceSets.named("main", ::installPluginsAutoRegistrant)
-
-	tasks {
-		withType<JavaCompile>().configureEach {
-			options.compilerArgs.add(Build.JAVAC_RELEASE_OPT)
-		}
-		withType<KotlinCompile>().configureEach(fun(task) = with(task.compilerOptions) {
-			task.jvmTargetValidationMode.set(JvmTargetValidationMode.IGNORE)
-			jvmTarget.set(Build.KOTLIN_JVM_TARGET)
-
-			val kotlinVersion = KotlinVersion.DEFAULT
-			apiVersion.set(kotlinVersion)
-			languageVersion.set(kotlinVersion)
-
-			/** @see org.gradle.kotlin.dsl.provider.KotlinDslPluginSupport.kotlinCompilerArgs */
-			freeCompilerArgs.apply {
-				add("-java-parameters")
-				add("-Xjvm-default=all")
-			}
-
-			/** @see org.gradle.kotlin.dsl.plugins.dsl.KotlinDslCompilerPlugins */
-			(task.logger as ContextAwareTaskLogger).setMessageRewriter(
-				@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-				org.gradle.kotlin.dsl.plugins.dsl.ExperimentalCompilerWarningSilencer(listOf(
-					"-XXLanguage:+DisableCompatibilityModeForNewInference",
-					"-XXLanguage:-TypeEnhancementImprovementsInStrictMode",
-				))
-			)
-		})
-		test {
+		tasks.test {
 			useJUnitPlatform()
 			jvmArgs("-ea") // Also enables stacktrace recovery for kotlinx coroutines
 		}
-	}
 
-	dependencies {
-		api("build:build.logic")
-		testImplementation(embeddedKotlin("test"))
+		dependencies {
+			api("build:build.logic")
+			testImplementation(embeddedKotlin("test"))
+		}
 	}
 }

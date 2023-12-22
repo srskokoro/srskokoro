@@ -23,6 +23,10 @@ gradlePlugin {
 		addPlugin("build.plugins.base")
 		addPlugin("build.root")
 
+		addPlugin("build.support.kt.base")
+		addPlugin("build.support.kt.jvm")
+		addPlugin("build.support.kt.mpp")
+
 		addPlugin("build.dependencies")
 		addPlugin("build.dotbuild")
 		addPlugin("build.settings.buildslist")
