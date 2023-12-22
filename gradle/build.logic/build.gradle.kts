@@ -77,7 +77,12 @@ tasks {
 		val kotlinVersion = KotlinCompileVersion.DEFAULT
 		apiVersion.set(kotlinVersion)
 		languageVersion.set(kotlinVersion)
-		freeCompilerArgs.add("-Xjvm-default=all")
+
+		/** @see org.gradle.kotlin.dsl.provider.KotlinDslPluginSupport.kotlinCompilerArgs */
+		freeCompilerArgs.apply {
+			add("-java-parameters")
+			add("-Xjvm-default=all")
+		}
 	})
 }
 

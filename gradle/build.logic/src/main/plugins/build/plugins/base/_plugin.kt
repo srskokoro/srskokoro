@@ -58,7 +58,12 @@ internal fun Project.apply_() {
 			val kotlinVersion = KotlinVersion.DEFAULT
 			apiVersion.set(kotlinVersion)
 			languageVersion.set(kotlinVersion)
-			freeCompilerArgs.add("-Xjvm-default=all")
+
+			/** @see org.gradle.kotlin.dsl.provider.KotlinDslPluginSupport.kotlinCompilerArgs */
+			freeCompilerArgs.apply {
+				add("-java-parameters")
+				add("-Xjvm-default=all")
+			}
 
 			/** @see org.gradle.kotlin.dsl.plugins.dsl.KotlinDslCompilerPlugins */
 			task.setWarningRewriter(@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
