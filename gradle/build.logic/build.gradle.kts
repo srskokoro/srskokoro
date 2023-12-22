@@ -18,7 +18,7 @@ gradlePlugin {
 	plugins {
 		addPlugin("build.kt.base")
 
-		addPlugin("build.plugins.base")
+		addPlugin("build.plugins")
 		addPlugin("build.root")
 
 		addPlugin("build.dependencies")
@@ -28,7 +28,7 @@ gradlePlugin {
 }
 
 /**
- * NOTE: The setup of this build is similar to [build.plugins.base._plugin] and
+ * NOTE: The setup of this build is similar to [build.plugins._plugin] and
  * should be kept consistent with that (as much as possible).
  */
 object _eat_comment_

@@ -1,5 +1,5 @@
 plugins {
-	id("build.plugins.base")
+	id("build.plugins")
 }
 
 group = "build"
