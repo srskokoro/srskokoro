@@ -21,4 +21,20 @@ class test_ModuleId {
 			ModuleId.of_unsafe(group, name),
 		)
 	}
+
+	@Test fun `of(ID) == of(GROUP, NAME)`() {
+		val group = "foo"
+		val name = "bar"
+		val id = "foo:bar"
+
+		val viaId = ModuleId.of(id)
+		val viaGroupName = ModuleId.of(group, name)
+
+		assertEquals(viaGroupName, viaId)
+		assertEquals(viaGroupName.hashCode(), viaId.hashCode())
+		assertEquals(viaGroupName.toString(), viaId.toString())
+
+		assertEquals(viaGroupName.group, viaId.group)
+		assertEquals(viaGroupName.name, viaId.name)
+	}
 }
