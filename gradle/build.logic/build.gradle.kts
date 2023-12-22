@@ -1,3 +1,4 @@
+import org.gradle.internal.logging.slf4j.ContextAwareTaskLogger
 import org.gradle.kotlin.dsl.support.expectedKotlinDslPluginsVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
@@ -82,6 +83,15 @@ tasks {
 			add("-java-parameters")
 			add("-Xjvm-default=all")
 		}
+
+		/** @see org.gradle.kotlin.dsl.plugins.dsl.KotlinDslCompilerPlugins */
+		(task.logger as ContextAwareTaskLogger).setMessageRewriter(
+			@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+			ExperimentalCompilerWarningSilencer(listOf(
+				"-XXLanguage:+DisableCompatibilityModeForNewInference",
+				"-XXLanguage:-TypeEnhancementImprovementsInStrictMode",
+			))
+		)
 	})
 }
 

@@ -66,11 +66,13 @@ internal fun Project.apply_() {
 			}
 
 			/** @see org.gradle.kotlin.dsl.plugins.dsl.KotlinDslCompilerPlugins */
-			task.setWarningRewriter(@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-			org.gradle.kotlin.dsl.plugins.dsl.ExperimentalCompilerWarningSilencer(listOf(
-				"-XXLanguage:+DisableCompatibilityModeForNewInference",
-				"-XXLanguage:-TypeEnhancementImprovementsInStrictMode",
-			)))
+			(task.logger as ContextAwareTaskLogger).setMessageRewriter(
+				@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+				org.gradle.kotlin.dsl.plugins.dsl.ExperimentalCompilerWarningSilencer(listOf(
+					"-XXLanguage:+DisableCompatibilityModeForNewInference",
+					"-XXLanguage:-TypeEnhancementImprovementsInStrictMode",
+				))
+			)
 		})
 		test {
 			useJUnitPlatform()
@@ -82,9 +84,4 @@ internal fun Project.apply_() {
 		api("build:build.logic")
 		testImplementation(embeddedKotlin("test"))
 	}
-}
-
-/** @see org.gradle.kotlin.dsl.plugins.dsl.KotlinDslCompilerPlugins.setWarningRewriter */
-private fun KotlinCompile.setWarningRewriter(rewriter: ContextAwareTaskLogger.MessageRewriter?) {
-	(logger as ContextAwareTaskLogger).setMessageRewriter(rewriter)
 }
