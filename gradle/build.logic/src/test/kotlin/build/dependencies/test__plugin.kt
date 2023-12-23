@@ -11,13 +11,14 @@ import plugin
 import prop
 import java.io.File
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 class test__plugin {
 
 	@Test fun `A build with a chain of includes is working as expected`() {
 		val mainProjectDir: File
-		buildDir(TestTempDir.from(this)) {
+		buildDir(TestTempDir.from(this, "0")) {
 			clean()
 			setUpProject(
 				"exportOnly",
@@ -53,6 +54,28 @@ class test__plugin {
 		}
 		gradleRunner(mainProjectDir).build()
 	}
+
+	@Test fun `Export is preserved as expected`() {
+		val projectDir = buildDir(TestTempDir.from(this, "1")).run {
+			clean()
+			setUpProject("project", "dependencySettings { exportOnly() }")
+				.file
+		}
+
+		// Ensure that the settings file's last modification time is less than
+		// the current time.
+		Thread.sleep(1)
+
+		val runner = gradleRunner(projectDir)
+		assertContains(
+			runner.build().output,
+			"Generated new dependency settings export: "
+		)
+		assertContains(
+			runner.build().output,
+			"Preserved likely up-to-date dependency settings export: "
+		)
+	}
 }
 
 /** @see setUpProject */
@@ -79,7 +102,7 @@ fun Project.assertDepsNull() {
 	if (deps != null) throw AssertionError("Expected `deps` to be null")
 }
 
-private fun DirectoryBuilder.setUpProject(name: String, settingsConfig: String, rootProjectAction: String) = dir(name) {
+private fun DirectoryBuilder.setUpProject(name: String, settingsConfig: String, rootProjectAction: String = "") = dir(name) {
 	file("settings.gradle.kts").writeText(
 		"""
 		import build.dependencies.*
@@ -89,7 +112,7 @@ private fun DirectoryBuilder.setUpProject(name: String, settingsConfig: String, 
 		dependencySettings {
 			setUpForTesting()
 		}
-		""".trimIndent() + '\n' + settingsConfig + '\n' + """
+		""".trimIndent() + '\n' + settingsConfig + if (rootProjectAction.isEmpty()) "" else '\n' + """
 		fun Project.setUpRootProjectForTesting() {
 		""".trimIndent() + '\n' + rootProjectAction + '\n' + """
 		}
@@ -98,5 +121,6 @@ private fun DirectoryBuilder.setUpProject(name: String, settingsConfig: String, 
 		}
 		""".trimIndent()
 	)
-	file("build.gradle.kts").writeText("runTestSetupAction.run()")
+	if (rootProjectAction.isNotEmpty())
+		file("build.gradle.kts").writeText("runTestSetupAction.run()")
 }
