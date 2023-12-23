@@ -44,9 +44,6 @@ internal object Build {
 	const val PLUGINS_DIR = "src/main/plugins"
 	const val PLUGIN_CLASS = "_plugin"
 
-	/** @see build.api.testing.io.TestTempDir.TEST_TMPDIR_SYS_PROP */
-	const val TEST_TMPDIR_SYS_PROP = "build.api.testing.io.tmpdir"
-
 	// NOTE: The following ensures that our convention plugins are always
 	// compiled with a consistent JVM bytecode target version. Otherwise, the
 	// compiled output would vary depending on the current JDK running Gradle.
@@ -63,6 +60,11 @@ internal object Build {
 	// isn't even complaining that.
 	inline val KOTLIN_JVM_TARGET get() = JvmTarget.JVM_1_8
 	const val JAVAC_RELEASE_OPT = "--release=8"
+}
+
+/** @see build.api.testing.TestSystemProps */
+internal object TestSystemProps {
+	const val TMPDIR = "build.api.testing.io.tmpdir"
 }
 
 configureMain {
@@ -98,7 +100,7 @@ tasks {
 
 		val buildTmpDir = File(taskTmpDir, "b")
 		buildTmpDir.mkdir()
-		systemProperty(Build.TEST_TMPDIR_SYS_PROP, buildTmpDir)
+		systemProperty(TestSystemProps.TMPDIR, buildTmpDir)
 	}
 }
 

@@ -1,7 +1,7 @@
 package build.support.kt.base
 
 import build.api.ProjectPlugin
-import build.api.testing.io.TestTempDir.TEST_TMPDIR_SYS_PROP
+import build.api.testing.TestSystemProps
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
@@ -71,7 +71,7 @@ private fun Project.apply_() {
 
 			val buildTmpDir = File(taskTmpDir, "b")
 			buildTmpDir.mkdir()
-			systemProperty(TEST_TMPDIR_SYS_PROP, buildTmpDir)
+			systemProperty(TestSystemProps.TMPDIR, buildTmpDir)
 		}
 	}
 }
