@@ -67,7 +67,7 @@ internal class DepsEncoder(
 			/** @see DepsDecoder.nextCell */
 			when (c) {
 				',' -> 'C'.code
-				'\\' -> 'S'.code
+				'%' -> 'E'.code // The Escape Char
 				'\n' -> 'n'.code
 				'\r' -> 'r'.code
 				else -> {
@@ -75,7 +75,7 @@ internal class DepsEncoder(
 					continue
 				}
 			}.let {
-				write('\\'.code)
+				write('%'.code)
 				write(it)
 			}
 		}
@@ -183,9 +183,9 @@ internal class DepsDecoder(
 				',' -> break
 
 				/** @see DepsEncoder.formatCell */
-				'\\' -> if (i < data.length) when (data[i++]) {
+				'%' -> if (i < data.length) when (data[i++]) {
 					'C' -> out.append(',')
-					'S' -> out.append('\\')
+					'E' -> out.append('%') // The Escape Char
 					'n' -> out.append('\n')
 					'r' -> out.append('\r')
 					else -> throw E_UnexpectedChar()
