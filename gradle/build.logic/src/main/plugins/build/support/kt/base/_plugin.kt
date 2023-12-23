@@ -66,12 +66,15 @@ private fun Project.apply_() {
 			val taskTmpDir = temporaryDir
 
 			val ioTmpDir = File(taskTmpDir, "io")
-			ioTmpDir.mkdir() // …or Gradle will warn us about its nonexistence
 			systemProperty("java.io.tmpdir", ioTmpDir)
 
 			val buildTmpDir = File(taskTmpDir, "b")
-			buildTmpDir.mkdir()
 			systemProperty(TestSystemProps.TMPDIR, buildTmpDir)
+
+			doFirst {
+				ioTmpDir.mkdir() // …or Gradle will warn us about its nonexistence
+				buildTmpDir.deleteRecursively()
+			}
 		}
 	}
 	afterEvaluate {

@@ -19,7 +19,6 @@ class test__plugin {
 	@Test fun `A build with a chain of includes is working as expected`() {
 		val mainProjectDir: File
 		buildDir(TestTempDir.from(this, "0")) {
-			clean()
 			setUpProject(
 				"exportOnly",
 				"""dependencySettings { exportOnly() }""",
@@ -57,7 +56,6 @@ class test__plugin {
 
 	@Test fun `Export is preserved as expected`() {
 		val projectDir = buildDir(TestTempDir.from(this, "1")).run {
-			clean()
 			setUpProject("project", "dependencySettings { exportOnly() }")
 				.file
 		}
