@@ -12,7 +12,7 @@ object TestTempDir {
 
 	// --
 
-	fun named(name: String) = File(base, name).apply { mkdirs() }
+	fun named(name: String) = File(base, name)
 
 	fun of(testClass: Class<*>) = named(testClass.name)
 
