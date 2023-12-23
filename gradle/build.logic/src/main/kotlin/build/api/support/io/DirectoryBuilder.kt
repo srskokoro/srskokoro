@@ -10,64 +10,67 @@ annotation class DirectoryBuilderDsl
 
 @DirectoryBuilderDsl
 @JvmInline
-value class DirectoryBuilder(@JvmField val dir: File) {
+value class DirectoryBuilder(@JvmField val file: File) {
 
 	init {
-		dir.initDirs()
-	}
-
-	fun dir(child: String) = file(child) {
-		initDirs()
-	}
-
-	@OptIn(ExperimentalContracts::class)
-	inline fun dir(child: String, configure: DirectoryBuilder.() -> Unit): File {
-		contract {
-			callsInPlace(configure, InvocationKind.EXACTLY_ONCE)
-		}
-		return buildDir(file(child), configure)
+		file.initDirs()
 	}
 
 	@Suppress("NOTHING_TO_INLINE")
-	inline fun clean() = dir.clean()
-
-	// --
-
-	inline val file get() = dir
+	inline fun file() = file
 
 	@Suppress("NOTHING_TO_INLINE")
-	inline fun file(child: String) = File(dir, child)
+	inline fun file(child: String) = File(file, child)
 
 	@OptIn(ExperimentalContracts::class)
 	inline fun file(child: String, configure: File.() -> Unit): File {
 		contract {
 			callsInPlace(configure, InvocationKind.EXACTLY_ONCE)
 		}
-		return File(dir, child).apply(configure)
+		return File(file, child).apply(configure)
 	}
-}
 
-@OptIn(ExperimentalContracts::class)
-inline fun buildDir(root: File, configure: DirectoryBuilder.() -> Unit): File {
-	contract {
-		callsInPlace(configure, InvocationKind.EXACTLY_ONCE)
+	// --
+
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun dir() = this
+
+	fun dir(child: String) = DirectoryBuilder(file(child))
+
+	@OptIn(ExperimentalContracts::class)
+	inline fun dir(child: String, configure: DirectoryBuilder.() -> Unit): DirectoryBuilder {
+		contract {
+			callsInPlace(configure, InvocationKind.EXACTLY_ONCE)
+		}
+		return dir(child).apply(configure)
 	}
-	DirectoryBuilder(root).configure()
-	return root
+
+	// --
+
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun clean() = file.clean()
 }
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun buildDir(root: File) = root.initDirs()
+inline fun buildDir(root: File) = DirectoryBuilder(root)
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildDir(root: File, configure: DirectoryBuilder.() -> Unit): DirectoryBuilder {
+	contract {
+		callsInPlace(configure, InvocationKind.EXACTLY_ONCE)
+	}
+	return DirectoryBuilder(root).apply(configure)
+}
+
+@Suppress("NOTHING_TO_INLINE")
+@JvmName("File buildDir") @JvmSynthetic
+inline fun File.buildDir() = buildDir(this)
 
 @OptIn(ExperimentalContracts::class)
 @JvmName("File buildDir") @JvmSynthetic
-inline fun File.buildDir(configure: DirectoryBuilder.() -> Unit): File {
+inline fun File.buildDir(configure: DirectoryBuilder.() -> Unit): DirectoryBuilder {
 	contract {
 		callsInPlace(configure, InvocationKind.EXACTLY_ONCE)
 	}
 	return buildDir(this, configure)
 }
-
-@Suppress("NOTHING_TO_INLINE")
-@JvmName("File buildDir") @JvmSynthetic
-inline fun File.buildDir() = initDirs()
