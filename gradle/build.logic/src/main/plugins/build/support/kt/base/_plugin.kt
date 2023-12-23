@@ -74,4 +74,10 @@ private fun Project.apply_() {
 			systemProperty(TestSystemProps.TMPDIR, buildTmpDir)
 		}
 	}
+	afterEvaluate {
+		tasks.withType<Test>().configureEach {
+			val s = classpath.joinToString(File.pathSeparator)
+			systemProperty(TestSystemProps.CLASSPATH, s)
+		}
+	}
 }

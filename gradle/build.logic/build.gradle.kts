@@ -65,6 +65,7 @@ internal object Build {
 /** @see build.api.testing.TestSystemProps */
 internal object TestSystemProps {
 	const val TMPDIR = "build.api.testing.io.tmpdir"
+	const val CLASSPATH = "build.api.testing.classpath"
 }
 
 configureMain {
@@ -101,6 +102,12 @@ tasks {
 		val buildTmpDir = File(taskTmpDir, "b")
 		buildTmpDir.mkdir()
 		systemProperty(TestSystemProps.TMPDIR, buildTmpDir)
+	}
+}
+afterEvaluate {
+	tasks.withType<Test>().configureEach {
+		val s = classpath.joinToString(File.pathSeparator)
+		systemProperty(TestSystemProps.CLASSPATH, s)
 	}
 }
 
