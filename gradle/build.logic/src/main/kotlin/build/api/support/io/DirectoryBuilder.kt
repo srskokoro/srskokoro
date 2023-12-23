@@ -45,6 +45,14 @@ value class DirectoryBuilder(@JvmField val file: File) {
 		return dir(child).apply(configure)
 	}
 
+	@OptIn(ExperimentalContracts::class)
+	inline fun dir(configure: DirectoryBuilder.() -> Unit): DirectoryBuilder {
+		contract {
+			callsInPlace(configure, InvocationKind.EXACTLY_ONCE)
+		}
+		return apply(configure)
+	}
+
 	// --
 
 	@Suppress("NOTHING_TO_INLINE")
