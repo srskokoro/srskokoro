@@ -1,7 +1,7 @@
 package build.plugins.base
 
 import build.api.testing.buildProject
-import build.api.testing.io.TestTmpDir
+import build.api.testing.io.TestTempDir
 import org.gradle.kotlin.dsl.*
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -9,7 +9,7 @@ import kotlin.test.assertTrue
 class test__plugin {
 
 	@Test fun `The provided NOTE is still consistent with the expected plugins applied`() {
-		val project = buildProject(TestTmpDir.from(this, "project"))
+		val project = buildProject(TestTempDir.from(this, "project"))
 		project.apply<_plugin>()
 
 		with(project.pluginManager) {

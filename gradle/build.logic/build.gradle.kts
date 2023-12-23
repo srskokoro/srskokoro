@@ -45,7 +45,7 @@ internal object Build {
 	const val PLUGINS_DIR = "src/main/plugins"
 	const val PLUGIN_CLASS = "_plugin"
 
-	/** @see build.api.testing.io.TestTmpDir.TEST_TMPDIR_SYS_PROP */
+	/** @see build.api.testing.io.TestTempDir.TEST_TMPDIR_SYS_PROP */
 	const val TEST_TMPDIR_SYS_PROP = "build.api.testing.io.tmpdir"
 
 	// NOTE: The following ensures that our convention plugins are always

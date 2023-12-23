@@ -3,7 +3,7 @@ package build.api.testing.io
 import java.io.File
 
 @Suppress("MemberVisibilityCanBePrivate")
-object TestTmpDir {
+object TestTempDir {
 
 	internal const val TEST_TMPDIR_SYS_PROP = "build.api.testing.io.tmpdir"
 

@@ -1,7 +1,7 @@
 package build.support.kt.base
 
 import build.api.ProjectPlugin
-import build.api.testing.io.TestTmpDir.TEST_TMPDIR_SYS_PROP
+import build.api.testing.io.TestTempDir.TEST_TMPDIR_SYS_PROP
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
