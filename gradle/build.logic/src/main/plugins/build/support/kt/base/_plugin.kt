@@ -5,7 +5,6 @@ import build.api.testing.io.TestTempDir.TEST_TMPDIR_SYS_PROP
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
-import org.gradle.internal.logging.slf4j.ContextAwareTaskLogger
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
@@ -59,20 +58,9 @@ private fun Project.apply_() {
 			apiVersion.set(kotlinVersion)
 			languageVersion.set(kotlinVersion)
 
-			/** @see org.gradle.kotlin.dsl.provider.KotlinDslPluginSupport.kotlinCompilerArgs */
 			freeCompilerArgs.apply {
-				add("-java-parameters")
 				add("-Xjvm-default=all")
 			}
-
-			/** @see org.gradle.kotlin.dsl.plugins.dsl.KotlinDslCompilerPlugins */
-			(task.logger as ContextAwareTaskLogger).setMessageRewriter(
-				@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-				org.gradle.kotlin.dsl.plugins.dsl.ExperimentalCompilerWarningSilencer(listOf(
-					"-XXLanguage:+DisableCompatibilityModeForNewInference",
-					"-XXLanguage:-TypeEnhancementImprovementsInStrictMode",
-				))
-			)
 		})
 		withType<Test>().configureEach {
 			val taskTmpDir = temporaryDir
