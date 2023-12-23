@@ -27,9 +27,13 @@ internal const val DepsCoder_version = "#$DepsCoder_checksum"
  * @see DepsCoder_checksum
  */
 internal class DepsEncoder(
-	private val deps: DependencySettings,
+	private val deps: BaseDependencySettings,
 	private val out: UnsafeCharArrayWriter,
+	private val sourceSettingsDir: File,
 ) {
+	constructor(deps: DependencySettings, out: UnsafeCharArrayWriter)
+		: this(deps, out, deps.settings.settingsDir)
+
 	fun encodeFully() {
 		val out = out
 		out.appendLine(DepsCoder_version)
@@ -39,8 +43,7 @@ internal class DepsEncoder(
 		deps.plugins.forEach { (id, v) -> out.encodeEntry(PC_PLUGIN, id.toString(), v) }
 		deps.modules.forEach { (id, v) -> out.encodeEntry(PC_MODULE, id.toString(), v) }
 
-		/** @see DepsDecoder.sourceSettingsDir */
-		val sourceSettingsDir = deps.settings.settingsDir.toPath()
+		val sourceSettingsDir = sourceSettingsDir.toPath()
 		deps.includedBuildsDeque.forEach {
 			/** @see DepsDecoder.decodeInclude */
 			val relativePath = sourceSettingsDir.relativize(Path.of(it)).toString()
@@ -88,7 +91,7 @@ internal class DepsEncoder(
  * @see DepsCoder_checksum
  */
 internal class DepsDecoder(
-	private val deps: DependencySettings,
+	private val deps: BaseDependencySettings,
 	private val data: String,
 	private val sourceSettingsDir: File,
 ) {

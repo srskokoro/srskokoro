@@ -25,7 +25,26 @@ import java.nio.file.Path
 import java.util.LinkedList
 import java.util.Properties
 
-abstract class DependencySettings internal constructor(val settings: Settings) : ExtensionAware {
+open class BaseDependencySettings internal constructor() {
+
+	val props = DependencySettings.Props()
+	val plugins = LinkedHashMap<PluginId, String>()
+	val modules = LinkedHashMap<ModuleId, String>()
+
+	internal val includedBuildsDeque = LinkedList<String>()
+
+	/**
+	 * See the NOTE in the loading logic to understand why this method is named
+	 * like this.
+	 *
+	 * @see DependencySettings.setUpForUsageInProjects
+	 */
+	internal fun prioritizeForLoad(rootProject: File) {
+		includedBuildsDeque.addLast(rootProject.canonicalPath)
+	}
+}
+
+abstract class DependencySettings internal constructor(val settings: Settings) : BaseDependencySettings(), ExtensionAware {
 
 	enum class ExportMode {
 		EXPORT,
@@ -45,10 +64,6 @@ abstract class DependencySettings internal constructor(val settings: Settings) :
 	// --
 
 	class Props : LinkedHashMap<String, String>()
-
-	val props = Props()
-	val plugins = LinkedHashMap<PluginId, String>()
-	val modules = LinkedHashMap<ModuleId, String>()
 
 	fun Props.load(propertiesFile: Any?) {
 		val s = settings
@@ -78,18 +93,6 @@ abstract class DependencySettings internal constructor(val settings: Settings) :
 		val resolved = s.resolve(rootProject) // May throw
 		s.includeBuild(resolved, configuration)
 		prioritizeForLoad(resolved)
-	}
-
-	// --
-
-	internal val includedBuildsDeque = LinkedList<String>()
-
-	/**
-	 * See the NOTE in the loading logic to understand why this method is named
-	 * like this.
-	 */
-	internal fun prioritizeForLoad(rootProject: File) {
-		includedBuildsDeque.addLast(rootProject.canonicalPath)
 	}
 
 	// --
