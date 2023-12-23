@@ -24,12 +24,12 @@ abstract class DepsCoderInvalidate : ValueSource<Boolean, DepsCoderInvalidate.Pa
 	override fun obtain(): Boolean {
 		val depsExport = parameters.depsExport.get().asFile
 		if (depsExport.isFile) {
-			val coderVersionChars = CharArray(DepsCoder_version.length)
-			depsExport.reader(DepsCoder_charset).use { unbuffered ->
+			val coderVersionChars = CharArray(DepsCoder.VERSION.length)
+			depsExport.reader(DepsCoder.CHARSET).use { unbuffered ->
 				unbuffered.read(coderVersionChars)
 			}
 
-			if (!DepsCoder_version.contentEquals(CharBuffer.wrap(coderVersionChars))) {
+			if (!DepsCoder.VERSION.contentEquals(CharBuffer.wrap(coderVersionChars))) {
 				depsExport.delete() // Force regeneration
 			}
 		}

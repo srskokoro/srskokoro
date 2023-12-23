@@ -3,8 +3,10 @@ package build.dependencies
 import build.api.support.io.UnsafeCharArrayWriter
 import build.api.support.lineInfoUriAt
 import build.dependencies.DependencySettings.Companion.EXPORT_PATH
+import build.dependencies.DepsEncoder.formatCell
 import org.gradle.api.InvalidUserDataException
 import java.io.File
+import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.nio.file.Path
 
@@ -14,36 +16,40 @@ private const val PC_PLUGIN = 'P'
 private const val PC_MODULE = 'M'
 private const val PC_INCLUDE = 'I'
 
-/**
- * @see DepsCoder_checksum
- */
-internal const val DepsCoder_version = "#$DepsCoder_checksum"
+internal object DepsCoder {
 
-@JvmField internal val DepsCoder_charset = StandardCharsets.UTF_8
+	internal const val VERSION = "#$DepsCoder_CHECKSUM"
+
+	@JvmField val CHARSET: Charset = StandardCharsets.UTF_8
+
+	fun encode(deps: DependencySettings, out: UnsafeCharArrayWriter) = encode(deps, out, deps.settings.settingsDir)
+
+	internal fun encode(deps: BaseDependencySettings, out: UnsafeCharArrayWriter, sourceSettingsDir: File) =
+		DepsEncoder.encodeFully(deps, out, sourceSettingsDir)
+
+	fun decode(deps: BaseDependencySettings, data: String, sourceSettingsDir: File) =
+		DepsDecoder(deps, data, sourceSettingsDir).decodeFully()
+}
 
 /**
  * @see DepsDecoder
- * @see DepsCoder_version
- * @see DepsCoder_checksum
+ * @see DepsCoder.VERSION
+ * @see DepsCoder_CHECKSUM
  */
-internal class DepsEncoder(
-	private val deps: BaseDependencySettings,
-	private val out: UnsafeCharArrayWriter,
-	private val sourceSettingsDir: File,
-) {
-	constructor(deps: DependencySettings, out: UnsafeCharArrayWriter)
-		: this(deps, out, deps.settings.settingsDir)
+private object DepsEncoder {
 
-	fun encodeFully() {
-		val out = out
-		out.appendLine(DepsCoder_version)
+	fun encodeFully(
+		deps: BaseDependencySettings,
+		out: UnsafeCharArrayWriter,
+		sourceSettingsDir: File,
+	) {
+		out.appendLine(DepsCoder.VERSION)
 
-		val deps = deps
 		deps.props.forEach { (k, v) -> out.encodeEntry(PC_PROP, k, v) }
 		deps.plugins.forEach { (id, v) -> out.encodeEntry(PC_PLUGIN, id.toString(), v) }
 		deps.modules.forEach { (id, v) -> out.encodeEntry(PC_MODULE, id.toString(), v) }
 
-		val sourceSettingsDir = sourceSettingsDir.toPath()
+		@Suppress("NAME_SHADOWING") val sourceSettingsDir = sourceSettingsDir.toPath()
 		deps.includedBuildsDeque.forEach {
 			/** @see DepsDecoder.decodeInclude */
 			val relativePath = sourceSettingsDir.relativize(Path.of(it)).toString()
@@ -87,10 +93,10 @@ internal class DepsEncoder(
 
 /**
  * @see DepsEncoder
- * @see DepsCoder_version
- * @see DepsCoder_checksum
+ * @see DepsCoder.VERSION
+ * @see DepsCoder_CHECKSUM
  */
-internal class DepsDecoder(
+private class DepsDecoder(
 	private val deps: BaseDependencySettings,
 	private val data: String,
 	private val sourceSettingsDir: File,

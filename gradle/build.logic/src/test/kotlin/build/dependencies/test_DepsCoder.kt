@@ -29,11 +29,11 @@ class test_DepsCoder {
 			prioritizeForLoad(File(settingDir, "relative"))
 		}
 
-		DepsEncoder(input, buffer, settingDir).encodeFully()
+		DepsCoder.encode(input, buffer, settingDir)
 		val data = buffer.toString()
 
 		assertEquals(
-			DepsCoder_version + '\n' + """
+			DepsCoder.VERSION + '\n' + """
 			X,46,Pd
 			X,X,%C
 			X,P,%C%C
@@ -49,7 +49,7 @@ class test_DepsCoder {
 		)
 
 		val output = BaseDependencySettings()
-		DepsDecoder(output, data, settingDir).decodeFully()
+		DepsCoder.decode(output, data, settingDir)
 
 		assertEquals(
 			input.props,

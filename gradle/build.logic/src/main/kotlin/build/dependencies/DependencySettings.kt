@@ -136,11 +136,10 @@ abstract class DependencySettings internal constructor(val settings: Settings) :
 		providers.transformFileAtomic(settingsFile, targetFile) { fc ->
 			val out = UnsafeCharArrayWriter(DEFAULT_BUFFER_SIZE)
 
-			DepsEncoder(this@DependencySettings, out)
-				.encodeFully()
+			DepsCoder.encode(this@DependencySettings, out)
 
 			val cb = out.getUnsafeCharBuffer()
-			val bb = DepsCoder_charset.encode(cb)
+			val bb = DepsCoder.CHARSET.encode(cb)
 			fc.write(bb)
 		}.let {
 			val m = if (it) "Generated new dependency settings export: {}"
@@ -190,10 +189,9 @@ abstract class DependencySettings internal constructor(val settings: Settings) :
 
 					val data = (providers.fileContents(targetFile).asBytes.orNull
 						?: throw E_DependencySettingsNotFound(targetDir.asFile))
-						.toString(DepsCoder_charset)
+						.toString(DepsCoder.CHARSET)
 
-					DepsDecoder(this@DependencySettings, data, targetDir.asFile)
-						.decodeFully()
+					DepsCoder.decode(this@DependencySettings, data, targetDir.asFile)
 
 					logger.info("Loaded dependency settings from file: {}", targetFile)
 				}

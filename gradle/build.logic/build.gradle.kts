@@ -153,7 +153,7 @@ internal abstract class ChecksumDepsCoder : DefaultTask() {
 		private const val SRC_PATH = "src/main/kotlin/$SRC_DIR/$SRC_NAME.kt"
 
 		private const val TASK_NAME = "checksum$SRC_NAME"
-		private const val GEN_NAME = "${SRC_NAME}_checksum"
+		private const val GEN_NAME = "${SRC_NAME}_CHECKSUM"
 		private const val GEN_DIR = "generated/$TASK_NAME"
 
 		private const val MD_ALGORITHM = "SHA-1"
