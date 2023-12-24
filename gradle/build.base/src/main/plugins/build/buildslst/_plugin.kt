@@ -1,11 +1,11 @@
-package build.settings.buildslist
+package build.buildslst
 
-import build.api.SettingsPlugin
 import build.api.provider.runUntracked
-import build.api.support.from
-import build.api.support.io.safeResolve
-import build.api.support.io.transformFileAtomic
+import build.support.from
+import build.support.io.safeResolve
+import build.support.io.transformFileAtomic
 import org.gradle.api.InvalidUserDataException
+import org.gradle.api.Plugin
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.initialization.Settings
 import org.gradle.api.provider.ValueSource
@@ -23,14 +23,18 @@ private const val TYPE_PROP = "prop:"
 
 private const val SETTINGS_BUILDS_LST = "settings.builds.lst"
 
-class _plugin : SettingsPlugin {
+class _plugin : Plugin<Settings> {
 
 	private data class Entry(
 		val buildPath: String,
 		val customName: String?,
 	)
 
-	override fun Settings.applyPlugin() {
+	override fun apply(target: Settings) {
+		target.applyPlugin()
+	}
+
+	private fun Settings.applyPlugin() {
 		val gradlePropsPropagationPaths = LinkedHashSet<String>()
 		val includedPluginBuilds = LinkedHashSet<Entry>()
 		val includedBuilds = LinkedHashSet<Entry>()
