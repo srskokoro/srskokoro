@@ -11,12 +11,18 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import java.io.File
 
+private const val TEST_TMP = "TEST_TMP"
+
 class _plugin : ProjectPlugin({
 	xs().add("kotlinSourceSets", kotlin.kotlinSourceSets)
 
 	tasks.withType<AbstractTestTask>().configureEach {
 		val taskTmpDir = temporaryDir
 		val ioTmpDir = File(taskTmpDir, "io")
+
+		// A custom temporary directory acting as a sandbox for the test task to
+		// play in without fear for when doing tests with the filesystem.
+		val testTmpDir = File(taskTmpDir, "x")
 
 		when (this) {
 			is KotlinNativeTest -> {
@@ -30,6 +36,7 @@ class _plugin : ProjectPlugin({
 					environment("TMP", it)
 					environment("TEMP", it)
 				}
+				environment(TEST_TMP, testTmpDir.path)
 			}
 			is KotlinJsTest -> {
 				ioTmpDir.path.let {
@@ -37,9 +44,11 @@ class _plugin : ProjectPlugin({
 					environment("TMP", it)
 					environment("TEMP", it)
 				}
+				environment(TEST_TMP, testTmpDir.path)
 			}
 			is Test -> {
 				systemProperty("java.io.tmpdir", ioTmpDir.path)
+				environment(TEST_TMP, testTmpDir.path)
 			}
 		}
 
