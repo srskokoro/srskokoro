@@ -67,7 +67,7 @@ tasks {
 			error(
 				"Tests have been disallowed for this $project\n" + """
 
-				NOTE: Complex logic should not reside in this build. The project should only
+				NOTE: Complex logic should not reside in this build. This project should only
 				provide simple utilities, helpers and base plugins, that all of which should not
 				need testing.
 				""".trimIndent()
