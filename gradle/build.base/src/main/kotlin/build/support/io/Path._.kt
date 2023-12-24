@@ -1,4 +1,4 @@
-package build.api.support.io
+package build.support.io
 
 import java.nio.file.Files
 import java.nio.file.Path
