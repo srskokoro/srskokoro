@@ -1,14 +1,14 @@
 pluginManagement {
-	includeBuild("gradle/build.logic")
+	includeBuild("gradle/build.base")
 }
 plugins {
-	id("build.dependencies")
-	id("build.dotbuild")
-	id("build.settings.buildslist")
+	//id("build.dependencies")
+	//id("build.dotbuild")
+	//id("build.settings.buildslist")
 }
 
-dependencySettings {
-	includeBuild("dependencies")
-}
+//dependencySettings {
+//	includeBuild("dependencies")
+//}
 
 rootProject.name = "srskokoro"
