@@ -1,4 +1,4 @@
-package build.api.dsl.model
+package build.api.dsl.accessors
 
 import org.gradle.api.artifacts.dsl.DependencyHandler
 
