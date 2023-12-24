@@ -21,9 +21,9 @@ class _plugin : ProjectPlugin {
 
 			jvm()
 
+			iosX64()
 			iosArm64()
 			iosSimulatorArm64()
-			iosX64()
 
 			linuxX64()
 			linuxArm64()
