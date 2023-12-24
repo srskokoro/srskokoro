@@ -4,23 +4,24 @@ import org.gradle.api.Task
 import org.gradle.api.UnknownTaskException
 import org.gradle.api.initialization.IncludedBuild
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.TaskProvider
 
 fun Task.dependOnSameTaskFromSubProjects() {
 	val taskName = name
 	val project = project
-	dependsOn(project.provider {
-		project.subprojects.mapNotNull { project ->
+	dependsOn(project.provider(fun() = ArrayList<TaskProvider<Task>>().apply {
+		project.subprojects.forEach { project ->
 			try {
 				// NOTE: Rather than check via `getNames()`, it's better to just
 				// let the following throw (and catch the exception), since
 				// `getNames()` seems to be not optimized for repeated access
 				// (as it may return a different instance every time).
-				project.tasks.named(taskName)
+				add(project.tasks.named(taskName))
 			} catch (_: UnknownTaskException) {
-				null
+				// Ignore
 			}
 		}
-	})
+	}))
 }
 
 fun Task.dependOnSameTaskFromIncludedBuildsOrFail() =
