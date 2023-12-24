@@ -6,6 +6,17 @@ import org.gradle.api.initialization.IncludedBuild
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 
+inline fun <reified T : Task> Task.dependOnTasksFromSubprojects() = dependOnTasksFromSubprojects(T::class.java)
+
+fun <T : Task> Task.dependOnTasksFromSubprojects(type: Class<T>) {
+	val project = project
+	dependsOn(project.provider {
+		project.subprojects.map { project ->
+			project.tasks.withType(type)
+		}
+	})
+}
+
 fun Task.dependOnSameTaskFromSubProjects() {
 	val taskName = name
 	val project = project
