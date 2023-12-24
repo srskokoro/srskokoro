@@ -5,7 +5,7 @@ import org.gradle.api.UnknownTaskException
 import org.gradle.api.initialization.IncludedBuild
 import org.gradle.api.provider.Provider
 
-fun Task.dependOnTaskFromSubProjects() {
+fun Task.dependOnSameTaskFromSubProjects() {
 	val taskName = name
 	val project = project
 	dependsOn(project.provider {
@@ -19,15 +19,15 @@ fun Task.dependOnTaskFromSubProjects() {
 	})
 }
 
-fun Task.dependOnTaskFromIncludedBuildsOrFail() =
-	dependOnTaskFromIncludedBuildsOrFail(project.gradle.includedBuilds)
+fun Task.dependOnSameTaskFromIncludedBuildsOrFail() =
+	dependOnSameTaskFromIncludedBuildsOrFail(project.gradle.includedBuilds)
 
-fun Task.dependOnTaskFromIncludedBuildsOrFail(includedBuilds: Iterable<IncludedBuild>) {
+fun Task.dependOnSameTaskFromIncludedBuildsOrFail(includedBuilds: Iterable<IncludedBuild>) {
 	val taskPath = ":$name"
 	dependsOn(includedBuilds.map { it.task(taskPath) })
 }
 
-fun Task.dependOnTaskFromIncludedBuildsOrFail(includedBuilds: Provider<out Iterable<IncludedBuild>>) {
+fun Task.dependOnSameTaskFromIncludedBuildsOrFail(includedBuilds: Provider<out Iterable<IncludedBuild>>) {
 	val taskPath = ":$name"
 	dependsOn(includedBuilds.map { iter -> iter.map { it.task(taskPath) } })
 }

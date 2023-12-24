@@ -11,7 +11,7 @@ class _plugin : ProjectPlugin({
 	afterEvaluate {
 		val tasks = tasks
 
-		tasks.named("check") { dependOnTaskFromSubProjects() }
-		tasks.named("clean") { dependOnTaskFromSubProjects() }
+		tasks.named("check") { dependOnSameTaskFromSubProjects() }
+		tasks.named("clean") { dependOnSameTaskFromSubProjects() }
 	}
 })
