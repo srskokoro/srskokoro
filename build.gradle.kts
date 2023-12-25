@@ -1,4 +1,3 @@
-/*
 import build.api.dsl.*
 
 plugins {
@@ -6,15 +5,10 @@ plugins {
 }
 
 gradle.includedBuilds(
-	"build.logic",
-	"support",
-	"plugins",
+	"build.logic"
 ).let { testableBuilds ->
 	tasks {
-		check { dependOnTaskFromIncludedBuildsOrFail(testableBuilds) }
-		registerTestTask { dependOnTaskFromIncludedBuildsOrFail(testableBuilds) }
-
-		clean { dependOnTaskFromIncludedBuildsOrFail(testableBuilds) }
+		check { dependOnSameTaskFromIncludedBuildsOrFail(testableBuilds) }
+		clean { dependOnSameTaskFromIncludedBuildsOrFail(testableBuilds) }
 	}
 }
-*/

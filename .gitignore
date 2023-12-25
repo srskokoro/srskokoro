@@ -36,6 +36,8 @@ google-services.json
 *.hprof
 
 # Exclude auto-generated properties files -- see, `settings.builds.lst`
+/gradle/build.logic/gradle.properties
+
 /dependencies/gradle.properties
 /gradle/support/gradle.properties
 /gradle/plugins/gradle.properties
