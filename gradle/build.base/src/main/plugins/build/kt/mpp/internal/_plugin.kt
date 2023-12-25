@@ -1,7 +1,7 @@
-package build.kt.jvm.internal
+package build.kt.mpp.internal
 
 import build.api.ProjectPlugin
-import build.api.dsl.accessors.testImplementation
+import build.api.dsl.accessors.commonTestImplementation
 import org.gradle.kotlin.dsl.*
 
 class _plugin : ProjectPlugin({
@@ -10,6 +10,6 @@ class _plugin : ProjectPlugin({
 	}
 
 	dependencies.run {
-		testImplementation(embeddedKotlin("test"))
+		commonTestImplementation(embeddedKotlin("test"))
 	}
 })

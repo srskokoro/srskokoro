@@ -16,8 +16,11 @@ gradlePlugin {
 	plugins {
 		addPlugin("build.kt.internal")
 		addPlugin("build.kt.jvm.internal")
+		addPlugin("build.kt.mpp.internal")
+		addPlugin("build.kt.mpp.lib.internal")
 
 		addPlugin("build.support.kt.internal")
+		addPlugin("build.support.kt.mpp.base")
 
 		addPlugin("build.plugins.base")
 		addPlugin("build.root.base")
