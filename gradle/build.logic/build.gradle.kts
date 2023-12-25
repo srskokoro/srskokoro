@@ -6,6 +6,8 @@ plugins {
 	id("build.plugins.base")
 }
 
+group = "build"
+
 //#region Special build setup for `build.dependencies` plugin
 
 internal abstract class ChecksumDepsCoder : DefaultTask() {
