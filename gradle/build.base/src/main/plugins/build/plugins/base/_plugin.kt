@@ -9,8 +9,8 @@ class _plugin : ProjectPlugin({
 	apply {
 		plugin("java-gradle-plugin")
 		plugin("org.gradle.kotlin.kotlin-dsl.base")
-		plugin<build.kt.jvm.base._plugin>()
-		plugin<build.support.kt.base._plugin>()
+		plugin<build.kt.jvm.internal._plugin>()
+		plugin<build.support.kt.internal._plugin>()
 	}
 
 	kotlinSourceSets.named("main", ::installPluginsAutoRegistrant)

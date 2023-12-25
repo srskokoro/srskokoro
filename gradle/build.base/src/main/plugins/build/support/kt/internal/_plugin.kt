@@ -1,4 +1,4 @@
-package build.support.kt.base
+package build.support.kt.internal
 
 import build.api.ProjectPlugin
 import org.gradle.api.tasks.compile.JavaCompile

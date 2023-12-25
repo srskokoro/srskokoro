@@ -1,4 +1,4 @@
-package build.kt.base
+package build.kt.internal
 
 import build.api.ProjectPlugin
 import build.api.dsl.*
