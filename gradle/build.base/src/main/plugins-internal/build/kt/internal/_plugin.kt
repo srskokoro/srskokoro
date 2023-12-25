@@ -54,6 +54,8 @@ class _plugin : ProjectPlugin({
 				systemProperty("java.io.tmpdir", ioTmpDir.path)
 				environment(TEST_TMP, testTmpDir.path)
 
+				// --
+
 				useJUnitPlatform()
 				jvmArgs("-ea") // Also enables stacktrace recovery for kotlinx coroutines
 			}
