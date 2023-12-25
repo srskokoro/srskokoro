@@ -55,7 +55,7 @@ private object Build {
 }
 
 configureMain {
-	kotlin.source(project.objects.sourceDirectorySet("plugins", "plugins").apply {
+	kotlin.source("plugins".let { project.objects.sourceDirectorySet(it, it) }.apply {
 		srcDir(Build.PLUGINS_DIR)
 		include("**/${Build.PLUGIN_CLASS}.kt")
 	})
