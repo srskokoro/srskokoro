@@ -14,12 +14,6 @@ group = "build"
 
 gradlePlugin {
 	plugins {
-		addPlugin("build.kt.internal")
-		addPlugin("build.kt.jvm.internal")
-		addPlugin("build.kt.mpp.internal")
-		addPlugin("build.kt.mpp.lib.internal")
-
-		addPlugin("build.support.kt.internal")
 		addPlugin("build.support.kt.mpp.base")
 
 		addPlugin("build.plugins.base")
@@ -35,6 +29,8 @@ gradlePlugin {
 private object Build {
 	const val PLUGINS_DIR = "src/main/plugins"
 	const val PLUGIN_CLASS = "_plugin"
+
+	const val PLUGINS_INTERNAL_DIR = "src/main/plugins-internal"
 
 	// NOTE: The following ensures that our convention plugins are always
 	// compiled with a consistent JVM bytecode target version. Otherwise, the
@@ -55,7 +51,12 @@ private object Build {
 }
 
 configureMain {
-	kotlin.source("plugins".let { project.objects.sourceDirectorySet(it, it) }.apply {
+	val objects = project.objects
+	kotlin.source("plugins-internal".let { objects.sourceDirectorySet(it, it) }.apply {
+		srcDir(Build.PLUGINS_INTERNAL_DIR)
+		include("**/${Build.PLUGIN_CLASS}.kt")
+	})
+	kotlin.source("plugins".let { objects.sourceDirectorySet(it, it) }.apply {
 		srcDir(Build.PLUGINS_DIR)
 		include("**/${Build.PLUGIN_CLASS}.kt")
 	})
