@@ -20,7 +20,6 @@ gradlePlugin {
 		addPlugin("build.root.base")
 
 		addPlugin("build.buildslst")
-		addPlugin("build.dotbuild")
 	}
 }
 

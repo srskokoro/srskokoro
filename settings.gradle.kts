@@ -3,7 +3,6 @@ pluginManagement {
 }
 plugins {
 	//id("build.dependencies")
-	id("build.dotbuild")
 	id("build.buildslst")
 }
 
