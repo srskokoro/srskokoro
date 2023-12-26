@@ -5,7 +5,8 @@ plugins {
 }
 
 gradle.includedBuilds(
-	"build.logic"
+	"build.base",
+	"build.logic",
 ).let { testableBuilds ->
 	tasks {
 		check { dependOnSameTaskFromIncludedBuildsOrFail(testableBuilds) }
