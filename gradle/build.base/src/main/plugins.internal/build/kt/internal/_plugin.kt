@@ -20,13 +20,15 @@ class _plugin : ProjectPlugin({
 		val taskTmpDir = temporaryDir
 		val ioTmpDir = File(taskTmpDir, "io")
 
-		// The JVM expects this to exist (or it'll warn us). And perhaps, others
-		// too is expecting this to exist.
-		ioTmpDir.mkdir()
-
 		// A custom temporary directory acting as a sandbox for the test task to
 		// play in without fear for when doing tests with the filesystem.
 		val testTmpDir = File(taskTmpDir, "x")
+
+		doFirst {
+			// The JVM expects this to exist (or it'll warn us). And perhaps,
+			// others too is expecting this to exist.
+			ioTmpDir.mkdir()
+		}
 
 		when (this) {
 			is KotlinNativeTest -> {
