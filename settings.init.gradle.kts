@@ -12,6 +12,7 @@ import java.nio.file.FileSystemException as NioFileSystemException
 extra["autoGradleProperties"] = fun(rootProject: String): String {
 	val settingsDir = settings.settingsDir
 	val source = File(settingsDir, "gradle.properties")
+	val target = File(File(settingsDir, rootProject), "gradle.properties")
 
 	/**
 	 * @see build.api.provider.RunUntrackedHelper
@@ -20,9 +21,7 @@ extra["autoGradleProperties"] = fun(rootProject: String): String {
 		/**
 		 * @see build.support.io.transformFileAtomic
 		 */
-		transformFileAtomic(
-			source, File(File(settingsDir, rootProject), "gradle.properties"),
-		) {
+		transformFileAtomic(source, target) {
 			val props = Properties().apply { load(source.inputStream()) }
 			props.store(Channels.newOutputStream(it), " Auto-generated file. DO NOT EDIT!")
 		}
