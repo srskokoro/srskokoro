@@ -5,8 +5,8 @@ import java.io.File
 @Suppress("MemberVisibilityCanBePrivate")
 object TestTemp {
 
-	val base = File(System.getenv("TEST_TMP")
-		?: error("Environment variable `TEST_TMP` not set up"))
+	val base = File(System.getenv("TEST_TMPDIR")
+		?: error("Environment variable `TEST_TMPDIR` not set up"))
 
 	// --
 

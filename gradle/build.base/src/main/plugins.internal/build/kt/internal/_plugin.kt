@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import java.io.File
 
-private const val TEST_TMP = "TEST_TMP"
+private const val TEST_TMPDIR = "TEST_TMPDIR"
 
 class _plugin : ProjectPlugin({
 	xs().add("kotlinSourceSets", kotlin.kotlinSourceSets)
@@ -44,7 +44,7 @@ class _plugin : ProjectPlugin({
 					environment("TMP", it)
 					environment("TEMP", it)
 				}
-				environment(TEST_TMP, testTmpDir.path)
+				environment(TEST_TMPDIR, testTmpDir.path)
 			}
 			is KotlinJsTest -> {
 				ioTmpDir.path.let {
@@ -52,11 +52,11 @@ class _plugin : ProjectPlugin({
 					environment("TMP", it)
 					environment("TEMP", it)
 				}
-				environment(TEST_TMP, testTmpDir.path)
+				environment(TEST_TMPDIR, testTmpDir.path)
 			}
 			is Test -> {
 				systemProperty("java.io.tmpdir", ioTmpDir.path)
-				environment(TEST_TMP, testTmpDir.path)
+				environment(TEST_TMPDIR, testTmpDir.path)
 
 				// --
 
