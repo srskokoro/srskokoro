@@ -7,3 +7,5 @@ pluginManagement {
 dependencyResolutionManagement {
 	repositories.gradlePluginPortal()
 }
+
+include(":testing")

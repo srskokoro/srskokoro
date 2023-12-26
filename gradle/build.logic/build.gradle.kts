@@ -70,3 +70,7 @@ kotlinSourceSets.main {
 }
 
 //#endregion
+
+dependencies {
+	testImplementation(project(":testing"))
+}

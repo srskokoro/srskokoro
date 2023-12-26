@@ -18,6 +18,7 @@ gradlePlugin {
 		addPlugin("build.support.kt.mpp.base")
 
 		addPlugin("build.plugins.base")
+		addPlugin("build.plugins.testing.base")
 		addPlugin("build.root.base")
 
 		addPlugin("build.buildslst")

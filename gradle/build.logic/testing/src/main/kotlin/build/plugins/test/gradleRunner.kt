@@ -1,14 +1,16 @@
-package build.api.testing
+package build.plugins.test
 
 import org.gradle.testkit.runner.GradleRunner
 import java.io.File
+
+internal const val gradleRunner_CLASSPATH_SYS_PROP = "build.plugins.test.classpath"
 
 fun gradleRunner(projectDir: File, vararg taskNames: String): GradleRunner {
 	return GradleRunner.create().apply {
 		withProjectDir(projectDir)
 		withArguments("--info", "--stacktrace", "--continue", *taskNames)
 
-		System.getProperty(TestSystemProps.CLASSPATH).let(fun(s) {
+		System.getProperty(gradleRunner_CLASSPATH_SYS_PROP).let(fun(s) {
 			if (s == null) {
 				withPluginClasspath()
 			} else {
