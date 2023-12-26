@@ -20,8 +20,6 @@ gradlePlugin {
 		addPlugin("build.plugins.base")
 		addPlugin("build.plugins.testing.base")
 		addPlugin("build.root.base")
-
-		addPlugin("build.buildslst")
 	}
 }
 
