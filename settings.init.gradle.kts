@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
 import java.nio.file.FileSystemException as NioFileSystemException
 
-extra["autoGradleProperties"] = fun Settings.(rootProject: String): String {
+extra["autoGradleProperties"] = fun(rootProject: String): String {
 	val settingsDir = settings.settingsDir
 	val source = File(settingsDir, "gradle.properties")
 
