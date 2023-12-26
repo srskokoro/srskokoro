@@ -1,7 +1,7 @@
 import build.api.dsl.*
 
 plugins {
-	id("build.root")
+	id("build.root.base")
 }
 
 gradle.includedBuilds(
