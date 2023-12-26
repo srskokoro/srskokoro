@@ -2,15 +2,9 @@
 
 pluginManagement {
 	includeBuild("../build.logic")
-}
-plugins {
-	id("build.dependencies")
-	id("build.dotbuild")
+	includeBuild("../conventions")
 }
 
 dependencyResolutionManagement {
 	repositories.gradlePluginPortal()
-}
-dependencySettings {
-	includeBuild("../../dependencies")
 }

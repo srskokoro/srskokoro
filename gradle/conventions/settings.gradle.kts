@@ -5,6 +5,5 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
-	includeBuild("../conventions")
 	repositories.gradlePluginPortal()
 }

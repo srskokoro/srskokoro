@@ -1,3 +1,3 @@
 plugins {
-	id("build.root")
+	id("build.plugins.root")
 }

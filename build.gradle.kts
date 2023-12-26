@@ -1,12 +1,14 @@
 import build.api.dsl.*
 
 plugins {
-	id("build.root.base")
+	id("build.root")
 }
 
 gradle.includedBuilds(
-	"build.base",
 	"build.logic",
+	"conventions",
+	"plugins",
+	"support",
 ).let { testableBuilds ->
 	tasks {
 		check { dependOnSameTaskFromIncludedBuildsOrFail(testableBuilds) }
