@@ -25,6 +25,8 @@ class _plugin : ProjectPlugin({
 		val testTmpDir = File(taskTmpDir, "x")
 
 		doFirst {
+			testTmpDir.deleteRecursively()
+
 			// The JVM expects this to exist (or it'll warn us). And perhaps,
 			// others too is expecting this to exist.
 			ioTmpDir.mkdir()
