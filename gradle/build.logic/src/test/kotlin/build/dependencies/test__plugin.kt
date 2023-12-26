@@ -1,9 +1,9 @@
 package build.dependencies
 
-import build.api.support.io.DirectoryBuilder
-import build.api.support.io.buildDir
-import build.api.testing.gradleRunner
-import build.api.testing.io.TestTempDir
+import build.plugins.test.gradleRunner
+import build.plugins.test.io.TestTemp
+import build.support.io.DirectoryBuilder
+import build.support.io.buildDir
 import deps
 import module
 import org.gradle.api.Project
@@ -18,7 +18,7 @@ class test__plugin {
 
 	@Test fun `A build with a chain of includes is working as expected`() {
 		val mainProjectDir: File
-		buildDir(TestTempDir.from(this, "0")) {
+		buildDir(TestTemp.from(this, "0")) {
 			setUpProject(
 				"exportOnly",
 				"""dependencySettings { exportOnly() }""",
@@ -55,7 +55,7 @@ class test__plugin {
 	}
 
 	@Test fun `Export is preserved as expected`() {
-		val projectDir = buildDir(TestTempDir.from(this, "1")).run {
+		val projectDir = buildDir(TestTemp.from(this, "1")).run {
 			setUpProject("project", "dependencySettings { exportOnly() }")
 				.file
 		}

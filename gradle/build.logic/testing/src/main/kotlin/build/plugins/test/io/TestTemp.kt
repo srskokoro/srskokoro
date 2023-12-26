@@ -1,13 +1,12 @@
-package build.api.testing.io
+package build.plugins.test.io
 
-import build.api.testing.TestSystemProps
 import java.io.File
 
 @Suppress("MemberVisibilityCanBePrivate")
-object TestTempDir {
+object TestTemp {
 
-	val base = File(System.getProperty(TestSystemProps.TMPDIR)
-		?: error("System property \"${TestSystemProps.TMPDIR}\" not set up"))
+	val base = File(System.getenv("TEST_TMP")
+		?: error("Environment variable `TEST_TMP` not set up"))
 
 	// --
 

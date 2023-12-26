@@ -1,7 +1,7 @@
 package build.dependencies
 
-import build.api.support.io.UnsafeCharArrayWriter
-import build.api.testing.io.TestTempDir
+import build.plugins.test.io.TestTemp
+import build.support.io.UnsafeCharArrayWriter
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -10,7 +10,7 @@ import kotlin.test.assertEquals
 class test_DepsCoder {
 
 	@Test fun `encodeFully decodeFully`() {
-		val settingDir = TestTempDir.from(this)
+		val settingDir = TestTemp.from(this)
 		val buffer = UnsafeCharArrayWriter()
 
 		val input = BaseDependencySettings().apply {
