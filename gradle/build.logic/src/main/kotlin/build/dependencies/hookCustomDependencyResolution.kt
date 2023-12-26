@@ -1,6 +1,8 @@
 package build.dependencies
 
+import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.initialization.Settings
 import org.gradle.kotlin.dsl.*
@@ -24,7 +26,7 @@ internal fun hookCustomDependencyResolution(settings: Settings, map: Map<PluginI
  * dependency) that has no version.
  */
 internal fun hookCustomDependencyResolution(project: Project, map: Map<ModuleId, String>) {
-	project.configurations.configureEach {
+	Action<Configuration> {
 		dependencies.withType<ExternalDependency>().configureEach(fun(dep) = dep.version {
 			if (requiredVersion.isEmpty() && strictVersion.isEmpty()) {
 				val v = map[ModuleId.of_unsafe(dep.group, dep.name)]
@@ -37,5 +39,8 @@ internal fun hookCustomDependencyResolution(project: Project, map: Map<ModuleId,
 				}
 			}
 		})
+	}.let {
+		project.buildscript.configurations.configureEach(it)
+		project.configurations.configureEach(it)
 	}
 }
