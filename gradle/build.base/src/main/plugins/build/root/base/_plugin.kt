@@ -5,6 +5,8 @@ import build.api.dsl.*
 import org.gradle.api.InvalidUserDataException
 
 class _plugin : ProjectPlugin({
+	check(parent == null) { "Must only be applied to the root project" }
+
 	// NOTE: Given that we set up the build directory to a custom location, we
 	// must ensure that we are the first plugin applied, that is, before all
 	// other plugins that interact with the build directory. We can't however
