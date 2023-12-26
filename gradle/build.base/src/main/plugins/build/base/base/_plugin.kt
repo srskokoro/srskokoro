@@ -1,6 +1,7 @@
 package build.base.base
 
 import build.api.ProjectPlugin
+import build.api.dsl.*
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.kotlin.dsl.*
 
@@ -18,5 +19,12 @@ class _plugin : ProjectPlugin({
 		// - See, https://docs.gradle.org/8.2.1/userguide/working_with_files.html#sec:reproducible_archives
 		isPreserveFileTimestamps = false
 		isReproducibleFileOrder = true
+	}
+
+	configurations.configureEach {
+		if (isCanBeResolved) {
+			// Fail on transitive upgrade/downgrade of direct dependency versions
+			failOnDirectDependencyVersionGotcha(this)
+		}
 	}
 })
