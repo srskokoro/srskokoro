@@ -31,7 +31,7 @@ private object Build {
 	const val PLUGINS_DIR = "src/main/plugins"
 	const val PLUGIN_CLASS = "_plugin"
 
-	const val PLUGINS_INTERNAL_DIR = "src/main/plugins-internal"
+	const val PLUGINS_INTERNAL_DIR = "src/main/plugins.internal"
 
 	// NOTE: The following ensures that our convention plugins are always
 	// compiled with a consistent JVM bytecode target version. Otherwise, the
@@ -53,7 +53,7 @@ private object Build {
 
 configureMain {
 	val objects = project.objects
-	kotlin.source("plugins-internal".let { objects.sourceDirectorySet(it, it) }.apply {
+	kotlin.source("plugins.internal".let { objects.sourceDirectorySet(it, it) }.apply {
 		srcDir(Build.PLUGINS_INTERNAL_DIR)
 		include("**/${Build.PLUGIN_CLASS}.kt")
 	})

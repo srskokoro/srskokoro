@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
  * @see PluginsAutoRegistrant
  */
 internal fun installPluginsAutoRegistrant(main: KotlinSourceSet): Unit = main.project.run {
-	val pluginsInternalDir = file("src/${main.name}/plugins-internal")
-	main.kotlin.source(objects.addExtraneousSourceTo(main, "plugins-internal").apply {
+	val pluginsInternalDir = file("src/${main.name}/plugins.internal")
+	main.kotlin.source(objects.addExtraneousSourceTo(main, "plugins.internal").apply {
 		srcDir(pluginsInternalDir)
 		include("**/$PLUGIN_CLASS.kt")
 	})
