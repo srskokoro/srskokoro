@@ -23,6 +23,6 @@ val Project.kotlinMpp: KotlinMultiplatformExtension
 	get() = x("kotlin")
 
 
-/** @see build.kt.base._plugin */
+/** @see build.kt.internal._plugin */
 val Project.kotlinSourceSets: NamedDomainObjectContainer<KotlinSourceSet>
 	get() = x("kotlinSourceSets")
