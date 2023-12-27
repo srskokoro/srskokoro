@@ -74,6 +74,16 @@ class test__plugin {
 			"Preserved likely up-to-date dependency settings export: "
 		)
 	}
+
+	@Test fun `Should fail on empty include`() {
+		buildDir(TestTemp.from(this, "2")).run {
+			dir("empty")
+			setUpProject("project", """dependencySettings { includeBuild("../empty") }""")
+				.file
+		}.let {
+			gradleRunner(it).buildAndFail()
+		}
+	}
 }
 
 /** @see setUpProject */
