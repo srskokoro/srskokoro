@@ -17,9 +17,21 @@ inline fun <R> ExtensionContainer.getOrNull(name: String): R? {
 	return findByName(name) as R?
 }
 
+@Suppress("NOTHING_TO_INLINE")
+inline fun <R> ExtensionContainer.getSafelyOrNull(name: String): R? {
+	@Suppress("UNCHECKED_CAST")
+	return findByName(name) as? R?
+}
+
+
 inline fun <R> ExtensionContainer.getOrElse(name: String, defaultValue: ExtensionContainer.(name: String) -> R): R {
 	return getOrNull(name) ?: defaultValue(name)
 }
+
+inline fun <R> ExtensionContainer.getSafelyOrElse(name: String, defaultValue: ExtensionContainer.(name: String) -> R): R {
+	return getSafelyOrNull(name) ?: defaultValue(name)
+}
+
 
 inline fun <reified R : Any> ExtensionContainer.getOrAdd(name: String, defaultValue: ExtensionContainer.(name: String) -> R): R = getOrElse(name) {
 	val extension = defaultValue(name)

@@ -1,7 +1,6 @@
 package build.api
 
 import build.api.dsl.*
-import build.support.unsafeCastOrNull
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.ProjectEvaluationListener
@@ -46,9 +45,8 @@ private object PrioritizedEvaluationListenersSetup : ProjectEvaluationListener {
 		// thus, at least, emulate that behavior.
 		var thrown = state.failure
 
-		val listeners = project.xs()
-			.findByName(prioritizedEvaluationListeners__name)
-			.unsafeCastOrNull<PrioritizedEvaluationListeners?>()
+		val listeners: PrioritizedEvaluationListeners? =
+			project.xs().getSafelyOrNull(prioritizedEvaluationListeners__name)
 
 		if (listeners != null) for (action in listeners) {
 			try {
