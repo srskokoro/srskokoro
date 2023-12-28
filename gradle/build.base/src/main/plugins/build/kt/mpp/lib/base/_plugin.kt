@@ -1,4 +1,4 @@
-package build.kt.mpp.lib.internal
+package build.kt.mpp.lib.base
 
 import build.api.ProjectPlugin
 import build.api.dsl.accessors.kotlinMpp
@@ -6,7 +6,7 @@ import org.gradle.kotlin.dsl.*
 
 class _plugin : ProjectPlugin({
 	apply {
-		plugin<build.kt.mpp.internal._plugin>()
+		plugin<build.kt.mpp.base._plugin>()
 	}
 
 	kotlinMpp.run {
