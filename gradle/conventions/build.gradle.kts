@@ -3,3 +3,7 @@ plugins {
 }
 
 group = "build"
+
+dependencies {
+	api(kotlin("gradle-plugin"))
+}
