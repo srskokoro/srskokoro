@@ -17,6 +17,8 @@ gradlePlugin {
 		addPlugin("build.root.base")
 
 		addPlugin("build.base.base")
+		addPlugin("build.kt.jvm.base")
+		addPlugin("build.kt.jvm.lib.base")
 		addPlugin("build.support.kt.jvm.base")
 		addPlugin("build.support.kt.mpp.base")
 
