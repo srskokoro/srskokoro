@@ -123,7 +123,7 @@ private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(exclude
 		val req = dep.requested
 		if (req !is ModuleComponentSelector) continue
 
-		@Suppress("RedundantNullableReturnType")
+		@Suppress("RedundantNullableReturnType", "RedundantSuppression")
 		val reqVer: String? = req.version
 		if (reqVer.isNullOrBlank()) continue
 
