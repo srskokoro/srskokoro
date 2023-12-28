@@ -10,10 +10,24 @@ fun DependencySettings.prop(key: String, value: String) {
 		throw E_DuplicatePropKey(key)
 }
 
+@Suppress("NOTHING_TO_INLINE", "UnusedReceiverParameter")
+inline fun DependencySettings.pluginKotlin(module: String) =
+	"org.jetbrains.kotlin.$module"
+
+fun DependencySettings.pluginKotlin(module: String, version: String) =
+	plugin(pluginKotlin(module), version)
+
 fun DependencySettings.plugin(pluginId: String, version: String) {
 	if (plugins.putIfAbsent(PluginId.of(pluginId), version) != null)
 		throw E_DuplicatePluginId(pluginId)
 }
+
+@Suppress("NOTHING_TO_INLINE", "UnusedReceiverParameter")
+inline fun DependencySettings.moduleKotlin(module: String) =
+	"org.jetbrains.kotlin:kotlin-$module"
+
+fun DependencySettings.moduleKotlin(module: String, version: String) =
+	module(moduleKotlin(module), version)
 
 fun DependencySettings.module(moduleId: String, version: String) {
 	if (modules.putIfAbsent(ModuleId.of(moduleId), version) != null)
