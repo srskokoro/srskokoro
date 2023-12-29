@@ -29,7 +29,8 @@ internal fun hookCustomDependencyResolution(project: Project, map: Map<ModuleId,
 	Action<Configuration> {
 		dependencies.withType<ExternalDependency>().configureEach(fun(dep) = dep.version {
 			if (requiredVersion.isEmpty() && strictVersion.isEmpty()) {
-				val v = map[ModuleId.of_unsafe(dep.group, dep.name)]
+				@Suppress("USELESS_ELVIS", "KotlinRedundantDiagnosticSuppress")
+				val v = map[ModuleId.of_unsafe(dep.group ?: "", dep.name)]
 				if (v != null) {
 					val rejectedVersionsBackup = rejectedVersions.let {
 						if (it.isEmpty()) null else it.toTypedArray()
