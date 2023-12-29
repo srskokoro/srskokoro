@@ -7,9 +7,7 @@ import org.gradle.kotlin.dsl.*
 
 class _plugin : ProjectPlugin({
 	apply {
-		if (project().parent == null) {
-			plugin<build.plugins.root._plugin>()
-		}
+		if (isRoot) plugin<build.plugins.root._plugin>()
 		plugin<build.plugins.testing.base._plugin>()
 	}
 
