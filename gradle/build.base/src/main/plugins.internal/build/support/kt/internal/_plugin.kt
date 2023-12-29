@@ -2,6 +2,7 @@ package build.support.kt.internal
 
 import build.api.ProjectPlugin
 import build.api.dsl.accessors.kotlin
+import build.plugins.base.internal.mimicKotlinDslCompiler
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -42,6 +43,8 @@ class _plugin : ProjectPlugin({
 			val kotlinVersion = KotlinCompileVersion.DEFAULT
 			apiVersion.set(kotlinVersion)
 			languageVersion.set(kotlinVersion)
+
+			mimicKotlinDslCompiler()
 		})
 	}
 

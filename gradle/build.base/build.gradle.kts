@@ -113,5 +113,7 @@ fun configureMain(action: Action<in KotlinSourceSet>) {
 
 dependencies {
 	compileOnly(kotlin("gradle-plugin"))
-	api("org.gradle.kotlin:gradle-kotlin-dsl-plugins:$expectedKotlinDslPluginsVersion")
+	api("org.gradle.kotlin", "gradle-kotlin-dsl-plugins", expectedKotlinDslPluginsVersion)
+	compileOnly(embeddedKotlin("sam-with-receiver"))
+	compileOnly(embeddedKotlin("assignment"))
 }

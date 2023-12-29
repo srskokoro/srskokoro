@@ -1,6 +1,7 @@
 package build.plugins.testing.base
 
 import build.api.ProjectPlugin
+import build.api.dsl.*
 import build.api.dsl.accessors.api
 import build.api.dsl.accessors.compileOnlyTestImpl
 import org.gradle.kotlin.dsl.*
@@ -8,7 +9,7 @@ import org.gradle.kotlin.dsl.*
 class _plugin : ProjectPlugin({
 	apply {
 		plugin("java-library")
-		plugin("org.gradle.kotlin.kotlin-dsl.base")
+		plugin(kotlin("jvm"))
 		plugin<build.plugins.base.internal._plugin>()
 	}
 
