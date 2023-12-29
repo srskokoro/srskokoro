@@ -3,6 +3,7 @@ package build.plugins
 import build.api.ProjectPlugin
 import build.api.dsl.*
 import build.api.dsl.accessors.api
+import build.api.dsl.accessors.testImplementation
 import org.gradle.kotlin.dsl.*
 
 class _plugin : ProjectPlugin({
@@ -13,5 +14,6 @@ class _plugin : ProjectPlugin({
 
 	dependencies.run {
 		api("build:build.logic")
+		testImplementation("build:build.logic.testing")
 	}
 })

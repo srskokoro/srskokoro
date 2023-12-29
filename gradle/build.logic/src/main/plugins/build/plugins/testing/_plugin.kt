@@ -13,5 +13,6 @@ class _plugin : ProjectPlugin({
 
 	dependencies.run {
 		api("build:build.logic")
+		api("build:build.logic.testing")
 	}
 })
