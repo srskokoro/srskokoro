@@ -10,7 +10,11 @@ import org.gradle.api.initialization.Settings
 internal const val dependencySettings__name = "dependencySettings"
 
 val Settings.dependencySettings: DependencySettings
-	get() = x(dependencySettings__name)
+	get() = xs().getSafelyOrNull(dependencySettings__name) ?: error(
+		"Settings plugin \"" +
+			build.dependencies._plugin::class.java.packageName +
+			"\" not yet applied."
+	)
 
 // NOTE: Correct line numbers are reported only when `Action<T>` is used --
 // i.e., we can't even use `() -> Unit` here (`inline` or not).
