@@ -6,6 +6,6 @@ import org.gradle.kotlin.dsl.*
 class _plugin : ProjectPlugin({
 	apply {
 		plugin<build.kt.jvm.lib._plugin>()
-		plugin<build.support.kt.jvm.base._plugin>()
+		plugin<build.support.kt.internal._plugin>()
 	}
 })

@@ -9,7 +9,7 @@ class _plugin : ProjectPlugin({
 	apply {
 		plugin("java-library")
 		plugin("org.gradle.kotlin.kotlin-dsl.base")
-		plugin<build.plugins.internal._plugin>()
+		plugin<build.plugins.base.internal._plugin>()
 	}
 
 	dependencies.run {

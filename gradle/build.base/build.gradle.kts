@@ -15,15 +15,6 @@ group = "build"
 gradlePlugin {
 	plugins {
 		addPlugin("build.root.base")
-
-		addPlugin("build.base.base")
-		addPlugin("build.kt.jvm.base")
-		addPlugin("build.kt.jvm.lib.base")
-		addPlugin("build.support.kt.jvm.base")
-		addPlugin("build.kt.mpp.base")
-		addPlugin("build.kt.mpp.lib.base")
-		addPlugin("build.support.kt.mpp.base")
-
 		addPlugin("build.plugins.base")
 		addPlugin("build.plugins.testing.base")
 	}

@@ -1,4 +1,4 @@
-package build.kt.internal
+package build.kt.base.internal
 
 import build.api.ProjectPlugin
 import build.api.dsl.*
@@ -7,6 +7,8 @@ import build.api.dsl.accessors.kotlinSourceSets
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import java.io.File
@@ -14,6 +16,7 @@ import java.io.File
 private const val TEST_TMPDIR = "TEST_TMPDIR"
 
 class _plugin : ProjectPlugin({
+	val kotlin = kotlin
 	xs().add("kotlinSourceSets", kotlin.kotlinSourceSets)
 
 	tasks.withType<AbstractTestTask>().configureEach {
@@ -64,5 +67,13 @@ class _plugin : ProjectPlugin({
 				jvmArgs("-ea") // Also enables stacktrace recovery for kotlinx coroutines
 			}
 		}
+	}
+
+	dependencies.run {
+		add(when (kotlin) {
+			is KotlinSingleTargetExtension<*> -> "testImplementation"
+			is KotlinMultiplatformExtension -> "commonTestImplementation"
+			else -> error("Unexpected `kotlin` extension $kotlin")
+		}, embeddedKotlin("test"))
 	}
 })

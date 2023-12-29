@@ -11,7 +11,8 @@ import org.gradle.kotlin.dsl.*
 class _plugin : ProjectPlugin({
 	apply {
 		if (isRoot) plugin<build.root._plugin>()
-		plugin<build.base.base._plugin>()
+		plugin("base")
+		plugin<build.base.internal._plugin>()
 	}
 
 	prioritizedAfterEvaluate(fun Project.() {
@@ -53,4 +54,11 @@ class _plugin : ProjectPlugin({
 
 		base.archivesName.convention(archivesNameProvider)
 	})
+
+	configurations.configureEach {
+		if (!isCanBeResolved) return@configureEach // Skip
+
+		// Fail on transitive upgrade/downgrade of direct dependency versions
+		failOnDirectDependencyVersionGotcha(this)
+	}
 })

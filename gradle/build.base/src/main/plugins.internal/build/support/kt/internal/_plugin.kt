@@ -1,9 +1,12 @@
 package build.support.kt.internal
 
 import build.api.ProjectPlugin
+import build.api.dsl.accessors.kotlin
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion as KotlinCompileVersion
@@ -40,5 +43,13 @@ class _plugin : ProjectPlugin({
 			apiVersion.set(kotlinVersion)
 			languageVersion.set(kotlinVersion)
 		})
+	}
+
+	dependencies.run {
+		add(when (kotlin) {
+			is KotlinSingleTargetExtension<*> -> "implementation"
+			is KotlinMultiplatformExtension -> "commonMainImplementation"
+			else -> error("Unexpected `kotlin` extension $kotlin")
+		}, kotlin("stdlib", "$embeddedKotlinVersion!!"))
 	}
 })
