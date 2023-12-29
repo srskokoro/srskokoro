@@ -8,7 +8,7 @@ import org.gradle.kotlin.dsl.*
 inline fun Any.xs() = (this as ExtensionAware).xs()
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun ExtensionAware.xs() = extensions
+inline fun ExtensionAware.xs(): ExtensionContainer = extensions
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun ExtensionContainer.xs() = this
