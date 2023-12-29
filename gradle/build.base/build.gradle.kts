@@ -14,6 +14,7 @@ group = "build"
 
 gradlePlugin {
 	plugins {
+		addPlugin("build.api.settings.base")
 		addPlugin("build.root.base")
 		addPlugin("build.plugins.base")
 		addPlugin("build.plugins.testing.base")
