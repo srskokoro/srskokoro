@@ -1,7 +1,6 @@
 package build.api.dsl
 
 import org.gradle.api.initialization.Settings
-import org.gradle.kotlin.dsl.support.uppercaseFirstChar
 import java.io.File
 
 fun Settings.includeWithBaseName(projectDir: String, baseName: String = rootProject.name) {
@@ -10,7 +9,8 @@ fun Settings.includeWithBaseName(projectDir: String, baseName: String = rootProj
 			append(':')
 		}
 		append(baseName)
-		append(projectDir.uppercaseFirstChar())
+		append('.')
+		append(projectDir)
 	}
 	include(childId)
 	project(childId).projectDir = File(settingsDir, projectDir)
