@@ -72,5 +72,5 @@ kotlinSourceSets.main {
 //#endregion
 
 dependencies {
-	testImplementation(project(":testing"))
+	testImplementation(project(":build.logic.testing"))
 }
