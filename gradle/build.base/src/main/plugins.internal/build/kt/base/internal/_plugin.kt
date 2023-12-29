@@ -70,10 +70,11 @@ class _plugin : ProjectPlugin({
 	}
 
 	dependencies.run {
-		add(when (kotlin) {
+		val configurationName = when (kotlin) {
 			is KotlinSingleTargetExtension<*> -> "testImplementation"
 			is KotlinMultiplatformExtension -> "commonTestImplementation"
 			else -> error("Unexpected `kotlin` extension $kotlin")
-		}, embeddedKotlin("test"))
+		}
+		add(configurationName, kotlin("test"))
 	}
 })

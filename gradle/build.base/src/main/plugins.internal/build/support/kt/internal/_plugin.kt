@@ -46,10 +46,11 @@ class _plugin : ProjectPlugin({
 	}
 
 	dependencies.run {
-		add(when (kotlin) {
+		val configurationName = when (kotlin) {
 			is KotlinSingleTargetExtension<*> -> "implementation"
 			is KotlinMultiplatformExtension -> "commonMainImplementation"
 			else -> error("Unexpected `kotlin` extension $kotlin")
-		}, kotlin("stdlib", "$embeddedKotlinVersion!!"))
+		}
+		add(configurationName, enforcedPlatform(embeddedKotlin("bom")))
 	}
 })

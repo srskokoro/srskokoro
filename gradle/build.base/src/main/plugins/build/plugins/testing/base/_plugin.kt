@@ -16,6 +16,6 @@ class _plugin : ProjectPlugin({
 		api("build:build.base")
 
 		compileOnlyTestImpl(gradleTestKit())
-		api(embeddedKotlin("test"))
+		api(kotlin("test"))
 	}
 })

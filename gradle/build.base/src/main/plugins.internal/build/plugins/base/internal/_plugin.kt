@@ -2,6 +2,7 @@ package build.plugins.base.internal
 
 import build.api.ProjectPlugin
 import build.api.dsl.*
+import build.api.dsl.accessors.api
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import java.io.File
@@ -37,5 +38,15 @@ class _plugin : ProjectPlugin({
 			}
 			return true // Do exclude
 		})
+	}
+
+	dependencies {
+		/**
+		 * NOTE: Our dependency settings plugin should be able to pick up the
+		 * following so as to provide the version automatically.
+		 *
+		 * @see build.dependencies._plugin
+		 */
+		api(kotlin("gradle-plugin"))
 	}
 })

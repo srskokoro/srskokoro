@@ -112,6 +112,6 @@ fun configureMain(action: Action<in KotlinSourceSet>) {
 //#endregion
 
 dependencies {
-	compileOnlyApi(embeddedKotlin("gradle-plugin"))
+	compileOnly(kotlin("gradle-plugin"))
 	api("org.gradle.kotlin:gradle-kotlin-dsl-plugins:$expectedKotlinDslPluginsVersion")
 }
