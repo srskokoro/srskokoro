@@ -1,7 +1,7 @@
 package build.api.dsl
 
+import build.support.io.safeResolve
 import org.gradle.api.initialization.Settings
-import java.io.File
 
 fun Settings.includeWithBaseName(projectDir: String, baseName: String = rootProject.name) {
 	val childId = buildString {
@@ -13,5 +13,5 @@ fun Settings.includeWithBaseName(projectDir: String, baseName: String = rootProj
 		append(projectDir)
 	}
 	include(childId)
-	project(childId).projectDir = File(settingsDir, projectDir)
+	project(childId).projectDir = settingsDir.safeResolve(projectDir)
 }
