@@ -15,7 +15,7 @@ class _plugin : ProjectPlugin({
 	// `lifecycle-base`, which is often applied by plugins (often implicitly)
 	// that interact with the build directory.
 	// - See also, https://github.com/gradle/gradle/issues/15664
-	// TODO Consider not throwing and simply let clients apply this plugin
+	// TODO Consider not throwing and simply let consumers apply this plugin
 	//  however they want, in whatever order they want.
 	if (pluginManager.hasPlugin("lifecycle-base")) throw InvalidUserDataException(
 		"Plugin \"${_plugin::class.java.packageName}\" should be applied first (before everything else)"
