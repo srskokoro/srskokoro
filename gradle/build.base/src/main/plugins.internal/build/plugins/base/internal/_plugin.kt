@@ -56,7 +56,6 @@ class _plugin : ProjectPlugin({
 		/**
 		 * NOTE: Our dependency settings plugin should be able to pick up the
 		 * following so as to provide the version automatically.
-		 *
 		 * @see build.dependencies._plugin
 		 */
 		api(kotlin("gradle-plugin"))
