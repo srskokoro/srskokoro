@@ -2,11 +2,13 @@ package build.plugins.test.io
 
 import java.io.File
 
+internal const val TEST_TMPDIR = "TEST_TMPDIR"
+
 @Suppress("MemberVisibilityCanBePrivate")
 object TestTemp {
 
-	val base = File(System.getenv("TEST_TMPDIR")
-		?: error("Environment variable `TEST_TMPDIR` not set up"))
+	val base = File(System.getenv(TEST_TMPDIR)
+		?: error("Environment variable `$TEST_TMPDIR` not set up"))
 
 	// --
 

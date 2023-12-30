@@ -11,3 +11,4 @@ dependencyResolutionManagement {
 }
 
 include("support")
+include("testing")
