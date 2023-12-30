@@ -8,6 +8,12 @@ plugins {
 dependencySettings {
 	exportOnly()
 
+	/** Should correspond to [JavaToolchainSpec] */
+	run<Unit> {
+		prop("jvm.lang", 21)
+		prop("jvm.vendor", JvmVendorSpec.ADOPTIUM)
+	}
+
 	val kotlin = "1.9.21" // https://kotlinlang.org/docs/releases.html
 	pluginKotlin("android", kotlin)
 	pluginKotlin("jvm", kotlin)
