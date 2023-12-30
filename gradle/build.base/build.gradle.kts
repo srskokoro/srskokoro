@@ -33,6 +33,7 @@ tasks {
 			jvmTarget = Build.KOTLIN_JVM_TARGET
 			apiVersion.set(KotlinCompileVersion.DEFAULT)
 			languageVersion.set(KotlinCompileVersion.DEFAULT)
+			freeCompilerArgs.add("-opt-in=build.conventions.internal.InternalConventionsApi")
 		}
 	}
 }
