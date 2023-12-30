@@ -1,10 +1,10 @@
-package build.base.internal
+package build.conventions.internal
 
-import build.api.ProjectPlugin
+import org.gradle.api.Project
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.kotlin.dsl.*
 
-class _plugin : ProjectPlugin({
+fun InternalConventions.ensureReproducibleBuild(project: Project): Unit = with(project) {
 	tasks.withType<AbstractArchiveTask>().configureEach {
 		// By default, don't include the version in the names of output archives.
 		// - This clears the default behavior set by the `base` plugin.
@@ -15,4 +15,4 @@ class _plugin : ProjectPlugin({
 		isPreserveFileTimestamps = false
 		isReproducibleFileOrder = true
 	}
-})
+}

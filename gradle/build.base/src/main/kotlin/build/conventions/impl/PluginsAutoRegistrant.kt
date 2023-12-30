@@ -1,14 +1,13 @@
-package build.plugins.base
+package build.conventions.impl
 
-import build.api.addExtraneousSourceTo
-import build.api.dsl.accessors.gradlePlugin
-import build.plugins.base.PluginsAutoRegistrant.Companion.PLUGIN_CLASS
+import build.conventions.impl.PluginsAutoRegistrant.Companion.PLUGIN_CLASS
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.EmptyFileVisitor
 import org.gradle.api.file.FileVisitDetails
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
+import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 /**
@@ -16,18 +15,18 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
  */
 internal fun installPluginsAutoRegistrant(main: KotlinSourceSet): Unit = main.project.run {
 	val pluginsInternalDir = file("src/${main.name}/plugins.internal")
-	main.kotlin.source(objects.addExtraneousSourceTo(main, "plugins.internal").apply {
+	main.kotlin.source("plugins.internal".let { objects.sourceDirectorySet(it, it) }.apply {
 		srcDir(pluginsInternalDir)
 		include("**/$PLUGIN_CLASS.kt")
 	})
 
 	val pluginsDir = file("src/${main.name}/plugins")
-	main.kotlin.source(objects.addExtraneousSourceTo(main, "plugins").apply {
+	main.kotlin.source("plugins".let { objects.sourceDirectorySet(it, it) }.apply {
 		srcDir(pluginsDir)
 		include("**/$PLUGIN_CLASS.kt")
 	})
 
-	val gradlePlugins = gradlePlugin.plugins
+	val gradlePlugins = (extensions.getByName("gradlePlugin") as GradlePluginDevelopmentExtension).plugins
 	providers.of(PluginsAutoRegistrant::class.java) {
 		parameters.pluginsDir.set(pluginsDir)
 	}.get().forEach {

@@ -1,13 +1,10 @@
-package build.support.kt.internal
+package build.conventions.internal
 
-import build.api.ProjectPlugin
-import build.api.dsl.accessors.kotlin
-import build.plugins.base.internal.mimicKotlinDslCompiler
+import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion as KotlinCompileVersion
@@ -31,7 +28,7 @@ private object Build {
 	const val JAVAC_RELEASE_OPT = "--release=8"
 }
 
-class _plugin : ProjectPlugin({
+fun InternalConventions.ensureMultipurpose(project: Project): Unit = with(project) {
 	tasks.run {
 		withType<JavaCompile>().configureEach {
 			options.compilerArgs.add(Build.JAVAC_RELEASE_OPT)
@@ -44,16 +41,19 @@ class _plugin : ProjectPlugin({
 			apiVersion.set(kotlinVersion)
 			languageVersion.set(kotlinVersion)
 
-			mimicKotlinDslCompiler()
+			ensureMultipurpose(this)
 		})
 	}
+}
 
-	dependencies.run {
-		val configurationName = when (kotlin) {
-			is KotlinSingleTargetExtension<*> -> "implementation"
-			is KotlinMultiplatformExtension -> "commonMainImplementation"
-			else -> error("Unexpected `kotlin` extension $kotlin")
-		}
-		add(configurationName, enforcedPlatform(embeddedKotlin("bom")))
+/**
+ * @see org.gradle.kotlin.dsl.provider.KotlinDslPluginSupport.kotlinCompilerArgs
+ */
+private fun ensureMultipurpose(compilerOptions: KotlinJvmCompilerOptions) {
+	compilerOptions.freeCompilerArgs.apply {
+		add("-java-parameters")
+		add("-Xjvm-default=all")
+		add("-Xjsr305=strict")
+		add("-Xsam-conversions=class")
 	}
-})
+}
