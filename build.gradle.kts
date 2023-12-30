@@ -1,3 +1,4 @@
+/*
 import build.api.dsl.*
 
 plugins {
@@ -15,3 +16,4 @@ gradle.includedBuilds(
 		clean { dependOnSameTaskFromIncludedBuildsOrFail(testableBuilds) }
 	}
 }
+*/
