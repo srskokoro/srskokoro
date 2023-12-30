@@ -8,3 +8,5 @@ pluginManagement {
 dependencyResolutionManagement {
 	repositories.gradlePluginPortal()
 }
+
+include("support")
