@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-	testImplementation("build.support:testing")
+	testImplementation(project(":testing"))
 }

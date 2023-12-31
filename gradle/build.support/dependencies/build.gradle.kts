@@ -71,6 +71,6 @@ kotlin.sourceSets {
 //#endregion
 
 dependencies {
-	implementation("build.support:support")
-	testImplementation("build.support:testing")
+	implementation(project(":support"))
+	testImplementation(project(":testing"))
 }
