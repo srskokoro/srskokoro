@@ -11,6 +11,9 @@ import build.support.from
 import org.gradle.api.Project
 
 class _plugin : ProjectPlugin({
+	@OptIn(InternalConventionsApi::class)
+	InternalConventions.markOrFail(this)
+
 	apply {
 		plugin("base")
 	}

@@ -17,6 +17,8 @@ class _plugin : Plugin<Project> {
 	override fun apply(target: Project) {
 		target.throwOnNonConventionsRoot()
 
+		InternalConventions.markOrFail(target)
+
 		target.apply {
 			plugin(kotlin("jvm"))
 			plugin("java-library")
