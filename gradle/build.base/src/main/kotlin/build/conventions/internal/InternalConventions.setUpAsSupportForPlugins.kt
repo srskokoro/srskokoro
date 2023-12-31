@@ -38,10 +38,10 @@ private fun Project.mimicKotlinDslCompiler() {
 		apply(AssignmentSubplugin::class.java)
 	}
 	with(extensions) {
-		configure<SamWithReceiverExtension> {
+		configure<SamWithReceiverExtension>("samWithReceiver") {
 			annotation(HasImplicitReceiver::class.qualifiedName!!)
 		}
-		configure<AssignmentExtension> {
+		configure<AssignmentExtension>("assignment") {
 			annotation(SupportsKotlinAssignmentOverloading::class.qualifiedName!!)
 		}
 	}
