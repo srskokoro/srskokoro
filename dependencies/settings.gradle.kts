@@ -23,6 +23,8 @@ dependencySettings {
 	moduleKotlin("gradle-plugins-bom", kotlin)
 	// See, https://kotlinlang.org/docs/gradle-configure-project.html#versions-alignment-of-transitive-dependencies
 	moduleKotlin("bom", kotlin)
+	moduleKotlin("stdlib", kotlin)
+	moduleKotlin("reflect", kotlin)
 	moduleKotlin("test", kotlin)
 	moduleKotlin("test-junit5", kotlin)
 }

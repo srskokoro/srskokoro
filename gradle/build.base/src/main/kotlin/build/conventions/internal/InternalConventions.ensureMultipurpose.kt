@@ -5,6 +5,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion as KotlinCompileVersion
@@ -43,6 +44,14 @@ fun InternalConventions.ensureMultipurpose(project: Project): Unit = with(projec
 
 			ensureMultipurpose(this)
 		})
+	}
+	dependencies.run {
+		val bom = enforcedPlatform(kotlin("bom"))
+		if (project.extensions.getByName("kotlin") is KotlinMultiplatformExtension) {
+			commonMainCompileOnlyTestImpl(bom)
+		} else {
+			compileOnlyTestImpl(bom)
+		}
 	}
 }
 
