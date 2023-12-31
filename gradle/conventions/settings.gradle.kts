@@ -1,7 +1,9 @@
 @file:Suppress("UnstableApiUsage")
 
 pluginManagement {
-	includeBuild("../build.logic")
+	includeBuild("../build.support")
+	includeBuild("../build.base")
+	repositories.gradlePluginPortal()
 }
 plugins {
 	id("build.dependencies")
@@ -13,3 +15,8 @@ dependencySettings {
 dependencyResolutionManagement {
 	repositories.gradlePluginPortal()
 }
+
+include("basic")
+include("support")
+include("support.kotlin-gradle-plugin")
+include("testing")

@@ -28,17 +28,3 @@ fun DependencyHandler.compileOnlyApiTestImpl(dependencyNotation: Any) {
 	compileOnlyApi(dependencyNotation)
 	testImplementation(dependencyNotation)
 }
-
-
-fun DependencyHandler.commonMainImplementation(dependencyNotation: Any) =
-	add("commonMainImplementation", dependencyNotation)
-
-fun DependencyHandler.commonMainApi(dependencyNotation: Any) =
-	add("commonMainApi", dependencyNotation)
-
-fun DependencyHandler.commonMainCompileOnly(dependencyNotation: Any) =
-	add("commonMainCompileOnly", dependencyNotation)
-
-
-fun DependencyHandler.commonTestImplementation(dependencyNotation: Any) =
-	add("commonTestImplementation", dependencyNotation)

@@ -1,12 +1,14 @@
 import build.api.dsl.*
 
 plugins {
-	id("build.root")
+	`kotlin-dsl-base` apply false
+	id("build.conventions.root")
+	id("build.conventions.api")
 }
 
 gradle.includedBuilds(
+	"build.base",
 	"build.support",
-	"conventions",
 ).let { builds ->
 	tasks {
 		check { dependOnSameTaskFromIncludedBuildsOrFail(builds) }

@@ -5,6 +5,6 @@ import org.gradle.kotlin.dsl.*
 
 class _plugin : ProjectPlugin({
 	apply {
-		plugin<build.root.base._plugin>()
+		plugin<build.conventions.root.impl._plugin>()
 	}
 })

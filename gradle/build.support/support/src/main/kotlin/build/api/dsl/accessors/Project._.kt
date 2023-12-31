@@ -3,6 +3,11 @@ package build.api.dsl.accessors
 import build.api.dsl.*
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePluginExtension
+import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
+
+val Project.gradlePlugin: GradlePluginDevelopmentExtension
+	get() = x("gradlePlugin")
+
 
 val Project.base: BasePluginExtension
 	get() = x("base")
