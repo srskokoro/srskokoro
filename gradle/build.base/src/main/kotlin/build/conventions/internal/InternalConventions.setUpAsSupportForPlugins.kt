@@ -1,13 +1,6 @@
-package build.conventions.support.impl
+package build.conventions.internal
 
-import build.conventions.internal.InternalConventions
-import build.conventions.internal.compileOnlyTestImpl
-import build.conventions.internal.ensureMultipurpose
-import build.conventions.internal.ensureReproducibleBuild
-import build.conventions.internal.kotlin
-import build.conventions.internal.setUpTestTasks
 import org.gradle.api.HasImplicitReceiver
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.SupportsKotlinAssignmentOverloading
 import org.gradle.api.tasks.testing.Test
@@ -18,26 +11,12 @@ import org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension
 import org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverGradleSubplugin
 import java.io.File
 
-class _plugin : Plugin<Project> {
-	override fun apply(target: Project) {
-		target.apply_()
-	}
-}
-
 /**
- * Mimics [kotlin-dsl-base][org.gradle.kotlin.dsl.plugins.base.KotlinDslBasePlugin]
+ * WARNING: Assumes that [ensureMultipurpose][build.conventions.internal.ensureMultipurpose]`()`
+ * has already been called beforehand.
  */
-private fun Project.apply_() {
-	apply {
-		plugin("java-library")
-		plugin(kotlin("jvm"))
-	}
-
+fun InternalConventions.setUpAsSupportForPlugins(project: Project): Unit = with(project) {
 	mimicKotlinDslCompiler()
-
-	InternalConventions.ensureReproducibleBuild(this)
-	InternalConventions.ensureMultipurpose(this)
-	InternalConventions.setUpTestTasks(this)
 
 	tasks.withType<Test>().configureEach {
 		doFirst {
