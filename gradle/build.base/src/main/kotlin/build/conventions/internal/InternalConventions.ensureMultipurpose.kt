@@ -46,11 +46,16 @@ fun InternalConventions.ensureMultipurpose(project: Project): Unit = with(projec
 		})
 	}
 	dependencies.run {
-		val bom = enforcedPlatform(kotlin("bom"))
+		val bom = enforcedPlatform(embeddedKotlin("bom"))
+		val stdlib = embeddedKotlin("stdlib")
+		// NOTE: The following will prevent `kotlin("stdlib")` from being added
+		// automatically by KGP -- see, https://kotlinlang.org/docs/gradle-configure-project.html#dependency-on-the-standard-library
 		if (project.extensions.getByName("kotlin") is KotlinMultiplatformExtension) {
 			commonMainCompileOnlyTestImpl(bom)
+			commonMainCompileOnlyTestImpl(stdlib)
 		} else {
 			compileOnlyTestImpl(bom)
+			compileOnlyTestImpl(stdlib)
 		}
 	}
 }

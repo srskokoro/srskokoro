@@ -47,11 +47,7 @@ private fun Project.apply_() {
 	}
 
 	dependencies.run {
-		// NOTE: The following will prevent `kotlin("stdlib")` from being added
-		// automatically by `kotlin("jvm")` -- see, https://kotlinlang.org/docs/gradle-configure-project.html#dependency-on-the-standard-library
-		compileOnlyTestImpl(kotlin("stdlib"))
 		compileOnlyTestImpl(kotlin("reflect"))
-
 		compileOnlyTestImpl(gradleKotlinDsl())
 	}
 }
