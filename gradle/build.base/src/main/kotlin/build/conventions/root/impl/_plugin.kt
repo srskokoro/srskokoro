@@ -13,6 +13,8 @@ class _plugin : Plugin<Project> {
 }
 
 private fun Project.apply_() {
+	check(parent == null) { "Must only be applied to the root project" }
+
 	allprojects {
 		layout.buildDirectory.set(file(".build"))
 	}
