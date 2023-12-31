@@ -47,7 +47,7 @@ private fun Project.apply_() {
 	}
 
 	dependencies.run {
-		compileOnlyTestImpl(kotlin("reflect"))
+		compileOnlyTestImpl(embeddedKotlin("reflect"))
 		compileOnlyTestImpl(gradleKotlinDsl())
 	}
 }
