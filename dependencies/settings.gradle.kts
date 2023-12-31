@@ -24,6 +24,11 @@ dependencySettings {
 	moduleKotlin("gradle-plugins-bom", kotlin)
 	moduleKotlin("gradle-plugin", kotlin)
 
+	pluginKotlin("plugin.assignment", kotlin)
+	moduleKotlin("assignment", kotlin)
+	pluginKotlin("plugin.sam.with.receiver", kotlin)
+	moduleKotlin("sam-with-receiver", kotlin)
+
 	// See, https://kotlinlang.org/docs/gradle-configure-project.html#versions-alignment-of-transitive-dependencies
 	moduleKotlin("bom", kotlin)
 	moduleKotlin("stdlib", kotlin)
