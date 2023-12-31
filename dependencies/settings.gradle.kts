@@ -8,6 +8,9 @@ plugins {
 dependencySettings {
 	exportOnly()
 
+	// -=*=-
+	// Build foundations
+
 	/** Should correspond to [JavaToolchainSpec] */
 	run<Unit> {
 		prop("jvm.lang", 21)
@@ -35,6 +38,9 @@ dependencySettings {
 	moduleKotlin("reflect", kotlin)
 	moduleKotlin("test", kotlin)
 	moduleKotlin("test-junit5", kotlin)
+
+	// -=*=-
+	// Test infrastructure
 
 	val assertk = "0.28.0" // https://github.com/willowtreeapps/assertk/releases
 	module("com.willowtreeapps.assertk:assertk", assertk)
