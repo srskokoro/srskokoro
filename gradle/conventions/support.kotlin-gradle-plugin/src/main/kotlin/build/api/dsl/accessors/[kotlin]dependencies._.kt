@@ -14,3 +14,9 @@ fun DependencyHandler.commonMainCompileOnly(dependencyNotation: Any) =
 
 fun DependencyHandler.commonTestImplementation(dependencyNotation: Any) =
 	add("commonTestImplementation", dependencyNotation)
+
+
+fun DependencyHandler.commonMainCompileOnlyTestImpl(dependencyNotation: Any) {
+	commonMainCompileOnly(dependencyNotation)
+	commonTestImplementation(dependencyNotation)
+}
