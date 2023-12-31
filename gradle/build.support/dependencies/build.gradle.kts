@@ -2,13 +2,10 @@ import java.security.MessageDigest
 import java.util.HexFormat
 
 plugins {
-	id("build.root.base")
-	id("build.plugins.base")
+	id("build.conventions")
 }
 
-group = "build"
-
-//#region Special build setup for `build.dependencies` plugin
+//#region Complex build setup
 
 internal abstract class ChecksumDepsCoder : DefaultTask() {
 
@@ -65,12 +62,15 @@ internal abstract class ChecksumDepsCoder : DefaultTask() {
 	}
 }
 
-kotlinSourceSets.main {
-	kotlin.srcDir(ChecksumDepsCoder.registerInto(project.tasks))
+kotlin.sourceSets {
+	main {
+		kotlin.srcDir(ChecksumDepsCoder.registerInto(project.tasks))
+	}
 }
 
 //#endregion
 
 dependencies {
-	testImplementation(project(":build.logic.testing"))
+	implementation("build.support:support")
+	testImplementation("build.support:testing")
 }
