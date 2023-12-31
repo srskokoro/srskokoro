@@ -16,7 +16,7 @@ dependencyResolutionManagement {
 	repositories.gradlePluginPortal()
 }
 
-include("basic")
+include("core")
 include("support")
 include("support.kotlin-gradle-plugin")
 include("testing")
