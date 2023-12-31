@@ -2,7 +2,7 @@ package build.api
 
 import org.gradle.api.Plugin
 
-abstract class UtilityOnly : Plugin<Any> {
+abstract class UtilityPlugin : Plugin<Any> {
 
 	override fun apply(target: Any) {
 		// Do nothing. The purpose of this plugin is to simply bring in some
