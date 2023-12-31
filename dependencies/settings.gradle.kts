@@ -1,5 +1,5 @@
 pluginManagement {
-	includeBuild("../gradle/build.logic")
+	includeBuild("../gradle/build.support")
 }
 plugins {
 	id("build.dependencies")
@@ -24,4 +24,5 @@ dependencySettings {
 	// See, https://kotlinlang.org/docs/gradle-configure-project.html#versions-alignment-of-transitive-dependencies
 	moduleKotlin("bom", kotlin)
 	moduleKotlin("test", kotlin)
+	moduleKotlin("test-junit5", kotlin)
 }

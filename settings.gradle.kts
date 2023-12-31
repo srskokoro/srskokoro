@@ -9,8 +9,14 @@ pluginManagement {
 
 	repositories.gradlePluginPortal()
 }
+plugins {
+	id("build.dependencies")
+}
 
 val autoGradleProperties: (String) -> String by extra
+dependencySettings {
+	includeBuild("dependencies")
+}
 dependencyResolutionManagement {
 	repositories {
 		mavenCentral()
