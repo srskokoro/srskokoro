@@ -7,5 +7,6 @@ plugins {
 dependencies {
 	api("build.support:support")
 	api("build.support:testing")
+	api("com.willowtreeapps.assertk:assertk")
 	compileOnlyTestImpl(gradleTestKit())
 }
