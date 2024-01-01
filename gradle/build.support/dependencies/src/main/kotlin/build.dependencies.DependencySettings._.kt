@@ -1,4 +1,5 @@
 import build.dependencies.DependencySettings
+import build.dependencies.KotlinId
 import build.dependencies.ModuleId
 import build.dependencies.PluginId
 import org.gradle.api.InvalidUserDataException
@@ -10,24 +11,24 @@ fun DependencySettings.prop(key: String, value: String) {
 		throw E_DuplicatePropKey(key)
 }
 
+/**
+ * @see KotlinId
+ * @see KotlinId.pluginId
+ * @see KotlinId.moduleId
+ */
 @Suppress("NOTHING_TO_INLINE", "UnusedReceiverParameter")
-inline fun DependencySettings.pluginKotlin(module: String) =
-	"org.jetbrains.kotlin.$module"
+inline fun DependencySettings.kotlin(module: String) = KotlinId(module)
 
-fun DependencySettings.pluginKotlin(module: String, version: String) =
-	plugin(pluginKotlin(module), version)
+fun DependencySettings.plugin(pluginId: KotlinId, version: String) =
+	plugin(pluginId.pluginId(), version)
 
 fun DependencySettings.plugin(pluginId: String, version: String) {
 	if (plugins.putIfAbsent(PluginId.of(pluginId), version) != null)
 		throw E_DuplicatePluginId(pluginId)
 }
 
-@Suppress("NOTHING_TO_INLINE", "UnusedReceiverParameter")
-inline fun DependencySettings.moduleKotlin(module: String) =
-	"org.jetbrains.kotlin:kotlin-$module"
-
-fun DependencySettings.moduleKotlin(module: String, version: String) =
-	module(moduleKotlin(module), version)
+fun DependencySettings.module(moduleId: KotlinId, version: String) =
+	module(moduleId.moduleId(), version)
 
 fun DependencySettings.module(moduleId: String, version: String) {
 	if (modules.putIfAbsent(ModuleId.of(moduleId), version) != null)

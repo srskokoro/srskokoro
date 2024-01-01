@@ -19,25 +19,25 @@ dependencySettings {
 
 	val kotlin = "1.9.21" // https://kotlinlang.org/docs/releases.html
 
-	pluginKotlin("android", kotlin)
-	pluginKotlin("jvm", kotlin)
-	pluginKotlin("multiplatform", kotlin)
+	plugin(kotlin("android"), kotlin)
+	plugin(kotlin("jvm"), kotlin)
+	plugin(kotlin("multiplatform"), kotlin)
 
 	// See also, https://youtrack.jetbrains.com/issue/KT-54691#focus=Comments-27-6852272.0-0
-	moduleKotlin("gradle-plugins-bom", kotlin)
-	moduleKotlin("gradle-plugin", kotlin)
+	module(kotlin("gradle-plugins-bom"), kotlin)
+	module(kotlin("gradle-plugin"), kotlin)
 
-	pluginKotlin("plugin.assignment", kotlin)
-	moduleKotlin("assignment", kotlin)
-	pluginKotlin("plugin.sam.with.receiver", kotlin)
-	moduleKotlin("sam-with-receiver", kotlin)
+	plugin(kotlin("plugin.assignment"), kotlin)
+	module(kotlin("assignment"), kotlin)
+	plugin(kotlin("plugin.sam.with.receiver"), kotlin)
+	module(kotlin("sam-with-receiver"), kotlin)
 
 	// See, https://kotlinlang.org/docs/gradle-configure-project.html#versions-alignment-of-transitive-dependencies
-	moduleKotlin("bom", kotlin)
-	moduleKotlin("stdlib", kotlin)
-	moduleKotlin("reflect", kotlin)
-	moduleKotlin("test", kotlin)
-	moduleKotlin("test-junit5", kotlin)
+	module(kotlin("bom"), kotlin)
+	module(kotlin("stdlib"), kotlin)
+	module(kotlin("reflect"), kotlin)
+	module(kotlin("test"), kotlin)
+	module(kotlin("test-junit5"), kotlin)
 
 	// -=*=-
 	// Test infrastructure
