@@ -2,14 +2,14 @@ package build.plugins.test.io
 
 import java.io.File
 
-/**
- * A custom temporary directory acting as a sandbox for the test task to play in
- * without fear, for when doing tests with the filesystem.
- */
-internal const val TEST_TMPDIR = "TEST_TMPDIR"
-
 @Suppress("MemberVisibilityCanBePrivate")
 object TestTemp {
+	/**
+	 * An environment variable specifying a path to a custom temporary directory
+	 * that acts as a sandbox for the test task to play in without fear, for
+	 * when doing tests with the filesystem.
+	 */
+	internal const val TEST_TMPDIR = "TEST_TMPDIR"
 
 	val base = File(System.getenv(TEST_TMPDIR)
 		?: error("Environment variable `$TEST_TMPDIR` not set up"))

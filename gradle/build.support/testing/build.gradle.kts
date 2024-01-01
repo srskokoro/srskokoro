@@ -18,4 +18,6 @@ dependencies {
 	api(kotlin("test-junit5"))
 	// Ensure that we're really using `JUnit5` (failing otherwise).
 	tasks.test { check(testFramework is JUnitPlatformTestFramework) }
+
+	testImplementation(":build.base")
 }

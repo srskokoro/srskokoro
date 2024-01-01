@@ -1,5 +1,7 @@
 package build.conventions.internal
 
+import build.conventions.internal.InternalConventions.TEST_TMPDIR
+import build.conventions.internal.InternalConventions.env__extension
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -9,14 +11,6 @@ import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import java.io.File
-
-/**
- * A custom temporary directory acting as a sandbox for the test task to play in
- * without fear, for when doing tests with the filesystem.
- */
-// NOTE: A utility somewhere in our build uses this and expects it to be set up
-// automatically.
-private const val TEST_TMPDIR = "TEST_TMPDIR"
 
 private sealed interface TestTaskSetupInDoFirst<T : AbstractTestTask> : Action<Task> {
 
@@ -85,7 +79,7 @@ private sealed interface TestTaskSetupInDoFirst<T : AbstractTestTask> : Action<T
 @Suppress("UNCHECKED_CAST")
 internal fun AbstractTestTask.extraEnvVars() =
 	// NOTE: The cast below throws on non-null incompatible types (as intended).
-	extensions.findByName(InternalConventions.env__extension) as Map<String, String>?
+	extensions.findByName(env__extension) as Map<String, String>?
 
 fun InternalConventions.setUpTestTasks(project: Project): Unit = with(project) {
 	tasks.withType<AbstractTestTask>().configureEach {
