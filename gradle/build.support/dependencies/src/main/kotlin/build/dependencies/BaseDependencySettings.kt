@@ -10,18 +10,6 @@ open class BaseDependencySettings internal constructor() {
 	val plugins = LinkedHashMap<PluginId, String>()
 	val modules = LinkedHashMap<ModuleId, String>()
 
-	internal val includedBuildsDeque = LinkedList<String>()
-
-	/**
-	 * See the NOTE in the loading logic to understand why this method is named
-	 * like this.
-	 *
-	 * @see DependencySettings.setUpForUsageInProjects
-	 */
-	internal fun prioritizeForLoad(rootProject: File) {
-		includedBuildsDeque.addLast(rootProject.canonicalPath)
-	}
-
 	// --
 
 	fun prop(key: String, value: Any) = prop(key, value.toString())
@@ -75,4 +63,16 @@ open class BaseDependencySettings internal constructor() {
 
 		private fun E_DuplicateModuleId(moduleId: Any) = E_DuplicateEntry("module", moduleId, "name")
 	}
+
+	/**
+	 * See the NOTE in the loading logic to understand why this method is named
+	 * like this.
+	 *
+	 * @see DependencySettings.setUpForUsageInProjects
+	 */
+	internal fun prioritizeForLoad(rootProject: File) {
+		includedBuildsDeque.addLast(rootProject.canonicalPath)
+	}
+
+	internal val includedBuildsDeque = LinkedList<String>()
 }
