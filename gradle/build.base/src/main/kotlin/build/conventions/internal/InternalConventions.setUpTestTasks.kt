@@ -24,7 +24,7 @@ fun InternalConventions.setUpTestTasks(project: Project): Unit = with(project) {
 
 			// The JVM expects this to exist (or it'll warn us). And perhaps,
 			// others too is expecting this to exist.
-			ioTmpDir.mkdir()
+			ioTmpDir.mkdirs()
 		}
 
 		when (this) {
