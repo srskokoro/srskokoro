@@ -13,12 +13,12 @@ import kotlin.reflect.KProperty
 @JvmInline
 value class ExtensionsDelegate<O>(val extensions: ExtensionContainer) {
 
-	inline operator fun <reified T> getValue(thisRef: Any?, property: KProperty<*>): T {
-		return extensions.getByName(property.name) as T
+	inline operator fun <reified R> getValue(thisRef: Any?, property: KProperty<*>): R {
+		return extensions.getByName(property.name) as R
 	}
 
-	inline operator fun <reified T> setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-		extensions.add(typeOf<T>(), property.name, value!!)
+	inline operator fun <reified R> setValue(thisRef: Any?, property: KProperty<*>, value: R) {
+		extensions.add(typeOf<R>(), property.name, value!!)
 	}
 
 	@Suppress("NOTHING_TO_INLINE")

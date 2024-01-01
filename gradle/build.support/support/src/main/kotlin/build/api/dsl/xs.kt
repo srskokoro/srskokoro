@@ -18,21 +18,21 @@ inline fun ExtensionsDelegate<*>.xs() = extensions
 
 inline fun <reified O : Any> O.x() = ExtensionsDelegate<O>(xs())
 
-inline fun <reified T> Any.x(name: String): T = xs().x(name)
+inline fun <reified R> Any.x(name: String): R = xs().x(name)
 
-inline fun <reified T> Any.x(name: String, noinline configure: T.() -> Unit): Unit = xs().x(name, configure)
+inline fun <reified R> Any.x(name: String, noinline configure: R.() -> Unit): Unit = xs().x(name, configure)
 
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun ExtensionContainer.x() = ExtensionsDelegate<Any>(this)
 
-inline fun <reified T> ExtensionContainer.x(name: String): T = getOrThrow(name)
+inline fun <reified R> ExtensionContainer.x(name: String): R = getOrThrow(name)
 
-inline fun <reified T> ExtensionContainer.x(name: String, noinline configure: T.() -> Unit): Unit = configure(name, configure)
+inline fun <reified R> ExtensionContainer.x(name: String, noinline configure: R.() -> Unit): Unit = configure(name, configure)
 
 
 inline fun <reified O> ExtensionsDelegate<O>.x() = this
 
-inline fun <reified T> ExtensionsDelegate<*>.x(name: String): T = xs().x(name)
+inline fun <reified R> ExtensionsDelegate<*>.x(name: String): R = xs().x(name)
 
-inline fun <reified T> ExtensionsDelegate<*>.x(name: String, noinline configure: T.() -> Unit): Unit = xs().x(name, configure)
+inline fun <reified R> ExtensionsDelegate<*>.x(name: String, noinline configure: R.() -> Unit): Unit = xs().x(name, configure)
