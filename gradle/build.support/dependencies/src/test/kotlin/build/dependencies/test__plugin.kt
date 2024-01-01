@@ -5,10 +5,7 @@ import build.plugins.test.io.TestTemp
 import build.support.io.DirectoryBuilder
 import build.support.io.buildDir
 import deps
-import module
 import org.gradle.api.Project
-import plugin
-import prop
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertContains
