@@ -14,11 +14,10 @@ inline fun ExtensionAware.xs(): ExtensionContainer = extensions
 inline fun ExtensionContainer.xs() = this
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun ExtensionContainerDelegate.xs() = extensions
+inline fun ExtensionsDelegate<*>.xs() = extensions
 
 
-@Suppress("NOTHING_TO_INLINE")
-inline fun Any.x() = xs().x()
+inline fun <reified O : Any> O.x() = ExtensionsDelegate<O>(xs())
 
 inline fun <reified T> Any.x(name: String): T = xs().x(name)
 
@@ -28,7 +27,7 @@ inline fun <reified T> Any.x(noinline configure: T.() -> Unit): Unit = xs().x(co
 
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun ExtensionContainer.x() = ExtensionContainerDelegate(this)
+inline fun ExtensionContainer.x() = ExtensionsDelegate<Any>(this)
 
 inline fun <reified T> ExtensionContainer.x(name: String): T = getOrThrow(name)
 
@@ -37,11 +36,10 @@ inline fun <reified T> ExtensionContainer.x(name: String, noinline configure: T.
 inline fun <reified T> ExtensionContainer.x(noinline configure: T.() -> Unit): Unit = configure(configure)
 
 
-@Suppress("NOTHING_TO_INLINE")
-inline fun ExtensionContainerDelegate.x() = xs().x()
+inline fun <reified O> ExtensionsDelegate<O>.x() = this
 
-inline fun <reified T> ExtensionContainerDelegate.x(name: String): T = xs().x(name)
+inline fun <reified T> ExtensionsDelegate<*>.x(name: String): T = xs().x(name)
 
-inline fun <reified T> ExtensionContainerDelegate.x(name: String, noinline configure: T.() -> Unit): Unit = xs().x(name, configure)
+inline fun <reified T> ExtensionsDelegate<*>.x(name: String, noinline configure: T.() -> Unit): Unit = xs().x(name, configure)
 
-inline fun <reified T> ExtensionContainerDelegate.x(noinline configure: T.() -> Unit): Unit = xs().x(configure)
+inline fun <reified T> ExtensionsDelegate<*>.x(noinline configure: T.() -> Unit): Unit = xs().x(configure)
