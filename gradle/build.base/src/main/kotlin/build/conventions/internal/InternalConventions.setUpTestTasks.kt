@@ -38,7 +38,10 @@ private sealed interface TestTaskSetupInDoFirst<T : AbstractTestTask> : Action<T
 	fun T.execute(ioTmpDir: File, testTmpDir: File)
 
 	data object ForNative : TestTaskSetupInDoFirst<KotlinNativeTest> {
+
 		override fun KotlinNativeTest.execute(ioTmpDir: File, testTmpDir: File) {
+			extraEnvVars()?.forEach { (k, v) -> environment(k, v, false) }
+
 			// See also,
 			// - https://github.com/square/okio/blob/parent-3.7.0/okio/src/unixMain/kotlin/okio/UnixPosixVariant.kt#L55
 			// - https://github.com/square/okio/blob/parent-3.7.0/okio/src/mingwX64Main/kotlin/okio/WindowsPosixVariant.kt#L52
@@ -49,28 +52,40 @@ private sealed interface TestTaskSetupInDoFirst<T : AbstractTestTask> : Action<T
 				environment("TMP", it, false)
 				environment("TEMP", it, false)
 			}
+
 			environment(TEST_TMPDIR, testTmpDir.path, false)
 		}
 	}
 
 	data object ForJs : TestTaskSetupInDoFirst<KotlinJsTest> {
+
 		override fun KotlinJsTest.execute(ioTmpDir: File, testTmpDir: File) {
+			extraEnvVars()?.forEach { (k, v) -> environment(k, v) }
+
 			ioTmpDir.path.let {
 				environment("TMPDIR", it)
 				environment("TMP", it)
 				environment("TEMP", it)
 			}
+
 			environment(TEST_TMPDIR, testTmpDir.path)
 		}
 	}
 
 	data object ForJvm : TestTaskSetupInDoFirst<Test> {
+
 		override fun Test.execute(ioTmpDir: File, testTmpDir: File) {
+			extraEnvVars()?.forEach { (k, v) -> environment(k, v) }
 			systemProperty("java.io.tmpdir", ioTmpDir.path)
 			environment(TEST_TMPDIR, testTmpDir.path)
 		}
 	}
 }
+
+@Suppress("UNCHECKED_CAST")
+internal fun AbstractTestTask.extraEnvVars() =
+	// NOTE: The cast below throws on non-null incompatible types (as intended).
+	extensions.findByName(InternalConventions.env__extension) as Map<String, String>?
 
 fun InternalConventions.setUpTestTasks(project: Project): Unit = with(project) {
 	tasks.withType<AbstractTestTask>().configureEach {
