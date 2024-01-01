@@ -12,7 +12,14 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import java.io.File
 
-private sealed interface TestTaskSetupInDoFirst<T : AbstractTestTask> : Action<Task> {
+private sealed class TestTaskSetupInDoFirst<T : AbstractTestTask>(task: T) : Action<Task> {
+
+	// NOTE: We must set this up now, because `extensions` isn't supported by
+	// the configuration cache, i.e., accessing `extensions` during execution
+	// time will fail.
+	protected val env = LinkedHashMap<String, String>().also {
+		task.extensions.add(env__extension, it)
+	}
 
 	override fun execute(task: Task) {
 		val taskTmpDir = task.temporaryDir
@@ -26,15 +33,15 @@ private sealed interface TestTaskSetupInDoFirst<T : AbstractTestTask> : Action<T
 		ioTmpDir.mkdirs()
 
 		@Suppress("UNCHECKED_CAST")
-		(task as T).execute(ioTmpDir, testTmpDir)
+		execute(task as T, ioTmpDir, testTmpDir)
 	}
 
-	fun T.execute(ioTmpDir: File, testTmpDir: File)
+	abstract fun execute(task: T, ioTmpDir: File, testTmpDir: File)
 
-	data object ForNative : TestTaskSetupInDoFirst<KotlinNativeTest> {
+	class ForNative(task: KotlinNativeTest) : TestTaskSetupInDoFirst<KotlinNativeTest>(task) {
 
-		override fun KotlinNativeTest.execute(ioTmpDir: File, testTmpDir: File) {
-			extraEnvVars()?.forEach { (k, v) -> environment(k, v, false) }
+		override fun execute(task: KotlinNativeTest, ioTmpDir: File, testTmpDir: File) {
+			env.forEach { (k, v) -> task.environment(k, v, false) }
 
 			// See also,
 			// - https://github.com/square/okio/blob/parent-3.7.0/okio/src/unixMain/kotlin/okio/UnixPosixVariant.kt#L55
@@ -42,56 +49,51 @@ private sealed interface TestTaskSetupInDoFirst<T : AbstractTestTask> : Action<T
 			// - https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-gettemppatha#remarks
 			// - https://web.archive.org/web/20190213135141/https://blogs.msdn.microsoft.com/oldnewthing/20150417-00/?p=44213
 			ioTmpDir.path.let {
-				environment("TMPDIR", it, false)
-				environment("TMP", it, false)
-				environment("TEMP", it, false)
+				task.environment("TMPDIR", it, false)
+				task.environment("TMP", it, false)
+				task.environment("TEMP", it, false)
 			}
 
-			environment(TEST_TMPDIR, testTmpDir.path, false)
+			task.environment(TEST_TMPDIR, testTmpDir.path, false)
 		}
 	}
 
-	data object ForJs : TestTaskSetupInDoFirst<KotlinJsTest> {
+	class ForJs(task: KotlinJsTest) : TestTaskSetupInDoFirst<KotlinJsTest>(task) {
 
-		override fun KotlinJsTest.execute(ioTmpDir: File, testTmpDir: File) {
-			extraEnvVars()?.forEach { (k, v) -> environment(k, v) }
+		override fun execute(task: KotlinJsTest, ioTmpDir: File, testTmpDir: File) {
+			env.forEach { (k, v) -> task.environment(k, v) }
 
 			ioTmpDir.path.let {
-				environment("TMPDIR", it)
-				environment("TMP", it)
-				environment("TEMP", it)
+				task.environment("TMPDIR", it)
+				task.environment("TMP", it)
+				task.environment("TEMP", it)
 			}
 
-			environment(TEST_TMPDIR, testTmpDir.path)
+			task.environment(TEST_TMPDIR, testTmpDir.path)
 		}
 	}
 
-	data object ForJvm : TestTaskSetupInDoFirst<Test> {
+	class ForJvm(task: Test) : TestTaskSetupInDoFirst<Test>(task) {
 
-		override fun Test.execute(ioTmpDir: File, testTmpDir: File) {
-			extraEnvVars()?.forEach { (k, v) -> environment(k, v) }
-			systemProperty("java.io.tmpdir", ioTmpDir.path)
-			environment(TEST_TMPDIR, testTmpDir.path)
+		override fun execute(task: Test, ioTmpDir: File, testTmpDir: File) {
+			env.forEach { (k, v) -> task.environment(k, v) }
+			task.systemProperty("java.io.tmpdir", ioTmpDir.path)
+			task.environment(TEST_TMPDIR, testTmpDir.path)
 		}
 	}
 }
 
-@Suppress("UNCHECKED_CAST")
-internal fun AbstractTestTask.extraEnvVars() =
-	// NOTE: The cast below throws on non-null incompatible types (as intended).
-	extensions.findByName(env__extension) as Map<String, String>?
-
 fun InternalConventions.setUpTestTasks(project: Project): Unit = with(project) {
 	tasks.withType<AbstractTestTask>().configureEach {
 		when (this) {
-			is KotlinNativeTest -> {
-				doFirst(TestTaskSetupInDoFirst.ForNative)
+			is KotlinNativeTest -> run {
+				doFirst(TestTaskSetupInDoFirst.ForNative(this))
 			}
-			is KotlinJsTest -> {
-				doFirst(TestTaskSetupInDoFirst.ForJs)
+			is KotlinJsTest -> run {
+				doFirst(TestTaskSetupInDoFirst.ForJs(this))
 			}
-			is Test -> {
-				doFirst(TestTaskSetupInDoFirst.ForJvm)
+			is Test -> run {
+				doFirst(TestTaskSetupInDoFirst.ForJvm(this))
 				useJUnitPlatform()
 				jvmArgs("-ea") // Also enables stacktrace recovery for kotlinx coroutines
 			}
