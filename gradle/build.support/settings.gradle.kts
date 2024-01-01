@@ -9,7 +9,7 @@ dependencyResolutionManagement {
 	repositories.gradlePluginPortal()
 }
 
-include("api")
+include("core")
 include("dependencies")
 include("support")
 include("testing")
