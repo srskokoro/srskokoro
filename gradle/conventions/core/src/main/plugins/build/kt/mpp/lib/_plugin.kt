@@ -10,6 +10,12 @@ class _plugin : ProjectPlugin({
 	}
 
 	kotlinMpp.run {
+		// Apply this now (instead of waiting for it to be applied later), so
+		// that Gradle may generate type-safe model accessors for the default
+		// hierarchy.
+		applyDefaultHierarchyTemplate()
+
+		// -=-
 		// Should support at best, targets that we can test with Kotest
 		// (which is version 5.8 at the time of writing). See,
 		// - https://github.com/kotest/kotest/blob/v5.8.0/buildSrc/src/main/kotlin/kotest-js-conventions.gradle.kts
