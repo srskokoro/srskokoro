@@ -29,6 +29,9 @@ private object Build {
 	const val JAVAC_RELEASE_OPT = "--release=8"
 }
 
+/**
+ * Sets up [project] so that it may be used for both the app and build logic.
+ */
 fun InternalConventions.ensureMultipurpose(project: Project): Unit = with(project) {
 	tasks.run {
 		withType<JavaCompile>().configureEach {
