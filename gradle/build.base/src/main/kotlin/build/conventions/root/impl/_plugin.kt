@@ -5,10 +5,20 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.UnknownTaskException
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
+import java.io.File
 
 class _plugin : Plugin<Project> {
 	override fun apply(target: Project) {
 		target.apply_()
+
+		target.plugins.withType<YarnPlugin>(fun(_) {
+			with(target.extensions.getByName(YarnRootExtension.YARN) as YarnRootExtension) {
+				lockFileDirectory = File(target.projectDir, "#kotlin-js-store")
+			}
+		})
 	}
 }
 
