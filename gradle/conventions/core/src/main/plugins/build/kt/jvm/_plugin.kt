@@ -2,6 +2,7 @@ package build.kt.jvm
 
 import build.api.ProjectPlugin
 import build.api.dsl.*
+import build.api.dsl.accessors.testImplementation
 import build.conventions.internal.InternalConventions
 import build.conventions.internal.InternalConventionsApi
 import build.conventions.internal.setUpTestTasks
@@ -15,4 +16,8 @@ class _plugin : ProjectPlugin({
 
 	@OptIn(InternalConventionsApi::class)
 	InternalConventions.setUpTestTasks(this)
+
+	if (group != "multipurpose" && name != "testing") {
+		dependencies.testImplementation("multipurpose:testing")
+	}
 })

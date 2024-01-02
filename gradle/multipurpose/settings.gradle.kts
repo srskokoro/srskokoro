@@ -17,3 +17,5 @@ dependencyResolutionManagement {
 		mavenCentral()
 	}
 }
+
+include("testing")

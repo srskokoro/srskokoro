@@ -17,8 +17,16 @@ private sealed class TestTaskSetupInDoFirst<T : AbstractTestTask>(task: T) : Act
 	// NOTE: We must set this up now, because `extensions` isn't supported by
 	// the configuration cache, i.e., accessing `extensions` during execution
 	// time will fail.
-	protected val env = LinkedHashMap<String, String>().also {
-		task.extensions.add(env__extension, it)
+	protected val env = LinkedHashMap<String, String>().also { env ->
+		task.extensions.add(env__extension, env)
+
+		// Speed up startup time for when using Kotest. See also,
+		// - https://github.com/kotest/kotest/issues/3126#issuecomment-1516917534
+		// - https://github.com/kotest/kotest/issues/3746#issuecomment-1807231614
+		// - https://github.com/kotest/kotest/pull/2925
+		env["kotest_framework_classpath_scanning_autoscan_disable"] = "true"
+		env["kotest_framework_classpath_scanning_config_disable"] = "true"
+		env["kotest_framework_discovery_jar_scan_disable"] = "true"
 	}
 
 	override fun execute(task: Task) {
