@@ -6,12 +6,11 @@ import assertk.assertions.isFailure
 import assertk.assertions.isSuccess
 import build.plugins.test.buildProject
 import build.plugins.test.io.TestTemp
+import io.kotest.core.spec.style.FunSpec
 import org.gradle.kotlin.dsl.*
-import kotlin.test.Test
 
-class test__plugin {
-
-	@Test fun `The 'root' plugin can only be applied to root projects`() {
+class test__plugin : FunSpec({
+	test("The 'root' plugin can only be applied to root projects") {
 		val parent = buildProject(TestTemp.from(this, "0"))
 		val child = buildProject(TestTemp.from(this, "0/0")) { withParent(parent) }
 
@@ -20,4 +19,4 @@ class test__plugin {
 			assertThat(runCatching { child.apply<_plugin>() }).isFailure()
 		}
 	}
-}
+})
