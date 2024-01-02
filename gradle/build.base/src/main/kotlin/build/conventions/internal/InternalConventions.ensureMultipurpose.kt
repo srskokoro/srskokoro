@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion as KotlinCompileVersion
 
@@ -48,17 +49,36 @@ fun InternalConventions.ensureMultipurpose(project: Project): Unit = with(projec
 			ensureMultipurpose(this)
 		})
 	}
+
 	dependencies.run {
 		val bom = enforcedPlatform(embeddedKotlin("bom"))
 		val stdlib = embeddedKotlin("stdlib")
+
+		val kotlin = project.extensions.getByName("kotlin")
 		// NOTE: The following will prevent `kotlin("stdlib")` from being added
 		// automatically by KGP -- see, https://kotlinlang.org/docs/gradle-configure-project.html#dependency-on-the-standard-library
-		if (project.extensions.getByName("kotlin") is KotlinMultiplatformExtension) {
-			commonMainCompileOnlyTestImpl(bom)
-			commonMainCompileOnlyTestImpl(stdlib)
-		} else {
+		if (kotlin !is KotlinMultiplatformExtension) {
 			compileOnlyTestImpl(bom)
 			compileOnlyTestImpl(stdlib)
+		} else {
+			redirectCompileOnlyForNative(kotlin)
+			commonMainCompileOnlyTestImpl(bom)
+			commonMainCompileOnlyTestImpl(stdlib)
+		}
+	}
+}
+
+// KLUDGE K/N doesn't support `compileOnly` (at the moment)
+// - See, https://youtrack.jetbrains.com/issue/KT-64109
+/** @see org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator.warnAboutIncorrectDependencies */
+fun redirectCompileOnlyForNative(kotlin: KotlinMultiplatformExtension) {
+	kotlin.targets.withType<KotlinNativeTarget>().configureEach {
+		compilations.configureEach {
+			val cs = project.configurations
+			val compileOnly = cs.getByName(compileOnlyConfigurationName)
+			val implementation = cs.getByName(implementationConfigurationName)
+			implementation.setExtendsFrom(compileOnly.extendsFrom)
+			compileOnly.setExtendsFrom(emptySet())
 		}
 	}
 }
