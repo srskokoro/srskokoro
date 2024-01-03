@@ -7,7 +7,7 @@ plugins {
 }
 
 gradle.includedBuilds(
-	"build.base",
+	"build.foundation",
 	"build.support",
 ).let { builds ->
 	tasks {

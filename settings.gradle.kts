@@ -4,7 +4,7 @@ pluginManagement {
 	apply(from = "settings.init.gradle.kts")
 	val autoGradleProperties: (String) -> String by extra
 
-	autoGradleProperties("gradle/build.base")
+	autoGradleProperties("gradle/build.foundation")
 	includeBuild(autoGradleProperties("gradle/build.support"))
 	includeBuild(autoGradleProperties("gradle/conventions"))
 

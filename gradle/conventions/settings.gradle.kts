@@ -2,7 +2,7 @@
 
 pluginManagement {
 	includeBuild("../build.support")
-	includeBuild("../build.base")
+	includeBuild("../build.foundation")
 	repositories.gradlePluginPortal()
 }
 plugins {

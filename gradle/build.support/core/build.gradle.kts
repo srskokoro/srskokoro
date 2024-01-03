@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-	implementation(":build.base")
+	implementation(":build.foundation")
 	implementation(project(":support"))
 }

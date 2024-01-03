@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-	implementation(":build.base")
+	implementation(":build.foundation")
 
 	implementation(project(":support.kotlin-gradle-plugin"))
 	implementation(kotlin("sam-with-receiver"))
