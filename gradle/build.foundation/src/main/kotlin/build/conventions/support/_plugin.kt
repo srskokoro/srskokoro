@@ -16,7 +16,6 @@ import org.gradle.api.Project
 class _plugin : Plugin<Project> {
 	override fun apply(target: Project) {
 		target.throwOnNonConventionsRoot()
-
 		BuildFoundation.markOrFail(target)
 
 		target.apply {
