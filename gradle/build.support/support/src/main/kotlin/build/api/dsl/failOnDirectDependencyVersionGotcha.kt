@@ -40,6 +40,9 @@ fun Project.failOnDirectDependencyVersionGotcha(configuration: Configuration, en
 
 	if (alreadySetUpBefore) return
 
+	@Suppress("UnstableApiUsage")
+	val currentBuildPath = rootProject.buildTreePath
+
 	configuration.incoming.afterResolve {
 		if (extra[_failOnDirectDependencyVersionGotcha_isEnabled] != true) {
 			return@afterResolve // Checks have been disabled
@@ -49,11 +52,11 @@ fun Project.failOnDirectDependencyVersionGotcha(configuration: Configuration, en
 			is DependencyInsightReportTask,
 			-> return@afterResolve
 		}
-		this@afterResolve.doFailOnDirectDependencyVersionGotcha()
+		this@afterResolve.doFailOnDirectDependencyVersionGotcha(currentBuildPath)
 	}
 }
 
-private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha() {
+private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(currentBuildPath: String) {
 	val depSet = resolutionResult.allDependencies
 
 	// NOTE: The reason why we must fail for dependencies of any project (and
@@ -80,6 +83,10 @@ private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha() {
 
 		// Include only dependencies directly declared by project components
 		val projectId = dep.from.id as? ProjectComponentIdentifier ?: continue
+
+		// Exclude those from projects that are not from the current build --
+		// i.e., treat the dependency like it was contributed externally.
+		if (projectId.build.buildPath != currentBuildPath) continue
 
 		val req = dep.requested
 		if (req !is ModuleComponentSelector) continue
