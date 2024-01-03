@@ -4,5 +4,5 @@ plugins {
 
 dependencies {
 	api("build.support:support")
-	testImplementation(project(":testing"))
+	testImplementation(project(":testing.conventions"))
 }

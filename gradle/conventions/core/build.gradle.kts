@@ -10,5 +10,5 @@ dependencies {
 	implementation(kotlin("assignment"))
 	implementation("io.kotest:kotest-framework-multiplatform-plugin-gradle")
 
-	testImplementation(project(":testing"))
+	testImplementation(project(":testing.conventions"))
 }

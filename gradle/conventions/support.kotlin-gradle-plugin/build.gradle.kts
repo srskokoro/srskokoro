@@ -5,5 +5,5 @@ plugins {
 dependencies {
 	api(kotlin("gradle-plugin"))
 	api(project(":support"))
-	testImplementation(project(":testing"))
+	testImplementation(project(":testing.conventions"))
 }
