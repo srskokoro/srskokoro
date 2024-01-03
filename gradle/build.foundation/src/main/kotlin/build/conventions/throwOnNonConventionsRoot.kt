@@ -1,13 +1,14 @@
-package build.conventions.internal
+package build.conventions
 
+import build.foundation.InternalApi
 import org.gradle.api.Project
 import org.gradle.api.initialization.Settings
 
-@InternalConventionsApi
+@InternalApi
 fun Project.throwOnNonConventionsRoot() =
 	throwOnNonConventionsRoot(rootProject.name)
 
-@InternalConventionsApi
+@InternalApi
 fun Settings.throwOnNonConventionsRoot() =
 	throwOnNonConventionsRoot(rootProject.name)
 

@@ -1,6 +1,6 @@
-package build.conventions.impl
+package build.conventions
 
-import build.conventions.impl.PluginsAutoRegistrant.Companion.PLUGIN_CLASS
+import build.conventions.PluginsAutoRegistrant.Companion.PLUGIN_CLASS
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.EmptyFileVisitor

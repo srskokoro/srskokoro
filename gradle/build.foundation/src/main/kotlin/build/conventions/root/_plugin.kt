@@ -1,6 +1,6 @@
 package build.conventions.root
 
-import build.conventions.internal.throwOnNonConventionsRoot
+import build.conventions.throwOnNonConventionsRoot
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*

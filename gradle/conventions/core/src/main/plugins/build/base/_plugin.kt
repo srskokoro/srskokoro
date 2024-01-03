@@ -4,22 +4,22 @@ import build.api.ProjectPlugin
 import build.api.dsl.*
 import build.api.dsl.accessors.base
 import build.api.dsl.accessors.baseOrNull
-import build.conventions.internal.InternalConventions
-import build.conventions.internal.InternalConventionsApi
-import build.conventions.internal.ensureReproducibleBuild
+import build.foundation.BuildFoundation
+import build.foundation.InternalApi
+import build.foundation.ensureReproducibleBuild
 import build.support.from
 import org.gradle.api.Project
 
 class _plugin : ProjectPlugin({
-	@OptIn(InternalConventionsApi::class)
-	InternalConventions.markOrFail(this)
+	@OptIn(InternalApi::class)
+	BuildFoundation.markOrFail(this)
 
 	apply {
 		plugin("base")
 	}
 
-	@OptIn(InternalConventionsApi::class)
-	InternalConventions.ensureReproducibleBuild(this)
+	@OptIn(InternalApi::class)
+	BuildFoundation.ensureReproducibleBuild(this)
 
 	prioritizedAfterEvaluate(fun Project.() {
 		// Don't proceed if we're either a direct child of the root project or

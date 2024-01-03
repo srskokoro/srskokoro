@@ -1,9 +1,9 @@
 package build.plugins
 
 import build.api.ProjectPlugin
-import build.conventions.internal.InternalConventions
-import build.conventions.internal.InternalConventionsApi
-import build.conventions.internal.contributesPlugins
+import build.foundation.BuildFoundation
+import build.foundation.InternalApi
+import build.foundation.contributesPlugins
 import org.gradle.kotlin.dsl.*
 
 /**
@@ -15,6 +15,6 @@ class _plugin : ProjectPlugin({
 		plugin("java-gradle-plugin")
 	}
 
-	@OptIn(InternalConventionsApi::class)
-	InternalConventions.contributesPlugins(this)
+	@OptIn(InternalApi::class)
+	BuildFoundation.contributesPlugins(this)
 })

@@ -1,12 +1,12 @@
 package build.conventions.api
 
 import build.api.UtilityPlugin
-import build.conventions.internal.InternalConventionsApi
-import build.conventions.internal.throwOnNonConventionsRoot
+import build.conventions.throwOnNonConventionsRoot
+import build.foundation.InternalApi
 import org.gradle.api.Project
 import org.gradle.api.initialization.Settings
 
-@OptIn(InternalConventionsApi::class)
+@OptIn(InternalApi::class)
 class _plugin : UtilityPlugin({
 	when (this) {
 		is Project -> throwOnNonConventionsRoot()

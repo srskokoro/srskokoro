@@ -1,4 +1,4 @@
-package build.conventions.internal
+package build.foundation
 
 import org.gradle.api.HasImplicitReceiver
 import org.gradle.api.Project
@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverGradleSubplugi
 import java.io.File
 
 /**
- * WARNING: Assumes that [ensureMultipurpose][build.conventions.internal.ensureMultipurpose]`()`
+ * WARNING: Assumes that [ensureMultipurpose][build.foundation.ensureMultipurpose]`()`
  * has already been called beforehand.
  */
-fun InternalConventions.setUpAsSupportForPlugins(project: Project): Unit = with(project) {
+fun BuildFoundation.setUpAsSupportForPlugins(project: Project): Unit = with(project) {
 	mimicKotlinDslCompiler()
 
 	tasks.withType<Test>().configureEach {

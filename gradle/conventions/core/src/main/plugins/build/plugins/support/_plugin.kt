@@ -1,9 +1,9 @@
 package build.plugins.support
 
 import build.api.ProjectPlugin
-import build.conventions.internal.InternalConventions
-import build.conventions.internal.InternalConventionsApi
-import build.conventions.internal.setUpAsSupportForPlugins
+import build.foundation.BuildFoundation
+import build.foundation.InternalApi
+import build.foundation.setUpAsSupportForPlugins
 import org.gradle.kotlin.dsl.*
 
 /**
@@ -14,6 +14,6 @@ class _plugin : ProjectPlugin({
 		plugin<build.kt.jvm.multipurpose._plugin>()
 	}
 
-	@OptIn(InternalConventionsApi::class)
-	InternalConventions.setUpAsSupportForPlugins(this)
+	@OptIn(InternalApi::class)
+	BuildFoundation.setUpAsSupportForPlugins(this)
 })

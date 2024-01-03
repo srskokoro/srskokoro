@@ -1,4 +1,4 @@
-package build.conventions.internal
+package build.foundation
 
 import org.gradle.api.plugins.ObjectConfigurationAction
 

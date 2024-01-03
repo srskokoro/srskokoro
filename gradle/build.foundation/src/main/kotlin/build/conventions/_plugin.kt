@@ -1,7 +1,7 @@
 package build.conventions
 
-import build.conventions.internal.InternalConventions
-import build.conventions.internal.contributesPlugins
+import build.foundation.BuildFoundation
+import build.foundation.contributesPlugins
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
@@ -12,6 +12,6 @@ class _plugin : Plugin<Project> {
 			plugin<build.conventions.support._plugin>()
 			plugin("java-gradle-plugin")
 		}
-		InternalConventions.contributesPlugins(target)
+		BuildFoundation.contributesPlugins(target)
 	}
 }

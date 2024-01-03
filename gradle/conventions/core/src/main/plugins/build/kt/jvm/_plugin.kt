@@ -3,9 +3,9 @@ package build.kt.jvm
 import build.api.ProjectPlugin
 import build.api.dsl.*
 import build.api.dsl.accessors.testImplementation
-import build.conventions.internal.InternalConventions
-import build.conventions.internal.InternalConventionsApi
-import build.conventions.internal.setUpTestTasks
+import build.foundation.BuildFoundation
+import build.foundation.InternalApi
+import build.foundation.setUpTestTasks
 import org.gradle.kotlin.dsl.*
 
 class _plugin : ProjectPlugin({
@@ -14,8 +14,8 @@ class _plugin : ProjectPlugin({
 		plugin(kotlin("jvm"))
 	}
 
-	@OptIn(InternalConventionsApi::class)
-	InternalConventions.setUpTestTasks(this)
+	@OptIn(InternalApi::class)
+	BuildFoundation.setUpTestTasks(this)
 
 	if (group != "multipurpose" && name != "testing") {
 		dependencies.testImplementation("multipurpose:testing")

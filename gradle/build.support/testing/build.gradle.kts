@@ -1,6 +1,6 @@
-@file:OptIn(build.conventions.internal.InternalConventionsApi::class)
+@file:OptIn(build.foundation.InternalApi::class)
 
-import build.conventions.internal.compileOnlyTestImpl
+import build.foundation.compileOnlyTestImpl
 import org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework
 
 plugins {

@@ -1,7 +1,7 @@
-package build.conventions.internal
+package build.foundation
 
-import build.conventions.internal.InternalConventions.TEST_TMPDIR
-import build.conventions.internal.InternalConventions.env__extension
+import build.foundation.BuildFoundation.TEST_TMPDIR
+import build.foundation.BuildFoundation.env__extension
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -91,7 +91,7 @@ private sealed class TestTaskSetupInDoFirst<T : AbstractTestTask>(task: T) : Act
 	}
 }
 
-fun InternalConventions.setUpTestTasks(project: Project): Unit = with(project) {
+fun BuildFoundation.setUpTestTasks(project: Project): Unit = with(project) {
 	tasks.withType<AbstractTestTask>().configureEach {
 		when (this) {
 			is KotlinNativeTest -> run {

@@ -1,12 +1,12 @@
 package build.conventions.support
 
-import build.conventions.internal.InternalConventions
-import build.conventions.internal.ensureMultipurpose
-import build.conventions.internal.ensureReproducibleBuild
-import build.conventions.internal.kotlin
-import build.conventions.internal.setUpAsSupportForPlugins
-import build.conventions.internal.setUpTestTasks
-import build.conventions.internal.throwOnNonConventionsRoot
+import build.conventions.throwOnNonConventionsRoot
+import build.foundation.BuildFoundation
+import build.foundation.ensureMultipurpose
+import build.foundation.ensureReproducibleBuild
+import build.foundation.kotlin
+import build.foundation.setUpAsSupportForPlugins
+import build.foundation.setUpTestTasks
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -17,16 +17,16 @@ class _plugin : Plugin<Project> {
 	override fun apply(target: Project) {
 		target.throwOnNonConventionsRoot()
 
-		InternalConventions.markOrFail(target)
+		BuildFoundation.markOrFail(target)
 
 		target.apply {
 			plugin(kotlin("jvm"))
 			plugin("java-library")
 		}
 
-		InternalConventions.ensureReproducibleBuild(target)
-		InternalConventions.setUpTestTasks(target)
-		InternalConventions.ensureMultipurpose(target)
-		InternalConventions.setUpAsSupportForPlugins(target)
+		BuildFoundation.ensureReproducibleBuild(target)
+		BuildFoundation.setUpTestTasks(target)
+		BuildFoundation.ensureMultipurpose(target)
+		BuildFoundation.setUpAsSupportForPlugins(target)
 	}
 }

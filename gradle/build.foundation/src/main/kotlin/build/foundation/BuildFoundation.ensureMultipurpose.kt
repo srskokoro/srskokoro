@@ -1,4 +1,4 @@
-package build.conventions.internal
+package build.foundation
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile
@@ -33,7 +33,7 @@ private object Build {
 /**
  * Sets up [project] so that it may be used for both the app and build logic.
  */
-fun InternalConventions.ensureMultipurpose(project: Project): Unit = with(project) {
+fun BuildFoundation.ensureMultipurpose(project: Project): Unit = with(project) {
 	tasks.run {
 		withType<JavaCompile>().configureEach {
 			options.compilerArgs.add(Build.JAVAC_RELEASE_OPT)

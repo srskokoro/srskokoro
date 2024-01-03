@@ -1,9 +1,9 @@
 package build.kt.jvm.multipurpose
 
 import build.api.ProjectPlugin
-import build.conventions.internal.InternalConventions
-import build.conventions.internal.InternalConventionsApi
-import build.conventions.internal.ensureMultipurpose
+import build.foundation.BuildFoundation
+import build.foundation.InternalApi
+import build.foundation.ensureMultipurpose
 import org.gradle.kotlin.dsl.*
 
 class _plugin : ProjectPlugin({
@@ -11,6 +11,6 @@ class _plugin : ProjectPlugin({
 		plugin<build.kt.jvm.lib._plugin>()
 	}
 
-	@OptIn(InternalConventionsApi::class)
-	InternalConventions.ensureMultipurpose(this)
+	@OptIn(InternalApi::class)
+	BuildFoundation.ensureMultipurpose(this)
 })
