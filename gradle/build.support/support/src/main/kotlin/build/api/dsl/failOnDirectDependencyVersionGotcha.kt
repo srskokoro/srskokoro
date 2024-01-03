@@ -109,6 +109,9 @@ private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha() {
 		// (into the selected version), so long as the change was done by the
 		// same project that directly requested for the differing version.
 		if (Triple(projectId, selModId, selVer) in reqByAnyProj) continue
+		// ^ Remember, `projectId` is the ID of the project that directly
+		// requested for the dependency, while `selVer` is the actual version
+		// selected despite what the project requested.
 
 		if (!sel.selectionReason.isConflictResolution) continue
 
