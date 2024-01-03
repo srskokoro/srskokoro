@@ -24,43 +24,7 @@ import org.gradle.kotlin.dsl.*
  * @param configuration A resolvable configuration.
  * @param enable `true` to enable; `false` to disable.
  */
-fun Project.failOnDirectDependencyVersionGotcha(configuration: Configuration, enable: Boolean = true) =
-	failOnDirectDependencyVersionGotcha(configuration, enable) { false }
-
-/**
- * See, [failOnDirectDependencyVersionGotcha]
- *
- * @param configuration A resolvable configuration.
- * @param enable `true` to enable; `false` to disable.
- * @param excludeAlreadyDeclared If `true`, dependencies already declared when
- * this method is called will be excluded from the check.
- */
-fun Project.failOnDirectDependencyVersionGotcha(configuration: Configuration, enable: Boolean = true, excludeAlreadyDeclared: Boolean) {
-	val excludeFilter: (ModuleIdentifier) -> Boolean = if (!excludeAlreadyDeclared) {
-		({ false })
-	} else {
-		val alreadyDeclared: Set<Pair<String, String>> = configuration.allDependencies
-			.mapNotNullTo(mutableSetOf()) { dep -> dep.group?.let { it to dep.name } }
-
-		({ it.group to it.name in alreadyDeclared })
-	}
-	return failOnDirectDependencyVersionGotcha(configuration, enable, excludeFilter)
-}
-
-/**
- * See, [failOnDirectDependencyVersionGotcha]
- *
- * @param configuration A resolvable configuration.
- * @param enable `true` to enable; `false` to disable.
- * @param excludeFilter A filter over the direct dependencies under this
- * configuration; it must return `true` if a dependency should be excluded from
- * the check.
- */
-fun Project.failOnDirectDependencyVersionGotcha(
-	configuration: Configuration,
-	enable: Boolean = true,
-	excludeFilter: (ModuleIdentifier) -> Boolean
-) {
+fun Project.failOnDirectDependencyVersionGotcha(configuration: Configuration, enable: Boolean = true) {
 	require(configuration.isCanBeResolved) {
 		"Configuration must be resolvable: '$name'"
 	}
@@ -74,9 +38,6 @@ fun Project.failOnDirectDependencyVersionGotcha(
 
 	extra[_failOnDirectDependencyVersionGotcha_isEnabled] = enable
 
-	var failOnDirectDependencyVersionGotcha_excludeFilter: (ModuleIdentifier) -> Boolean by extra
-	failOnDirectDependencyVersionGotcha_excludeFilter = excludeFilter
-
 	if (alreadySetUpBefore) return
 
 	configuration.incoming.afterResolve {
@@ -88,11 +49,11 @@ fun Project.failOnDirectDependencyVersionGotcha(
 			is DependencyInsightReportTask,
 			-> return@afterResolve
 		}
-		this.doFailOnDirectDependencyVersionGotcha(failOnDirectDependencyVersionGotcha_excludeFilter)
+		this.doFailOnDirectDependencyVersionGotcha()
 	}
 }
 
-private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(excludeFilter: (ModuleIdentifier) -> Boolean) {
+private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha() {
 	val depSet = resolutionResult.allDependencies
 
 	// NOTE: The reason why we must fail for dependencies of any project (and
@@ -150,7 +111,6 @@ private fun ResolvableDependencies.doFailOnDirectDependencyVersionGotcha(exclude
 		if (Triple(projectId, selModId, selVer) in reqByAnyProj) continue
 
 		if (!sel.selectionReason.isConflictResolution) continue
-		if (excludeFilter(selModId)) continue
 
 		failedSet.add(dep)
 	}
