@@ -49,7 +49,7 @@ fun Project.failOnDirectDependencyVersionGotcha(configuration: Configuration, en
 			is DependencyInsightReportTask,
 			-> return@afterResolve
 		}
-		this.doFailOnDirectDependencyVersionGotcha()
+		this@afterResolve.doFailOnDirectDependencyVersionGotcha()
 	}
 }
 
