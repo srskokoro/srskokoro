@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverGradleSubplugi
 import java.io.File
 
 /**
- * WARNING: Assumes that [ensureMultipurpose][build.foundation.ensureMultipurpose]`()`
+ * WARNING: Assumes that [setUpAsBuildInclusive][build.foundation.setUpAsBuildInclusive]`()`
  * has already been called beforehand.
  */
 fun BuildFoundation.setUpAsSupportForPlugins(project: Project): Unit = with(project) {

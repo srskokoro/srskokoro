@@ -1,5 +1,5 @@
 plugins {
-	id("build.kt.mpp.multipurpose")
+	id("build.kt.mpp.inclusive")
 }
 
 dependencies {

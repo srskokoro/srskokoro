@@ -16,11 +16,11 @@ class test__plugin : FunSpec({
 		assertAll {
 			assertTrue { hasBasePlugin<build.kt.jvm._plugin>() }
 			assertTrue { hasBasePlugin<build.kt.jvm.lib._plugin>() }
-			assertTrue { hasBasePlugin<build.kt.jvm.multipurpose._plugin>() }
+			assertTrue { hasBasePlugin<build.kt.jvm.inclusive._plugin>() }
 
 			assertTrue { hasBasePlugin<build.kt.mpp._plugin>() }
 			assertTrue { hasBasePlugin<build.kt.mpp.lib._plugin>() }
-			assertTrue { hasBasePlugin<build.kt.mpp.multipurpose._plugin>() }
+			assertTrue { hasBasePlugin<build.kt.mpp.inclusive._plugin>() }
 
 			assertTrue { hasBasePlugin<build.plugins._plugin>() }
 			assertTrue { hasBasePlugin<build.plugins.support._plugin>() }

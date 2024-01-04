@@ -1,10 +1,10 @@
-package build.foundation.kt.mpp.multipurpose
+package build.foundation.kt.mpp.inclusive
 
 import build.conventions.throwOnNonConventionsRoot
 import build.foundation.BuildFoundation
-import build.foundation.ensureMultipurpose
 import build.foundation.ensureReproducibleBuild
 import build.foundation.kotlin
+import build.foundation.setUpAsBuildInclusive
 import build.foundation.setUpMppLibTargets
 import build.foundation.setUpTestTasks
 import org.gradle.api.Plugin
@@ -22,6 +22,6 @@ class _plugin : Plugin<Project> {
 		BuildFoundation.ensureReproducibleBuild(target)
 		BuildFoundation.setUpTestTasks(target)
 		BuildFoundation.setUpMppLibTargets(target)
-		BuildFoundation.ensureMultipurpose(target)
+		BuildFoundation.setUpAsBuildInclusive(target)
 	}
 }

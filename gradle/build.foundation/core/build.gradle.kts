@@ -12,7 +12,7 @@ gradlePlugin {
 		addPlugin("build.conventions")
 		addPlugin("build.conventions.root")
 		addPlugin("build.conventions.support")
-		addPlugin("build.foundation.kt.mpp.multipurpose")
+		addPlugin("build.foundation.kt.mpp.inclusive")
 	}
 }
 

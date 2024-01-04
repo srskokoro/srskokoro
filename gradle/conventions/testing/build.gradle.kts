@@ -1,7 +1,7 @@
 import org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework
 
 plugins {
-	id("build.foundation.kt.mpp.multipurpose")
+	id("build.foundation.kt.mpp.inclusive")
 }
 
 dependencies {

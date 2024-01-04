@@ -11,7 +11,7 @@ import org.gradle.kotlin.dsl.*
  */
 class _plugin : ProjectPlugin({
 	apply {
-		plugin<build.kt.jvm.multipurpose._plugin>()
+		plugin<build.kt.jvm.inclusive._plugin>()
 	}
 
 	@OptIn(InternalApi::class)

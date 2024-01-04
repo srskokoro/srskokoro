@@ -31,7 +31,7 @@ private object Build {
 /**
  * Sets up [project] so that it may be used for both the app and build logic.
  */
-fun BuildFoundation.ensureMultipurpose(project: Project): Unit = with(project) {
+fun BuildFoundation.setUpAsBuildInclusive(project: Project): Unit = with(project) {
 	tasks.run {
 		withType<JavaCompile>().configureEach {
 			options.compilerArgs.add(Build.JAVAC_RELEASE_OPT)
@@ -44,7 +44,7 @@ fun BuildFoundation.ensureMultipurpose(project: Project): Unit = with(project) {
 			apiVersion.set(kotlinVersion)
 			languageVersion.set(kotlinVersion)
 
-			ensureMultipurpose(this)
+			setUpAsBuildInclusive(this)
 		})
 	}
 
@@ -69,7 +69,7 @@ fun BuildFoundation.ensureMultipurpose(project: Project): Unit = with(project) {
 /**
  * @see org.gradle.kotlin.dsl.provider.KotlinDslPluginSupport.kotlinCompilerArgs
  */
-private fun ensureMultipurpose(compilerOptions: KotlinJvmCompilerOptions) {
+private fun setUpAsBuildInclusive(compilerOptions: KotlinJvmCompilerOptions) {
 	compilerOptions.freeCompilerArgs.apply {
 		add("-java-parameters")
 		add("-Xjvm-default=all")

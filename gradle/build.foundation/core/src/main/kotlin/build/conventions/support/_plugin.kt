@@ -2,9 +2,9 @@ package build.conventions.support
 
 import build.conventions.throwOnNonConventionsRoot
 import build.foundation.BuildFoundation
-import build.foundation.ensureMultipurpose
 import build.foundation.ensureReproducibleBuild
 import build.foundation.kotlin
+import build.foundation.setUpAsBuildInclusive
 import build.foundation.setUpAsSupportForPlugins
 import build.foundation.setUpTestTasks
 import org.gradle.api.Plugin
@@ -25,7 +25,7 @@ class _plugin : Plugin<Project> {
 
 		BuildFoundation.ensureReproducibleBuild(target)
 		BuildFoundation.setUpTestTasks(target)
-		BuildFoundation.ensureMultipurpose(target)
+		BuildFoundation.setUpAsBuildInclusive(target)
 		BuildFoundation.setUpAsSupportForPlugins(target)
 	}
 }

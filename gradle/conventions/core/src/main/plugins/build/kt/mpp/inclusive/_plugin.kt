@@ -1,16 +1,16 @@
-package build.kt.jvm.multipurpose
+package build.kt.mpp.inclusive
 
 import build.api.ProjectPlugin
 import build.foundation.BuildFoundation
 import build.foundation.InternalApi
-import build.foundation.ensureMultipurpose
+import build.foundation.setUpAsBuildInclusive
 import org.gradle.kotlin.dsl.*
 
 class _plugin : ProjectPlugin({
 	apply {
-		plugin<build.kt.jvm.lib._plugin>()
+		plugin<build.kt.mpp.lib._plugin>()
 	}
 
 	@OptIn(InternalApi::class)
-	BuildFoundation.ensureMultipurpose(this)
+	BuildFoundation.setUpAsBuildInclusive(this)
 })
