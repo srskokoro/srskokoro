@@ -5,6 +5,7 @@ import build.foundation.BuildFoundation.env__extension
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
@@ -17,7 +18,7 @@ private sealed class TestTaskSetupInDoFirst<T : AbstractTestTask>(task: T) : Act
 	// NOTE: We must set this up now, because `extensions` isn't supported by
 	// the configuration cache, i.e., accessing `extensions` during execution
 	// time will fail.
-	protected val env = LinkedHashMap<String, String>().also { env ->
+	protected val env = LinkedHashMap<String, Any>().also { env ->
 		task.extensions.add(env__extension, env)
 
 		// Speed up startup time for when using Kotest. See also,
@@ -49,7 +50,7 @@ private sealed class TestTaskSetupInDoFirst<T : AbstractTestTask>(task: T) : Act
 	class ForNative(task: KotlinNativeTest) : TestTaskSetupInDoFirst<KotlinNativeTest>(task) {
 
 		override fun execute(task: KotlinNativeTest, ioTmpDir: File, testTmpDir: File) {
-			env.forEach { (k, v) -> task.environment(k, v, false) }
+			for ((k, p) in env) resolveString(p)?.let { v -> task.environment(k, v, false) }
 
 			// See also,
 			// - https://github.com/square/okio/blob/parent-3.7.0/okio/src/unixMain/kotlin/okio/UnixPosixVariant.kt#L55
@@ -69,7 +70,7 @@ private sealed class TestTaskSetupInDoFirst<T : AbstractTestTask>(task: T) : Act
 	class ForJs(task: KotlinJsTest) : TestTaskSetupInDoFirst<KotlinJsTest>(task) {
 
 		override fun execute(task: KotlinJsTest, ioTmpDir: File, testTmpDir: File) {
-			env.forEach { (k, v) -> task.environment(k, v) }
+			for ((k, p) in env) resolveString(p)?.let { v -> task.environment(k, v) }
 
 			ioTmpDir.path.let {
 				task.environment("TMPDIR", it)
@@ -84,9 +85,22 @@ private sealed class TestTaskSetupInDoFirst<T : AbstractTestTask>(task: T) : Act
 	class ForJvm(task: Test) : TestTaskSetupInDoFirst<Test>(task) {
 
 		override fun execute(task: Test, ioTmpDir: File, testTmpDir: File) {
-			env.forEach { (k, v) -> task.environment(k, v) }
+			for ((k, p) in env) resolveString(p)?.let { v -> task.environment(k, v) }
 			task.systemProperty("java.io.tmpdir", ioTmpDir.path)
 			task.environment(TEST_TMPDIR, testTmpDir.path)
+		}
+	}
+
+	companion object {
+		internal fun resolveString(provider: Any): String? {
+			var value: Any? = provider
+			while (true) {
+				if (value is Provider<*>) {
+					value = value.orNull
+				} else {
+					return value?.toString()
+				}
+			}
 		}
 	}
 }
