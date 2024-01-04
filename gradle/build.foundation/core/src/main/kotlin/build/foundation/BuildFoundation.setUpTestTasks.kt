@@ -28,6 +28,10 @@ private sealed class TestTaskSetupInDoFirst<T : AbstractTestTask>(task: T) : Act
 		env["kotest_framework_classpath_scanning_autoscan_disable"] = "true"
 		env["kotest_framework_classpath_scanning_config_disable"] = "true"
 		env["kotest_framework_discovery_jar_scan_disable"] = "true"
+
+		// See also, https://stackoverflow.com/a/52629195
+		env["kotest_framework_parallelism"] =
+			Runtime.getRuntime().availableProcessors().coerceAtLeast(2)
 	}
 
 	override fun execute(task: Task) {
@@ -86,13 +90,20 @@ private sealed class TestTaskSetupInDoFirst<T : AbstractTestTask>(task: T) : Act
 
 		override fun execute(task: Test, ioTmpDir: File, testTmpDir: File) {
 			for ((k, p) in env) resolveString(p)?.let { v -> task.environment(k, v) }
+
 			task.systemProperty("java.io.tmpdir", ioTmpDir.path)
 			task.environment(TEST_TMPDIR, testTmpDir.path)
+
+			// NOTE: At the moment, Kotest on JVM only reads the system property
+			// for this and ignores the equivalent environment variable.
+			resolveString(env["kotest_framework_parallelism"])?.let {
+				task.systemProperty("kotest.framework.parallelism", it)
+			}
 		}
 	}
 
 	companion object {
-		internal fun resolveString(provider: Any): String? {
+		internal fun resolveString(provider: Any?): String? {
 			var value: Any? = provider
 			while (true) {
 				if (value is Provider<*>) {
