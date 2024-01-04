@@ -73,4 +73,5 @@ kotlin.sourceSets {
 dependencies {
 	implementation(project(":support"))
 	testImplementation(project(":testing"))
+	testImplementation(kotlin("test"))
 }

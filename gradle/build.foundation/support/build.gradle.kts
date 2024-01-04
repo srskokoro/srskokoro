@@ -5,4 +5,5 @@ plugins {
 dependencies {
 	testImplementation("build.foundation:core")
 	testImplementation(project(":testing"))
+	testImplementation(kotlin("test"))
 }
