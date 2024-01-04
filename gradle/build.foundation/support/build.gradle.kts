@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-	testImplementation(":build.foundation")
+	testImplementation("build.foundation:core")
 	testImplementation(project(":testing"))
 }

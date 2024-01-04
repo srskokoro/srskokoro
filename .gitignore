@@ -37,8 +37,8 @@ google-services.json
 
 # Exclude auto-generated properties files
 /dependencies/gradle.properties
+/gradle/build.foundation/core/gradle.properties
 /gradle/build.foundation/gradle.properties
-/gradle/build.support/gradle.properties
 /gradle/conventions/gradle.properties
 /gradle/multipurpose/gradle.properties
 

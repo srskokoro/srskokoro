@@ -5,7 +5,7 @@ plugins {
 }
 
 gradle.includedBuilds(
-	"build.support",
+	"build.foundation",
 	"conventions",
 	"multipurpose",
 ).let { builds ->

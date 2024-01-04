@@ -19,5 +19,5 @@ dependencies {
 	// Ensure that we're really using `JUnit5` (failing otherwise).
 	tasks.test { check(testFramework is JUnitPlatformTestFramework) }
 
-	testImplementation(":build.foundation")
+	testImplementation("build.foundation:core")
 }

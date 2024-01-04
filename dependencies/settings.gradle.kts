@@ -1,5 +1,5 @@
 pluginManagement {
-	includeBuild("../gradle/build.support")
+	includeBuild("../gradle/build.foundation")
 }
 plugins {
 	id("build.dependencies")

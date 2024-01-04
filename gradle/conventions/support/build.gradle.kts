@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-	api("build.support:support")
+	api("build.foundation:support")
 	testImplementation(project(":testing.conventions"))
 }

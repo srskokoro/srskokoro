@@ -5,8 +5,8 @@ plugins {
 }
 
 dependencies {
-	api("build.support:support")
-	api("build.support:testing")
+	api("build.foundation:support")
+	api("build.foundation:testing")
 	api(project(":testing"))
 	compileOnlyTestImpl(gradleTestKit())
 }

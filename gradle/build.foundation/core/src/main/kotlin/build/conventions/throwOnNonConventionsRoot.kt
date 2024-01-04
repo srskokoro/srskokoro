@@ -14,7 +14,7 @@ fun Settings.throwOnNonConventionsRoot() =
 
 private fun throwOnNonConventionsRoot(rootProjectName: String) {
 	when (rootProjectName) {
-		"build.support" -> {}
+		"build.foundation" -> {}
 		"conventions" -> {}
 		else -> error("This plugin has been forbidden for this build as it may affect the buildscript classpath")
 	}

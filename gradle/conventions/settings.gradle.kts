@@ -1,8 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
 pluginManagement {
-	includeBuild("../build.support")
 	includeBuild("../build.foundation")
+	includeBuild("../build.foundation/core")
 	repositories.gradlePluginPortal()
 }
 plugins {

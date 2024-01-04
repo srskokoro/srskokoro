@@ -7,8 +7,8 @@ plugins {
 }
 
 gradle.includedBuilds(
+	"core",
 	"build.foundation",
-	"build.support",
 ).let { builds ->
 	tasks {
 		check { dependOnSameTaskFromIncludedBuildsOrFail(builds) }

@@ -5,7 +5,7 @@ pluginManagement {
 	// and not cause any KMP projects to be built, which (at the moment) will
 	// fail, since KMP requires the `rootProject` of the root of the composite
 	// build (which isn't available yet while `settings` is being configured).
-	includeBuild("../build.support")
+	includeBuild("../build.foundation")
 	// NOTE: May have KMP projects.
 	includeBuild("../conventions")
 

@@ -3,6 +3,6 @@ plugins {
 }
 
 dependencies {
-	implementation(":build.foundation")
+	api("build.foundation:core")
 	implementation(project(":support"))
 }

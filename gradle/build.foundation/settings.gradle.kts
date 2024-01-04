@@ -1,9 +1,16 @@
 @file:Suppress("UnstableApiUsage")
 
-dependencyResolutionManagement {
+pluginManagement {
+	includeBuild("core")
 	repositories.gradlePluginPortal()
 }
 
-gradle.allprojects {
-	layout.buildDirectory.set(file(".build"))
+dependencyResolutionManagement {
+	includeBuild("core")
+	repositories.gradlePluginPortal()
 }
+
+include("complement")
+include("dependencies")
+include("support")
+include("testing")
