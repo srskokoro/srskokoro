@@ -103,16 +103,9 @@ private sealed class TestTaskSetupInDoFirst<T : AbstractTestTask>(task: T) : Act
 	}
 
 	companion object {
-		internal fun resolveString(provider: Any?): String? {
-			var value: Any? = provider
-			while (true) {
-				if (value is Provider<*>) {
-					value = value.orNull
-				} else {
-					return value?.toString()
-				}
-			}
-		}
+		internal tailrec fun resolveString(provider: Any?): String? =
+			if (provider !is Provider<*>) provider?.toString()
+			else resolveString(provider.orNull)
 	}
 }
 
