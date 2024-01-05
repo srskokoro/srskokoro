@@ -9,6 +9,7 @@ pluginManagement {
 	autoGradleProperties("gradle/build.foundation/core")
 	includeBuild(autoGradleProperties("gradle/build.foundation"))
 	includeBuild(autoGradleProperties("gradle/conventions"))
+	includeBuild(autoGradleProperties("gradle/plugins"))
 
 	repositories.gradlePluginPortal()
 }

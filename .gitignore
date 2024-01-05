@@ -41,7 +41,7 @@ google-services.json
 /gradle/build.foundation/gradle.properties
 /gradle/conventions/gradle.properties
 /gradle/inclusives/gradle.properties
+/gradle/plugins/gradle.properties
 
 /gradle/build.logic/gradle.properties
-/gradle/plugins/gradle.properties
 /gradle/support/gradle.properties
