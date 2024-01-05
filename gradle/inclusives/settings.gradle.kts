@@ -1,6 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
 pluginManagement {
+	extra["build.structure.root"] = "../.."
+
 	// NOTE: Must be first, so `Settings` plugins would be looked up here first,
 	// and not cause any KMP projects to be built, which (at the moment) will
 	// fail, since KMP requires the `rootProject` of the root of the composite
@@ -13,6 +15,7 @@ pluginManagement {
 }
 plugins {
 	id("build.dependencies")
+	id("build.structure.inclusives")
 }
 
 dependencySettings {
