@@ -18,7 +18,7 @@ class _plugin : ProjectPlugin({
 	@OptIn(InternalApi::class)
 	BuildFoundation.setUpTestTasks(this)
 
-	if (group != "multipurpose" && name != "testing") {
-		dependencies.commonTestImplementation("multipurpose:testing")
+	if (group != "inclusives" && name != "testing") {
+		dependencies.commonTestImplementation("inclusives:testing")
 	}
 })

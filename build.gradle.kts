@@ -7,7 +7,7 @@ plugins {
 gradle.includedBuilds(
 	"build.foundation",
 	"conventions",
-	"multipurpose",
+	"inclusives",
 ).let { builds ->
 	tasks {
 		check { dependOnSameTaskFromIncludedBuildsOrFail(builds) }

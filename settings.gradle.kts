@@ -22,7 +22,7 @@ dependencySettings {
 	includeBuild("dependencies")
 }
 dependencyResolutionManagement {
-	includeBuild(autoGradleProperties("gradle/multipurpose"))
+	includeBuild(autoGradleProperties("gradle/inclusives"))
 
 	repositories {
 		mavenCentral()
