@@ -1,11 +1,11 @@
 package build.root
 
 import assertk.assertAll
-import assertk.assertThat
 import assertk.assertions.isFailure
 import assertk.assertions.isSuccess
 import build.plugins.test.buildProject
 import build.plugins.test.io.TestTemp
+import build.test.assertResult
 import io.kotest.core.spec.style.FunSpec
 import org.gradle.kotlin.dsl.*
 
@@ -15,8 +15,8 @@ class test__plugin : FunSpec({
 		val child = buildProject(TestTemp.from(this, "0/0")) { withParent(parent) }
 
 		assertAll {
-			assertThat(runCatching { parent.apply<_plugin>() }).isSuccess()
-			assertThat(runCatching { child.apply<_plugin>() }).isFailure()
+			assertResult { parent.apply<_plugin>() }.isSuccess()
+			assertResult { child.apply<_plugin>() }.isFailure()
 		}
 	}
 })
