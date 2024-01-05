@@ -1,7 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 pluginManagement {
-	extra["build.structure.root"] = rootDir
+	extra["build.structure.root"] = "."
 
 	apply(from = "settings.init.gradle.kts")
 	val autoGradleProperties: (String) -> String by extra
