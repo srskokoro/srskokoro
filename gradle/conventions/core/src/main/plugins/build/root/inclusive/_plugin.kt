@@ -14,7 +14,7 @@ class _plugin : ProjectPlugin({
 		if (plugins.hasPlugin(_plugin::class.java)) return
 		if (plugins.hasPlugin(build.base._plugin::class.java)) error(
 			"""
-			All projects of this build must have "build.base.inclusive" plugin applied or
+			Each project of this build should have "build.base.inclusive" plugin applied or
 			must not have "build.base" plugin applied.
 			""".trimIndent()
 		)
