@@ -13,9 +13,17 @@ internal fun Settings.getStructureRoot(): Path {
 	val structureRootValue = extra.getOrElse<Any>("build.structure.root") {
 		error("Must set up structure root path via extra property key \"$it\" (or via 'gradle.properties' file)")
 	}
+
 	var structureRootPath = Path.of(structureRootValue.toString())
 	if (!structureRootPath.isAbsolute) structureRootPath = rootDir.toPath() / structureRootPath
-	return structureRootPath.normalize()
+	structureRootPath = structureRootPath.normalize()
+
+	// Guard against an unintended path set as the structure root
+	if (!structureRootPath.div("settings.gradle.kts").exists() && !structureRootPath.div("settings.gradle").exists()) {
+		error("Structure root must be a valid build with a Gradle `settings` file (even if empty)" +
+			"\n- Structure root: $structureRootPath")
+	}
+	return structureRootPath
 }
 
 internal fun Settings.autoIncludeSubProjects(parentDir: Path, parentProjectId: String) {
