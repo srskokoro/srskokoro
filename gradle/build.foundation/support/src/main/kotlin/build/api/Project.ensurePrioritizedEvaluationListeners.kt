@@ -32,7 +32,7 @@ private fun Gradle.ensurePrioritizedEvaluationListenersWillExec(): Unit = xs().r
 	// Immediately mark as set up, even if the code after it fails.
 	add(prioritizedEvaluationListeners__name, true)
 
-	gradle().addProjectEvaluationListener(PrioritizedEvaluationListenersSetup)
+	gradleThis.addProjectEvaluationListener(PrioritizedEvaluationListenersSetup)
 }
 
 private object PrioritizedEvaluationListenersSetup : ProjectEvaluationListener {
