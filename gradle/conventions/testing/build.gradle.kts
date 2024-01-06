@@ -30,6 +30,7 @@ private object Build {
 
 dependencies {
 	commonMainRuntimeOnly("io.kotest:kotest-assertions-shared")
+	nativeMainImplementation("io.kotest:kotest-assertions-shared")
 	commonMainApi("io.kotest:kotest-framework-engine", Build::excludeKotestAssertions)
 	jvmMainApi("io.kotest:kotest-runner-junit5", Build::excludeKotestAssertions)
 	projectThis.tasks.run { Build.assert_JUnit5(jvmTest) }
