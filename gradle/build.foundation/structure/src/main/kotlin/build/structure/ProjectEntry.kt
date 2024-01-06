@@ -3,8 +3,8 @@ package build.structure
 import java.io.File
 import java.util.LinkedList
 
-private const val D_BUILD_INCLUSIVE = ".build-inclusive"
-private const val D_BUILD_PLUGIN = ".build-plugin"
+internal const val D_BUILD_INCLUSIVE = ".build-inclusive"
+internal const val D_BUILD_PLUGIN = ".build-plugin"
 
 internal data class ProjectEntry(
 	val parent: ProjectEntry?,
