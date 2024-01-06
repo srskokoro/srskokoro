@@ -5,14 +5,14 @@ import assertk.assertThat
 import assertk.assertions.isTrue
 import build.plugins.test.buildProject
 import build.plugins.test.io.TestTemp
-import io.kotest.core.spec.style.FunSpec
+import io.kotest.core.spec.style.FreeSpec
 import io.kotest.core.test.TestScope
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 
-class test__plugin : FunSpec({
-	test("All known convention plugins delegate to the 'base' plugin") {
+class test__plugin : FreeSpec({
+	"All known convention plugins delegate to the 'base' plugin" {
 		assertAll {
 			assertTrue { hasBasePlugin<build.kt.jvm._plugin>() }
 			assertTrue { hasBasePlugin<build.kt.jvm.lib._plugin>() }
