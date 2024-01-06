@@ -1,9 +1,11 @@
 package build.structure.inclusives
 
 import build.api.SettingsPlugin
-import build.structure.autoIncludeBuildInclusiveSubProjects
+import build.structure.ProjectStructure
+import build.structure.findProjects
 import build.structure.getStructureRoot
+import build.structure.include
 
 class _plugin : SettingsPlugin({
-	autoIncludeBuildInclusiveSubProjects(getStructureRoot(), "")
+	include(ProjectStructure.BUILD_INCLUSIVES.findProjects(getStructureRoot(), providers))
 })
