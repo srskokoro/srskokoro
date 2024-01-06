@@ -48,6 +48,7 @@ dependencySettings {
 	module("io.kotest:kotest-framework-engine", kotest)
 	module("io.kotest:kotest-framework-multiplatform-plugin-gradle", kotest)
 	module("io.kotest:kotest-runner-junit5", kotest)
+	module("io.kotest:kotest-property", kotest)
 
 	val assertk = "0.28.0" // https://github.com/willowtreeapps/assertk/releases
 	module("com.willowtreeapps.assertk:assertk", assertk)

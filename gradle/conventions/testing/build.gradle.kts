@@ -26,6 +26,7 @@ dependencies {
 		// Ensure that we're really using `JUnit5` (failing otherwise).
 		tasks.jvmTest { check(testFramework is JUnitPlatformTestFramework) }
 	}
+	commonMainApi("io.kotest:kotest-property", Build::excludeKotestAssertions)
 
 	commonMainApi("com.willowtreeapps.assertk:assertk")
 }
