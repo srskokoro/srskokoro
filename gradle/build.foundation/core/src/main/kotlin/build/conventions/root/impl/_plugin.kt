@@ -1,5 +1,6 @@
 package build.conventions.root.impl
 
+import build.foundation.PropertiesSource
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -25,8 +26,26 @@ class _plugin : Plugin<Project> {
 private fun Project.apply_() {
 	check(parent == null) { "Must only be applied to the root project" }
 
+	// NOTE: `local.properties` isn't automatically loaded into `extra` (unlike
+	// Gradle properties). KGP also doesn't do that, rather, it uses an internal
+	// build service, `PropertiesBuildService`. We should however keep our
+	// loading logic consistent with `PropertiesBuildService`.
+	// - See, https://github.com/JetBrains/kotlin/blob/v1.9.22/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/plugin/PropertiesBuildService.kt#L21
+	// - Also, according to that, only the root project's `local.properties` is
+	// considered -- it is shared across all projects.
+	val localProperties = providers.of(PropertiesSource::class.java) {
+		parameters.from.set(File(projectDir, "local.properties"))
+	}.get()
+
 	allprojects {
 		layout.buildDirectory.set(file(".build"))
+
+		val extra = extra
+		for ((k, v) in localProperties) {
+			// Should not override existing values (to keep it consistent with
+			// `PropertiesBuildService` from KGP).
+			if (!extra.has(k as String)) extra.set(k, v)
+		}
 	}
 
 	apply {
