@@ -1,6 +1,7 @@
 package build.foundation
 
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 fun BuildFoundation.setUpMppLibTargets(project: Project): Unit = with(project) {
@@ -16,33 +17,37 @@ fun BuildFoundation.setUpMppLibTargets(project: Project): Unit = with(project) {
 		// - https://github.com/kotest/kotest/blob/v5.8.0/buildSrc/src/main/kotlin/kotest-js-conventions.gradle.kts
 		// - https://github.com/kotest/kotest/blob/v5.8.0/buildSrc/src/main/kotlin/kotest-native-conventions.gradle.kts
 
-		js(IR) {
-			browser()
-			nodejs()
-		}
-
 		jvm()
 
-		iosX64()
-		iosArm64()
-		iosSimulatorArm64()
+		if ("true".equals(project.extra.getOrNull("BUILD_KJS") ?: "true", ignoreCase = true)) {
+			js(IR) {
+				browser()
+				nodejs()
+			}
+		}
 
-		tvosX64()
-		tvosArm64()
-		tvosSimulatorArm64()
+		if ("true".equals(project.extra.getOrNull("BUILD_KN") ?: "true", ignoreCase = true)) {
+			iosX64()
+			iosArm64()
+			iosSimulatorArm64()
 
-		watchosX64()
-		watchosArm32()
-		watchosArm64()
-//		watchosDeviceArm64()
-		watchosSimulatorArm64()
+			tvosX64()
+			tvosArm64()
+			tvosSimulatorArm64()
 
-		linuxX64()
-		linuxArm64()
+			watchosX64()
+			watchosArm32()
+			watchosArm64()
+//			watchosDeviceArm64()
+			watchosSimulatorArm64()
 
-		macosX64()
-		macosArm64()
+			linuxX64()
+			linuxArm64()
 
-		mingwX64()
+			macosX64()
+			macosArm64()
+
+			mingwX64()
+		}
 	}
 }
