@@ -1,7 +1,6 @@
 package build.foundation
 
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 fun BuildFoundation.setUpMppLibTargets(project: Project): Unit = with(project) {
@@ -19,35 +18,31 @@ fun BuildFoundation.setUpMppLibTargets(project: Project): Unit = with(project) {
 
 		jvm()
 
-		if (project.extra.parseBoolean("BUILD_KJS", true)) {
-			js(IR) {
-				browser()
-				nodejs()
-			}
+		js(IR) {
+			browser()
+			nodejs()
 		}
 
-		if (project.extra.parseBoolean("BUILD_KN", true)) {
-			iosX64()
-			iosArm64()
-			iosSimulatorArm64()
+		iosX64()
+		iosArm64()
+		iosSimulatorArm64()
 
-			tvosX64()
-			tvosArm64()
-			tvosSimulatorArm64()
+		tvosX64()
+		tvosArm64()
+		tvosSimulatorArm64()
 
-			watchosX64()
-			watchosArm32()
-			watchosArm64()
-//			watchosDeviceArm64()
-			watchosSimulatorArm64()
+		watchosX64()
+		watchosArm32()
+		watchosArm64()
+//		watchosDeviceArm64()
+		watchosSimulatorArm64()
 
-			linuxX64()
-			linuxArm64()
+		linuxX64()
+		linuxArm64()
 
-			macosX64()
-			macosArm64()
+		macosX64()
+		macosArm64()
 
-			mingwX64()
-		}
+		mingwX64()
 	}
 }
