@@ -8,22 +8,22 @@ import java.util.LinkedList
 // compatibility with Gradle's configuration cache.
 internal enum class ProjectStructure {
 	INCLUDES {
-		override fun findProjects(structureRoot: File, output: LinkedList<ProjectEntry>) {
-			findIncludes(structureRoot, null, output)
+		override fun findProjects(structureRoot: File, out: LinkedList<ProjectEntry>) {
+			findIncludes(structureRoot, null, out)
 		}
 	},
 	BUILD_INCLUSIVES {
-		override fun findProjects(structureRoot: File, output: LinkedList<ProjectEntry>) {
-			findBuildInclusives(structureRoot, null, output)
+		override fun findProjects(structureRoot: File, out: LinkedList<ProjectEntry>) {
+			findBuildInclusives(structureRoot, null, out)
 		}
 	},
 	BUILD_PLUGINS {
-		override fun findProjects(structureRoot: File, output: LinkedList<ProjectEntry>) {
-			findBuildPlugins(structureRoot, null, output)
+		override fun findProjects(structureRoot: File, out: LinkedList<ProjectEntry>) {
+			findBuildPlugins(structureRoot, null, out)
 		}
 	};
 
-	abstract fun findProjects(structureRoot: File, output: LinkedList<ProjectEntry>)
+	abstract fun findProjects(structureRoot: File, out: LinkedList<ProjectEntry>)
 }
 
 @Suppress("NOTHING_TO_INLINE")
