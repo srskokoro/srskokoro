@@ -5,8 +5,11 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.UnknownTaskException
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.initialization.SettingsLocation
 import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 import java.io.File
@@ -33,8 +36,11 @@ private fun Project.apply_() {
 	// - See, https://github.com/JetBrains/kotlin/blob/v1.9.22/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/plugin/PropertiesBuildService.kt#L21
 	// - Also, according to that, only the root project's `local.properties` is
 	// considered -- it is shared across all projects.
+
+	// Load the `local.properties` file from the root Gradle build instead
+	val localPropertiesFile = File(gradle.findRoot().serviceOf<SettingsLocation>().settingsDir, "local.properties")
 	val localProperties = providers.of(PropertiesSource::class.java) {
-		parameters.from.set(File(projectDir, "local.properties"))
+		parameters.from.set(localPropertiesFile)
 	}.get()
 
 	allprojects {
@@ -58,6 +64,18 @@ private fun Project.apply_() {
 			named("clean") { dependOnSameTaskFromSubProjects() }
 		}
 	}
+}
+
+private fun Gradle.findRoot(): Gradle {
+	var gradle = this
+	var parent = gradle.parent
+
+	while (parent != null) {
+		gradle = parent
+		parent = gradle.parent
+	}
+
+	return gradle
 }
 
 private fun Task.dependOnSameTaskFromSubProjects() {
