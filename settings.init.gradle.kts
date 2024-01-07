@@ -21,15 +21,23 @@ extra["autoGradleProperties"] = fun(rootProject: String): String {
 		 * @see build.support.io.transformFileAtomic
 		 */
 		File(settingsDir, "gradle.properties").let { source ->
-			if (!source.isFile) return@let
-			transformFileAtomic(source, File(targetDir, "gradle.properties")) {
+			val target = File(targetDir, "gradle.properties")
+			if (!source.isFile) {
+				target.delete()
+				return@let
+			}
+			transformFileAtomic(source, target) {
 				val props = Properties().apply { load(source.inputStream()) }
 				props.store(Channels.newOutputStream(it), " Auto-generated file. DO NOT EDIT!")
 			}
 		}
 		File(settingsDir, "local.properties").let { source ->
-			if (!source.isFile) return@let
-			transformFileAtomic(source, File(targetDir, "local.properties")) {
+			val target = File(targetDir, "local.properties")
+			if (!source.isFile) {
+				target.delete()
+				return@let
+			}
+			transformFileAtomic(source, target) {
 				val props = Properties().apply { load(source.inputStream()) }
 				props.store(Channels.newOutputStream(it), " Auto-generated file. DO NOT EDIT!")
 			}
