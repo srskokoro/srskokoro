@@ -13,9 +13,9 @@ internal abstract class ProjectStructureSource : ValueSource<LinkedList<ProjectE
 		val finder: Property<ProjectStructure>
 	}
 
-	override fun obtain() = LinkedList<ProjectEntry>().also { output ->
+	override fun obtain() = LinkedList<ProjectEntry>().also { out ->
 		val structureRoot = parameters.structureRoot.get()
 		val finder = parameters.finder.get()
-		finder.findProjects(structureRoot, output)
+		finder.findProjects(structureRoot, out)
 	}
 }
