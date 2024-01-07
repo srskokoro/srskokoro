@@ -1,6 +1,7 @@
 package build.conventions
 
 import build.conventions.PluginsAutoRegistrant.Companion.PLUGIN_CLASS
+import org.gradle.api.Describable
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.EmptyFileVisitor
@@ -37,7 +38,7 @@ internal fun installPluginsAutoRegistrant(main: KotlinSourceSet): Unit = main.pr
 	}
 }
 
-internal abstract class PluginsAutoRegistrant : ValueSource<Set<String>, PluginsAutoRegistrant.Parameters> {
+internal abstract class PluginsAutoRegistrant : ValueSource<Set<String>, PluginsAutoRegistrant.Parameters>, Describable {
 
 	companion object {
 		const val PLUGIN_CLASS = "_plugin"
@@ -46,6 +47,8 @@ internal abstract class PluginsAutoRegistrant : ValueSource<Set<String>, Plugins
 	interface Parameters : ValueSourceParameters {
 		val pluginsDir: DirectoryProperty
 	}
+
+	override fun getDisplayName() = "plugins under '${parameters.pluginsDir.get()}'"
 
 	override fun obtain() = mutableSetOf<String>().also { out ->
 		parameters.pluginsDir.asFileTree.visit(object : EmptyFileVisitor() {
