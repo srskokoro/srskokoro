@@ -8,7 +8,6 @@ import org.gradle.api.Task
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
-import org.gradle.internal.extensibility.DefaultExtraPropertiesExtension
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
@@ -131,20 +130,12 @@ fun BuildFoundation.setUpTestTasks(project: Project) {
 }
 
 private fun AbstractTestTask.doTestGivenProjectExtra(extraName: String) {
-	project.extra.let { extra ->
-		val x = if (extra is DefaultExtraPropertiesExtension) {
-			extra.find(extraName) ?: return@let
-		} else if (extra.has(extraName)) {
-			extra.get(extraName) ?: return@let
-		} else return@let
-
-		if (!"true".equals(x.toString(), true)) {
-			// Skip test task.
-			//
-			// NOTE: Can't use `onlyIf` as it'll skip only *this* task.
-			// - See, https://stackoverflow.com/q/16214865
-			enabled = false
-			setDependsOn(emptyList<Any?>())
-		}
+	if (!"true".equals(project.extra.getOrNull(extraName) ?: "true", ignoreCase = true)) {
+		// Skip test task.
+		//
+		// NOTE: Can't use `onlyIf` as it'll skip only *this* task.
+		// - See, https://stackoverflow.com/q/16214865
+		enabled = false
+		setDependsOn(emptyList<Any?>())
 	}
 }
