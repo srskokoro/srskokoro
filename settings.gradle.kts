@@ -20,7 +20,7 @@ plugins {
 
 val autoGradleProperties: (String) -> String by extra
 dependencySettings {
-	includeBuild("dependencies")
+	includeBuild(autoGradleProperties("dependencies"))
 }
 dependencyResolutionManagement {
 	includeBuild(autoGradleProperties("gradle/inclusives"))
