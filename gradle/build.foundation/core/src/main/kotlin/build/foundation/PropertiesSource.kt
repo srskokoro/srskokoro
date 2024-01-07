@@ -13,7 +13,7 @@ internal abstract class PropertiesSource : ValueSource<Properties, PropertiesSou
 		val from: RegularFileProperty
 	}
 
-	override fun getDisplayName(): String = "properties file '${parameters.from.get().asFile}'"
+	override fun getDisplayName() = "properties file '${parameters.from.get()}'"
 
 	override fun obtain() = Properties().also { out ->
 		val from = parameters.from.get().asFile
