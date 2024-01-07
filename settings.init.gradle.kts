@@ -27,6 +27,13 @@ extra["autoGradleProperties"] = fun(rootProject: String): String {
 				props.store(Channels.newOutputStream(it), " Auto-generated file. DO NOT EDIT!")
 			}
 		}
+		File(settingsDir, "local.properties").let { source ->
+			if (!source.isFile) return@let
+			transformFileAtomic(source, File(targetDir, "local.properties")) {
+				val props = Properties().apply { load(source.inputStream()) }
+				props.store(Channels.newOutputStream(it), " Auto-generated file. DO NOT EDIT!")
+			}
+		}
 	}
 
 	return rootProject
