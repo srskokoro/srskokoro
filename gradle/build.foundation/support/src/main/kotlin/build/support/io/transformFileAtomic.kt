@@ -9,7 +9,6 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption.ATOMIC_MOVE
 import java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import java.nio.file.StandardOpenOption.*
-import java.nio.file.FileSystemException as NioFileSystemException
 
 /**
  * @see ProviderFactory.callUntracked
@@ -130,6 +129,6 @@ internal fun transformFileAtomic_error(destination: File, tmp: File, cause: Thro
 		cause.addSuppressed(ex)
 	}
 	return if (cause is Error) cause
-	else NioFileSystemException(destination.path)
+	else FileSystemException(destination)
 		.apply { initCause(cause) }
 }

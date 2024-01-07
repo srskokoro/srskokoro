@@ -7,7 +7,6 @@ import java.nio.file.StandardOpenOption.*
 import java.util.Properties
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
-import java.nio.file.FileSystemException as NioFileSystemException
 
 extra["autoGradleProperties"] = fun(rootProject: String): String {
 	val settingsDir = settings.settingsDir
@@ -138,7 +137,7 @@ internal fun transformFileAtomic_error(destination: File, tmp: File, cause: Thro
 		cause.addSuppressed(ex)
 	}
 	return if (cause is Error) cause
-	else NioFileSystemException(destination.path)
+	else FileSystemException(destination)
 		.apply { initCause(cause) }
 }
 
