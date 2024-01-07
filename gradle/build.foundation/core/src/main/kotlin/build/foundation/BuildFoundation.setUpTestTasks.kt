@@ -8,6 +8,7 @@ import org.gradle.api.Task
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
+import org.gradle.internal.extensibility.DefaultExtraPropertiesExtension
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
@@ -109,14 +110,18 @@ private sealed class TestTaskSetupInDoFirst<T : AbstractTestTask>(task: T) : Act
 	}
 }
 
-fun BuildFoundation.setUpTestTasks(project: Project): Unit = with(project) {
-	tasks.withType<AbstractTestTask>().configureEach {
+fun BuildFoundation.setUpTestTasks(project: Project) {
+	project.tasks.withType<AbstractTestTask>().configureEach {
 		when (this) {
 			is KotlinNativeTest -> run {
 				doFirst(TestTaskSetupInDoFirst.ForNative(this))
+				val shouldDoTest = this.project.shouldDoTest("TEST_KN")
+				onlyIf { shouldDoTest.get() }
 			}
 			is KotlinJsTest -> run {
 				doFirst(TestTaskSetupInDoFirst.ForJs(this))
+				val shouldDoTest = this.project.shouldDoTest("TEST_KJS")
+				onlyIf { shouldDoTest.get() }
 			}
 			is Test -> run {
 				doFirst(TestTaskSetupInDoFirst.ForJvm(this))
@@ -126,3 +131,18 @@ fun BuildFoundation.setUpTestTasks(project: Project): Unit = with(project) {
 		}
 	}
 }
+
+private fun Project.shouldDoTest(extraName: String) = provider(fun(): Boolean {
+	extra.let { extra ->
+		val x = if (extra is DefaultExtraPropertiesExtension) {
+			extra.find(extraName) ?: return@let
+		} else if (extra.has(extraName)) {
+			extra.get(extraName) ?: return@let
+		} else return@let
+
+		if (!"true".equals(x.toString(), true)) {
+			return false
+		}
+	}
+	return true
+})
