@@ -19,14 +19,14 @@ fun BuildFoundation.setUpMppLibTargets(project: Project): Unit = with(project) {
 
 		jvm()
 
-		if ("true".equals(project.extra.getOrNull("BUILD_KJS") ?: "true", ignoreCase = true)) {
+		if (project.extra.parseBoolean("BUILD_KJS", true)) {
 			js(IR) {
 				browser()
 				nodejs()
 			}
 		}
 
-		if ("true".equals(project.extra.getOrNull("BUILD_KN") ?: "true", ignoreCase = true)) {
+		if (project.extra.parseBoolean("BUILD_KN", true)) {
 			iosX64()
 			iosArm64()
 			iosSimulatorArm64()

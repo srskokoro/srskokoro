@@ -130,7 +130,7 @@ fun BuildFoundation.setUpTestTasks(project: Project) {
 }
 
 private fun AbstractTestTask.doTestGivenProjectExtra(extraName: String) {
-	if (!"true".equals(project.extra.getOrNull(extraName) ?: "true", ignoreCase = true)) {
+	if (!project.extra.parseBoolean(extraName, true)) {
 		// Skip test task.
 		//
 		// NOTE: Can't use `onlyIf` as it'll skip only *this* task.
