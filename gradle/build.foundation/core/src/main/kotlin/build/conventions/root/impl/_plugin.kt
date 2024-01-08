@@ -29,6 +29,9 @@ class _plugin : Plugin<Project> {
 private fun Project.apply_() {
 	check(parent == null) { "Must only be applied to the root project" }
 
+	val rootSettingsDir = gradle.findRoot().serviceOf<SettingsLocation>().settingsDir
+	extra["rootSettingsDir"] = rootSettingsDir
+
 	// NOTE: `local.properties` isn't automatically loaded into `extra` (unlike
 	// Gradle properties). KGP also doesn't do that, rather, it uses an internal
 	// build service, `PropertiesBuildService`. We should however keep our
@@ -38,7 +41,7 @@ private fun Project.apply_() {
 	// considered -- it is shared across all projects.
 
 	// Load the `local.properties` file from the root Gradle build instead
-	val localPropertiesFile = File(gradle.findRoot().serviceOf<SettingsLocation>().settingsDir, "local.properties")
+	val localPropertiesFile = File(rootSettingsDir, "local.properties")
 	val localProperties = providers.of(PropertiesSource::class.java) {
 		parameters.from.set(localPropertiesFile)
 	}.get()
