@@ -1,7 +1,12 @@
 package build.foundation
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.internal.os.OperatingSystem
+import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import kotlin.reflect.KFunction2
 
 fun BuildFoundation.setUpMppLibTargets(project: Project): Unit = with(project) {
 	with(extensions.getByName("kotlin") as KotlinMultiplatformExtension) {
@@ -18,31 +23,74 @@ fun BuildFoundation.setUpMppLibTargets(project: Project): Unit = with(project) {
 
 		jvm()
 
-		js(IR) {
-			browser()
-			nodejs()
+		if (project.extra.parseBoolean("BUILD_KJS", true)) {
+			js(IR) {
+				browser()
+				nodejs()
+			}
+		} else {
+			configurations.registerDummyConfigurations("js")
 		}
 
-		iosX64()
-		iosArm64()
-		iosSimulatorArm64()
+		val s = KotlinTargetSetup()
+		run<KotlinTargetSetup> {
+			if (project.extra.parseBoolean("BUILD_KN", true)) s
+			else KotlinTargetSetup.Dummy(configurations)
+		}.let { x ->
+			x(::iosX64)
+			x(::iosArm64)
+			x(::iosSimulatorArm64)
 
-		tvosX64()
-		tvosArm64()
-		tvosSimulatorArm64()
+			x(::tvosX64)
+			x(::tvosArm64)
+			x(::tvosSimulatorArm64)
 
-		watchosX64()
-		watchosArm32()
-		watchosArm64()
-//		watchosDeviceArm64()
-		watchosSimulatorArm64()
+			x(::watchosX64)
+			x(::watchosArm32)
+			x(::watchosArm64)
+//			x(::watchosDeviceArm64)
+			x(::watchosSimulatorArm64)
 
-		linuxX64()
-		linuxArm64()
-
-		macosX64()
-		macosArm64()
-
-		mingwX64()
+			// See, https://stackoverflow.com/a/31443955
+			val os = OperatingSystem.current()
+			(if (os.isLinux) s else x).also { w ->
+				w(::linuxX64)
+				w(::linuxArm64)
+			}
+			(if (os.isMacOsX) s else x).also { w ->
+				w(::macosX64)
+				w(::macosArm64)
+			}
+			(if (os.isWindows) s else x).also { w ->
+				w(::mingwX64)
+			}
+		}
 	}
+}
+
+private open class KotlinTargetSetup {
+
+	operator fun <T : KotlinTarget> invoke(fn: KFunction2<String, T.() -> Unit, T>, configure: T.() -> Unit = {}) = invoke(fn, fn.name, configure)
+
+	open operator fun <T : KotlinTarget> invoke(fn: KFunction2<String, T.() -> Unit, T>, name: String, configure: T.() -> Unit = {}) {
+		fn.invoke(name, configure)
+	}
+
+	open class Dummy(val configurations: ConfigurationContainer) : KotlinTargetSetup() {
+
+		override fun <T : KotlinTarget> invoke(fn: KFunction2<String, T.() -> Unit, T>, name: String, configure: T.() -> Unit) {
+			configurations.registerDummyConfigurations(name)
+		}
+	}
+}
+
+private fun ConfigurationContainer.registerDummyConfigurations(name: String) {
+	register("${name}MainApi")
+	register("${name}MainImplementation")
+	register("${name}MainCompileOnly")
+	register("${name}MainRuntimeOnly")
+	register("${name}TestApi")
+	register("${name}TestImplementation")
+	register("${name}TestCompileOnly")
+	register("${name}TestRuntimeOnly")
 }
