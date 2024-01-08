@@ -1,10 +1,12 @@
 package build.foundation
 
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import kotlin.reflect.KFunction2
 
@@ -32,39 +34,53 @@ fun BuildFoundation.setUpMppLibTargets(project: Project): Unit = with(project) {
 			configurations.registerDummyConfigurations("js")
 		}
 
-		val s = KotlinTargetSetup()
+		val hs = KotlinHierarchySetup(sourceSets, configurations)
+		val ts = KotlinTargetSetup()
 		run<KotlinTargetSetup> {
-			if (project.extra.parseBoolean("BUILD_KN", true)) s
+			if (project.extra.parseBoolean("BUILD_KN", true)) ts
 			else KotlinTargetSetup.Dummy(configurations)
 		}.let { x ->
 			x(::iosX64)
 			x(::iosArm64)
 			x(::iosSimulatorArm64)
+			hs.ensureNode("ios")
 
 			x(::tvosX64)
 			x(::tvosArm64)
 			x(::tvosSimulatorArm64)
+			hs.ensureNode("tvos")
 
 			x(::watchosX64)
 			x(::watchosArm32)
 			x(::watchosArm64)
 //			x(::watchosDeviceArm64)
 			x(::watchosSimulatorArm64)
+			hs.ensureNode("watchos")
 
 			// See, https://stackoverflow.com/a/31443955
 			val os = OperatingSystem.current()
-			(if (os.isLinux) s else x).also { w ->
+
+			(if (os.isLinux) ts else x).also { w ->
 				w(::linuxX64)
 				w(::linuxArm64)
 			}
-			(if (os.isMacOsX) s else x).also { w ->
+			hs.ensureNode("linux")
+
+			(if (os.isMacOsX) ts else x).also { w ->
 				w(::macosX64)
 				w(::macosArm64)
 			}
-			(if (os.isWindows) s else x).also { w ->
+			hs.ensureNode("macos")
+
+			(if (os.isWindows) ts else x).also { w ->
 				w(::mingwX64)
 			}
+			hs.ensureNode("mingw")
+
+			// --
 		}
+		hs.ensureNode("apple")
+		hs.ensureNode("native")
 	}
 }
 
@@ -79,6 +95,17 @@ private open class KotlinTargetSetup {
 	open class Dummy(val configurations: ConfigurationContainer) : KotlinTargetSetup() {
 
 		override fun <T : KotlinTarget> invoke(fn: KFunction2<String, T.() -> Unit, T>, name: String, configure: T.() -> Unit) {
+			configurations.registerDummyConfigurations(name)
+		}
+	}
+}
+
+private class KotlinHierarchySetup(
+	val sourceSets: NamedDomainObjectContainer<KotlinSourceSet>,
+	val configurations: ConfigurationContainer,
+) {
+	fun ensureNode(name: String) {
+		if (sourceSets.findByName("${name}Main") == null) {
 			configurations.registerDummyConfigurations(name)
 		}
 	}
