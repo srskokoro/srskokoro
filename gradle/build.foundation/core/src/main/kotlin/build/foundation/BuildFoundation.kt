@@ -6,10 +6,15 @@ import org.gradle.kotlin.dsl.*
 @InternalApi
 object BuildFoundation {
 
+	// Named like this to discourage direct access
+	private const val mark__extension = "--BuildFoundation-mark--"
+
 	fun markOrFail(project: Project) {
-		// NOTE: Extension named like this to discourage direct access.
-		project.extensions.add<Any>("--BuildFoundation-mark--", BuildFoundation)
+		project.extensions.add<Any>(mark__extension, BuildFoundation)
 	}
+
+	fun isMarked(project: Project): Boolean =
+		project.extensions.findByName(mark__extension) != null
 
 	// --
 
