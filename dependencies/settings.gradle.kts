@@ -14,7 +14,8 @@ dependencySettings {
 	/** Should correspond to [JavaToolchainSpec] */
 	run<Unit> {
 		prop("jvm.lang", 21)
-		prop("jvm.vendor", JvmVendorSpec.ADOPTIUM)
+		prop("jvm.vendor", JvmVendorSpec::ADOPTIUM.name)
+		prop("jvm.implementation", JvmImplementation::VENDOR_SPECIFIC.name)
 	}
 
 	val kotlin = "1.9.21" // https://kotlinlang.org/docs/releases.html

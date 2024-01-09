@@ -2,10 +2,12 @@ package build.kt.jvm
 
 import build.api.ProjectPlugin
 import build.api.dsl.*
+import build.api.dsl.accessors.kotlin
 import build.api.dsl.accessors.testImplementation
 import build.foundation.BuildFoundation
 import build.foundation.InternalApi
 import build.foundation.setUpTestTasks
+import build.setUpJvmToolchain
 import org.gradle.kotlin.dsl.*
 
 class _plugin : ProjectPlugin({
@@ -13,6 +15,8 @@ class _plugin : ProjectPlugin({
 		plugin<build.base._plugin>()
 		plugin(kotlin("jvm"))
 	}
+
+	setUpJvmToolchain(kotlin)
 
 	@OptIn(InternalApi::class)
 	BuildFoundation.setUpTestTasks(this)

@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
 	implementation("build.foundation:complement")
+	implementation("build.foundation:dependencies")
 
 	implementation(project(":support.kotlin-gradle-plugin"))
 	implementation(kotlin("sam-with-receiver"))

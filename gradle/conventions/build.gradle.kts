@@ -1,4 +1,7 @@
 import build.api.dsl.*
+import build.foundation.BuildFoundation
+import build.foundation.InternalApi
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 plugins {
 	`kotlin-dsl-base` apply false
@@ -15,3 +18,13 @@ gradle.includedBuilds(
 		clean { dependOnSameTaskFromIncludedBuildsOrFail(builds) }
 	}
 }
+
+allprojects(fun Project.() {
+	val deps = deps ?: return
+	prioritizedAfterEvaluate(fun Project.() {
+		@OptIn(InternalApi::class)
+		if (!BuildFoundation.isMarked(this)) return
+		(extensions.findByName("kotlin") as KotlinProjectExtension?)
+			?.jvmToolchain(jvmToolchainSetupFrom(deps.props.map))
+	})
+})
