@@ -29,6 +29,10 @@ private object Build {
 		"Must only have `compileOnly()` or `project()` dependencies (or equivalent), to\n" +
 		"avoid affecting the buildscript classpath of the consuming build."
 
+	const val ERROR_MESSAGE_NOTES = "" +
+		"Note that, `compileOnlyApi()` should not be used either. However, test source\n" +
+		"sets should be free to have whatever dependencies."
+
 	private fun Configuration.recursivelyRemoveDependency(dependency: Dependency) {
 		dependencies.remove(dependency)
 		extendsFrom.forEach { it.recursivelyRemoveDependency(dependency) }
@@ -55,7 +59,8 @@ private object Build {
 				}
 				error(ERROR_MESSAGE +
 					"\n- Dependency: $label" +
-					"\n- From: $from")
+					"\n- From: $from" +
+					"\n$ERROR_MESSAGE_NOTES")
 			}
 		}))
 	}
@@ -67,7 +72,8 @@ private object Build {
 				error(ERROR_MESSAGE +
 					"\n- Dependency: $id" +
 					"\n- From: ${r.from}" +
-					"\n- Resolved via, $c")
+					"\n- Resolved via, $c" +
+					"\n$ERROR_MESSAGE_NOTES")
 			}
 		}
 	}
