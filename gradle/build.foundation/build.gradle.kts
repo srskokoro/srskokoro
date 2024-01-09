@@ -35,16 +35,17 @@ private object Build {
 	}
 
 	fun ensureProjectOnlyDependencies(c: Configuration, from: Project) {
-		val gradleApi = from.dependencies.gradleApi()
-		c.allDependencies.configureEach(fun(d) {
+		from.afterEvaluate {
+			// Remove the automatically added "Gradle API" dependency
+			c.recursivelyRemoveDependency(dependencies.gradleApi())
+		}
+		// NOTE: We wrapped the following in `withDependencies()` because
+		// `allDependencies` seems to not reflect further `extendsFrom()`
+		// modifications.
+		c.withDependencies(fun(_): Unit = c.allDependencies.configureEach(fun(d) {
 			if (d !is ProjectDependency) {
 				if (d.group == "build.foundation" && d.name == "core") {
 					// It is an included build.
-					return // Skip (silently)
-				}
-				if (d == gradleApi) {
-					// Remove the automatically added "Gradle API" dependency
-					c.recursivelyRemoveDependency(d)
 					return // Skip (silently)
 				}
 				val label: Any? = when (d) {
@@ -56,7 +57,7 @@ private object Build {
 					"\n- Dependency: $label" +
 					"\n- From: $from")
 			}
-		})
+		}))
 	}
 
 	fun ensureProjectOnlyDependenciesResolved(c: Configuration) = c.incoming.afterResolve {
