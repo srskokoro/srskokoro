@@ -7,6 +7,7 @@ plugins {
 }
 
 allprojects(fun(project): Unit = with(project) {
+	if (path == ":foojay") return // Exempted
 	plugins.withType<build.conventions.support._plugin> {
 		@OptIn(build.foundation.InternalApi::class)
 		dependencies.run {

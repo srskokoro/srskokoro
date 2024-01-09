@@ -12,6 +12,7 @@ dependencyResolutionManagement {
 
 include("complement")
 include("dependencies")
+include("foojay")
 include("structure")
 include("support")
 include("testing")

@@ -15,6 +15,7 @@ pluginManagement {
 }
 plugins {
 	id("build.dependencies")
+	id("build.foojay")
 	id("build.structure.inclusives")
 }
 
