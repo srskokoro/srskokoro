@@ -3,7 +3,7 @@
 pluginManagement {
 	extra["build.structure.root"] = "."
 
-	apply(from = "settings.init.gradle.kts")
+	apply(from = "gradle/autoGradleProperties.settings.gradle.kts")
 	val autoGradleProperties: (String) -> String by extra
 
 	autoGradleProperties("gradle/build.foundation/core")
