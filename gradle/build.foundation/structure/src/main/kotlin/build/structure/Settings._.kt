@@ -20,6 +20,9 @@ internal fun Settings.getStructureRoot(): File {
 	return structureRoot
 }
 
+internal fun Settings.include(structure: ProjectStructure, structureRoot: File) =
+	include(structure.findProjects(structureRoot, providers), structureRoot)
+
 internal fun Settings.include(projectEntries: LinkedList<ProjectEntry>, structureRoot: File) {
 	projectEntries.forEach {
 		val id = it.projectId
