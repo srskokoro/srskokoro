@@ -49,13 +49,13 @@ class test_ProjectStructure {
 
 // --
 
-private val SETUP_WITHOUT_BUILD_SCRIPTS = arrayOf(
+private val SETUP_WITHOUT_BUILD_SCRIPTS: LinkedHashSet<String> = arrayOf(
 	"bob/b/hi",
 	"bob/ignored",
 	"erin",
 ).mapTo(LinkedHashSet()) { it.replace('/', File.separatorChar) }
 
-private val SETUP_WITH_BUILD_SCRIPTS = arrayOf(
+private val SETUP_WITH_BUILD_SCRIPTS: LinkedHashSet<String> = arrayOf(
 	"alice",
 	"alice/@a",
 	"alice/b",
@@ -118,7 +118,7 @@ private val SETUP_WITH_BUILD_SCRIPTS = arrayOf(
 	"frank/z/[martha]bertha/peggy$D_BUILD_INCLUSIVE/pat$D_BUILD_INCLUSIVE",
 ).mapTo(LinkedHashSet()) { it.replace('/', File.separatorChar) }
 
-private val INCLUDES_expected = arrayOf(
+private val INCLUDES_expected: List<String> = arrayOf(
 	":alice",
 	":alice:a",
 	":alice:b",
@@ -146,7 +146,7 @@ private val INCLUDES_expected = arrayOf(
 	":frank:z:bertha",
 ).asList()//.sorted()
 
-private val BUILD_INCLUSIVES_expected = arrayOf(
+private val BUILD_INCLUSIVES_expected: List<String> = arrayOf(
 	":alice[.]e",
 	":alice[.]e:hi",
 	":alice[.]e[.]hi[.]hello[.]world[.]foo[.]bar[.]baz",
@@ -167,7 +167,7 @@ private val BUILD_INCLUSIVES_expected = arrayOf(
 	":frank[.]z[.]bertha[.]peggy[.]pat",
 ).asList()//.sorted()
 
-private val BUILD_PLUGINS_expected = arrayOf(
+private val BUILD_PLUGINS_expected: List<String> = arrayOf(
 	":alice[.]e[.]hi[.]hello",
 	":alice[.]e[.]hi[.]hello:world",
 	":alice[.]e[.]hi[.]hello:world:foo",
