@@ -3,12 +3,7 @@ package build.kt.mpp
 import build.api.ProjectPlugin
 import build.api.dsl.*
 import build.api.dsl.accessors.commonTestImplementation
-import build.api.dsl.accessors.kotlin
-import build.foundation.BuildFoundation
-import build.foundation.InternalApi
-import build.foundation.setUpTestTasks
-import build.setUpAltSrcDirs
-import build.setUpJvmToolchain
+import build.setUp
 import org.gradle.kotlin.dsl.*
 
 class _plugin : ProjectPlugin({
@@ -18,11 +13,7 @@ class _plugin : ProjectPlugin({
 		plugin("io.kotest.multiplatform")
 	}
 
-	setUpJvmToolchain(kotlin)
-	setUpAltSrcDirs()
-
-	@OptIn(InternalApi::class)
-	BuildFoundation.setUpTestTasks(this)
+	setUp(this)
 
 	if (group != "inclusives" && name != "testing") {
 		dependencies.commonTestImplementation("inclusives:testing")
