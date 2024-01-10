@@ -8,7 +8,7 @@ plugins {
 
 allprojects(fun(project): Unit = with(project) {
 	if (path == ":foojay") return // Exempted
-	plugins.withType<build.conventions.support._plugin> {
+	plugins.withId(build.conventions.support._plugin::class.java.packageName) {
 		@OptIn(build.foundation.InternalApi::class)
 		dependencies.run {
 			// NOTE: The following will prevent `kotlin-stdlib` from being added

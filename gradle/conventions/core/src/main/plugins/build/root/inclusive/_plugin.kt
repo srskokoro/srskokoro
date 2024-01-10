@@ -10,8 +10,8 @@ class _plugin : ProjectPlugin({
 
 	allprojects(fun(project): Unit = project.afterEvaluate(fun(project) {
 		val plugins = project.plugins
-		if (plugins.hasPlugin(build.base.inclusive._plugin::class.java)) return
-		if (plugins.hasPlugin(build.base._plugin::class.java)) error(
+		if (plugins.hasPlugin(build.base.inclusive._plugin::class.java.packageName)) return
+		if (plugins.hasPlugin(build.base._plugin::class.java.packageName)) error(
 			"""
 			Each project of this build should have "build.base.inclusive" plugin applied or
 			must not have "build.base" plugin applied.

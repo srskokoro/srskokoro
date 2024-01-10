@@ -9,7 +9,6 @@ import io.kotest.core.spec.style.FreeSpec
 import io.kotest.core.test.TestScope
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.*
 
 class test__plugin : FreeSpec({
 	"All known convention plugins delegate to the 'base' plugin" {
@@ -35,6 +34,6 @@ private inline fun <reified P : Plugin<Project>> TestScope.hasBasePlugin() = has
 private fun TestScope.hasBasePlugin(plugin: Class<out Plugin<Project>>): Boolean {
 	return buildProject(TestTemp.from(this, plugin.name)).run {
 		apply(fun(x) { x.plugin(plugin) })
-		plugins.hasPlugin(_plugin::class)
+		plugins.hasPlugin(_plugin::class.java.packageName)
 	}
 }
