@@ -162,7 +162,9 @@ private fun findProjects(
 ) {
 	parentDir.list()?.forEach { name ->
 		if (name.startsWith('.')) return@forEach
-		if (name == "build") return@forEach
+		when (name) {
+			"build", "src", "test" -> return@forEach
+		}
 
 		val file = File(parentDir, name)
 		if (!file.isDirectory) return@forEach
