@@ -20,11 +20,10 @@ internal fun Settings.getStructureRoot(): File {
 	return structureRoot
 }
 
-internal fun Settings.include(projectEntries: LinkedList<ProjectEntry>) {
-	val rootDir = rootDir
+internal fun Settings.include(projectEntries: LinkedList<ProjectEntry>, structureRoot: File) {
 	projectEntries.forEach {
 		val id = it.projectId
 		include(id) // NOTE: Resolves relative to `Settings.rootDir`
-		project(id).projectDir = File(rootDir, it.relativePath)
+		project(id).projectDir = File(structureRoot, it.relativePath)
 	}
 }

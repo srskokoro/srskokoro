@@ -7,5 +7,6 @@ import build.structure.getStructureRoot
 import build.structure.include
 
 class _plugin : SettingsPlugin({
-	include(ProjectStructure.BUILD_INCLUSIVES.findProjects(getStructureRoot(), providers))
+	val structureRoot = getStructureRoot()
+	include(ProjectStructure.BUILD_INCLUSIVES.findProjects(structureRoot, providers), structureRoot)
 })
