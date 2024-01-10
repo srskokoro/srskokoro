@@ -1,5 +1,6 @@
 package build.structure
 
+import build.support.io.getFsSortingPrefixLength
 import java.io.File
 import java.util.LinkedList
 
@@ -82,13 +83,8 @@ internal data class ProjectEntry(
 	}
 }
 
-private fun getProjectDirPrefixLength(dirName: String) = when (dirName[0]) {
-	// NOTE: Listed in sorted order.
-	'!', '#', '$', '-', '@', '~' -> 1
-	// The prefix can be a custom label in brackets
-	'[' -> dirName.indexOf(']', 1) + 1 // -- returns `0` if not found
-	else -> 0
-}
+@Suppress("NOTHING_TO_INLINE")
+private inline fun getProjectDirPrefixLength(dirName: String) = getFsSortingPrefixLength(dirName)
 
 private fun getSubStructureNameLength(dirName: String): Int {
 	return if (dirName.endsWith(D_BUILD_INCLUSIVE)) {
