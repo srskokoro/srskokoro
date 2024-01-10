@@ -181,7 +181,7 @@ private val BUILD_PLUGINS_expected = arrayOf(
 	":bob[.]b[.]world[.]baz[.]oof[.]victor[.]vanna",
 ).asList()//.sorted()
 
-@Suppress("SameParameterValue", "NAME_SHADOWING")
+@Suppress("SameParameterValue")
 private fun setUpProjectTree(rootDir: File) {
 	val withBuildScripts = SETUP_WITH_BUILD_SCRIPTS
 	val withoutBuildScript = SETUP_WITHOUT_BUILD_SCRIPTS
