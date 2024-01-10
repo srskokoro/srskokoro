@@ -9,6 +9,7 @@ import java.io.File
 import java.util.LinkedList
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
+import kotlin.test.assertEquals
 
 class test_ProjectStructure {
 
@@ -40,79 +41,82 @@ class test_ProjectStructure {
 
 		val actual = output.mapTo(ArrayList()) { it.projectId }.apply { sort() }
 		assertContentEquals(expectedProjectIds, actual)
+
+		// Also assert that the resulting relative paths are correct
+		assertEquals(output.size, output.count { it.relativePath in SETUP_WITH_BUILD_SCRIPTS })
 	}
 }
 
 // --
 
-private val SETUP_WITHOUT_BUILD_SCRIPTS = setOf(
-	"bob/b/hi/",
-	"bob/ignored/",
-	"erin/",
-)
+private val SETUP_WITHOUT_BUILD_SCRIPTS = arrayOf(
+	"bob/b/hi",
+	"bob/ignored",
+	"erin",
+).mapTo(LinkedHashSet()) { it.replace('/', File.separatorChar) }
 
-private val SETUP_WITH_BUILD_SCRIPTS = listOf(
-	"alice/",
-	"alice/@a/",
-	"alice/b/",
-	"alice/c/",
-	"alice/d/",
-	"alice/e/",
-	"alice/e/hi/",
-	"alice/e/hi/hello/",
-	"alice/e/hi/hello/world/",
-	"alice/e$D_BUILD_INCLUSIVE/",
-	"alice/e$D_BUILD_INCLUSIVE/hi/",
-	"alice/e$D_BUILD_INCLUSIVE/hi/hello$D_BUILD_PLUGIN/",
-	"alice/e$D_BUILD_INCLUSIVE/hi/hello$D_BUILD_PLUGIN/world/",
-	"alice/e$D_BUILD_INCLUSIVE/hi/hello$D_BUILD_PLUGIN/world/foo/",
-	"alice/e$D_BUILD_INCLUSIVE/hi/hello$D_BUILD_PLUGIN/world/foo/bar/",
-	"alice/e$D_BUILD_INCLUSIVE/hi/hello$D_BUILD_PLUGIN/world/foo/bar/baz$D_BUILD_INCLUSIVE/",
-	"alice/e$D_BUILD_INCLUSIVE/hi/hello$D_BUILD_PLUGIN/world/foo/bar/baz$D_BUILD_INCLUSIVE/x/",
-	"alice/e$D_BUILD_INCLUSIVE/hi/hello$D_BUILD_PLUGIN/world/foo/bar/baz$D_BUILD_INCLUSIVE/x/y/",
-	"alice/e$D_BUILD_INCLUSIVE/hi/hello$D_BUILD_PLUGIN/world/foo/bar/baz$D_BUILD_INCLUSIVE/x/y/z/",
-	"bob/",
-	"bob/[foo]a/",
-	"bob/b/",
-	"bob/b/hello$D_BUILD_PLUGIN/",
-	"bob/b/hello$D_BUILD_PLUGIN/left/",
-	"bob/b/hello$D_BUILD_PLUGIN/left/dan$D_BUILD_INCLUSIVE/",
-	"bob/b/hello$D_BUILD_PLUGIN/left/dan$D_BUILD_INCLUSIVE/[x]d/",
-	"bob/b/hello$D_BUILD_PLUGIN/left/dave/",
-	"bob/b/hello$D_BUILD_PLUGIN/left/david/",
-	"bob/b/hello$D_BUILD_PLUGIN/up/",
-	"bob/b/hello$D_BUILD_PLUGIN/!right/",
-	"bob/b/hello$D_BUILD_PLUGIN/down/",
-	"bob/b/hello$D_BUILD_PLUGIN/[x]down$D_BUILD_PLUGIN/",
-	"bob/b/world/",
-	"bob/b/world/[0]foo/",
-	"bob/b/world/[1]bar$D_BUILD_INCLUSIVE/",
-	"bob/b/world/[1]bar$D_BUILD_INCLUSIVE/beep/",
-	"bob/b/world/[1]bar$D_BUILD_INCLUSIVE/bop/",
-	"bob/b/world/baz/",
-	"bob/b/world/baz/oof/",
-	"bob/b/world/baz/oof/victor$D_BUILD_PLUGIN/",
-	"bob/b/world/baz/oof/victor$D_BUILD_PLUGIN/vanna$D_BUILD_PLUGIN/",
-	"bob/b/world/baz/oof$D_BUILD_PLUGIN/",
-	"bob/ignored/bar/",
-	"bob/ignored/baz$D_BUILD_PLUGIN/",
-	"bob/#c/",
-	"carol/",
-	"dan/",
-	"frank/",
-	"frank/x/",
-	"frank/y/",
-	"frank/~y$D_BUILD_INCLUSIVE/",
-	"frank/~y$D_BUILD_INCLUSIVE/arthur/",
-	"frank/~y$D_BUILD_INCLUSIVE/arthur/paul/",
-	"frank/~y$D_BUILD_INCLUSIVE/arthur/\$carole/",
-	"frank/~y$D_BUILD_INCLUSIVE/merlin/",
-	"frank/z/",
-	"frank/z/-arthur/",
-	"frank/z/[martha]bertha/",
-	"frank/z/[martha]bertha/peggy$D_BUILD_INCLUSIVE/",
-	"frank/z/[martha]bertha/peggy$D_BUILD_INCLUSIVE/pat$D_BUILD_INCLUSIVE/",
-)
+private val SETUP_WITH_BUILD_SCRIPTS = arrayOf(
+	"alice",
+	"alice/@a",
+	"alice/b",
+	"alice/c",
+	"alice/d",
+	"alice/e",
+	"alice/e/hi",
+	"alice/e/hi/hello",
+	"alice/e/hi/hello/world",
+	"alice/e$D_BUILD_INCLUSIVE",
+	"alice/e$D_BUILD_INCLUSIVE/hi",
+	"alice/e$D_BUILD_INCLUSIVE/hi/hello$D_BUILD_PLUGIN",
+	"alice/e$D_BUILD_INCLUSIVE/hi/hello$D_BUILD_PLUGIN/world",
+	"alice/e$D_BUILD_INCLUSIVE/hi/hello$D_BUILD_PLUGIN/world/foo",
+	"alice/e$D_BUILD_INCLUSIVE/hi/hello$D_BUILD_PLUGIN/world/foo/bar",
+	"alice/e$D_BUILD_INCLUSIVE/hi/hello$D_BUILD_PLUGIN/world/foo/bar/baz$D_BUILD_INCLUSIVE",
+	"alice/e$D_BUILD_INCLUSIVE/hi/hello$D_BUILD_PLUGIN/world/foo/bar/baz$D_BUILD_INCLUSIVE/x",
+	"alice/e$D_BUILD_INCLUSIVE/hi/hello$D_BUILD_PLUGIN/world/foo/bar/baz$D_BUILD_INCLUSIVE/x/y",
+	"alice/e$D_BUILD_INCLUSIVE/hi/hello$D_BUILD_PLUGIN/world/foo/bar/baz$D_BUILD_INCLUSIVE/x/y/z",
+	"bob",
+	"bob/[foo]a",
+	"bob/b",
+	"bob/b/hello$D_BUILD_PLUGIN",
+	"bob/b/hello$D_BUILD_PLUGIN/left",
+	"bob/b/hello$D_BUILD_PLUGIN/left/dan$D_BUILD_INCLUSIVE",
+	"bob/b/hello$D_BUILD_PLUGIN/left/dan$D_BUILD_INCLUSIVE/[x]d",
+	"bob/b/hello$D_BUILD_PLUGIN/left/dave",
+	"bob/b/hello$D_BUILD_PLUGIN/left/david",
+	"bob/b/hello$D_BUILD_PLUGIN/up",
+	"bob/b/hello$D_BUILD_PLUGIN/!right",
+	"bob/b/hello$D_BUILD_PLUGIN/down",
+	"bob/b/hello$D_BUILD_PLUGIN/[x]down$D_BUILD_PLUGIN",
+	"bob/b/world",
+	"bob/b/world/[0]foo",
+	"bob/b/world/[1]bar$D_BUILD_INCLUSIVE",
+	"bob/b/world/[1]bar$D_BUILD_INCLUSIVE/beep",
+	"bob/b/world/[1]bar$D_BUILD_INCLUSIVE/bop",
+	"bob/b/world/baz",
+	"bob/b/world/baz/oof",
+	"bob/b/world/baz/oof/victor$D_BUILD_PLUGIN",
+	"bob/b/world/baz/oof/victor$D_BUILD_PLUGIN/vanna$D_BUILD_PLUGIN",
+	"bob/b/world/baz/oof$D_BUILD_PLUGIN",
+	"bob/ignored/bar",
+	"bob/ignored/baz$D_BUILD_PLUGIN",
+	"bob/#c",
+	"carol",
+	"dan",
+	"frank",
+	"frank/x",
+	"frank/y",
+	"frank/~y$D_BUILD_INCLUSIVE",
+	"frank/~y$D_BUILD_INCLUSIVE/arthur",
+	"frank/~y$D_BUILD_INCLUSIVE/arthur/paul",
+	"frank/~y$D_BUILD_INCLUSIVE/arthur/\$carole",
+	"frank/~y$D_BUILD_INCLUSIVE/merlin",
+	"frank/z",
+	"frank/z/-arthur",
+	"frank/z/[martha]bertha",
+	"frank/z/[martha]bertha/peggy$D_BUILD_INCLUSIVE",
+	"frank/z/[martha]bertha/peggy$D_BUILD_INCLUSIVE/pat$D_BUILD_INCLUSIVE",
+).mapTo(LinkedHashSet()) { it.replace('/', File.separatorChar) }
 
 private val INCLUDES_expected = arrayOf(
 	":alice",
