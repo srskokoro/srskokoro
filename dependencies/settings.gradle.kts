@@ -41,6 +41,12 @@ dependencySettings {
 	module(kotlin("test-junit5"), kotlin)
 
 	// -=*=-
+	// Build support
+
+	val gmazzo_buildconfig = "5.3.3" // https://github.com/gmazzo/gradle-buildconfig-plugin/releases
+	plugin("com.github.gmazzo.buildconfig", gmazzo_buildconfig)
+
+	// -=*=-
 	// Test infrastructure
 
 	val kotest = "5.8.0" // https://github.com/kotest/kotest/releases
