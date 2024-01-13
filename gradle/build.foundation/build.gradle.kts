@@ -1,4 +1,4 @@
-import build.foundation.compileOnlyTestImpl
+import build.foundation.BuildFoundation.compileOnlyTestImpl
 import org.gradle.api.internal.artifacts.dependencies.SelfResolvingDependencyInternal
 
 plugins {

@@ -1,6 +1,7 @@
 package build.foundation
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.kotlin.dsl.*
 
 @InternalApi
@@ -29,4 +30,11 @@ object BuildFoundation {
 
 	// Used as extension name. It's named like this to discourage direct access.
 	const val env__extension = "--_env_--"
+
+	// --
+
+	fun DependencyHandler.compileOnlyTestImpl(dependencyNotation: Any) {
+		add("compileOnly", dependencyNotation)
+		add("testImplementation", dependencyNotation)
+	}
 }

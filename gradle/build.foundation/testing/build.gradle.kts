@@ -1,6 +1,6 @@
 @file:OptIn(build.foundation.InternalApi::class)
 
-import build.foundation.compileOnlyTestImpl
+import build.foundation.BuildFoundation.compileOnlyTestImpl
 
 plugins {
 	id("build.conventions.support")
