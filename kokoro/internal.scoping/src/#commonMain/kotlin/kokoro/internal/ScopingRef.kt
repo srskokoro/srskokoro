@@ -1,18 +1,16 @@
 package kokoro.internal
 
-import kotlin.annotation.AnnotationTarget.CLASS
-import kotlin.annotation.AnnotationTarget.TYPEALIAS
-import kotlin.reflect.KClass
-
 /**
- * Marks a class or typealias so that it may be used as a *scoping reference*
- * for [packageScoped] and [packagePrivate].
+ * Must be implemented by a class used as a *scoping reference* for
+ * [packageScoped] and [packagePrivate]. By convention, the class is an `object`
+ * declaration named `module` (lowercase):
  *
- * This annotation exists to prevent accidental usage of a [KClass] not meant to
- * be used as a scoping reference.
+ * ```kt
+ * @Suppress("ClassName")
+ * object module : ScopingRef
+ * ```
  *
  * @see packageScoped.scopingRef
  * @see packagePrivate.scopingRef
  */
-@Target(CLASS, TYPEALIAS)
-annotation class ScopingRef
+interface ScopingRef

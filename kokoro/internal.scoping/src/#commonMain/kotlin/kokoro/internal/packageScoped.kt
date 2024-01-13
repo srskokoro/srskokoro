@@ -14,12 +14,11 @@ import kotlin.reflect.KClass
  * the [scopingRef] parameter).
  *
  * @param scopingRef the *scoping reference*; a [KClass] whose package will be
- * used as the scoping package for the marked declaration. The specified [KClass]
- * (or `typealias`) must be annotated with [ScopingRef].
+ * used as the scoping package for the marked declaration.
  *
  * @see packagePrivate
  */
 @RequiresCompilerPlugin
 @RequiresOptIn("Not accessible to packages other than the scoping package and its subpackages.")
 @Target(CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS)
-annotation class packageScoped(val scopingRef: KClass<*> = Nothing::class)
+annotation class packageScoped(val scopingRef: KClass<out ScopingRef> = Nothing::class)
