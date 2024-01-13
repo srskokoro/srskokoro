@@ -51,9 +51,9 @@ dependencySettings {
 
 	val kotest = "5.8.0" // https://github.com/kotest/kotest/releases
 	plugin("io.kotest.multiplatform", kotest)
+	module("io.kotest.multiplatform:io.kotest.multiplatform.gradle.plugin", kotest)
 	module("io.kotest:kotest-assertions-shared", kotest)
 	module("io.kotest:kotest-framework-engine", kotest)
-	module("io.kotest:kotest-framework-multiplatform-plugin-gradle", kotest)
 	module("io.kotest:kotest-runner-junit5", kotest)
 	module("io.kotest:kotest-property", kotest)
 
