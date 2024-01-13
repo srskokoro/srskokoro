@@ -1,8 +1,9 @@
+package org.gradle.kotlin.dsl
+
 import build.api.dsl.*
 import build.dependencies.Deps
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.*
 
 // Named like this to discourage direct access
 private const val deps__key = "--deps--"

@@ -1,3 +1,5 @@
+package org.gradle.kotlin.dsl
+
 import build.api.dsl.*
 import build.dependencies.DependencySettings
 import org.gradle.api.Action

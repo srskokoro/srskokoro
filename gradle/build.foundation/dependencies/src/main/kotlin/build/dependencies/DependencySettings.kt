@@ -5,7 +5,6 @@ import build.support.getFileUri
 import build.support.io.UnsafeCharArrayWriter
 import build.support.io.safeResolve
 import build.support.io.transformFileAtomic
-import dependencySettings__name
 import org.gradle.api.Action
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Project
@@ -17,8 +16,8 @@ import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.initialization.SettingsLocation
+import org.gradle.kotlin.dsl.*
 import org.gradle.kotlin.dsl.support.serviceOf
-import setUpDeps
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.nio.file.Path

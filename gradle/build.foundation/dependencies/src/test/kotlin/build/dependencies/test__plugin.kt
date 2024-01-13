@@ -4,8 +4,8 @@ import build.plugins.test.gradleRunner
 import build.plugins.test.io.TestTemp
 import build.support.io.DirectoryBuilder
 import build.support.io.buildDir
-import deps
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.*
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertContains

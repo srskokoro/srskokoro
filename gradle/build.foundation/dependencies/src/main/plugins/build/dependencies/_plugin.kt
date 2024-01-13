@@ -3,7 +3,6 @@ package build.dependencies
 import build.api.SettingsPlugin
 import build.api.dsl.*
 import build.dependencies.DependencySettings.ExportMode.EXPORT_ONLY
-import dependencySettings__name
 import org.gradle.kotlin.dsl.*
 
 class _plugin : SettingsPlugin({
