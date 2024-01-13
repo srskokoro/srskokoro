@@ -11,7 +11,6 @@ private object Build {
 	const val ARTIFACT_NAME_PREFIX = "kokoro-internal-scoping-"
 }
 
-@Suppress("INLINE_FROM_HIGHER_PLATFORM")
 buildConfig {
 	packageName(Build.PLUGIN_PACKAGE)
 	useKotlinOutput {
