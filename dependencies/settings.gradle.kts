@@ -45,6 +45,7 @@ dependencySettings {
 
 	val gmazzo_buildconfig = "5.3.5" // https://github.com/gmazzo/gradle-buildconfig-plugin/releases
 	plugin("com.github.gmazzo.buildconfig", gmazzo_buildconfig)
+	module("com.github.gmazzo.buildconfig:com.github.gmazzo.buildconfig.gradle.plugin", gmazzo_buildconfig)
 
 	// -=*=-
 	// Test infrastructure
