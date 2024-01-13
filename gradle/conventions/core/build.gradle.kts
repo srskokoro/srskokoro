@@ -9,7 +9,7 @@ dependencies {
 	implementation(project(":support.kotlin-gradle-plugin"))
 	implementation(kotlin("sam-with-receiver"))
 	implementation(kotlin("assignment"))
-	implementation("io.kotest.multiplatform:io.kotest.multiplatform.gradle.plugin")
+	implementation(plugin("io.kotest.multiplatform"))
 
 	testImplementation(project(":testing.conventions"))
 }

@@ -45,14 +45,14 @@ dependencySettings {
 
 	val gmazzo_buildconfig = "5.3.5" // https://github.com/gmazzo/gradle-buildconfig-plugin/releases
 	plugin("com.github.gmazzo.buildconfig", gmazzo_buildconfig)
-	module("com.github.gmazzo.buildconfig:com.github.gmazzo.buildconfig.gradle.plugin", gmazzo_buildconfig)
+	module("com.github.gmazzo.buildconfig".plugin(), gmazzo_buildconfig)
 
 	// -=*=-
 	// Test infrastructure
 
 	val kotest = "5.8.0" // https://github.com/kotest/kotest/releases
 	plugin("io.kotest.multiplatform", kotest)
-	module("io.kotest.multiplatform:io.kotest.multiplatform.gradle.plugin", kotest)
+	module("io.kotest.multiplatform".plugin(), kotest)
 	module("io.kotest:kotest-assertions-shared", kotest)
 	module("io.kotest:kotest-framework-engine", kotest)
 	module("io.kotest:kotest-runner-junit5", kotest)

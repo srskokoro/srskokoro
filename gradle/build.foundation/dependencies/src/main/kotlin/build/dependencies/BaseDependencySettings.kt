@@ -1,6 +1,7 @@
 package build.dependencies
 
 import org.gradle.api.InvalidUserDataException
+import org.gradle.kotlin.dsl.*
 import java.io.File
 import java.util.LinkedList
 
@@ -26,6 +27,16 @@ open class BaseDependencySettings internal constructor() {
 	 */
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun kotlin(module: String) = KotlinId(module)
+
+	/**
+	 * See, [Plugin Marker Artifacts | Using Plugins | Gradle User Manual](https://docs.gradle.org/8.5/userguide/plugins.html#sec:plugin_markers)
+	 */
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun pluginMarker(pluginId: String) = "$pluginId:$pluginId.gradle.plugin"
+
+	/** @see pluginMarker */
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun String.plugin() = pluginMarker(this)
 
 	fun plugin(pluginId: KotlinId, version: String) =
 		plugin(pluginId.pluginId(), version)
