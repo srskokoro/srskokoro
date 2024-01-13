@@ -1,3 +1,5 @@
+import build.api.dsl.accessors.compileOnlyTestImpl
+
 plugins {
 	id("build.plugins")
 	id("com.github.gmazzo.buildconfig")
@@ -23,5 +25,8 @@ buildConfig {
 }
 
 dependencies {
-	compileOnly(kotlin("gradle-plugin"))
+	compileOnlyTestImpl(kotlin("gradle-plugin"))
+	implementation("conventions:support.kotlin-gradle-plugin") {
+		exclude("org.jetbrains.kotlin", "kotlin-gradle-plugin")
+	}
 }
