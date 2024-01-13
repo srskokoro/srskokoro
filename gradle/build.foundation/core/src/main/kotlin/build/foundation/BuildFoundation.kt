@@ -2,6 +2,7 @@ package build.foundation
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.plugins.ObjectConfigurationAction
 import org.gradle.kotlin.dsl.*
 
 @InternalApi
@@ -32,6 +33,10 @@ object BuildFoundation {
 	const val env__extension = "--_env_--"
 
 	// --
+
+	@Suppress("NOTHING_TO_INLINE", "UnusedReceiverParameter")
+	inline fun ObjectConfigurationAction.kotlin(module: String) =
+		"org.jetbrains.kotlin.$module"
 
 	fun DependencyHandler.compileOnlyTestImpl(dependencyNotation: Any) {
 		add("compileOnly", dependencyNotation)

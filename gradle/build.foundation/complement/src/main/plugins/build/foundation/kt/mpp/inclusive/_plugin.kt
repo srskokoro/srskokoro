@@ -2,8 +2,8 @@ package build.foundation.kt.mpp.inclusive
 
 import build.conventions.throwOnNonConventionsRoot
 import build.foundation.BuildFoundation
+import build.foundation.BuildFoundation.kotlin
 import build.foundation.ensureReproducibleBuild
-import build.foundation.kotlin
 import build.foundation.setUpAsBuildInclusive
 import build.foundation.setUpMppLibTargets
 import build.foundation.setUpTestTasks

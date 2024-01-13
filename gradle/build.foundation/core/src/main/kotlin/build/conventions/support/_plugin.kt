@@ -2,8 +2,8 @@ package build.conventions.support
 
 import build.conventions.throwOnNonConventionsRoot
 import build.foundation.BuildFoundation
+import build.foundation.BuildFoundation.kotlin
 import build.foundation.ensureReproducibleBuild
-import build.foundation.kotlin
 import build.foundation.setUpAsBuildInclusive
 import build.foundation.setUpAsSupportForPlugins
 import build.foundation.setUpTestTasks
