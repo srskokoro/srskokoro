@@ -43,7 +43,7 @@ private object PrioritizedEvaluationListenersSetup : ProjectEvaluationListener {
 		// NOTE: All actions scheduled via `project.afterEvaluate()` still run
 		// even on project evaluation failure due to an exception. We should
 		// thus, at least, emulate that behavior.
-		var thrown = state.failure
+		var thrown: Throwable? = null
 
 		val listeners: PrioritizedEvaluationListeners? =
 			project.xs().getSafelyOrNull(prioritizedEvaluationListeners__name)
@@ -57,6 +57,9 @@ private object PrioritizedEvaluationListenersSetup : ProjectEvaluationListener {
 			}
 		}
 
+		// NOTE: At the time of writing this, the `Throwable` that would be
+		// thrown below will just get ignored if `ProjectState.failure != null`,
+		// but that's okay, as that's how `afterEvaluate()` behaves too.
 		if (thrown != null)
 			throw thrown
 	}
