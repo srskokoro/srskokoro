@@ -7,7 +7,6 @@ plugins {
 }
 
 group = extra["kokoro.group"] as String
-base.archivesName = extra["kokoro.internal.scoping.plugin.artifact"] as String
 
 val NAMESPACE = extra["kokoro.internal.scoping.ns"] as String
 

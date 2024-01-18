@@ -3,7 +3,6 @@ plugins {
 }
 
 group = extra["kokoro.group"] as String
-base.archivesName = extra["kokoro.internal.scoping.compiler.artifact"] as String
 
 tasks.compileKotlin {
 	compilerOptions.freeCompilerArgs.run {

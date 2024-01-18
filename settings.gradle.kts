@@ -29,29 +29,14 @@ dependencyResolutionManagement {
 	repositories {
 		mavenCentral()
 	}
-}
 
-private class DependencySubstitutionsSetup(val project: Project) : Action<DependencySubstitutions> {
-
-	private val kokoroLibGroup = project.extra["kokoro.group"] as String
-
-	private fun DependencySubstitutions.setUp() {
-		substitute(module("$kokoroLibGroup:${project.extra["kokoro.internal.scoping.compiler.artifact"]}"))
-			.using(project(":kokoro:internal.scoping:compiler"))
-		substitute(module("$kokoroLibGroup:${project.extra["kokoro.internal.scoping.artifact"]}"))
-			.using(project(":kokoro:internal.scoping"))
-	}
-
-	override fun execute(dependencySubstitutions: DependencySubstitutions) = dependencySubstitutions.setUp()
-}
-
-gradle.allprojects {
-	val dependencySubstitutionsSetup = DependencySubstitutionsSetup(this)
-	configurations.configureEach {
-		if (isCanBeResolved) resolutionStrategy {
-			dependencySubstitution(dependencySubstitutionsSetup)
-		}
-	}
+	// Self-include build to allow projects in the main build be addressable by
+	// `${project.group}:${project.name}` coordinates.
+	// - See also, https://docs.gradle.org/8.5/userguide/composite_builds.html#included_build_declaring_substitutions
+	includeBuild(".")
 }
 
 rootProject.name = "srskokoro"
+
+project(":kokoro:internal.scoping").name = extra["kokoro.internal.scoping.artifact"] as String
+project(":kokoro:internal.scoping:compiler").name = extra["kokoro.internal.scoping.compiler.artifact"] as String
