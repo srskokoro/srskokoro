@@ -1,4 +1,4 @@
-﻿@file:Suppress("DEPRECATION_ERROR", "ClassName")
+﻿@file:Suppress("ClassName")
 
 package kokoro.internal
 
