@@ -1,3 +1,4 @@
+import build.api.dsl.*
 import build.api.dsl.accessors.compileOnlyTestImpl
 
 plugins {
@@ -6,22 +7,19 @@ plugins {
 }
 
 group = extra["kokoro.group"] as String
-base.archivesName = "${Build.ARTIFACT_NAME_PREFIX}plugin"
+base.archivesName = extra["kokoro.internal.scoping.plugin.artifact"] as String
 
-private object Build {
-	const val PLUGIN_PACKAGE = "kokoro.internal.scoping"
-	const val ARTIFACT_NAME_PREFIX = "kokoro-internal-scoping-"
-}
+val NAMESPACE = extra["kokoro.internal.scoping.ns"] as String
 
 buildConfig {
-	packageName(Build.PLUGIN_PACKAGE)
+	packageName(NAMESPACE)
 	useKotlinOutput {
 		topLevelConstants = true
 		internalVisibility = true
 	}
-	buildConfigField("COMPILER_ARTIFACT_GROUP", provider { group.toString() })
-	buildConfigField("COMPILER_ARTIFACT_NAME", provider { "${Build.ARTIFACT_NAME_PREFIX}compiler" })
-	buildConfigField("COMPILER_PLUGIN_ID", provider { "${Build.PLUGIN_PACKAGE}.compiler" })
+	buildConfigField("COMPILER_ARTIFACT_GROUP", provider { projectThis.group.toString() })
+	buildConfigField("COMPILER_ARTIFACT_NAME", provider { projectThis.extra["kokoro.internal.scoping.compiler.artifact"] as String })
+	buildConfigField("COMPILER_PLUGIN_ID", provider { "$NAMESPACE.compiler" })
 }
 
 dependencies {

@@ -39,7 +39,7 @@ dependencyResolutionManagement {
 	// - See, https://docs.gradle.org/8.5/userguide/composite_builds.html#included_build_declaring_substitutions
 	includeBuild(".") {
 		dependencySubstitution {
-			substitute(module("$kokoroLibGroup:kokoro-internal-scoping-compiler"))
+			substitute(module("$kokoroLibGroup:${settingsThis.extra["kokoro.internal.scoping.compiler.artifact"]}"))
 				.using(project(":kokoro:internal.scoping:compiler"))
 		}
 	}

@@ -3,4 +3,4 @@ plugins {
 }
 
 group = extra["kokoro.group"] as String
-base.archivesName = "kokoro-internal-scoping"
+base.archivesName = extra["kokoro.internal.scoping.artifact"] as String
