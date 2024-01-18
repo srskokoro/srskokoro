@@ -6,6 +6,8 @@ import build.api.dsl.accessors.kotlinSourceSets
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
@@ -49,6 +51,13 @@ private fun Project.apply_() {
 			// NOTE: Android Studio doesn't honor `-opt-in` compiler option when
 			// in KMP :P
 			languageSettings.optIn(REQUIRED_OPT_IN_CLASS)
+		}
+		when (kotlin) {
+			is KotlinSingleTargetExtension<*> -> "implementation"
+			is KotlinMultiplatformExtension -> "commonMainImplementation"
+			else -> error("Unexpected `kotlin` extension $kotlin")
+		}.let {
+			dependencies.add(it, RUNTIME_ARTIFACT_COORDINATE)
 		}
 	}
 }

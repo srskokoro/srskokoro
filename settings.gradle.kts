@@ -38,6 +38,8 @@ private class DependencySubstitutionsSetup(val project: Project) : Action<Depend
 	private fun DependencySubstitutions.setUp() {
 		substitute(module("$kokoroLibGroup:${project.extra["kokoro.internal.scoping.compiler.artifact"]}"))
 			.using(project(":kokoro:internal.scoping:compiler"))
+		substitute(module("$kokoroLibGroup:${project.extra["kokoro.internal.scoping.artifact"]}"))
+			.using(project(":kokoro:internal.scoping"))
 	}
 
 	override fun execute(dependencySubstitutions: DependencySubstitutions) = dependencySubstitutions.setUp()

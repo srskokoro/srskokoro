@@ -13,13 +13,17 @@ val NAMESPACE = extra["kokoro.internal.scoping.ns"] as String
 
 buildConfig {
 	packageName(NAMESPACE)
+
 	useKotlinOutput {
 		topLevelConstants = true
 		internalVisibility = true
 	}
+
 	buildConfigField("COMPILER_ARTIFACT_GROUP", provider { projectThis.group.toString() })
 	buildConfigField("COMPILER_ARTIFACT_NAME", provider { projectThis.extra["kokoro.internal.scoping.compiler.artifact"] as String })
 	buildConfigField("COMPILER_PLUGIN_ID", provider { "$NAMESPACE.compiler" })
+
+	buildConfigField("RUNTIME_ARTIFACT_COORDINATE", provider { "${projectThis.group}:${projectThis.extra["kokoro.internal.scoping.artifact"]}" })
 }
 
 dependencies {
