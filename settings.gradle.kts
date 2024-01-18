@@ -1,7 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import build.api.dsl.*
-
 pluginManagement {
 	extra["build.structure.root"] = "."
 
@@ -31,16 +29,25 @@ dependencyResolutionManagement {
 	repositories {
 		mavenCentral()
 	}
+}
 
-	val kokoroLibGroup = settingsThis.extra["kokoro.group"] as String
-	// Self-include build to allow projects in the main build be addressable by
-	// coordinates (i.e., `${project.group}:${project.name}`), and also, so that
-	// we can declare some dependency substitutions for the entire (main) build.
-	// - See, https://docs.gradle.org/8.5/userguide/composite_builds.html#included_build_declaring_substitutions
-	includeBuild(".") {
-		dependencySubstitution {
-			substitute(module("$kokoroLibGroup:${settingsThis.extra["kokoro.internal.scoping.compiler.artifact"]}"))
-				.using(project(":kokoro:internal.scoping:compiler"))
+private class DependencySubstitutionsSetup(val project: Project) : Action<DependencySubstitutions> {
+
+	private val kokoroLibGroup = project.extra["kokoro.group"] as String
+
+	private fun DependencySubstitutions.setUp() {
+		substitute(module("$kokoroLibGroup:${project.extra["kokoro.internal.scoping.compiler.artifact"]}"))
+			.using(project(":kokoro:internal.scoping:compiler"))
+	}
+
+	override fun execute(dependencySubstitutions: DependencySubstitutions) = dependencySubstitutions.setUp()
+}
+
+gradle.allprojects {
+	val dependencySubstitutionsSetup = DependencySubstitutionsSetup(this)
+	configurations.configureEach {
+		if (isCanBeResolved) resolutionStrategy {
+			dependencySubstitution(dependencySubstitutionsSetup)
 		}
 	}
 }
