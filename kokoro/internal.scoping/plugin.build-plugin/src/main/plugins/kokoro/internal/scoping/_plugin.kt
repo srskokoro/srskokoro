@@ -1,5 +1,8 @@
 package kokoro.internal.scoping
 
+import build.api.dsl.*
+import build.api.dsl.accessors.kotlin
+import build.api.dsl.accessors.kotlinSourceSets
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.*
@@ -35,7 +38,17 @@ class _plugin : KotlinCompilerPluginSupportPlugin {
 private fun Project.apply_() {
 	tasks.withType<KotlinCompilationTask<*>>().configureEach {
 		compilerOptions.freeCompilerArgs.run {
+			// NOTE: Android Studio honors `languageSettings.optIn()` (from
+			// `KotlinSourceSet`) but only for KMP :P
 			add("-opt-in=$REQUIRED_OPT_IN_CLASS")
+		}
+	}
+	prioritizedAfterEvaluate {
+		val kotlin = kotlin
+		kotlin.kotlinSourceSets.all {
+			// NOTE: Android Studio doesn't honor `-opt-in` compiler option when
+			// in KMP :P
+			languageSettings.optIn(REQUIRED_OPT_IN_CLASS)
 		}
 	}
 }
