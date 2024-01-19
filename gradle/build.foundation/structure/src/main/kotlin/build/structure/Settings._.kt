@@ -5,9 +5,8 @@ import build.support.io.safeResolve
 import org.gradle.api.initialization.Settings
 import org.gradle.kotlin.dsl.*
 import java.io.File
-import java.util.LinkedList
 
-internal fun Settings.getStructureRoot(): File {
+private fun Settings.getStructureRoot(): File {
 	val structureRootValue = extra.getOrElse<Any>("build.structure.root") {
 		error("Must set up structure root path via extra property key \"$it\" (or via 'gradle.properties' file)")
 	}
@@ -20,13 +19,11 @@ internal fun Settings.getStructureRoot(): File {
 	return structureRoot
 }
 
-internal fun Settings.include(structure: ProjectStructure, structureRoot: File) =
-	include(structure.findProjects(structureRoot, providers), structureRoot)
-
-internal fun Settings.include(projectEntries: LinkedList<ProjectEntry>, structureRoot: File) {
-	projectEntries.forEach {
-		val id = it.projectId
+internal fun Settings.include(structure: ProjectStructure) {
+	val structureRoot = getStructureRoot()
+	structure.findProjects(structureRoot, providers).forEach {
+		val id = it.getProjectId(structureRoot)
 		include(id) // NOTE: Resolves relative to `Settings.rootDir`
-		project(id).projectDir = File(structureRoot, it.relativePath)
+		project(id).projectDir = it.getProjectDir(structureRoot)
 	}
 }

@@ -12,6 +12,11 @@ internal enum class ProjectStructure {
 			findIncludes(structureRoot, null, out)
 		}
 	},
+	BUILD_HOISTED {
+		override fun findProjects(structureRoot: File, out: LinkedList<ProjectEntry>) {
+			findBuildHoisted(structureRoot, null, out)
+		}
+	},
 	BUILD_INCLUSIVES {
 		override fun findProjects(structureRoot: File, out: LinkedList<ProjectEntry>) {
 			findBuildInclusives(structureRoot, null, out)
