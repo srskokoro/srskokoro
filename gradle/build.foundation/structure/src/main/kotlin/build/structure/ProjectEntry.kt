@@ -3,6 +3,7 @@ package build.structure
 import build.support.io.getFsSortingPrefixLength
 import java.io.File
 import java.util.LinkedList
+import java.util.Properties
 
 internal data class ProjectEntry(
 	val parent: ProjectEntry?,
@@ -34,30 +35,40 @@ internal data class ProjectEntry(
 		cacheStructureRoot(structureRoot)
 		projectId_?.let { return it }
 
-		val name = dirName
-		val s = getFsSortingPrefixLength(name)
-
 		return buildString {
-			val p = parent
-			if (p != null) {
-				val parentProjectId = p.getProjectId(structureRoot)
-				if (!transitory) {
-					append(parentProjectId)
-					append(':')
-				} else {
-					append(':')
-					for (i in 1 until parentProjectId.length) {
-						val c = parentProjectId[i]
-						if (c != ':') append(c)
-						else append("[.]")
-					}
-					append("[.]")
-				}
-			} else {
-				append(':')
+			if (!transitory) parent?.let { p ->
+				append(p.getProjectId(structureRoot))
 			}
-			append(name, s, name.length)
+			append(':')
+			appendProjectName(structureRoot)
 		}.also { projectId_ = it }
+	}
+
+	private fun StringBuilder.appendProjectName(structureRoot: File) {
+		val propsFile = File(getProjectDir(structureRoot), "build.structure.properties")
+		if (propsFile.exists()) propsFile.inputStream().use {
+			Properties().apply { load(it) }.getProperty("project.name")
+		}?.let {
+			if (it.isNotBlank()) {
+				append(it)
+				return // Skip code below
+			}
+		}
+
+		if (transitory) parent?.let { p ->
+			val parentProjectId = p.getProjectId(structureRoot)
+			for (i in 1 until parentProjectId.length) {
+				val c = parentProjectId[i]
+				if (c != ':') append(c)
+				else append("[.]")
+			}
+			append("[.]")
+		}
+
+		dirName.let {
+			val s = getFsSortingPrefixLength(it)
+			append(it, s, it.length)
+		}
 	}
 
 	// --
