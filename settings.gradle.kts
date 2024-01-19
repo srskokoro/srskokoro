@@ -9,6 +9,8 @@ pluginManagement {
 	autoGradleProperties("gradle/build.foundation/core")
 	includeBuild(autoGradleProperties("gradle/build.foundation"))
 	includeBuild(autoGradleProperties("gradle/conventions"))
+
+	autoGradleProperties("gradle/inclusives")
 	includeBuild(autoGradleProperties("gradle/plugins"))
 
 	repositories.gradlePluginPortal()
@@ -24,7 +26,7 @@ dependencySettings {
 	includeBuild(autoGradleProperties("dependencies"))
 }
 dependencyResolutionManagement {
-	includeBuild(autoGradleProperties("gradle/inclusives"))
+	includeBuild("gradle/inclusives")
 
 	repositories {
 		mavenCentral()
