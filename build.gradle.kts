@@ -5,7 +5,6 @@ plugins {
 }
 
 gradle.includedBuilds(
-	"build.foundation",
 	"conventions",
 	"inclusives",
 	"plugins",
