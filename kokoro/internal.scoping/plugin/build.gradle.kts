@@ -8,10 +8,8 @@ plugins {
 
 group = extra["kokoro.group"] as String
 
-val NAMESPACE = extra["kokoro.internal.scoping.ns"] as String
-
 buildConfig {
-	packageName(NAMESPACE)
+	packageName("kokoro.internal.scoping")
 
 	useKotlinOutput {
 		topLevelConstants = true
@@ -19,10 +17,10 @@ buildConfig {
 	}
 
 	buildConfigField("COMPILER_ARTIFACT_GROUP", provider { projectThis.group.toString() })
-	buildConfigField("COMPILER_ARTIFACT_NAME", provider { projectThis.extra["kokoro.internal.scoping.compiler.artifact"] as String })
-	buildConfigField("COMPILER_PLUGIN_ID", provider { "$NAMESPACE.compiler" })
+	buildConfigField("COMPILER_ARTIFACT_NAME", "kokoro-internal-scoping-compiler")
+	buildConfigField("COMPILER_PLUGIN_ID", "kokoro.internal.scoping.compiler")
 
-	buildConfigField("RUNTIME_ARTIFACT_COORDINATE", provider { "${projectThis.group}:${projectThis.extra["kokoro.internal.scoping.artifact"]}" })
+	buildConfigField("RUNTIME_ARTIFACT_COORDINATE", provider { "${projectThis.group}:kokoro-internal-scoping" })
 }
 
 dependencies {

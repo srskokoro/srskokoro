@@ -41,6 +41,3 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "srskokoro"
-
-project(":kokoro:internal.scoping").name = extra["kokoro.internal.scoping.artifact"] as String
-project(":kokoro:internal.scoping:compiler").name = extra["kokoro.internal.scoping.compiler.artifact"] as String
