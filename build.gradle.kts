@@ -7,6 +7,7 @@ plugins {
 
 gradle.includedBuilds(
 	"conventions",
+	"hoisted",
 	"inclusives",
 	"plugins",
 ).let { builds ->

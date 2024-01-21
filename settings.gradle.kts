@@ -10,6 +10,7 @@ pluginManagement {
 	includeBuild(autoGradleProperties("gradle/build.foundation"))
 	includeBuild(autoGradleProperties("gradle/conventions"))
 
+	autoGradleProperties("gradle/hoisted")
 	autoGradleProperties("gradle/inclusives")
 	includeBuild(autoGradleProperties("gradle/plugins"))
 
@@ -26,6 +27,7 @@ dependencySettings {
 	includeBuild(autoGradleProperties("dependencies"))
 }
 dependencyResolutionManagement {
+	includeBuild("gradle/hoisted")
 	includeBuild("gradle/inclusives")
 
 	repositories {
