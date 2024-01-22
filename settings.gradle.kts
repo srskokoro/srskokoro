@@ -14,7 +14,11 @@ pluginManagement {
 	autoGradleProperties("gradle/inclusives")
 	includeBuild(autoGradleProperties("gradle/plugins"))
 
-	repositories.gradlePluginPortal()
+	repositories {
+		gradlePluginPortal()
+		mavenCentral()
+		google()
+	}
 }
 plugins {
 	id("build.dependencies")
@@ -32,6 +36,7 @@ dependencyResolutionManagement {
 
 	repositories {
 		mavenCentral()
+		google()
 	}
 
 	// Self-include build to allow projects in the main build be addressable by
