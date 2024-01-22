@@ -2,6 +2,7 @@
 
 package kokoro.internal
 
+import kokoro.internal.scoping.RequiresCompilerPlugin
 import kotlin.annotation.AnnotationTarget.*
 import kotlin.reflect.KClass
 

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
-private const val REQUIRED_OPT_IN_CLASS = "kokoro.internal.RequiresCompilerPlugin"
+private const val REQUIRED_OPT_IN_CLASS = "kokoro.internal.scoping.RequiresCompilerPlugin"
 
 class _plugin : KotlinCompilerPluginSupportPlugin {
 	override fun apply(target: Project) {
