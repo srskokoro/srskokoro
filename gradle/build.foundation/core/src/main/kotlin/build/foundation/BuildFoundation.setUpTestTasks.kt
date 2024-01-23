@@ -109,7 +109,7 @@ private sealed class TestTaskSetupInDoFirst<T : AbstractTestTask>(task: T) : Act
 	}
 }
 
-fun BuildFoundation.setUpTestTasks(project: Project) {
+fun BuildFoundation.setUpTestTasks(project: Project): Unit = project.afterEvaluate(fun(project) {
 	project.tasks.withType<AbstractTestTask>().configureEach {
 		when (this) {
 			is KotlinNativeTest -> run {
@@ -127,7 +127,7 @@ fun BuildFoundation.setUpTestTasks(project: Project) {
 			}
 		}
 	}
-}
+})
 
 private fun AbstractTestTask.doTestGivenProjectExtra(extraName: String) {
 	if (!project.extra.parseBoolean(extraName, true)) {

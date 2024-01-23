@@ -1,4 +1,3 @@
-import build.api.dsl.*
 import org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 
@@ -33,7 +32,7 @@ dependencies {
 	nativeMainImplementation("io.kotest:kotest-assertions-shared")
 	commonMainApi("io.kotest:kotest-framework-engine", Build::excludeKotestAssertions)
 	jvmMainApi("io.kotest:kotest-runner-junit5", Build::excludeKotestAssertions)
-	projectThis.tasks.run { Build.assert_JUnit5(jvmTest) }
+	afterEvaluate { tasks.run { Build.assert_JUnit5(jvmTest) } }
 	commonMainApi("io.kotest:kotest-property", Build::excludeKotestAssertions)
 	commonMainApi("com.willowtreeapps.assertk:assertk")
 }
