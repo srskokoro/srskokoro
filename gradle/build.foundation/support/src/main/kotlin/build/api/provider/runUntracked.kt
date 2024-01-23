@@ -77,7 +77,8 @@ internal abstract class RunUntrackedHelper : ValueSource<Boolean, RunUntrackedHe
 		val ticket: Property<Long>
 	}
 
-	private data object DefaultUntrackedScope : UntrackedScope
+	@Deprecated("Should only be used in tests", level = DeprecationLevel.HIDDEN)
+	internal data object DefaultUntrackedScope : UntrackedScope
 
 	companion object {
 		private val nextTicket = AtomicLong()
@@ -96,6 +97,7 @@ internal abstract class RunUntrackedHelper : ValueSource<Boolean, RunUntrackedHe
 
 	override fun obtain(): Boolean {
 		val ticket = parameters.ticket.get()
+		@Suppress("DEPRECATION_ERROR")
 		actions.remove(ticket)?.invoke(DefaultUntrackedScope)
 		return false
 	}
