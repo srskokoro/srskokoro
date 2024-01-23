@@ -6,11 +6,16 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
+import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
 import java.io.File
 
 private sealed class TestTaskSetupInDoFirst<T : AbstractTestTask>(task: T) : Action<Task> {
@@ -110,15 +115,15 @@ private sealed class TestTaskSetupInDoFirst<T : AbstractTestTask>(task: T) : Act
 }
 
 fun BuildFoundation.setUpTestTasks(project: Project): Unit = project.afterEvaluate(fun(project) {
-	project.tasks.withType<AbstractTestTask>().configureEach {
+	val tasks = project.tasks
+
+	tasks.withType<AbstractTestTask>().configureEach {
 		when (this) {
 			is KotlinNativeTest -> run {
 				doFirst(TestTaskSetupInDoFirst.ForNative(this)) // -- sets up `env` extension
-				doTestGivenProjectExtra("TEST_KN")
 			}
 			is KotlinJsTest -> run {
 				doFirst(TestTaskSetupInDoFirst.ForJs(this))
-				doTestGivenProjectExtra("TEST_KJS")
 			}
 			is Test -> run {
 				doFirst(TestTaskSetupInDoFirst.ForJvm(this))
@@ -127,23 +132,68 @@ fun BuildFoundation.setUpTestTasks(project: Project): Unit = project.afterEvalua
 			}
 		}
 	}
+
+	val shouldTestNative = project.extra.parseBoolean("TEST_KN", true)
+	val shouldTestJs = project.extra.parseBoolean("TEST_KJS", true)
+
+	if (!shouldTestNative || !shouldTestJs) run(fun() {
+		val kotlin = project.extensions.getByName("kotlin") as? KotlinMultiplatformExtension ?: return
+		val remover = TaskDependencyRemover()
+
+		kotlin.targets.all {
+			when (this) {
+				is KotlinNativeTarget -> if (!shouldTestNative) {
+					remover.add("${targetName}Test")
+				}
+				is KotlinJsSubTargetContainerDsl -> if (!shouldTestJs) targetName.let { targetName ->
+					remover.add("${targetName}Test")
+					if (isBrowserConfigured) remover.add("${targetName}BrowserTest")
+					if (isNodejsConfigured) remover.add("${targetName}NodeTest")
+				}
+			}
+		}
+
+		tasks.named("check", remover)
+		tasks.withType<KotlinTestReport>().configureEach(remover)
+	})
 })
 
-private fun AbstractTestTask.doTestGivenProjectExtra(extraName: String) {
-	if (!project.extra.parseBoolean(extraName, true)) {
-		// Skip test task.
-		//
-		// NOTE: Can't use `onlyIf` as it'll skip only *this* task.
-		// - See, https://stackoverflow.com/q/16214865
-		disableRecursively()
+private class TaskDependencyRemover : HashSet<String>(), Action<Task> {
+
+	override fun execute(task: Task) {
+		val dependsOn = task.dependsOn
+		val out = ArrayList<Any>(dependsOn.size)
+
+		dependsOn.forEach { x ->
+			run<Unit> {
+				when (x) {
+					is String -> x
+					is TaskProvider<*> -> x.name
+					is Task -> x.name
+					else -> return@run
+				}.let {
+					if (it in this)
+						return@forEach // Skip
+				}
+			}
+			out.add(x)
+		}
+
+		if (out.size != dependsOn.size) {
+			task.setDependsOn(out)
+		}
+
+		if (task is KotlinTestReport) {
+			configure(task)
+		}
 	}
-}
 
-private fun Task.disableRecursively() {
-	enabled = false
-	setDependsOn(emptyList<Any?>())
-
-	for (d in taskDependencies.getDependencies(this)) {
-		d.disableRecursively()
+	private fun configure(task: KotlinTestReport) {
+		val testResultDirs = task.testResults.from
+		val iter = task.testTasks.iterator()
+		for (x in iter) if (x.name in this) {
+			iter.remove()
+			testResultDirs.remove(x.binaryResultsDirectory)
+		}
 	}
 }
