@@ -135,7 +135,15 @@ private fun AbstractTestTask.doTestGivenProjectExtra(extraName: String) {
 		//
 		// NOTE: Can't use `onlyIf` as it'll skip only *this* task.
 		// - See, https://stackoverflow.com/q/16214865
-		enabled = false
-		setDependsOn(emptyList<Any?>())
+		disableRecursively()
+	}
+}
+
+private fun Task.disableRecursively() {
+	enabled = false
+	setDependsOn(emptyList<Any?>())
+
+	for (d in taskDependencies.getDependencies(this)) {
+		d.disableRecursively()
 	}
 }
