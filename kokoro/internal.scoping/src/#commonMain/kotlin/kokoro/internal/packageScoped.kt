@@ -21,5 +21,5 @@ import kotlin.reflect.KClass
  */
 @RequiresCompilerPlugin
 @RequiresOptIn("Not accessible to packages other than the scoping package and its subpackages.")
-@Target(CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS)
+@Target(CLASS, PROPERTY, FIELD, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS)
 annotation class packageScoped(val scopingRef: KClass<out ScopingRef> = Nothing::class)
