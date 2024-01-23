@@ -7,9 +7,9 @@
     </inspection_tool>
     <inspection_tool class="ClassName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <scope name="Tests" level="WEAK WARNING" enabled="true">
-        <option name="namePattern" value="[Tt]est[\W_].*|[\-_A-Z][\-_A-Za-z\d]*" />
+        <option name="namePattern" value="[Tt]est[\W_].*|[\-_A-Z][\-_A-Za-z\d]*|nook" />
       </scope>
-      <option name="namePattern" value="[\-_A-Z][\-_A-Za-z\d]*" />
+      <option name="namePattern" value="[\-_A-Z][\-_A-Za-z\d]*|nook" />
     </inspection_tool>
     <inspection_tool class="ConstPropertyName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="namePattern" value="[\-_]*[A-Za-z][\-_A-Za-z\d]*" />
