@@ -42,4 +42,17 @@ object BuildFoundation {
 		add("compileOnly", dependencyNotation)
 		add("testImplementation", dependencyNotation)
 	}
+
+	// --
+
+	/**
+	 * The following are a bunch of constants whose usage we would like to keep
+	 * track of via the IDE's refactoring mechanism.
+	 */
+	internal object MPP {
+		const val jvmish = "jvmish"
+		const val unix = "unix"
+		const val desktop = "desktop"
+		const val mobile = "mobile"
+	}
 }

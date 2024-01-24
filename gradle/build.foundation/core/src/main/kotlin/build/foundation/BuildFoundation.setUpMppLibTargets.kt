@@ -1,5 +1,6 @@
 package build.foundation
 
+import build.foundation.BuildFoundation.MPP
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurationContainer
@@ -10,14 +11,12 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import kotlin.reflect.KFunction2
 
+/**
+ * WARNING: Assumes that [setUpMppHierarchy][build.foundation.setUpMppHierarchy]`()`
+ * has already been called beforehand.
+ */
 fun BuildFoundation.setUpMppLibTargets(project: Project): Unit = with(project) {
 	with(extensions.getByName("kotlin") as KotlinMultiplatformExtension) {
-		// Apply this now (instead of waiting for it to be applied later), so
-		// that Gradle may generate type-safe model accessors for the default
-		// hierarchy.
-		applyDefaultHierarchyTemplate()
-
-		// -=-
 		// Should support at best, targets that we can test with Kotest
 		// (which is version 5.8 at the time of writing). See,
 		// - https://github.com/kotest/kotest/blob/v5.8.0/buildSrc/src/main/kotlin/kotest-js-conventions.gradle.kts
@@ -81,8 +80,23 @@ fun BuildFoundation.setUpMppLibTargets(project: Project): Unit = with(project) {
 		}
 		hs.ensureNode("apple")
 		hs.ensureNode("native")
+
+		ensureCustomMppHierarchyNodes(hs)
 	}
 }
+
+/**
+ * WARNING: Assumes that [setUpMppHierarchy][build.foundation.setUpMppHierarchy]`()`
+ * has already been called beforehand.
+ */
+private fun ensureCustomMppHierarchyNodes(hs: KotlinHierarchySetup) {
+	hs.ensureNode(MPP.jvmish)
+	hs.ensureNode(MPP.unix)
+	hs.ensureNode(MPP.desktop)
+	hs.ensureNode(MPP.mobile)
+}
+
+// --
 
 private open class KotlinTargetSetup {
 

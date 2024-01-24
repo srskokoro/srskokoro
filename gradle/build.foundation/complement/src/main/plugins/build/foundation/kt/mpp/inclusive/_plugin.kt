@@ -5,6 +5,7 @@ import build.foundation.BuildFoundation
 import build.foundation.BuildFoundation.kotlin
 import build.foundation.ensureReproducibleBuild
 import build.foundation.setUpAsBuildInclusive
+import build.foundation.setUpMppHierarchy
 import build.foundation.setUpMppLibTargets
 import build.foundation.setUpTestTasks
 import org.gradle.api.Plugin
@@ -21,6 +22,7 @@ class _plugin : Plugin<Project> {
 
 		BuildFoundation.ensureReproducibleBuild(target)
 		BuildFoundation.setUpTestTasks(target)
+		BuildFoundation.setUpMppHierarchy(target)
 		BuildFoundation.setUpMppLibTargets(target)
 		BuildFoundation.setUpAsBuildInclusive(target)
 	}
