@@ -62,6 +62,13 @@ dependencySettings {
 	// - https://stackoverflow.com/q/54129834
 	prop("build.android.minSdk", 26)
 
+	// Java 8+ API desugaring support -- https://developer.android.com/studio/write/java8-support#library-desugaring
+	// - See also, https://developer.android.com/studio/write/java11-default-support-table
+	val android_desugar = "2.0.4" // https://maven.google.com/web/index.html#com.android.tools:desugar_jdk_libs
+	module("com.android.tools:desugar_jdk_libs_minimal", android_desugar)
+	module("com.android.tools:desugar_jdk_libs", android_desugar)
+	module("com.android.tools:desugar_jdk_libs_nio", android_desugar)
+
 	// -=*=-
 	// Build support
 
