@@ -12,7 +12,11 @@ pluginManagement {
 	includeBuild("../conventions")
 	includeBuild("../plugins")
 
-	repositories.gradlePluginPortal()
+	repositories {
+		gradlePluginPortal()
+		mavenCentral()
+		google()
+	}
 }
 plugins {
 	id("build.dependencies")
@@ -28,5 +32,6 @@ dependencyResolutionManagement {
 
 	repositories {
 		mavenCentral()
+		google()
 	}
 }

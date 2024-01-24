@@ -11,7 +11,11 @@ pluginManagement {
 	// NOTE: May have KMP projects.
 	includeBuild("../conventions")
 
-	repositories.gradlePluginPortal()
+	repositories {
+		gradlePluginPortal()
+		mavenCentral()
+		google()
+	}
 }
 plugins {
 	id("build.dependencies")
@@ -25,6 +29,7 @@ dependencySettings {
 dependencyResolutionManagement {
 	repositories {
 		mavenCentral()
+		google()
 	}
 }
 

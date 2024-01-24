@@ -6,7 +6,11 @@ pluginManagement {
 	includeBuild("../build.foundation")
 	includeBuild("../build.foundation/core")
 
-	repositories.gradlePluginPortal()
+	repositories {
+		gradlePluginPortal()
+		mavenCentral()
+		google()
+	}
 }
 plugins {
 	id("build.dependencies")
@@ -18,5 +22,9 @@ dependencySettings {
 	includeBuild("../../dependencies")
 }
 dependencyResolutionManagement {
-	repositories.gradlePluginPortal()
+	repositories {
+		gradlePluginPortal()
+		mavenCentral()
+		google()
+	}
 }
