@@ -42,9 +42,25 @@ dependencySettings {
 
 	// Android Gradle Plugin (AGP) -- https://developer.android.com/build/releases/gradle-plugin
 	val android = "8.2.2" // https://maven.google.com/web/index.html#com.android.tools.build:gradle
+
 	plugin("com.android.library", android)
 	plugin("com.android.application", android)
 	module("com.android.tools.build:gradle", android)
+
+	// The Android SDK Build Tools to use -- https://developer.android.com/tools/releases/build-tools
+	// - See also, https://developer.android.com/build/releases/gradle-plugin#compatibility
+	prop("build.android.buildToolsVersion", "34.0.0")
+
+	prop("build.android.compileSdk", 34)
+	prop("build.android.targetSdk", 34)
+
+	// NOTE: API level 26 is the lowest SDK that we know of that fully supports
+	// all Java 8 features and APIs. See also,
+	// - https://developer.android.com/studio/write/java8-support#library-desugaring
+	// - https://developer.android.com/studio/write/java11-default-support-table
+	// - https://developer.android.com/build/jdks#compileSdk
+	// - https://stackoverflow.com/q/54129834
+	prop("build.android.minSdk", 26)
 
 	// -=*=-
 	// Build support
