@@ -21,7 +21,7 @@ fun BuildFoundation.setUpMppLibTargets(project: Project): Unit = with(project) {
 		// - https://github.com/kotest/kotest/blob/v5.8.0/buildSrc/src/main/kotlin/kotest-js-conventions.gradle.kts
 		// - https://github.com/kotest/kotest/blob/v5.8.0/buildSrc/src/main/kotlin/kotest-native-conventions.gradle.kts
 
-		jvm()
+		jvm(MPP.jre)
 
 		if (shouldBuildJs(project)) {
 			js(IR) {

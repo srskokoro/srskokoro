@@ -35,7 +35,8 @@ class _plugin : ProjectPlugin({
 			browser()
 		}
 
-		jvm()
+		@OptIn(InternalApi::class)
+		jvm(MPP.jre)
 
 		@OptIn(InternalApi::class)
 		if (BuildFoundation.shouldBuildNative(projectThis)) {

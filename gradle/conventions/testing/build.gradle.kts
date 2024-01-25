@@ -31,8 +31,8 @@ dependencies {
 	commonMainRuntimeOnly("io.kotest:kotest-assertions-shared")
 	nativeMainImplementation("io.kotest:kotest-assertions-shared")
 	commonMainApi("io.kotest:kotest-framework-engine", Build::excludeKotestAssertions)
-	jvmMainApi("io.kotest:kotest-runner-junit5", Build::excludeKotestAssertions)
-	afterEvaluate { tasks.run { Build.assert_JUnit5(jvmTest) } }
+	jreMainApi("io.kotest:kotest-runner-junit5", Build::excludeKotestAssertions)
+	afterEvaluate { tasks.run { Build.assert_JUnit5(jreTest) } }
 	commonMainApi("io.kotest:kotest-property", Build::excludeKotestAssertions)
 	commonMainApi("com.willowtreeapps.assertk:assertk")
 }

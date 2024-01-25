@@ -49,7 +49,9 @@ object BuildFoundation {
 	 * The following are a bunch of constants whose usage we would like to keep
 	 * track of via the IDE's refactoring mechanism.
 	 */
+	@InternalApi
 	object MPP {
+		const val jre = "jre"
 		const val jvmish = "jvmish"
 		const val unix = "unix"
 		const val desktop = "desktop"
