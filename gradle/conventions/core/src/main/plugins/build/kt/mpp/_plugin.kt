@@ -2,7 +2,6 @@ package build.kt.mpp
 
 import build.api.ProjectPlugin
 import build.api.dsl.*
-import build.api.dsl.accessors.android
 import build.api.dsl.accessors.commonTestImplementation
 import build.foundation.BuildFoundation
 import build.foundation.InternalApi
@@ -19,8 +18,8 @@ class _plugin : ProjectPlugin({
 
 	setUp(this)
 
-	onAndroidProject {
-		setUp(android)
+	onAndroid {
+		setUp(this)
 	}
 
 	@OptIn(InternalApi::class)
