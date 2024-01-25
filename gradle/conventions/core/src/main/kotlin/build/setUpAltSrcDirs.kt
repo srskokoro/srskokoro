@@ -85,14 +85,18 @@ private fun SourceDirectorySet.setUpAltSrcDirs(
 		// "/kotlin" or "/resources" or something similar, and that string may
 		// even have further sub-paths.
 
+		// With the check performed above, we expect the following to start with
+		// a slash -- the system-dependent file separator character.
+		val srcDirSubPath = p.from(n)
+
 		if (isTestSrcSet) {
-			srcDir(TEST_SLASHED + srcSetName + File.separatorChar + p.from(n + 1))
+			srcDir(TEST_SLASHED + srcSetName + srcDirSubPath)
 			if (altSrcSetDirName == null) continue
-			srcDir(TEST_SLASHED + altSrcSetDirName + File.separatorChar + p.from(n + 1))
+			srcDir(TEST_SLASHED + altSrcSetDirName + srcDirSubPath)
 		} else {
 			if (altSrcSetDirName == null) continue
 		}
-		srcDir(SRC_SLASHED + altSrcSetDirName + File.separatorChar + p.from(n + 1))
+		srcDir(SRC_SLASHED + altSrcSetDirName + srcDirSubPath)
 	}
 }
 
