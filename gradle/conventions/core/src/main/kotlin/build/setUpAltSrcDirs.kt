@@ -81,6 +81,10 @@ private fun SourceDirectorySet.setUpAltSrcDirs(
 		if (n >= p.length) continue
 		if (p[n] != File.separatorChar) continue
 
+		// NOTE: At this point, `n` should be pointing exactly at the string
+		// "/kotlin" or "/resources" or something similar, and that string may
+		// even have further sub-paths.
+
 		if (isTestSrcSet) {
 			srcDir(TEST_SLASHED + srcSetName + File.separatorChar + p.from(n + 1))
 			if (altSrcSetDirName == null) continue
