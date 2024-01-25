@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
 	api(kotlin("gradle-plugin"))
-	api("com.android.tools.build:gradle")
+	implementation("com.android.tools.build:gradle")
 
 	api(project(":support"))
 	testImplementation(project(":testing.conventions"))
