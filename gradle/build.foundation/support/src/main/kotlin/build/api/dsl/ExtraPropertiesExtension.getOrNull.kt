@@ -40,3 +40,13 @@ inline fun <R> ExtraPropertiesExtension.getOrAdd(name: String, defaultValue: Ext
 	set(name, value)
 	value
 }
+
+// --
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun ExtraPropertiesExtension.parseBoolean(name: String) = parseBoolean(name, false)
+
+fun ExtraPropertiesExtension.parseBoolean(name: String, default: Boolean): Boolean {
+	val v = getOrNull<Any>(name) ?: return default
+	return if (v is Boolean) v else java.lang.Boolean.parseBoolean(v.toString())
+}
