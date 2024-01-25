@@ -34,6 +34,8 @@ private inline fun <reified P : Plugin<Project>> TestScope.hasBasePlugin() = has
 private fun TestScope.hasBasePlugin(plugin: Class<out Plugin<Project>>): Boolean {
 	return buildProject(TestTemp.from(this, plugin.name)).run {
 		apply(fun(x) { x.plugin(plugin) })
-		plugins.hasPlugin(_plugin::class.java.packageName)
+		// NOTE: Using `pluginManager.hasPlugin()` is preferred over
+		// `plugins.hasPlugin()` according to `PluginAware.plugins` docs.
+		pluginManager.hasPlugin(_plugin::class.java.packageName)
 	}
 }
