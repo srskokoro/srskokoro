@@ -28,6 +28,7 @@ private fun Project.setUpAltSrcDirs_() {
 
 		// NOTE: It may not actually be a directory, but we don't care.
 		val altSrcSetDirName: String? = possibleAltSrcSetDirs[srcSetName]
+		if (altSrcSetDirName == null && !isTestSrcSet) return@configureEach
 
 		// Must process first before `kotlin` and `resources`, since `kotlin` or
 		// `resources` may include the extraneous source as a nested source
@@ -48,6 +49,7 @@ private fun Project.setUpAltSrcDirs_() {
 
 		// NOTE: It may not actually be a directory, but we don't care.
 		val altSrcSetDirName: String? = possibleAltSrcSetDirs[srcSetName]
+		if (altSrcSetDirName == null && !isTestSrcSet) return@configureEach
 
 		java.setUpAltSrcDirs(altSrcSetDirName, srcSetName, isTestSrcSet, srcPathSlashed)
 		resources.setUpAltSrcDirs(altSrcSetDirName, srcSetName, isTestSrcSet, srcPathSlashed)
