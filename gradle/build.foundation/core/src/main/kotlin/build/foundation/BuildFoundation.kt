@@ -55,4 +55,20 @@ object BuildFoundation {
 		const val desktop = "desktop"
 		const val mobile = "mobile"
 	}
+
+	// --
+
+	private const val BUILD_KJS__extra = "BUILD_KJS"
+	private const val BUILD_KN__extra = "BUILD_KN"
+
+	fun shouldBuildJs(project: Project) = project.extra.parseBoolean(BUILD_KJS__extra, true)
+	fun shouldBuildNative(project: Project) = project.extra.parseBoolean(BUILD_KN__extra, true)
+
+	// --
+
+	private const val TEST_KJS__extra = "TEST_KJS"
+	private const val TEST_KN__extra = "TEST_KN"
+
+	fun shouldTestJs(project: Project) = project.extra.parseBoolean(TEST_KJS__extra, true)
+	fun shouldTestNative(project: Project) = project.extra.parseBoolean(TEST_KN__extra, true)
 }

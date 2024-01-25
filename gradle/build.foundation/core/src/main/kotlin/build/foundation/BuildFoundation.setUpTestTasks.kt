@@ -133,8 +133,8 @@ fun BuildFoundation.setUpTestTasks(project: Project): Unit = project.afterEvalua
 		}
 	}
 
-	val shouldTestNative = project.extra.parseBoolean("TEST_KN", true)
-	val shouldTestJs = project.extra.parseBoolean("TEST_KJS", true)
+	val shouldTestNative = shouldTestNative(project)
+	val shouldTestJs = shouldTestJs(project)
 
 	if (!shouldTestNative || !shouldTestJs) run(fun() {
 		val kotlin = project.extensions.getByName("kotlin") as? KotlinMultiplatformExtension ?: return

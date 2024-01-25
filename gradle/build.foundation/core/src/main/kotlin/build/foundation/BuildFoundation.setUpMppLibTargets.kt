@@ -5,7 +5,6 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.internal.os.OperatingSystem
-import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -24,7 +23,7 @@ fun BuildFoundation.setUpMppLibTargets(project: Project): Unit = with(project) {
 
 		jvm()
 
-		if (project.extra.parseBoolean("BUILD_KJS", true)) {
+		if (shouldBuildJs(project)) {
 			js(IR) {
 				browser()
 				nodejs()
@@ -36,7 +35,7 @@ fun BuildFoundation.setUpMppLibTargets(project: Project): Unit = with(project) {
 		val hs = KotlinHierarchySetup(sourceSets, configurations)
 		val ts = KotlinTargetSetup()
 		run<KotlinTargetSetup> {
-			if (project.extra.parseBoolean("BUILD_KN", true)) ts
+			if (shouldBuildNative(project)) ts
 			else KotlinTargetSetup.Dummy(configurations)
 		}.let { x ->
 			x(::iosX64)
