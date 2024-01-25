@@ -4,7 +4,8 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.internal.extensibility.DefaultExtraPropertiesExtension
 
 internal fun ExtraPropertiesExtension.parseBoolean(name: String, default: Boolean): Boolean {
-	return java.lang.Boolean.parseBoolean((getOrNull<Any>(name) ?: return default).toString())
+	val v = getOrNull<Any>(name) ?: return default
+	return if (v is Boolean) v else java.lang.Boolean.parseBoolean(v.toString())
 }
 
 internal fun <R> ExtraPropertiesExtension.getOrNull(name: String): R? {
