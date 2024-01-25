@@ -6,13 +6,16 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 /**
- * @see mppHierarchy
+ * @see defaultMppHierarchyTemplate
+ * @see getMppHierarchyTemplate
+ * @see setMppHierarchyTemplate
+ * @see extendMppHierarchyTemplate
  */
 fun BuildFoundation.setUpMppHierarchy(project: Project) {
-	if (project.extra.parseBoolean(extra__skipMppHierarchySetup, false)) return
+	project.extensions.add<Any>(mppHierarchyTemplate_applied__extension, true)
 
 	with(project.extensions.getByName("kotlin") as KotlinMultiplatformExtension) {
 		@OptIn(ExperimentalKotlinGradlePluginApi::class)
-		applyHierarchyTemplate(mppHierarchy)
+		applyHierarchyTemplate(getMppHierarchyTemplate(project))
 	}
 }
