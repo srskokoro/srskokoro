@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import kotlin.reflect.KFunction2
 
 /**
- * WARNING: Assumes that [setUpMppHierarchy][build.foundation.setUpMppHierarchy]`()`
- * has already been called beforehand.
+ * WARNING: Assumes that [setUpMppHierarchy]`()` has already been called
+ * beforehand.
  */
 fun BuildFoundation.setUpMppLibTargets(project: Project): Unit = with(project) {
 	with(extensions.getByName("kotlin") as KotlinMultiplatformExtension) {
@@ -86,8 +86,8 @@ fun BuildFoundation.setUpMppLibTargets(project: Project): Unit = with(project) {
 }
 
 /**
- * WARNING: Assumes that [setUpMppHierarchy][build.foundation.setUpMppHierarchy]`()`
- * has already been called beforehand.
+ * WARNING: Assumes that [setUpMppHierarchy]`()` has already been called
+ * beforehand.
  */
 private fun ensureCustomMppHierarchyNodes(hs: KotlinHierarchySetup) {
 	hs.ensureNode(MPP.jvmish)
