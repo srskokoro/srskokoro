@@ -5,7 +5,7 @@ import com.android.build.api.dsl.ApplicationBaseFlavor
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 
-internal fun Project.setUp(android: AndroidExtension): Unit = with(android) {
+internal fun Project.setUp(android: AndroidExtension) {
 	android.run {
 		deps?.run {
 			buildToolsVersion = prop("build.android.buildToolsVersion")
