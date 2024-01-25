@@ -57,9 +57,9 @@ private fun Project.setUpAltSrcDirs_() {
 private fun File.gatherPossibleAltSrcSetDirs(out: HashMap<String, String>) {
 	// NOTE: Let Gradle automatically track the `File.list()` below as
 	// configuration input. See also, https://github.com/gradle/gradle/issues/23638
-	list()?.forEach { fn ->
-		getFsSortingPrefixLength(fn).let {
-			if (it != 0) out[fn.from(it)] = fn
+	list()?.forEach { name ->
+		getFsSortingPrefixLength(name).let {
+			if (it != 0) out[name.from(it)] = name
 		}
 	}
 }
