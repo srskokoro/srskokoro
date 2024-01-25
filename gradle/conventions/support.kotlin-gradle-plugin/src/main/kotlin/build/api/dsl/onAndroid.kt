@@ -25,6 +25,8 @@ fun Project.onAndroid(configure: Action<out AndroidExtension>) {
 		when (android) {
 			is AndroidAppExtension -> "com.android.application"
 			is AndroidLibExtension -> "com.android.library"
+			is AndroidDynamicFeatureExtension -> "com.android.dynamic-feature"
+			is AndroidTestExtension -> "com.android.test"
 			else -> error("Unknown `android` extension $android")
 		}.let { pluginId ->
 			pluginManager.withPlugin(pluginId) {
