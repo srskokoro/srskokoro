@@ -5,7 +5,7 @@ import org.gradle.api.Project
 
 @JvmName("withAndroid_")
 fun Project.withAndroid(configure: Action<out AndroidExtension>) {
-	ifAndroidProject {
+	onAndroidProject {
 		projectThis.extensions.configure("android", configure)
 	}
 }

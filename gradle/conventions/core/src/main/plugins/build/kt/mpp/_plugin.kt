@@ -19,7 +19,7 @@ class _plugin : ProjectPlugin({
 
 	setUp(this)
 
-	ifAndroidProject {
+	onAndroidProject {
 		setUp(android)
 	}
 
