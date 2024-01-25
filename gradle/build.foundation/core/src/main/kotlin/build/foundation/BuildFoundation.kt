@@ -55,4 +55,10 @@ object BuildFoundation {
 		const val desktop = "desktop"
 		const val mobile = "mobile"
 	}
+
+	/**
+	 * @see setUpMppHierarchy
+	 * @see mppHierarchy
+	 */
+	const val extra__skipMppHierarchySetup = "skipMppHierarchySetup"
 }

@@ -5,6 +5,10 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
 import org.jetbrains.kotlin.gradle.plugin.extend
 
+/**
+ * @see BuildFoundation.setUpMppHierarchy
+ * @see BuildFoundation.extra__skipMppHierarchySetup
+ */
 val BuildFoundation.mppHierarchy get() = mppHierarchy_
 
 @OptIn(ExperimentalKotlinGradlePluginApi::class)
