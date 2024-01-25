@@ -18,6 +18,6 @@ android {
 }
 
 dependencies {
-	commonMainApi(project(":kokoro:internal"))
-	commonMainApi(project(":kokoro"))
+	commonMainImplementation(project(":kokoro:internal"))
+	commonMainImplementation(project(":kokoro"))
 }
