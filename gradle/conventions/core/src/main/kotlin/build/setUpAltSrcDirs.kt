@@ -82,19 +82,19 @@ private fun SourceDirectorySet.setUpAltSrcDirs(
 		if (p[n] != File.separatorChar) continue
 
 		if (isTestSrcSet) {
-			srcDir(TEST_SEP + srcSetName + File.separatorChar + p.from(n + 1))
+			srcDir(TEST_SLASHED + srcSetName + File.separatorChar + p.from(n + 1))
 			if (altSrcSetDirName == null) continue
-			srcDir(TEST_SEP + altSrcSetDirName + File.separatorChar + p.from(n + 1))
+			srcDir(TEST_SLASHED + altSrcSetDirName + File.separatorChar + p.from(n + 1))
 		} else {
 			if (altSrcSetDirName == null) continue
 		}
-		srcDir(SRC_SEP + altSrcSetDirName + File.separatorChar + p.from(n + 1))
+		srcDir(SRC_SLASHED + altSrcSetDirName + File.separatorChar + p.from(n + 1))
 	}
 }
 
 private const val TEST = "test"
-private val TEST_SEP = TEST + File.separatorChar
-private val SRC_SEP = "src" + File.separatorChar
+private val TEST_SLASHED = TEST + File.separatorChar
+private val SRC_SLASHED = "src" + File.separatorChar
 
 private fun isTestSrcSet(name: String): Boolean {
 	// Either it's suffixed with "Test" or it's named "test" -- and not because
