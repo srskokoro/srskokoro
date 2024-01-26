@@ -35,3 +35,5 @@ dependencyResolutionManagement {
 		google()
 	}
 }
+
+include("init")
