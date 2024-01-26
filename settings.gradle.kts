@@ -1,6 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
 pluginManagement {
+	apply(from = "gradle/disableInitialIdeaSync.settings.gradle.kts")
+
 	extra["build.structure.root"] = "."
 
 	apply(from = "gradle/autoGradleProperties.settings.gradle.kts")
