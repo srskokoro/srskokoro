@@ -40,8 +40,8 @@ private const val isIdeaInitialSync__name = "--build.structure.isIdeaInitialSync
 private var isIdeaInitialSyncSeen = false
 
 private const val E_DISABLED_DUE_TO_INITIAL_IDEA_SYNC = "" +
-	"Due to issues with Android Studio's project import mechanism (that we would\n" +
-	"rather not deal with), a manual IDE sync has been required to load the projects.\n"
+	"Due to issues with Android Studio's project loading (that we would rather not\n" +
+	"deal with), projects were not loaded yet: a manual IDE sync must be done.\n"
 
 private fun Settings.shouldDisableDueToInitialIdeaSync(): Boolean {
 	// NOTE: The following prevents Android Studio from loading projects on
