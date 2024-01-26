@@ -1,8 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
 pluginManagement {
-	apply(from = "gradle/reloadOnIdeaInitialSync.settings.gradle.kts")
-
 	extra["build.structure.root"] = "."
 
 	apply(from = "gradle/autoGradleProperties.settings.gradle.kts")
