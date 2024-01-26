@@ -39,5 +39,7 @@ run<Unit> {
 	}
 
 	settings.apply(from = dummy)
+	check(dummy.delete()) { "Failed to delete: $dummy" }
+
 	println("IDE forced to reload projects.")
 }
