@@ -9,7 +9,7 @@ import org.gradle.kotlin.dsl.support.serviceOf
 class _plugin : ProjectPlugin({
 	val rootProject = rootProject
 
-	val internalVersion = rootProject.xs().getOrAdd("--internal-version--") {
+	val internalVersion = rootProject.xs().getOrAdd<InternalVersion>("--internal-version--") {
 		val providers = rootProject.providers
 		val isReleasing = providers.isReleasing
 		val rootSettingsDir = rootProject.gradle.findRoot().serviceOf<SettingsLocation>().settingsDir
@@ -18,7 +18,7 @@ class _plugin : ProjectPlugin({
 			val p = parameters
 			p.rootSettingsDir.set(rootSettingsDir)
 			p.releasing.set(isReleasing)
-		}.get() as InternalVersion
+		}.get()
 	}
 
 	internalVersion.name?.let { versionName = it }
