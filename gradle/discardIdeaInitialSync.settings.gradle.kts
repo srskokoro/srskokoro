@@ -10,7 +10,9 @@ run<Unit> {
 	// - From, https://stackoverflow.com/a/55020202
 	if (serviceOf<DaemonScanInfo>().isSingleUse) return@run
 
+	// See, https://github.com/JetBrains/kotlin/blob/v1.7.22/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/internal/idea.kt
 	if (System.getProperty("idea.sync.active") != "true") return@run
+
 	if (Build.ideaInitialSyncSeen) return@run
 	Build.ideaInitialSyncSeen = true
 
