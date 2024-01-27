@@ -6,20 +6,18 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 
 internal fun Project.setUp(android: AndroidExtension) {
-	android.run {
-		deps?.run {
-			buildToolsVersion = prop("build.android.buildToolsVersion")
-			compileSdk = prop("build.android.compileSdk").toInt()
+	deps?.run {
+		android.buildToolsVersion = prop("build.android.buildToolsVersion")
+		android.compileSdk = prop("build.android.compileSdk").toInt()
 
-			defaultConfig.run {
-				val targetSdkValue = prop("build.android.targetSdk").toInt()
-				if (this is ApplicationBaseFlavor) {
-					targetSdk = targetSdkValue
-				} else {
-					lint.targetSdk = targetSdkValue
-				}
-				minSdk = prop("build.android.minSdk").toInt()
+		android.defaultConfig.run {
+			val targetSdkValue = prop("build.android.targetSdk").toInt()
+			if (this is ApplicationBaseFlavor) {
+				targetSdk = targetSdkValue
+			} else {
+				android.lint.targetSdk = targetSdkValue
 			}
+			minSdk = prop("build.android.minSdk").toInt()
 		}
 	}
 
