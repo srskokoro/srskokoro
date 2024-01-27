@@ -15,6 +15,6 @@ fun Gradle.includedBuilds(names: Collection<String>) = mutableListOf<IncludedBui
 		}
 	}
 	if (names.isNotEmpty()) {
-		throw UnknownDomainObjectException("Included build '${names.first}' not found in $this")
+		throw UnknownDomainObjectException("Included build '${names.first()}' not found in $this")
 	}
 }

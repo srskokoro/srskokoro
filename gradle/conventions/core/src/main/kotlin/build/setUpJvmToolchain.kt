@@ -6,5 +6,6 @@ import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 internal fun Project.setUpJvmToolchain(kotlin: KotlinProjectExtension) {
-	kotlin.jvmToolchain(jvmToolchainSetupFrom((deps ?: return).props.map))
+	val map = (deps ?: return).props.map
+	kotlin.jvmToolchain { setUpFrom(map) }
 }

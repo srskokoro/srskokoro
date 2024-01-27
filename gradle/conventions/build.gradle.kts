@@ -21,10 +21,14 @@ gradle.includedBuilds(
 
 allprojects(fun Project.() {
 	val deps = deps ?: return
+	val jvmToolchainSetup = Action<JavaToolchainSpec> {
+		setUpFrom(deps.props.map)
+		restrictVersionForBuildInclusive()
+	}
 	prioritizedAfterEvaluate(fun Project.() {
 		@OptIn(InternalApi::class)
 		if (!BuildFoundation.isMarked(this)) return
 		(extensions.findByName("kotlin") as KotlinProjectExtension?)
-			?.jvmToolchain(jvmToolchainSetupFrom(deps.props.map))
+			?.jvmToolchain(jvmToolchainSetup)
 	})
 })
