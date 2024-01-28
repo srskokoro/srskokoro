@@ -40,15 +40,15 @@ private object PrioritizedEvaluationListenersSetup : ProjectEvaluationListener {
 	override fun beforeEvaluate(project: Project) = Unit
 
 	override fun afterEvaluate(project: Project, state: ProjectState) {
+		val listeners: PrioritizedEvaluationListeners = project.xs()
+			.getSafelyOrNull(prioritizedEvaluationListeners__name) ?: return
+
 		// NOTE: All actions scheduled via `project.afterEvaluate()` still run
 		// even on project evaluation failure due to an exception. We should
 		// thus, at least, emulate that behavior.
 		var thrown: Throwable? = null
 
-		val listeners: PrioritizedEvaluationListeners? =
-			project.xs().getSafelyOrNull(prioritizedEvaluationListeners__name)
-
-		if (listeners != null) for (action in listeners) {
+		for (action in listeners) {
 			try {
 				action.execute(project)
 			} catch (ex: Throwable) {
