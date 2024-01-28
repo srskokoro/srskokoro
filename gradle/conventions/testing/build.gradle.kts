@@ -7,6 +7,8 @@ plugins {
 }
 
 private object Build {
+	const val KOTEST_ASSERTIONS_SHARED = "kotest-assertions-shared"
+
 	/**
 	 * Use this utility to exclude `kotest-assertions-shared` from a dependency.
 	 *
@@ -15,8 +17,8 @@ private object Build {
 	 * `shouldNotBe`, etc.) when we just want the test framework and the
 	 * property testing library (as we want a different assertion library).
 	 */
-	fun excludeKotestAssertions(dependency: ExternalModuleDependency) {
-		dependency.exclude("io.kotest", "kotest-assertions-shared")
+	fun excludeKotestAssertionsShared(dependency: ExternalModuleDependency) {
+		dependency.exclude("io.kotest", KOTEST_ASSERTIONS_SHARED)
 	}
 
 	fun assert_JUnit5(jvmTest: TaskProvider<KotlinJvmTest>): Unit = jvmTest.configure {
@@ -29,11 +31,11 @@ private object Build {
 }
 
 dependencies {
-	commonMainRuntimeOnly("io.kotest:kotest-assertions-shared")
-	nativeMainImplementation("io.kotest:kotest-assertions-shared")
-	commonMainApi("io.kotest:kotest-framework-engine", Build::excludeKotestAssertions)
-	jreMainApi("io.kotest:kotest-runner-junit5", Build::excludeKotestAssertions)
+	commonMainRuntimeOnly("io.kotest:${Build.KOTEST_ASSERTIONS_SHARED}")
+	nativeMainImplementation("io.kotest:${Build.KOTEST_ASSERTIONS_SHARED}")
+	commonMainApi("io.kotest:kotest-framework-engine", Build::excludeKotestAssertionsShared)
+	jreMainApi("io.kotest:kotest-runner-junit5", Build::excludeKotestAssertionsShared)
 	afterEvaluate { tasks.run { Build.assert_JUnit5(jreTest) } }
-	commonMainApi("io.kotest:kotest-property", Build::excludeKotestAssertions)
+	commonMainApi("io.kotest:kotest-property", Build::excludeKotestAssertionsShared)
 	commonMainApi("com.willowtreeapps.assertk:assertk")
 }
