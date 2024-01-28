@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 
 plugins {
 	id("build.foundation.kt.mpp.inclusive")
+	id("io.kotest.multiplatform")
 }
 
 private object Build {

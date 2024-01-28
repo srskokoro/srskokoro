@@ -5,8 +5,11 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 plugins {
 	`kotlin-dsl-base` apply false
+
 	id("build.conventions.root")
 	id("build.conventions.api")
+
+	id("io.kotest.multiplatform") apply false
 }
 
 gradle.includedBuilds(
