@@ -94,20 +94,31 @@ private sealed class TestTaskSetupInDoFirst<T : AbstractTestTask>(task: T) : Act
 	class ForJvm(task: Test) : TestTaskSetupInDoFirst<Test>(task) {
 
 		override fun execute(task: Test, ioTmpDir: File, testTmpDir: File) {
-			for ((k, p) in env) resolveString(p)?.let { v -> task.environment(k, v) }
+			val envToSysProp = ENV_TO_SYS_PROP
+			for ((k, p) in env) resolveString(p)?.let { v ->
+				task.environment(k, v)
+				envToSysProp[k]?.let {
+					task.systemProperty(it, v)
+				}
+			}
 
 			task.systemProperty("java.io.tmpdir", ioTmpDir.path)
 			task.environment(TEST_TMPDIR, testTmpDir.path)
-
-			// NOTE: At the moment, Kotest on JVM only reads the system property
-			// for this and ignores the equivalent environment variable.
-			resolveString(env["kotest_framework_parallelism"])?.let {
-				task.systemProperty("kotest.framework.parallelism", it)
-			}
 		}
 	}
 
 	companion object {
+
+		@JvmField val ENV_TO_SYS_PROP = buildMap {
+			put("kotest_framework_classpath_scanning_autoscan_disable", "kotest.framework.classpath.scanning.autoscan.disable")
+			put("kotest_framework_classpath_scanning_config_disable", "kotest.framework.classpath.scanning.config.disable")
+			put("kotest_framework_discovery_jar_scan_disable", "kotest.framework.discovery.jar.scan.disable")
+
+			// NOTE: At the moment, Kotest on JVM only reads the system property
+			// for this and ignores the equivalent environment variable.
+			put("kotest_framework_parallelism", "kotest.framework.parallelism")
+		}
+
 		internal tailrec fun resolveString(provider: Any?): String? =
 			if (provider !is Provider<*>) provider?.toString()
 			else resolveString(provider.orNull)
