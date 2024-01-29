@@ -17,6 +17,6 @@ android {
 	namespace = "main"
 }
 
-// Hopefully, the following will ensure that this project gets seen by the IDE
-// on Gradle project sync.
+// Hopefully, the following will ensure that this project gets seen consistently
+// by the IDE on Gradle project sync.
 tasks.ideSyncTask
