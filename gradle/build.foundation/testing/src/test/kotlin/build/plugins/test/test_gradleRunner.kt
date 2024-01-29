@@ -5,7 +5,7 @@ import kotlin.test.assertNotNull
 
 class test_gradleRunner {
 
-	@Test fun `System property for classpath is set up automatically`() {
-		assertNotNull(System.getProperty(gradleRunner_CLASSPATH_SYS_PROP))
+	@Test fun `Environment variable for plugin classpath is set up automatically`() {
+		assertNotNull(System.getenv(gradleRunner_PLUGIN_CLASSPATH_ENV_VAR))
 	}
 }

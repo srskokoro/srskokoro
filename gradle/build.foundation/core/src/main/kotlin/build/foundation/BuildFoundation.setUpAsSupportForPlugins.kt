@@ -21,7 +21,7 @@ fun BuildFoundation.setUpAsSupportForPlugins(project: Project): Unit = with(proj
 	tasks.withType<Test>().configureEach {
 		doFirst {
 			// NOTE: Can be used for the Gradle TestKit.
-			systemProperty("build.plugins.test.classpath", classpath.joinToString(File.pathSeparator))
+			environment("BUILD_PLUGINS_TEST_CLASSPATH", classpath.joinToString(File.pathSeparator))
 		}
 	}
 
