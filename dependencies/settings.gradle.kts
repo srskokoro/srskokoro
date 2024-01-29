@@ -60,7 +60,17 @@ dependencySettings {
 	// - https://developer.android.com/studio/write/java11-default-support-table
 	// - https://developer.android.com/build/jdks#compileSdk
 	// - https://stackoverflow.com/q/54129834
+	//
+	// See also, OpenJDK support per Android version:
+	// - OpenJDK 17: https://developer.android.com/about/versions/14/features#core-libraries
+	// - OpenJDK 11: https://developer.android.com/about/versions/13/features#core-libraries
+	// - OpenJDK 8: https://developer.android.com/about/versions/oreo/android-8.0#rt
+	//
 	prop("build.android.minSdk", 26)
+
+	// The target OpenJDK for Android projects, which may be supported via
+	// desugaring. See also, https://developer.android.com/studio/write/java8-support#library-desugaring
+	prop("build.android.openjdk", 17)
 
 	// Java 8+ API desugaring support -- https://developer.android.com/studio/write/java8-support#library-desugaring
 	// - See also, https://developer.android.com/studio/write/java11-default-support-table

@@ -3,10 +3,12 @@ package build.kt.mpp
 import build.api.ProjectPlugin
 import build.api.dsl.*
 import build.api.dsl.accessors.commonTestImplementation
+import build.api.dsl.accessors.kotlinMpp
 import build.foundation.BuildFoundation
 import build.foundation.InternalApi
 import build.foundation.setUpMppHierarchy
 import build.setUp
+import build.setUpForAndroid
 import org.gradle.kotlin.dsl.*
 
 class _plugin : ProjectPlugin({
@@ -20,6 +22,7 @@ class _plugin : ProjectPlugin({
 
 	onAndroid {
 		setUp(this)
+		setUpForAndroid(kotlinMpp)
 	}
 
 	@OptIn(InternalApi::class)

@@ -3,6 +3,7 @@ package build.api.dsl.accessors
 import build.api.dsl.*
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
@@ -19,6 +20,9 @@ val Project.androidLib: AndroidLibExtension
 
 
 val Project.kotlin: KotlinProjectExtension
+	get() = x("kotlin")
+
+val Project.kotlinAndroid: KotlinAndroidProjectExtension
 	get() = x("kotlin")
 
 val Project.kotlinJvm: KotlinJvmProjectExtension
