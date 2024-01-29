@@ -1,5 +1,4 @@
 plugins {
-	id("com.android.library")
 	id("kokoro.build.kt.mpp.app")
 }
 

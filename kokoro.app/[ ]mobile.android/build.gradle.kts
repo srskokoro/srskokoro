@@ -1,7 +1,6 @@
 import build.api.dsl.*
 
 plugins {
-	id("com.android.application")
 	id("build.kt.android.app")
 	id("build.version")
 }
