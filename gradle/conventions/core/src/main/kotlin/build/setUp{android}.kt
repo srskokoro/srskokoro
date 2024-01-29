@@ -4,6 +4,8 @@ import build.api.dsl.*
 import com.android.build.api.dsl.ApplicationBaseFlavor
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
@@ -12,6 +14,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 
 internal fun Project.setUp(android: AndroidExtension) {
+	if (!isReleasing) removeLintFromCheckTask()
+
 	val compileOptions = android.compileOptions
 
 	deps?.run {
@@ -64,3 +68,22 @@ internal fun Project.setUpForAndroid(kotlin: KotlinAndroidProjectExtension) {
 
 private fun Project.getJvmTargetForAndroid(): JvmTarget? =
 	deps?.run { JvmTarget.entries[prop("build.android.openjdk").toInt() - 8 + JvmTarget.JVM_1_8.ordinal] }
+
+// --
+
+private fun Project.removeLintFromCheckTask() {
+	afterEvaluate {
+		tasks.named("check") {
+			dependsOn.removeAll(fun(it): Boolean {
+				when (it) {
+					is String -> it
+					is TaskProvider<*> -> it.name
+					is Task -> it.name
+					else -> return false
+				}.let {
+					return it == "lint"
+				}
+			})
+		}
+	}
+}
