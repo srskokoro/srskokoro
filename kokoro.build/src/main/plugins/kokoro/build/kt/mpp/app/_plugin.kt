@@ -12,6 +12,11 @@ import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 class _plugin : ProjectPlugin({
+	// Perhaps Android Studio prefers that we apply the Android plugin via
+	// `pluginManager`, in order for source code to be analyzed as Android
+	// sources (instead of for the current JDK running Gradle).
+	// - See, https://github.com/android/nowinandroid/blob/0.1.2/build-logic/convention/src/main/kotlin/AndroidApplicationConventionPlugin.kt#L29
+	pluginManager.apply("com.android.application")
 
 	@OptIn(InternalApi::class, ExperimentalKotlinGradlePluginApi::class)
 	BuildFoundation.extendMppHierarchyTemplate(this) {
