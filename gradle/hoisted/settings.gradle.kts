@@ -36,5 +36,3 @@ dependencyResolutionManagement {
 		google()
 	}
 }
-
-include("init")
