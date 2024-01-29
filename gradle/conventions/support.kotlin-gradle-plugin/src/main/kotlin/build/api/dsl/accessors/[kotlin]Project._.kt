@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 val Project.android: AndroidExtension
 	get() = x("android")
 
+val Project.androidOrNull: AndroidExtension?
+	get() = xs().getSafelyOrNull("android")
+
 val Project.androidApp: AndroidAppExtension
 	get() = x("android")
 

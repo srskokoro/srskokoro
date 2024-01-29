@@ -2,6 +2,7 @@ package build.base
 
 import build.api.ProjectPlugin
 import build.api.dsl.*
+import build.api.dsl.accessors.androidOrNull
 import build.api.dsl.accessors.base
 import build.api.dsl.accessors.baseOrNull
 import build.foundation.BuildFoundation
@@ -58,6 +59,15 @@ class _plugin : ProjectPlugin({
 		// but they look weird.
 
 		base.archivesName.convention(archivesNameProvider)
+
+		// -=-
+		// Automatically derive a namespace for Android projects based on their
+		// parent project.
+
+		androidOrNull?.let { android ->
+			if (android.namespace == null)
+				android.autoNamespaceOrNop(project)
+		}
 	})
 
 	configurations.configureEach {
