@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 
 plugins {
 	id("build.root")
+	id("kokoro.build.api") apply false
 }
 
 gradle.includedBuilds(
