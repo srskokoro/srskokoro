@@ -16,7 +16,7 @@ class _plugin : ProjectPlugin({
 	// `pluginManager`, in order for source code to be analyzed as Android
 	// sources (instead of for the current JDK running Gradle).
 	// - See, https://github.com/android/nowinandroid/blob/0.1.2/build-logic/convention/src/main/kotlin/AndroidApplicationConventionPlugin.kt#L29
-	pluginManager.apply("com.android.application")
+	pluginManager.apply("com.android.library")
 
 	@OptIn(InternalApi::class, ExperimentalKotlinGradlePluginApi::class)
 	BuildFoundation.extendMppHierarchyTemplate(this) {
