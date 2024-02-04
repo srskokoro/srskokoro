@@ -48,6 +48,9 @@ private const val E_DISABLED_DUE_TO_INITIAL_IDEA_SYNC = "" +
 	"Due to issues with Android Studio's project loading (that we would rather not\n" +
 	"deal with), projects were not loaded yet: a manual IDE sync must be done.\n"
 
+val Settings.isDisabledDueToInitialIdeaSync: Boolean
+	get() = extra.getOrElse(isInitialIdeaSync__name) { false }
+
 private fun Settings.shouldDisableDueToInitialIdeaSync(): Boolean {
 	// NOTE: The following prevents Android Studio from loading projects on
 	// initial project sync. This exists so as to prevent Android Studio from

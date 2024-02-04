@@ -1,5 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
+import build.structure.isDisabledDueToInitialIdeaSync
+
 pluginManagement {
 	extra["build.structure.disableOnIdeaInitialSync"] = true
 	extra["build.structure.root"] = "../.."
@@ -34,6 +36,6 @@ dependencyResolutionManagement {
 	}
 }
 
-if (!rootProject.buildFileName.startsWith('!')) {
+if (!isDisabledDueToInitialIdeaSync) {
 	include("testing")
 }
