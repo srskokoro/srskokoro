@@ -87,6 +87,18 @@ dependencySettings {
 	module("com.github.gmazzo.buildconfig".plugin(), gmazzo_buildconfig)
 
 	// -=*=-
+	// Model foundations
+
+	plugin(kotlin("plugin.serialization"), kotlin)
+	module(kotlin("plugin.serialization").plugin(), kotlin)
+
+	val kotlinx_serialization = "1.6.2" // https://github.com/Kotlin/kotlinx.serialization/releases
+	module("org.jetbrains.kotlinx:kotlinx-serialization-core", kotlinx_serialization)
+	module("org.jetbrains.kotlinx:kotlinx-serialization-json", kotlinx_serialization)
+	module("org.jetbrains.kotlinx:kotlinx-serialization-json-okio", kotlinx_serialization)
+	module("org.jetbrains.kotlinx:kotlinx-serialization-cbor", kotlinx_serialization)
+
+	// -=*=-
 	// Test infrastructure
 
 	val kotest = "5.8.0" // https://github.com/kotest/kotest/releases
