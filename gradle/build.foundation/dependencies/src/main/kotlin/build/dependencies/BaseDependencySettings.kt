@@ -34,9 +34,16 @@ open class BaseDependencySettings internal constructor() {
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun pluginMarker(pluginId: String) = "$pluginId:$pluginId.gradle.plugin"
 
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun pluginMarker(kotlinId: KotlinId) = pluginMarker(kotlinId.pluginId())
+
 	/** @see pluginMarker */
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun String.plugin() = pluginMarker(this)
+
+	/** @see pluginMarker */
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun KotlinId.plugin() = pluginMarker(this)
 
 	fun plugin(pluginId: KotlinId, version: String) =
 		plugin(pluginId.pluginId(), version)
