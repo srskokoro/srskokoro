@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 
 internal fun Project.setUp(android: AndroidExtension) {
-	if (!isReleasing) removeLintFromCheckTask()
+	if (!extra.parseBoolean("CHECK_ANDROID_LINT", isReleasing)) {
+		removeLintFromCheckTask()
+	}
 
 	val compileOptions = android.compileOptions
 
