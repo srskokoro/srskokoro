@@ -34,4 +34,6 @@ dependencyResolutionManagement {
 	}
 }
 
-include("testing")
+if (!rootProject.buildFileName.startsWith('!')) {
+	include("testing")
+}

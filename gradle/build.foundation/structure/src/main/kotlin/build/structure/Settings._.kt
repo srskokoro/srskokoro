@@ -24,7 +24,12 @@ private fun Settings.getStructureRoot(): File {
 }
 
 internal fun Settings.include(structure: ProjectStructure) {
-	if (shouldDisableDueToInitialIdeaSync()) return // Skip code below
+	if (shouldDisableDueToInitialIdeaSync()) {
+		// Also disable the root project's build file, in case it references
+		// subprojects in the structure.
+		rootProject.run { buildFileName = "!${buildFileName}" }
+		return // Skip code below
+	}
 
 	val structureRoot = getStructureRoot()
 	structure.findProjects(structureRoot, providers).forEach {
