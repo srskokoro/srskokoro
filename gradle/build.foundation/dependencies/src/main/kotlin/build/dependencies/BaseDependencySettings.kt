@@ -39,11 +39,11 @@ open class BaseDependencySettings internal constructor() {
 
 	/** @see pluginMarker */
 	@Suppress("NOTHING_TO_INLINE")
-	inline fun String.plugin() = pluginMarker(this)
+	inline fun String.marker() = pluginMarker(this)
 
 	/** @see pluginMarker */
 	@Suppress("NOTHING_TO_INLINE")
-	inline fun KotlinId.plugin() = pluginMarker(this)
+	inline fun KotlinId.marker() = pluginMarker(this)
 
 	fun plugin(pluginId: KotlinId, version: String) =
 		plugin(pluginId.pluginId(), version)

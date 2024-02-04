@@ -84,13 +84,13 @@ dependencySettings {
 
 	val gmazzo_buildconfig = "5.3.5" // https://github.com/gmazzo/gradle-buildconfig-plugin/releases
 	plugin("com.github.gmazzo.buildconfig", gmazzo_buildconfig)
-	module("com.github.gmazzo.buildconfig".plugin(), gmazzo_buildconfig)
+	module("com.github.gmazzo.buildconfig".marker(), gmazzo_buildconfig)
 
 	// -=*=-
 	// Model foundations
 
 	plugin(kotlin("plugin.serialization"), kotlin)
-	module(kotlin("plugin.serialization").plugin(), kotlin)
+	module(kotlin("plugin.serialization").marker(), kotlin)
 
 	val kotlinx_serialization = "1.6.2" // https://github.com/Kotlin/kotlinx.serialization/releases
 	module("org.jetbrains.kotlinx:kotlinx-serialization-core", kotlinx_serialization)
@@ -103,7 +103,7 @@ dependencySettings {
 
 	val kotest = "5.8.0" // https://github.com/kotest/kotest/releases
 	plugin("io.kotest.multiplatform", kotest)
-	module("io.kotest.multiplatform".plugin(), kotest)
+	module("io.kotest.multiplatform".marker(), kotest)
 	module("io.kotest:kotest-assertions-shared", kotest)
 	module("io.kotest:kotest-framework-engine", kotest)
 	module("io.kotest:kotest-runner-junit5", kotest)
