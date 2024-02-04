@@ -39,10 +39,10 @@ internal fun Settings.include(structure: ProjectStructure) {
 	}
 }
 
-private const val isIdeaInitialSync__name = "--build.structure.isIdeaInitialSync--"
+private const val isInitialIdeaSync__name = "--build.structure.isIdeaInitialSync--"
 
 // Will be preserved by the Gradle daemon
-private var isIdeaInitialSyncSeen = false
+private var isInitialIdeaSyncSeen = false
 
 private const val E_DISABLED_DUE_TO_INITIAL_IDEA_SYNC = "" +
 	"Due to issues with Android Studio's project loading (that we would rather not\n" +
@@ -61,9 +61,9 @@ private fun Settings.shouldDisableDueToInitialIdeaSync(): Boolean {
 
 	val settingsExtra = extra
 	if (settingsExtra.parseBoolean("build.structure.disableOnIdeaInitialSync")) {
-		val isIdeaInitialSync = settingsExtra.getOrAdd(isIdeaInitialSync__name) {
+		val isIdeaInitialSync = settingsExtra.getOrAdd(isInitialIdeaSync__name) {
 			val rootGradle = gradle.findRoot()
-			rootGradle.extra.getOrAdd(isIdeaInitialSync__name) init@{
+			rootGradle.extra.getOrAdd(isInitialIdeaSync__name) init@{
 				run<Unit> {
 					// Detect if we're running in a Gradle daemon.
 					// - From, https://stackoverflow.com/a/55020202
@@ -72,8 +72,8 @@ private fun Settings.shouldDisableDueToInitialIdeaSync(): Boolean {
 					// See, https://github.com/JetBrains/kotlin/blob/v1.7.22/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/internal/idea.kt
 					if (System.getProperty("idea.sync.active") != "true") return@run // Not in IDEA sync
 
-					if (isIdeaInitialSyncSeen) return@run
-					isIdeaInitialSyncSeen = true
+					if (isInitialIdeaSyncSeen) return@run
+					isInitialIdeaSyncSeen = true
 
 					System.err.println(buildString {
 						append("w: ")
