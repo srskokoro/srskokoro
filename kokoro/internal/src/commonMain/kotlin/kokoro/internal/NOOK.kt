@@ -17,4 +17,5 @@ package kokoro.internal
  *
  * @see NookContract
  */
+@NookContract
 const val NOOK = "Not meant to be accessed other than within the same package as the `@nook` annotation or subpackages of that package."
