@@ -9,6 +9,9 @@ import org.gradle.api.Project
 private const val deps__key = "--deps--"
 
 val Project.deps: Deps?
+	// NOTE: Given that the extension below is set up via the `settings` plugin,
+	// it will be null if Gradle simply evaluated a fake project in order to
+	// generate type-safe model accessors.
 	get() = rootProject.xs().getOrNull(deps__key)
 
 // NOTE: Correct line numbers are reported only when `Action<T>` is used --
