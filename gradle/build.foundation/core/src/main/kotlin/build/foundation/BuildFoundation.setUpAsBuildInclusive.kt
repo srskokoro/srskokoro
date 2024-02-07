@@ -62,6 +62,7 @@ fun BuildFoundation.setUpAsBuildInclusive(project: Project): Unit = with(project
 			// work when finally consumed by Gradle. Unlike "strict" versions,
 			// the consumer can easily override whatever version is in here.
 			force("org.jetbrains.kotlin:kotlin-stdlib:$embeddedKotlinVersion")
+			force("org.jetbrains.kotlin:kotlin-reflect:$embeddedKotlinVersion")
 		}
 	}
 }
