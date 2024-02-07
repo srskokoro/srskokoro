@@ -11,6 +11,7 @@ dependencies {
 	implementation(kotlin("assignment"))
 	implementation("com.android.tools.build:gradle")
 	implementation(plugin("io.kotest.multiplatform"))
+	implementation(plugin("com.github.gmazzo.buildconfig"))
 
 	testImplementation(project(":testing.conventions"))
 }
