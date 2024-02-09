@@ -28,9 +28,11 @@ run<Unit>(fun() {
 	// --
 
 	throw Error(
-		"""
+		'\n' + """
+		================================================================================
 		Due to issues with Android Studio's project loading (that we would rather not
 		deal with), projects were not loaded yet: a manual IDE sync must be done.
-		""".trimIndent()
+		================================================================================
+		""".trimIndent() + '\n'
 	)
 })
