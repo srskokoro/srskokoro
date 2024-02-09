@@ -1,5 +1,6 @@
 plugins {
 	id("kokoro.build.kt.mpp.app")
+	id("kokoro.internal.nook")
 }
 
 // NOTE: The `group` below is meant to be used by the application, such as the
