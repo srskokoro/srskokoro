@@ -20,4 +20,7 @@ android {
 dependencies {
 	commonMainApi(project(":kokoro:internal"))
 	commonMainApi(project(":kokoro"))
+
+	commonMainImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core")
+	commonMainImplementation("org.jetbrains.kotlinx:kotlinx-serialization-cbor")
 }
