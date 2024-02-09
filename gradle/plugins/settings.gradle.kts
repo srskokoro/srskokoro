@@ -1,7 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
 pluginManagement {
-	extra["build.structure.disableOnIdeaInitialSync"] = true
 	extra["build.structure.root"] = "../.."
 
 	// NOTE: Must be first, so `Settings` plugins would be looked up here first,

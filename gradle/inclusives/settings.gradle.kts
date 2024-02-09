@@ -1,9 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
-import build.structure.isDisabledDueToInitialIdeaSync
-
 pluginManagement {
-	extra["build.structure.disableOnIdeaInitialSync"] = true
 	extra["build.structure.root"] = "../.."
 
 	// NOTE: Must be first, so `Settings` plugins would be looked up here first,
@@ -36,6 +33,4 @@ dependencyResolutionManagement {
 	}
 }
 
-if (!isDisabledDueToInitialIdeaSync) {
-	include("testing")
-}
+include("testing")
