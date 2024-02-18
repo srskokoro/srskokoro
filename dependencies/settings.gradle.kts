@@ -87,6 +87,12 @@ dependencySettings {
 	module("com.github.gmazzo.buildconfig".marker(), gmazzo_buildconfig)
 
 	// -=*=-
+	// General support
+
+	val androidx_annotation = "1.7.1"// https://developer.android.com/jetpack/androidx/releases/annotation
+	module("androidx.annotation:annotation", androidx_annotation)
+
+	// -=*=-
 	// Model foundations
 
 	plugin(kotlin("plugin.serialization"), kotlin)
@@ -97,6 +103,23 @@ dependencySettings {
 	module("org.jetbrains.kotlinx:kotlinx-serialization-json", kotlinx_serialization)
 	module("org.jetbrains.kotlinx:kotlinx-serialization-json-okio", kotlinx_serialization)
 	module("org.jetbrains.kotlinx:kotlinx-serialization-cbor", kotlinx_serialization)
+
+	// -=*=-
+	// UI foundations
+
+	val androidx_core = "1.12.0" // https://developer.android.com/jetpack/androidx/releases/core
+	module("androidx.core:core-ktx", androidx_core)
+	val androidx_activity = "1.8.2" // https://developer.android.com/jetpack/androidx/releases/activity
+	module("androidx.activity:activity-ktx", androidx_activity)
+	val androidx_fragment = "1.6.2" // https://developer.android.com/jetpack/androidx/releases/fragment
+	module("androidx.fragment:fragment-ktx", androidx_fragment)
+
+	val androidx_appcompat = "1.6.1" // https://developer.android.com/jetpack/androidx/releases/appcompat
+	module("androidx.appcompat:appcompat", androidx_appcompat)
+	module("androidx.appcompat:appcompat-resources", androidx_appcompat) // For loading and tinting drawables on older versions of the platform
+
+	val androidx_webkit = "1.9.0" // https://developer.android.com/jetpack/androidx/releases/webkit
+	module("androidx.webkit:webkit", androidx_webkit)
 
 	// -=*=-
 	// Test infrastructure
