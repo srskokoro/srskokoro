@@ -29,7 +29,7 @@ fun BuildFoundation.setUpMppLibTargets(project: Project): Unit = with(project) {
 				nodejs()
 			}
 		} else {
-			configurations.registerMppDummyConfigurations("js")
+			registerMppDummyConfigurations("js", configurations)
 		}
 
 		val hs = KotlinHierarchySetup(sourceSets, configurations)
@@ -108,7 +108,7 @@ private open class KotlinTargetSetup {
 	open class Dummy(val configurations: ConfigurationContainer) : KotlinTargetSetup() {
 
 		override fun <T : KotlinTarget> invoke(fn: KFunction2<String, T.() -> Unit, T>, name: String, configure: T.() -> Unit) {
-			configurations.registerMppDummyConfigurations(name)
+			BuildFoundation.registerMppDummyConfigurations(name, configurations)
 		}
 	}
 }
@@ -119,18 +119,7 @@ private class KotlinHierarchySetup(
 ) {
 	fun ensureNode(name: String) {
 		if (sourceSets.findByName("${name}Main") == null) {
-			configurations.registerMppDummyConfigurations(name)
+			BuildFoundation.registerMppDummyConfigurations(name, configurations)
 		}
 	}
-}
-
-private fun ConfigurationContainer.registerMppDummyConfigurations(name: String) {
-	register("${name}MainApi")
-	register("${name}MainImplementation")
-	register("${name}MainCompileOnly")
-	register("${name}MainRuntimeOnly")
-	register("${name}TestApi")
-	register("${name}TestImplementation")
-	register("${name}TestCompileOnly")
-	register("${name}TestRuntimeOnly")
 }

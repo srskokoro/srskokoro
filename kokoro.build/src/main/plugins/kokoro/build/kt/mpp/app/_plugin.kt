@@ -6,7 +6,6 @@ import build.api.dsl.accessors.kotlinMpp
 import build.foundation.BuildFoundation
 import build.foundation.BuildFoundation.MPP
 import build.foundation.InternalApi
-import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.kotlin.dsl.*
 
 class _plugin : ProjectPlugin({
@@ -30,22 +29,12 @@ class _plugin : ProjectPlugin({
 			iosX64()
 			iosArm64()
 			iosSimulatorArm64()
-		} else projectThis.configurations.run {
-			registerMppDummyConfigurations("ios")
-			registerMppDummyConfigurations("apple")
-			registerMppDummyConfigurations(MPP.unix)
-			registerMppDummyConfigurations("native")
+		} else {
+			val configurations = projectThis.configurations
+			BuildFoundation.registerMppDummyConfigurations("ios", configurations)
+			BuildFoundation.registerMppDummyConfigurations("apple", configurations)
+			BuildFoundation.registerMppDummyConfigurations(MPP.unix, configurations)
+			BuildFoundation.registerMppDummyConfigurations("native", configurations)
 		}
 	}
 })
-
-private fun ConfigurationContainer.registerMppDummyConfigurations(name: String) {
-	register("${name}MainApi")
-	register("${name}MainImplementation")
-	register("${name}MainCompileOnly")
-	register("${name}MainRuntimeOnly")
-	register("${name}TestApi")
-	register("${name}TestImplementation")
-	register("${name}TestCompileOnly")
-	register("${name}TestRuntimeOnly")
-}
