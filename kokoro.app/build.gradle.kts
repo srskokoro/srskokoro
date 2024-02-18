@@ -21,6 +21,8 @@ dependencies {
 	commonMainApi(project(":kokoro:internal"))
 	commonMainApi(project(":kokoro"))
 
+	commonMainImplementation(project(":kokoro.app:ui.api"))
+
 	commonMainImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core")
 	commonMainImplementation("org.jetbrains.kotlinx:kotlinx-serialization-cbor")
 }
