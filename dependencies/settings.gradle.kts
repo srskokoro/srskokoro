@@ -8,8 +8,7 @@ plugins {
 dependencySettings {
 	exportOnly()
 
-	// -=*=-
-	// Build foundations
+	//#region Build foundations
 
 	/** Should correspond to [JavaToolchainSpec] */
 	run<Unit> {
@@ -79,21 +78,24 @@ dependencySettings {
 	module("com.android.tools:desugar_jdk_libs", android_desugar)
 	module("com.android.tools:desugar_jdk_libs_nio", android_desugar)
 
-	// -=*=-
-	// Build support
+	//#endregion
+
+	//#region Build support
 
 	val gmazzo_buildconfig = "5.3.5" // https://github.com/gmazzo/gradle-buildconfig-plugin/releases
 	plugin("com.github.gmazzo.buildconfig", gmazzo_buildconfig)
 	module("com.github.gmazzo.buildconfig".marker(), gmazzo_buildconfig)
 
-	// -=*=-
-	// General support
+	//#endregion
+
+	//#region General support
 
 	val androidx_annotation = "1.7.1"// https://developer.android.com/jetpack/androidx/releases/annotation
 	module("androidx.annotation:annotation", androidx_annotation)
 
-	// -=*=-
-	// Model foundations
+	//#endregion
+
+	//#region Model foundations
 
 	plugin(kotlin("plugin.serialization"), kotlin)
 	module(kotlin("plugin.serialization").marker(), kotlin)
@@ -104,8 +106,9 @@ dependencySettings {
 	module("org.jetbrains.kotlinx:kotlinx-serialization-json-okio", kotlinx_serialization)
 	module("org.jetbrains.kotlinx:kotlinx-serialization-cbor", kotlinx_serialization)
 
-	// -=*=-
-	// UI foundations
+	//#endregion
+
+	//#region UI foundations
 
 	val androidx_core = "1.12.0" // https://developer.android.com/jetpack/androidx/releases/core
 	module("androidx.core:core-ktx", androidx_core)
@@ -121,8 +124,9 @@ dependencySettings {
 	val androidx_webkit = "1.9.0" // https://developer.android.com/jetpack/androidx/releases/webkit
 	module("androidx.webkit:webkit", androidx_webkit)
 
-	// -=*=-
-	// Test infrastructure
+	//#endregion
+
+	//#region Test infrastructure
 
 	val kotest = "5.8.0" // https://github.com/kotest/kotest/releases
 	plugin("io.kotest.multiplatform", kotest)
@@ -134,4 +138,6 @@ dependencySettings {
 
 	val assertk = "0.28.0" // https://github.com/willowtreeapps/assertk/releases
 	module("com.willowtreeapps.assertk:assertk", assertk)
+
+	//#endregion
 }
