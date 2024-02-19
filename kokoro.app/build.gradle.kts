@@ -25,4 +25,9 @@ dependencies {
 
 	commonMainImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core")
 	commonMainImplementation("org.jetbrains.kotlinx:kotlinx-serialization-cbor")
+
+	androidMainImplementation("androidx.core:core-ktx")
+	androidMainImplementation("androidx.activity:activity-ktx")
+	//androidMainImplementation("androidx.fragment:fragment-ktx")
+	androidMainImplementation("androidx.appcompat:appcompat")
 }
