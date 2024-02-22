@@ -1,5 +1,6 @@
 plugins {
 	id("kokoro.build.kt.mpp.app")
+	id("build.kt.x.expect_actual")
 	id("kokoro.internal.nook")
 }
 
