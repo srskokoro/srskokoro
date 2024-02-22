@@ -22,6 +22,12 @@ dependencies {
 	commonMainApi(project(":kokoro:internal"))
 	commonMainApi(project(":kokoro"))
 
+	commonMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+	commonTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
+
+	androidMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-android")
+	jreMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing")
+
 	commonMainImplementation(project(":kokoro.app:ui.api"))
 
 	commonMainImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core")

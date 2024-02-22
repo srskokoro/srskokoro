@@ -95,6 +95,18 @@ dependencySettings {
 
 	//#endregion
 
+	//#region Concurrency support
+
+	val kotlinx_coroutines = "1.8.0" // https://github.com/Kotlin/kotlinx.coroutines/releases
+	module("org.jetbrains.kotlinx:kotlinx-coroutines-core", kotlinx_coroutines)
+	module("org.jetbrains.kotlinx:kotlinx-coroutines-debug", kotlinx_coroutines)
+	module("org.jetbrains.kotlinx:kotlinx-coroutines-test", kotlinx_coroutines)
+
+	module("org.jetbrains.kotlinx:kotlinx-coroutines-android", kotlinx_coroutines)
+	module("org.jetbrains.kotlinx:kotlinx-coroutines-swing", kotlinx_coroutines)
+
+	//#endregion
+
 	//#region Model foundations
 
 	plugin(kotlin("plugin.serialization"), kotlin)
