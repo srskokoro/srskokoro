@@ -1,3 +1,6 @@
+import build.api.dsl.*
+import build.foundation.BuildFoundation
+import build.foundation.BuildFoundation.MPP
 import org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 
@@ -30,12 +33,30 @@ private object Build {
 	}
 }
 
+@OptIn(build.foundation.InternalApi::class)
+kotlin {
+	jvm(MPP.jre)
+
+	if (BuildFoundation.shouldBuildJs(projectThis)) js(IR) {
+		browser()
+		nodejs()
+	}
+
+	if (BuildFoundation.shouldBuildNative(projectThis)) {
+		iosX64()
+		iosArm64()
+		iosSimulatorArm64()
+	} else {
+		configurations.create("nativeMainImplementation")
+	}
+}
+
 dependencies {
 	commonMainRuntimeOnly("io.kotest:${Build.KOTEST_ASSERTIONS_SHARED}")
-	nativeMainImplementation("io.kotest:${Build.KOTEST_ASSERTIONS_SHARED}")
+	"nativeMainImplementation"("io.kotest:${Build.KOTEST_ASSERTIONS_SHARED}")
 	commonMainApi("io.kotest:kotest-framework-engine", Build::excludeKotestAssertionsShared)
-	jreMainApi("io.kotest:kotest-runner-junit5", Build::excludeKotestAssertionsShared)
-	afterEvaluate { tasks.run { Build.assert_JUnit5(jreTest) } }
+	"jreMainApi"("io.kotest:kotest-runner-junit5", Build::excludeKotestAssertionsShared)
+	afterEvaluate { tasks.run { Build.assert_JUnit5(named<KotlinJvmTest>("jreTest")) } }
 	commonMainApi("io.kotest:kotest-property", Build::excludeKotestAssertionsShared)
 	commonMainApi("com.willowtreeapps.assertk:assertk")
 }

@@ -1,11 +1,14 @@
 package build.foundation
 
 import build.foundation.BuildFoundation.MPP
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.extend
 
 /**
@@ -42,6 +45,31 @@ private val defaultMppHierarchyTemplate_ = KotlinHierarchyTemplate.default.exten
 			withAndroidTarget()
 			group("ios")
 		}
+	}
+}
+
+fun BuildFoundation.ensureMppHierarchyTemplateDefaultNodes(
+	sourceSets: NamedDomainObjectContainer<KotlinSourceSet>,
+	configurations: ConfigurationContainer,
+) {
+	ensureMppHierarchyTemplateDefaultNode(MPP.jvmish, sourceSets, configurations)
+
+	ensureMppHierarchyTemplateDefaultNode("apple", sourceSets, configurations)
+	ensureMppHierarchyTemplateDefaultNode(MPP.unix, sourceSets, configurations)
+	ensureMppHierarchyTemplateDefaultNode("native", sourceSets, configurations)
+
+	ensureMppHierarchyTemplateDefaultNode(MPP.desktop, sourceSets, configurations)
+	ensureMppHierarchyTemplateDefaultNode(MPP.mobile, sourceSets, configurations)
+}
+
+@Suppress("NOTHING_TO_INLINE")
+private inline fun BuildFoundation.ensureMppHierarchyTemplateDefaultNode(
+	node: String,
+	sourceSets: NamedDomainObjectContainer<KotlinSourceSet>,
+	configurations: ConfigurationContainer,
+) {
+	if (sourceSets.findByName("${node}Main") == null) {
+		registerMppDummyConfigurations(node, configurations)
 	}
 }
 
