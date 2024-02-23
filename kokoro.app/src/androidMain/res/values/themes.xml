@@ -16,10 +16,10 @@
 		<item name="android:windowLightNavigationBar" tools:targetApi="27">true</item>
 	</style>
 
-	<style name="Theme.App.Alias" parent="android:style/Theme.Translucent.NoTitleBar" />
+	<style name="Theme.App.Routing" parent="android:style/Theme.Translucent.NoTitleBar" />
 
-	<style name="Theme.App.Alias.Splash" parent="Theme.App.Splash">
-		<item name="postSplashScreenTheme">@style/Theme.App.Alias</item>
+	<style name="Theme.App.Routing.Splash" parent="Theme.App.Splash">
+		<item name="postSplashScreenTheme">@style/Theme.App.Routing</item>
 	</style>
 
 </resources>
