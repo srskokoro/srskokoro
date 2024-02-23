@@ -50,8 +50,8 @@ class SerializationParcelable : Parcelable {
 			return decoded
 		}
 
-		assert({ "Unexpected encoded type: ${encoded!!::class.qualifiedName}\n- Value: $encoded" }) {
-			encoded == null
+		assert({ encoded == null }) {
+			"Unexpected encoded type: ${encoded!!::class.qualifiedName}\n- Value: $encoded"
 		}
 		@Suppress("UNCHECKED_CAST")
 		return null as T
@@ -79,8 +79,8 @@ class SerializationParcelable : Parcelable {
 			if (encoded is ByteArray) {
 				encoded
 			} else {
-				assert({ "Unexpected encoded type: ${encoded!!::class.qualifiedName}\n- Value: $encoded" }) {
-					encoded == null
+				assert({ encoded == null }) {
+					"Unexpected encoded type: ${encoded!!::class.qualifiedName}\n- Value: $encoded"
 				}
 				ByteArray(0)
 			}
