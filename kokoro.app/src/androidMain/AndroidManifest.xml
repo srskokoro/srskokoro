@@ -27,5 +27,9 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
+		<activity
+			android:exported="false"
+			android:documentLaunchMode="intoExisting"
+			android:name=".ui.engine.window.WvWindowActivity" />
 	</application>
 </manifest>
