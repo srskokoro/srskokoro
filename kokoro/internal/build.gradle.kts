@@ -4,6 +4,7 @@ plugins {
 	id("kokoro.build.kt.mpp.lib")
 	id("kokoro.build.kt.js")
 	id("build.kt.x.contracts")
+	id("build.kt.x.expect_actual")
 	id("build.gmazzo.buildconfig")
 }
 
