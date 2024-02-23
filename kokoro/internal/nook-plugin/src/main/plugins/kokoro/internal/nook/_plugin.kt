@@ -16,6 +16,8 @@ class _plugin : ProjectPlugin({
 			add("-opt-in=$REQUIRED_OPT_IN_CLASS")
 		}
 	}
+	// NOTE: We're using `prioritizedAfterEvaluate()` here since KGP may not
+	// have been applied yet.
 	prioritizedAfterEvaluate {
 		kotlinSourceSets.configureEach {
 			// NOTE: Android Studio doesn't honor `-opt-in` compiler option when
