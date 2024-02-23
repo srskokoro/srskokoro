@@ -3,6 +3,7 @@ import build.api.dsl.*
 plugins {
 	id("kokoro.build.kt.mpp.lib")
 	id("kokoro.build.kt.js")
+	id("build.kt.x.contracts")
 	id("build.gmazzo.buildconfig")
 }
 

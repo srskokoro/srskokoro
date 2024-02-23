@@ -5,6 +5,8 @@ import android.os.Parcelable
 import kokoro.internal.DEBUG
 import kokoro.internal.SPECIAL_USE_DEPRECATION
 import kokoro.internal.assert
+import kokoro.internal.check
+import kokoro.internal.require
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.cbor.Cbor
@@ -29,9 +31,9 @@ class SerializationParcelable : Parcelable {
 
 	fun <T> get(serializer: KSerializer<T>): T {
 		if (this.serializer != null) {
-			if (DEBUG) require(this.serializer == serializer) {
+			if (DEBUG) require(this.serializer == serializer, orFailWith = {
 				"`serializer` used must be the same as before"
-			}
+			})
 			@Suppress("UNCHECKED_CAST")
 			return value as T
 		}
@@ -100,9 +102,9 @@ class SerializationParcelable : Parcelable {
 
 		fun init(module: SerializersModule) {
 			with(ModuleHolderInit) {
-				if (DEBUG) check(value == null) {
+				if (DEBUG) check(value == null, orFailWith = {
 					"Must only be called once"
-				}
+				})
 				value = module
 			}
 		}
