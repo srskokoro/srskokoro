@@ -12,6 +12,8 @@
 		android:allowBackup="false"
 		android:appCategory="productivity"
 		android:hasFragileUserData="true"
+		android:icon="@mipmap/ic_launcher"
+		android:roundIcon="@mipmap/ic_launcher_round"
 		android:label="${APP_TITLE}"
 		android:theme="@style/Theme.App"
 		android:name=".MainApplication">
