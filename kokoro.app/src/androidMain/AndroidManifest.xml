@@ -20,7 +20,7 @@
 		<activity
 			android:exported="true"
 			android:label="${APP_TITLE_SHORT}"
-			android:theme="@style/Theme.App.Alias"
+			android:theme="@style/Theme.App.Alias.Splash"
 			android:name=".MainActivity">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
