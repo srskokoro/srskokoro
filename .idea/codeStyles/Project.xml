@@ -24,6 +24,9 @@
     <Properties>
       <option name="KEEP_BLANK_LINES" value="true" />
     </Properties>
+    <XML>
+      <option name="XML_KEEP_LINE_BREAKS" value="true" />
+    </XML>
     <codeStyleSettings language="CMake">
       <indentOptions>
         <option name="USE_TAB_CHARACTER" value="true" />

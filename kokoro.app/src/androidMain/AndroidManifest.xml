@@ -13,12 +13,12 @@
 		android:appCategory="productivity"
 		android:hasFragileUserData="true"
 		android:label="${APP_TITLE}"
-		android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+		android:theme="@style/Theme.App"
 		android:name=".MainApplication">
 		<activity
 			android:exported="true"
 			android:label="${APP_TITLE_SHORT}"
-			android:theme="@android:style/Theme.Translucent.NoTitleBar"
+			android:theme="@style/Theme.App.Alias"
 			android:name=".MainActivity">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />

@@ -127,14 +127,17 @@ dependencySettings {
 
 	val androidx_core = "1.12.0" // https://developer.android.com/jetpack/androidx/releases/core
 	module("androidx.core:core-ktx", androidx_core)
+
+	val androidx_core_splashscreen = "1.0.1" // https://developer.android.com/jetpack/androidx/releases/core
+	// See also,
+	// - https://developer.android.com/develop/ui/views/launch/splash-screen/migrate#library
+	// - https://developer.android.com/reference/kotlin/androidx/core/splashscreen/SplashScreen
+	module("androidx.core:core-splashscreen", androidx_core_splashscreen)
+
 	val androidx_activity = "1.8.2" // https://developer.android.com/jetpack/androidx/releases/activity
 	module("androidx.activity:activity-ktx", androidx_activity)
 	val androidx_fragment = "1.6.2" // https://developer.android.com/jetpack/androidx/releases/fragment
 	module("androidx.fragment:fragment-ktx", androidx_fragment)
-
-	val androidx_appcompat = "1.6.1" // https://developer.android.com/jetpack/androidx/releases/appcompat
-	module("androidx.appcompat:appcompat", androidx_appcompat)
-	module("androidx.appcompat:appcompat-resources", androidx_appcompat) // For loading and tinting drawables on older versions of the platform
 
 	val androidx_webkit = "1.9.0" // https://developer.android.com/jetpack/androidx/releases/webkit
 	module("androidx.webkit:webkit", androidx_webkit)
