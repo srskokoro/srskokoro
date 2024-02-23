@@ -28,3 +28,8 @@ buildConfig {
 	buildConfigField("Boolean", "RELEASE", "IS_RELEASING")
 	buildConfigField("Boolean", "DEBUG", "!RELEASE")
 }
+
+dependencies {
+	hostMainApi("androidx.annotation:annotation")
+	hostMainApi("androidx.collection:collection")
+}

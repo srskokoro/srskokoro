@@ -118,6 +118,9 @@ dependencySettings {
 	module("org.jetbrains.kotlinx:kotlinx-serialization-json-okio", kotlinx_serialization)
 	module("org.jetbrains.kotlinx:kotlinx-serialization-cbor", kotlinx_serialization)
 
+	val androidx_collection = "1.4.0" // https://developer.android.com/jetpack/androidx/releases/collection
+	module("androidx.collection:collection", androidx_collection)
+
 	//#endregion
 
 	//#region UI foundations
