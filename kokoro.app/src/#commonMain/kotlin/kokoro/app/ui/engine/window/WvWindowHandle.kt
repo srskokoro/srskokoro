@@ -72,11 +72,11 @@ class WvWindowHandle : AutoCloseable2 {
 		@Suppress(DEPRECATION_ERROR)
 		attachment?.let { attachment ->
 			WvWindowHandle_destroy_attachment(attachment) // May throw
-			detach()
+			detach() // Expected to never throw
 		}
 
 		// --
-		// NOTE: The code hereafter is expected to not throw.
+		// NOTE: The code hereafter must not throw.
 
 		parent_?.let { parent ->
 			parent.children.remove(this)
