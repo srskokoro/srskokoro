@@ -25,6 +25,7 @@ class WvWindowHandle : AutoCloseable2 {
 	private val children = MutableScatterSet<WvWindowHandle>()
 
 	@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
+	@MainThread
 	internal constructor(id: Int, parent: WvWindowHandle?) {
 		assertThreadMain()
 
@@ -38,6 +39,7 @@ class WvWindowHandle : AutoCloseable2 {
 		parent?.children?.add(this)
 	}
 
+	@MainThread
 	constructor(parent: WvWindowHandle?) {
 		val id = nextId()
 		this.id = id
@@ -95,6 +97,7 @@ class WvWindowHandle : AutoCloseable2 {
 		private val recycledIds = MutableIntList()
 		private var lastId = 0
 
+		@MainThread
 		private fun nextId(): Int {
 			assertThreadMain()
 
