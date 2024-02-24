@@ -29,7 +29,7 @@ class WvWindowHandle : AutoCloseable2 {
 	internal constructor(id: Int, parent: WvWindowHandle?) {
 		assertThreadMain()
 
-		assert({ id > 0 })
+		assert({ id > INVALID_ID })
 		if (id > lastId) lastId = id
 
 		this.id = id
@@ -91,11 +91,13 @@ class WvWindowHandle : AutoCloseable2 {
 	}
 
 	companion object {
+		const val INVALID_ID = 0
+
 		private val globalMap_ = MutableIntObjectMap<WvWindowHandle>()
 		val globalMap: IntObjectMap<WvWindowHandle> = globalMap_
 
 		private val recycledIds = MutableIntList()
-		private var lastId = 0
+		private var lastId = INVALID_ID
 
 		@MainThread
 		private fun nextId(): Int {
@@ -109,7 +111,7 @@ class WvWindowHandle : AutoCloseable2 {
 			}
 
 			val id = ++lastId
-			if (id <= 0) {
+			if (id <= INVALID_ID) {
 				lastId--
 				throw Error("Overflow: maximum ID exceeded")
 			}
