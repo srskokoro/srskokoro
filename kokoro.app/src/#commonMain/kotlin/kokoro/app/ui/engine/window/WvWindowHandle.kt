@@ -161,4 +161,6 @@ abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : 
 	}
 }
 
-internal expect class WvWindowHandleImpl : WvWindowHandle
+internal expect class WvWindowHandleImpl : WvWindowHandle {
+	override fun onClose()
+}

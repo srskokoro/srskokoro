@@ -59,7 +59,7 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 	}
 
 	@MainThread
-	override fun onClose() {
+	actual override fun onClose() {
 		uri_ = null
 		when (val c = context) {
 			null -> return // Skip code below
