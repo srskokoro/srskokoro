@@ -6,7 +6,6 @@ import androidx.collection.MutableIntList
 import androidx.collection.MutableIntObjectMap
 import androidx.collection.MutableScatterSet
 import kokoro.internal.AutoCloseable2
-import kokoro.internal.NOTHING_TO_INLINE
 import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assert
@@ -82,8 +81,8 @@ abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : 
 	companion object {
 		const val INVALID_ID = 0
 
-		@Suppress(NOTHING_TO_INLINE) inline fun isClose(id: Int): Boolean = id == INVALID_ID
-		@Suppress(NOTHING_TO_INLINE) inline fun isOpen(id: Int): Boolean = id != INVALID_ID
+		@Suppress("NOTHING_TO_INLINE") inline fun isClose(id: Int): Boolean = id == INVALID_ID
+		@Suppress("NOTHING_TO_INLINE") inline fun isOpen(id: Int): Boolean = id != INVALID_ID
 
 		// --
 
@@ -111,7 +110,7 @@ abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : 
 
 		//--
 
-		@Suppress(NOTHING_TO_INLINE)
+		@Suppress("NOTHING_TO_INLINE")
 		@AnyThread
 		fun <T : WvWindowHandle> get(id: Int): T? {
 			synchronized(globalLock) {
@@ -153,7 +152,7 @@ abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : 
 		/**
 		 * WARNING: May be called inside a synchronization block.
 		 */
-		@Suppress(NOTHING_TO_INLINE)
+		@Suppress("NOTHING_TO_INLINE")
 		@MainThread
 		private inline fun initialize(handle: WvWindowHandle, @IntRange(from = INVALID_ID + 1L) id: Int) {
 			handle.id_ = id

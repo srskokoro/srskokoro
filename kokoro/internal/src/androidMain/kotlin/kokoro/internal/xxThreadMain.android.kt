@@ -1,6 +1,6 @@
 package kokoro.internal
 
-@Suppress(NOTHING_TO_INLINE)
+@Suppress("NOTHING_TO_INLINE")
 actual inline fun isThreadMain(): Boolean = Thread.currentThread() == mainThread
 
 @Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)

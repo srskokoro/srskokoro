@@ -21,7 +21,6 @@ package kokoro.internal
  * @see Deprecated
  * @see SPECIAL_USE_DEPRECATION_FOR_TESTS
  * @see NOOK
- * @see DEPRECATION_ERROR
  */
 const val SPECIAL_USE_DEPRECATION = "Should not be used directly"
 
@@ -30,6 +29,5 @@ const val SPECIAL_USE_DEPRECATION = "Should not be used directly"
  * the deprecated symbol is exposed only for access in tests.
  *
  * @see SPECIAL_USE_DEPRECATION
- * @see DEPRECATION_ERROR
  */
 const val SPECIAL_USE_DEPRECATION_FOR_TESTS = "$SPECIAL_USE_DEPRECATION: exposed only for access in tests"

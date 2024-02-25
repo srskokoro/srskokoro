@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
 import kokoro.app.CoreApplication
-import kokoro.internal.NOTHING_TO_INLINE
 import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
@@ -17,17 +16,17 @@ import kokoro.internal.check
 internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindowHandle?) : WvWindowHandle(parent), Parcelable {
 	private var context: Any? = null
 
-	@Suppress(NOTHING_TO_INLINE)
+	@Suppress("NOTHING_TO_INLINE")
 	inline fun attachContext(activity: WvWindowActivity) {
 		this.context = activity
 	}
 
-	@Suppress(NOTHING_TO_INLINE)
+	@Suppress("NOTHING_TO_INLINE")
 	inline fun attachContext(task: ActivityManager.AppTask) {
 		this.context = task
 	}
 
-	@Suppress(NOTHING_TO_INLINE)
+	@Suppress("NOTHING_TO_INLINE")
 	inline fun detachContext() {
 		this.context = null
 	}
@@ -79,7 +78,7 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 		/**
 		 * @see WvWindowHandleImpl.get
 		 */
-		@Suppress(NOTHING_TO_INLINE)
+		@Suppress("NOTHING_TO_INLINE")
 		@AnyThread
 		inline fun getId(intent: Intent): Int =
 			intent.getIntExtra(EXTRAS_KEY_to_ID_INT, INVALID_ID)
@@ -87,7 +86,7 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 		/**
 		 * @see WvWindowHandleImpl.getId
 		 */
-		@Suppress(NOTHING_TO_INLINE)
+		@Suppress("NOTHING_TO_INLINE")
 		@AnyThread
 		inline fun getParentId(intent: Intent): Int =
 			intent.getIntExtra(EXTRAS_KEY_to_PARENT_ID_INT, INVALID_ID)
@@ -96,7 +95,7 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 		 * @see WvWindowHandleImpl.toIntent
 		 * @see WvWindowHandleImpl.getId
 		 */
-		@Suppress(NOTHING_TO_INLINE)
+		@Suppress("NOTHING_TO_INLINE")
 		@AnyThread
 		inline fun get(intent: Intent): WvWindowHandleImpl? = get(getId(intent))
 
