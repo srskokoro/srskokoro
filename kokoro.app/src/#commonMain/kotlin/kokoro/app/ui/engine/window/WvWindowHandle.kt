@@ -73,7 +73,7 @@ abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : 
 			}
 			if (prev != null) openHandles[id] = prev // Restore
 		}
-		assertUnreachable(orFailWith = { "Unexpected open handle with ID $id" })
+		assertUnreachable(or_fail_with = { "Unexpected open handle with ID $id" })
 	}
 
 	val isClosed: Boolean inline get() = isClose(id)
@@ -144,7 +144,7 @@ abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : 
 					return true
 				} else {
 					openHandles[id] = prev // Restore
-					assertUnreachable(orFailWith = { "ID already in use: $id" })
+					assertUnreachable(or_fail_with = { "ID already in use: $id" })
 					return false
 				}
 			}

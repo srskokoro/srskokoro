@@ -41,7 +41,7 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 			if (r != null) return r
 
 			val id = id
-			check(isOpen(id), orFailWith = { "Already closed (or not yet opened)" })
+			check(isOpen(id), or_fail_with = { "Already closed (or not yet opened)" })
 
 			r = Uri.parse("$URI_SCHEME_to_ID_HEX:${Integer.toHexString(id)}")
 			uri_ = r
