@@ -1,3 +1,3 @@
 package kokoro.internal.annotation
 
-typealias MainThread = androidx.annotation.MainThread
+actual typealias MainThread = androidx.annotation.MainThread

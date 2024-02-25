@@ -1,3 +1,3 @@
 package kokoro.internal.annotation
 
-typealias AnyThread = androidx.annotation.AnyThread
+actual typealias AnyThread = androidx.annotation.AnyThread
