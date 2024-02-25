@@ -1,40 +1,28 @@
 package kokoro.app.ui.engine.window
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import kokoro.internal.DEPRECATION_ERROR
-import kokoro.internal.assertUnreachable
 
 class WvWindowActivity : ComponentActivity() {
 
 	companion object {
-		init {
-			WvWindowHandle_globalInit()
+
+		private val COMPONENT_CLASS_NAME = WvWindowActivity::class.java.name
+
+		fun shouldHandle(intent: Intent): Boolean {
+			return intent.component?.className == COMPONENT_CLASS_NAME
 		}
 	}
 
-	private var handle: WvWindowHandle? = null
+	private var handle: WvWindowHandleImpl? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
-		intent.data?.let { uri ->
-			val s = uri.toString()
-			if (!s.startsWith("x:")) return@let
-
-			val id = try {
-				s.substring(2).toInt()
-			} catch (ex: NumberFormatException) {
-				assertUnreachable(ex)
-				return@let // Fail
-			}
-
-			val h = WvWindowHandle.globalMap[id] ?: return@let
+		WvWindowHandleImpl.get(intent)?.let { h ->
 			handle = h
-
-			@Suppress(DEPRECATION_ERROR)
-			h.attach(this@WvWindowActivity)
-
+			h.attachContext(this@WvWindowActivity)
 			return // Success. Skip code below.
 		}
 
@@ -45,8 +33,7 @@ class WvWindowActivity : ComponentActivity() {
 
 	override fun onDestroy() {
 		if (isFinishing) handle?.run {
-			@Suppress(DEPRECATION_ERROR)
-			detach() // So that `finishAndRemoveTask()` isn't called
+			detachContext() // So that `finishAndRemoveTask()` isn't called by `close()` below
 			close()
 		}
 		super.onDestroy()

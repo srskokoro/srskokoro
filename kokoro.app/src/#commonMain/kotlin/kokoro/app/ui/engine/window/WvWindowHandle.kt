@@ -1,59 +1,44 @@
 package kokoro.app.ui.engine.window
 
-import androidx.collection.IntObjectMap
+import androidx.annotation.GuardedBy
+import androidx.annotation.IntRange
 import androidx.collection.MutableIntList
 import androidx.collection.MutableIntObjectMap
 import androidx.collection.MutableScatterSet
-import androidx.collection.ScatterSet
 import kokoro.internal.AutoCloseable2
-import kokoro.internal.DEPRECATION_ERROR
 import kokoro.internal.NOTHING_TO_INLINE
-import kokoro.internal.SPECIAL_USE_DEPRECATION
 import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assert
 import kokoro.internal.assertThreadMain
 import kokoro.internal.assertUnreachable
-import kotlin.jvm.JvmField
+import kotlinx.atomicfu.locks.SynchronizedObject
+import kotlinx.atomicfu.locks.synchronized
 
 @MainThread
-class WvWindowHandle : AutoCloseable2 {
-	private var id_: Int
+abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : AutoCloseable2 {
+	/** WARNING: Must only be modified from the main thread. */
+	private var id_: Int = INVALID_ID
 	val id: Int get() = id_
 
-	@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
-	@JvmField internal var attachment: WvWindowHandleAttachment? = null
-
-	private var parent_: WvWindowHandle?
+	/** WARNING: Must only be modified from the main thread. */
+	private var parent_: WvWindowHandle? = parent
 	val parent: WvWindowHandle? get() = parent_
 
-	private val children_ = MutableScatterSet<WvWindowHandle>()
-	val children: ScatterSet<WvWindowHandle> get() = children_
+	/** WARNING: Must only be accessed (and modified) from the main thread. */
+	private val children = MutableScatterSet<WvWindowHandle>()
 
-	@Suppress("ConvertSecondaryConstructorToPrimary")
-	@AnyThread
-	private constructor(id: Int, parent: WvWindowHandle?) {
-		assert({ id > INVALID_ID })
-		this.id_ = id
-		this.parent_ = parent
-	}
+	@MainThread
+	protected abstract fun onClose()
 
-	@Suppress(NOTHING_TO_INLINE)
-	@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
-	internal inline fun detach() {
-		@Suppress(DEPRECATION_ERROR)
-		attachment = null
-	}
-
+	@MainThread
 	override fun close() {
 		assertThreadMain()
 
-		// NOTE: The code hereafter is expected to be idempotent after success,
-		// i.e., multiple invocations of this `close()` method shouldn't affect
-		// anything once the object is already considered successfully closed.
-		// --
+		val id = id_
+		if (id == INVALID_ID) return // Already closed before
 
-		children_.removeIf { child ->
+		children.removeIf { child ->
 			assert({ child.parent_.let { it == null || it == this } })
 			child.parent_ = null // Prevent child from removing itself
 			try {
@@ -65,47 +50,50 @@ class WvWindowHandle : AutoCloseable2 {
 			true // Remove child
 		}
 
-		@Suppress(DEPRECATION_ERROR)
-		attachment?.let { attachment ->
-			WvWindowHandle_destroy_attachment(attachment) // May throw
-			detach() // Expected to never throw
-		}
+		onClose() // May throw
 
 		// NOTE: The code hereafter must not throw.
 		// --
 
 		parent_?.let { parent ->
-			parent.children_.remove(this)
+			parent.children.remove(this)
 			parent_ = null
 		}
 
-		val id = id_
-		if (id == INVALID_ID) return // Already closed before.
 		// NOTE: The operation below not only marks the object as "closed" but
 		// also prevents multiple `close()` calls from affecting the globals as
 		// the code afterwards would.
 		id_ = INVALID_ID
 
-		globalMap_.remove(id)
-		recycledIds.add(id)
+		synchronized(globalLock) {
+			val prev = openHandles.remove(id)
+			if (prev == this) {
+				recycledIds.add(id)
+				return // Skip code below
+			}
+			if (prev != null) openHandles[id] = prev // Restore
+		}
+		assertUnreachable(orFailWith = { "Unexpected open handle with ID $id" })
 	}
 
-	val isClosed: Boolean
-		inline get() = id == INVALID_ID
+	val isClosed: Boolean inline get() = isClose(id)
+	val isOpen: Boolean inline get() = isOpen(id)
 
 	companion object {
 		const val INVALID_ID = 0
 
-		private val globalMap_ = MutableIntObjectMap<WvWindowHandle>()
-		val globalMap: IntObjectMap<WvWindowHandle> = globalMap_
+		@Suppress(NOTHING_TO_INLINE) inline fun isClose(id: Int): Boolean = id == INVALID_ID
+		@Suppress(NOTHING_TO_INLINE) inline fun isOpen(id: Int): Boolean = id != INVALID_ID
 
-		private val recycledIds = MutableIntList()
-		private var lastId = INVALID_ID
+		// --
 
-		@MainThread
-		private fun nextId(): Int {
-			assertThreadMain()
+		private val globalLock = SynchronizedObject()
+		@GuardedBy("globalLock") private val openHandles = MutableIntObjectMap<WvWindowHandle>()
+		@GuardedBy("globalLock") private val recycledIds = MutableIntList()
+		@GuardedBy("globalLock") private var lastId = INVALID_ID
 
+		@GuardedBy("globalLock")
+		private fun nextId_unsafe(): Int {
 			recycledIds.run {
 				val l = lastIndex
 				if (l >= 0) {
@@ -121,44 +109,57 @@ class WvWindowHandle : AutoCloseable2 {
 			return id
 		}
 
-		@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
-		@MainThread
-		internal fun recycleId(id: Int) {
-			assertThreadMain()
+		//--
 
-			assert({ id > INVALID_ID && id !in globalMap_ })
-			if (id > lastId) lastId = id
-
-			recycledIds.add(id)
-		}
-
-		@MainThread
-		fun create(parent: WvWindowHandle?): WvWindowHandle {
-			val id = nextId() // Expected to assert proper thread
-
-			val new = WvWindowHandle(id, parent)
-			globalMap_[id] = new
-
-			parent?.children_?.add(new)
-			return new
-		}
-
-		@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
-		@MainThread
-		fun create(id: Int, parent: WvWindowHandle?): WvWindowHandle? {
-			assertThreadMain()
-
-			val new = WvWindowHandle(id, parent)
-			globalMap_.put(id, new)?.let { prev ->
-				globalMap_[id] = prev // Restore
-				assertUnreachable(orFailWith = { "ID already in use: $id" })
-				globalMap_[id] = prev // Restore
-				return null
+		@Suppress(NOTHING_TO_INLINE)
+		@AnyThread
+		fun <T : WvWindowHandle> get(id: Int): T? {
+			synchronized(globalLock) {
+				@Suppress("UNCHECKED_CAST")
+				return openHandles[id] as? T
 			}
-			if (id > lastId) lastId = id
+		}
 
-			parent?.children_?.add(new)
-			return new
+		@MainThread
+		fun open(handle: WvWindowHandle) {
+			assertThreadMain()
+
+			synchronized(globalLock) {
+				val id = nextId_unsafe()
+				openHandles[id] = handle
+				initialize(handle, id) // Requires the main thread
+			}
+		}
+
+		@MainThread
+		fun openAt(@IntRange(from = INVALID_ID + 1L) id: Int, handle: WvWindowHandle): Boolean {
+			assertThreadMain()
+
+			assert({ id > INVALID_ID })
+			synchronized(globalLock) {
+				val prev = openHandles.put(id, handle)
+				if (prev == null) {
+					if (id > lastId) lastId = id
+					initialize(handle, id) // Requires the main thread
+					return true
+				} else {
+					openHandles[id] = prev // Restore
+					assertUnreachable(orFailWith = { "ID already in use: $id" })
+					return false
+				}
+			}
+		}
+
+		/**
+		 * WARNING: May be called inside a synchronization block.
+		 */
+		@Suppress(NOTHING_TO_INLINE)
+		@MainThread
+		private inline fun initialize(handle: WvWindowHandle, @IntRange(from = INVALID_ID + 1L) id: Int) {
+			handle.id_ = id
+			handle.parent_?.children?.add(handle)
 		}
 	}
 }
+
+internal expect class WvWindowHandleImpl : WvWindowHandle
