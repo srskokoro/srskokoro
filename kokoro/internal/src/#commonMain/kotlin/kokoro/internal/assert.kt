@@ -1,3 +1,5 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package kokoro.internal
 
 const val ASSERTIONS_ENABLED = !IS_RELEASING
