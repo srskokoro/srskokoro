@@ -97,6 +97,9 @@ dependencySettings {
 
 	//#region Concurrency support
 
+	val kotlinx_atomicfu = "0.23.2" // https://github.com/Kotlin/kotlinx-atomicfu/releases
+	module("org.jetbrains.kotlinx:atomicfu-gradle-plugin", kotlinx_atomicfu)
+
 	val kotlinx_coroutines = "1.8.0" // https://github.com/Kotlin/kotlinx.coroutines/releases
 	module("org.jetbrains.kotlinx:kotlinx-coroutines-core", kotlinx_coroutines)
 	module("org.jetbrains.kotlinx:kotlinx-coroutines-debug", kotlinx_coroutines)
