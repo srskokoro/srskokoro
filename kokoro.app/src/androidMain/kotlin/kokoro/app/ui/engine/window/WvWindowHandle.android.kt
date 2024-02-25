@@ -70,7 +70,7 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 		detachContext()
 	}
 
-	companion object {
+	actual companion object {
 		private const val URI_SCHEME_to_ID_HEX = "x:" // The 'x' stands for "hexadecimal"
 		private const val EXTRAS_KEY_to_ID_INT = "id"
 		private const val EXTRAS_KEY_to_PARENT_ID_INT = "parentId"
