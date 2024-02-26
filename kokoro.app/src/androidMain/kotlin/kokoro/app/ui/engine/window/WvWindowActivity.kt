@@ -27,8 +27,10 @@ class WvWindowActivity : ComponentActivity() {
 		}
 
 		// Either the `Intent` isn't supported or there isn't enough information
-		// to process the request.
-		finish()
+		// to process the request. Anyway, treat the "intent" as invalid and
+		// prevent the activity from being restored from the "recents" screen --
+		// it won't be able to do anything anyway and would "finish" instantly.
+		finishAndRemoveTask()
 	}
 
 	override fun onDestroy() {
