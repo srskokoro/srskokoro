@@ -161,6 +161,8 @@ abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : 
 		@Suppress("NOTHING_TO_INLINE")
 		@MainThread
 		private inline fun initialize(handle: WvWindowHandle, @IntRange(from = INVALID_ID + 1L) id: Int) {
+			assertThreadMain()
+
 			handle.id_ = id
 			handle.parent_?.children?.add(handle)
 		}
