@@ -110,7 +110,6 @@ abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : 
 
 		//--
 
-		@Suppress("NOTHING_TO_INLINE")
 		@AnyThread
 		fun <T : WvWindowHandle> get(id: Int): T? {
 			synchronized(globalLock) {
