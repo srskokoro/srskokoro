@@ -8,10 +8,11 @@ class WvWindowActivity : ComponentActivity() {
 
 	companion object {
 
-		private val COMPONENT_CLASS_NAME = WvWindowActivity::class.java.name
+		private val COMPONENT_CLASS_NAME: String = WvWindowActivity::class.java.name
 
 		fun shouldHandle(intent: Intent): Boolean {
-			return intent.component?.className == COMPONENT_CLASS_NAME
+			val c = intent.component
+			return c != null && COMPONENT_CLASS_NAME == c.className
 		}
 	}
 
