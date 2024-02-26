@@ -18,9 +18,12 @@ class MainActivity : Activity() {
 		splashScreen.setKeepOnScreenCondition { true }
 
 		startMainWindow()
-		finish() // Done!
+		finishAndRemoveTask() // Done!
 	}
 
+	/**
+	 * This should start the "real" main activity in a separate task entry.
+	 */
 	private fun startMainWindow() {
 		// TODO Implement!
 	}
