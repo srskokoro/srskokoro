@@ -6,6 +6,7 @@ import androidx.collection.MutableIntList
 import androidx.collection.MutableIntObjectMap
 import androidx.collection.MutableScatterSet
 import kokoro.internal.AutoCloseable2
+import kokoro.internal.SPECIAL_USE_DEPRECATION
 import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assert
@@ -110,12 +111,18 @@ abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : 
 
 		//--
 
+		@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
 		@AnyThread
-		fun <T : WvWindowHandle> get(id: Int): T? {
+		@PublishedApi internal fun get_(id: Int): WvWindowHandle? {
 			synchronized(globalLock) {
-				@Suppress("UNCHECKED_CAST")
-				return openHandles[id] as? T
+				return openHandles[id]
 			}
+		}
+
+		@AnyThread
+		inline fun <reified T : WvWindowHandle> get(id: Int): T? {
+			@Suppress("DEPRECATION_ERROR")
+			return get_(id) as? T
 		}
 
 		@MainThread
