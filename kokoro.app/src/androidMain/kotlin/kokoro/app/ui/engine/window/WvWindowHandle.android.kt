@@ -12,7 +12,6 @@ import kokoro.app.CoreApplication
 import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
-import kokoro.internal.check
 import kokoro.internal.os.SerializationParcelable
 
 @MainThread
@@ -47,7 +46,7 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 			if (r != null) return r
 
 			val id = id
-			check(isOpen(id), or = { "Already closed (or invalid)" })
+			ensureOpen(id)
 
 			r = Uri.parse("$URI_SCHEME_to_ID_HEX:${Integer.toHexString(id)}")
 			uri_ = r
@@ -87,7 +86,7 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 	@MainThread
 	actual override fun launch(windowFactoryId: String): WvWindowHandle {
 		assertThreadMain()
-		check(isOpen, or = { "Already closed (or invalid)" })
+		ensureOpen()
 
 		val child = WvWindowHandleImpl(this)
 		open(child)

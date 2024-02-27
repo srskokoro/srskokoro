@@ -16,6 +16,7 @@ import kokoro.internal.check
 import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
 
+@OptIn(nook::class)
 @MainThread
 abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : AutoCloseable2 {
 	/** WARNING: Must only be modified from the main thread. */
@@ -59,7 +60,7 @@ abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : 
 	 */
 	@MainThread
 	fun <T> post(bus: WvWindowBus<T>, value: T) {
-		check(postOrDiscard(bus, value), or = { "Already closed (or invalid)" })
+		check(postOrDiscard(bus, value), or = { E_CLOSED })
 	}
 
 	/**
@@ -125,11 +126,29 @@ abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : 
 	val isClosed: Boolean inline get() = isClose(id)
 	val isOpen: Boolean inline get() = isOpen(id)
 
+	/**
+	 * @throws IllegalStateException when this [handle][WvWindowHandle] is
+	 * already [closed][isClosed] (or invalid).
+	 *
+	 * @see WvWindowHandle.Companion.ensureOpen
+	 */
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun ensureOpen() = ensureOpen(id)
+
 	companion object {
 		const val INVALID_ID = 0
 
 		@Suppress("NOTHING_TO_INLINE") inline fun isClose(id: Int): Boolean = id == INVALID_ID
 		@Suppress("NOTHING_TO_INLINE") inline fun isOpen(id: Int): Boolean = id != INVALID_ID
+
+		@PublishedApi @nook internal const val E_CLOSED = "Already closed (or invalid)"
+
+		/**
+		 * @throws IllegalStateException when the given ID is already
+		 * [closed][isClose] (or invalid).
+		 */
+		@Suppress("NOTHING_TO_INLINE")
+		inline fun ensureOpen(id: Int) = check(isOpen(id), or = { E_CLOSED })
 
 		// --
 
