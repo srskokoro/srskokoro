@@ -8,18 +8,12 @@ import kotlin.reflect.typeOf
 
 inline fun <reified T> UiBus(
 	noinline serialization: SerializersModule.() -> KSerializer<T> = UiBus.defaultSerialization<T>(),
-) = UiBus(
-	serialization,
-	UiBus.id<T>(),
-)
+) = UiBus(serialization, UiBus.id<T>())
 
 inline fun <reified T> UiBus(
 	tag: String?,
 	noinline serialization: SerializersModule.() -> KSerializer<T> = UiBus.defaultSerialization<T>(),
-) = UiBus(
-	serialization,
-	UiBus.id<T>(tag),
-)
+) = UiBus(serialization, UiBus.id<T>(tag))
 
 data class UiBus<T>(
 	@JvmField val serialization: SerializersModule.() -> KSerializer<T>,
