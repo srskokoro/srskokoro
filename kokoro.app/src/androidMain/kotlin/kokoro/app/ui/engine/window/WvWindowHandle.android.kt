@@ -9,6 +9,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.core.content.IntentCompat
 import kokoro.app.CoreApplication
+import kokoro.app.ui.engine.UiBus
 import kokoro.internal.ASSERTIONS_ENABLED
 import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
@@ -75,7 +76,7 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 	 * @see WvWindowHandleImpl.Companion.getPostPayload
 	 */
 	@MainThread
-	private fun <T> newPostIntent(app: Application, bus: WvWindowBus<T>, payload: T) = Intent(app, WvWindowActivity::class.java).apply {
+	private fun <T> newPostIntent(app: Application, bus: UiBus<T>, payload: T) = Intent(app, WvWindowActivity::class.java).apply {
 		data = uri // Requires the main thread. May throw on a closed handle.
 		putExtra(EXTRAS_KEY_to_POST_BUS_ID, bus.id)
 		putExtra(EXTRAS_KEY_to_POST_PAYLOAD, SerializationParcelable().apply {
@@ -103,7 +104,7 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 	}
 
 	@MainThread
-	actual override fun <T> postOrDiscard(bus: WvWindowBus<T>, value: T): Boolean {
+	actual override fun <T> postOrDiscard(bus: UiBus<T>, value: T): Boolean {
 		assertThreadMain()
 		if (isOpen) {
 			val app = CoreApplication.get()

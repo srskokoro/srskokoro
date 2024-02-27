@@ -2,6 +2,7 @@ package kokoro.app.ui.engine.window
 
 import androidx.annotation.EmptySuper
 import androidx.collection.MutableScatterMap
+import kokoro.app.ui.engine.UiBus
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
 import kokoro.internal.collections.initWithAssert
@@ -49,7 +50,7 @@ abstract class WvWindow(@JvmField val context: WvContext) {
 	}
 
 	@MainThread
-	@PublishedApi @nook internal fun <W : WvWindow, T> doOnPost_(bus: WvWindowBus<T>, action: WvWindowBusAction<W, T>) {
+	@PublishedApi @nook internal fun <W : WvWindow, T> doOnPost_(bus: UiBus<T>, action: WvWindowBusAction<W, T>) {
 		assertThreadMain()
 		doOnPostMap.initWithAssert(bus.id, WvWindowBusBinding(bus, action), or = {
 			"Bus already bound. ID: ${bus.id}"
@@ -57,23 +58,23 @@ abstract class WvWindow(@JvmField val context: WvContext) {
 	}
 
 	@MainThread
-	@PublishedApi @nook internal fun <W : WvWindow, T> setDoOnPost_(bus: WvWindowBus<T>, action: WvWindowBusAction<W, T>) {
+	@PublishedApi @nook internal fun <W : WvWindow, T> setDoOnPost_(bus: UiBus<T>, action: WvWindowBusAction<W, T>) {
 		assertThreadMain()
 		doOnPostMap[bus.id] = WvWindowBusBinding(bus, action)
 	}
 
 	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
-	inline fun <W : WvWindow, T> W.doOnPost(bus: WvWindowBus<T>, action: WvWindowBusAction<W, T>) =
+	inline fun <W : WvWindow, T> W.doOnPost(bus: UiBus<T>, action: WvWindowBusAction<W, T>) =
 		doOnPost_(bus, action)
 
 	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
-	inline fun <W : WvWindow, T> W.setDoOnPost(bus: WvWindowBus<T>, action: WvWindowBusAction<W, T>) =
+	inline fun <W : WvWindow, T> W.setDoOnPost(bus: UiBus<T>, action: WvWindowBusAction<W, T>) =
 		setDoOnPost_(bus, action)
 
 	@MainThread
-	fun <T> unsetDoOnPost(bus: WvWindowBus<T>) {
+	fun <T> unsetDoOnPost(bus: UiBus<T>) {
 		assertThreadMain()
 		doOnPostMap.remove(bus.id)
 	}

@@ -5,6 +5,7 @@ import androidx.annotation.IntRange
 import androidx.collection.MutableIntList
 import androidx.collection.MutableIntObjectMap
 import androidx.collection.MutableScatterSet
+import kokoro.app.ui.engine.UiBus
 import kokoro.internal.AutoCloseable2
 import kokoro.internal.SPECIAL_USE_DEPRECATION
 import kokoro.internal.annotation.AnyThread
@@ -59,7 +60,7 @@ abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : 
 	 * @see postOrDiscard
 	 */
 	@MainThread
-	fun <T> post(bus: WvWindowBus<T>, value: T) {
+	fun <T> post(bus: UiBus<T>, value: T) {
 		check(postOrDiscard(bus, value), or = { E_CLOSED })
 	}
 
@@ -71,7 +72,7 @@ abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : 
 	 * @see post
 	 */
 	@MainThread
-	abstract fun <T> postOrDiscard(bus: WvWindowBus<T>, value: T): Boolean
+	abstract fun <T> postOrDiscard(bus: UiBus<T>, value: T): Boolean
 
 	// --
 
@@ -238,7 +239,7 @@ internal expect class WvWindowHandleImpl : WvWindowHandle {
 
 	override fun launch(windowFactoryId: String): WvWindowHandle
 
-	override fun <T> postOrDiscard(bus: WvWindowBus<T>, value: T): Boolean
+	override fun <T> postOrDiscard(bus: UiBus<T>, value: T): Boolean
 
 	override fun onClose()
 
