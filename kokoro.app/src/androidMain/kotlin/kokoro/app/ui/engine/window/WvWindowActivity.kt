@@ -65,6 +65,16 @@ class WvWindowActivity : ComponentActivity() {
 		}
 	}
 
+	override fun onResume() {
+		super.onResume()
+		window?.onResume()
+	}
+
+	override fun onPause() {
+		super.onPause()
+		window?.onPause()
+	}
+
 	override fun onDestroy() {
 		if (isFinishing) {
 			handle?.run {
