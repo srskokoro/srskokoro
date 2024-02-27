@@ -29,8 +29,10 @@ fun interface WvWindowFactory<out T : WvWindow> {
 		 * @see get
 		 */
 		@MainThread
-		inline fun <reified T : WvWindow> register(tag: String? = null, factory: WvWindowFactory<T>) =
-			register(factory, id<T>(tag))
+		fun register(factory: WvWindowFactory<*>, id: String) {
+			assertThreadMain()
+			map.initWithAssert(id, factory, or = { "Factory ID already in use: $id" })
+		}
 
 		/**
 		 * @see register
@@ -43,10 +45,8 @@ fun interface WvWindowFactory<out T : WvWindow> {
 		 * @see register
 		 */
 		@MainThread
-		fun register(factory: WvWindowFactory<*>, id: String) {
-			assertThreadMain()
-			map.initWithAssert(id, factory, or = { "Factory ID already in use: $id" })
-		}
+		inline fun <reified T : WvWindow> register(tag: String? = null, factory: WvWindowFactory<T>) =
+			register(factory, id<T>(tag))
 
 		/**
 		 * @see register
