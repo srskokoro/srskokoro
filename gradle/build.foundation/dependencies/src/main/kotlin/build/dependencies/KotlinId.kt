@@ -1,4 +1,4 @@
-@file:Suppress("MemberVisibilityCanBePrivate", "NOTHING_TO_INLINE")
+@file:Suppress("NOTHING_TO_INLINE")
 
 package build.dependencies
 

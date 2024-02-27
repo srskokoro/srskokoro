@@ -2,7 +2,6 @@ package build.dependencies
 
 import org.gradle.api.UnknownDomainObjectException
 
-@Suppress("MemberVisibilityCanBePrivate")
 class DepsVersions(
 	val plugins: Map<PluginId, String>,
 	val modules: Map<ModuleId, String>,

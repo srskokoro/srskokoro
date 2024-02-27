@@ -8,7 +8,6 @@ import kokoro.internal.assertThreadMain
 import kokoro.internal.collections.initWithAssert
 import kotlin.jvm.JvmField
 
-@Suppress("MemberVisibilityCanBePrivate")
 @OptIn(nook::class)
 abstract class WvWindow(@JvmField val context: WvContext) {
 

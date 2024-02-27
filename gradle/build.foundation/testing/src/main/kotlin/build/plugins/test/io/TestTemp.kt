@@ -2,7 +2,6 @@ package build.plugins.test.io
 
 import java.io.File
 
-@Suppress("MemberVisibilityCanBePrivate")
 object TestTemp {
 	/**
 	 * An environment variable specifying a path to a custom temporary directory
