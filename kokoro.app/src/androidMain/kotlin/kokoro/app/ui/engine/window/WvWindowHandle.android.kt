@@ -2,6 +2,7 @@ package kokoro.app.ui.engine.window
 
 import android.app.Activity
 import android.app.ActivityManager
+import android.app.Application
 import android.content.Intent
 import android.net.Uri
 import android.os.Parcel
@@ -35,6 +36,8 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 		this.context = null
 	}
 
+	// --
+
 	private var uri_: Uri? = null
 	private val uri: Uri
 		@MainThread get() {
@@ -53,10 +56,12 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 		}
 
 	/**
+	 * @see WvWindowHandle.launch
 	 * @see WvWindowHandleImpl.Companion.get
+	 * @see WvWindowFactory.id
 	 */
 	@MainThread
-	fun newLaunchIntent(windowFactoryId: String) = Intent(CoreApplication.get(), WvWindowActivity::class.java).apply {
+	private fun newLaunchIntent(app: Application, windowFactoryId: String) = Intent(app, WvWindowActivity::class.java).apply {
 		data = uri // Requires the main thread. May throw on a closed handle.
 		putExtra(EXTRAS_KEY_to_ID, id)
 		parent?.let { p -> putExtra(EXTRAS_KEY_to_PARENT_ID, p.id) }
@@ -64,17 +69,51 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 	}
 
 	/**
+	 * @see WvWindowHandle.post
 	 * @see WvWindowHandleImpl.Companion.getPostBusId
 	 * @see WvWindowHandleImpl.Companion.getPostPayload
 	 */
 	@MainThread
-	fun <T> newPostIntent(bus: WvWindowBus<T>, payload: T) = Intent(CoreApplication.get(), WvWindowActivity::class.java).apply {
+	private fun <T> newPostIntent(app: Application, bus: WvWindowBus<T>, payload: T) = Intent(app, WvWindowActivity::class.java).apply {
 		data = uri // Requires the main thread. May throw on a closed handle.
 		putExtra(EXTRAS_KEY_to_POST_BUS_ID, bus.id)
 		putExtra(EXTRAS_KEY_to_POST_PAYLOAD, SerializationParcelable().apply {
 			set(payload, bus.serialization)
 		})
 	}
+
+	// --
+
+	@MainThread
+	actual override fun launch(windowFactoryId: String): WvWindowHandle {
+		assertThreadMain()
+		check(isOpen, or = { "Already closed (or invalid)" })
+
+		val child = WvWindowHandleImpl(this)
+		open(child)
+
+		val app = CoreApplication.get()
+		Intent(app, WvWindowActivity::class.java)
+
+		val intent = child.newLaunchIntent(app, windowFactoryId)
+		app.startActivity(intent)
+
+		return child
+	}
+
+	@MainThread
+	actual override fun <T> postOrDiscard(bus: WvWindowBus<T>, value: T): Boolean {
+		assertThreadMain()
+		if (isOpen) {
+			val app = CoreApplication.get()
+			val intent = newPostIntent(app, bus, value)
+			app.startActivity(intent)
+			return true
+		}
+		return false
+	}
+
+	// --
 
 	@MainThread
 	actual override fun onClose() {

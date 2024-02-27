@@ -12,6 +12,7 @@ import kokoro.internal.annotation.MainThread
 import kokoro.internal.assert
 import kokoro.internal.assertThreadMain
 import kokoro.internal.assertUnreachable
+import kokoro.internal.check
 import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
 
@@ -27,6 +28,51 @@ abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : 
 
 	/** WARNING: Must only be accessed (and modified) from the main thread. */
 	private val children = MutableScatterSet<WvWindowHandle>()
+
+	// --
+
+	/**
+	 * Launches a new child [window][WvWindow] and returns its [handle][WvWindowHandle].
+	 *
+	 * @throws IllegalStateException when this [handle][WvWindowHandle] is
+	 * already [closed][isClosed] (or invalid).
+	 */
+	@MainThread
+	inline fun <reified T : WvWindow> launch() = launch(WvWindowFactory.id<T>())
+
+	/**
+	 * @throws IllegalStateException
+	 *
+	 * @see launch
+	 * @see WvWindowFactory.id
+	 */
+	@MainThread
+	abstract fun launch(windowFactoryId: String): WvWindowHandle
+
+	/**
+	 * Posts a value to this [handle][WvWindowHandle]'s [window][WvWindow].
+	 *
+	 * @throws IllegalStateException when this [handle][WvWindowHandle] is
+	 * already [closed][isClosed] (or invalid).
+	 *
+	 * @see postOrDiscard
+	 */
+	@MainThread
+	fun <T> post(bus: WvWindowBus<T>, value: T) {
+		check(postOrDiscard(bus, value), or = { "Already closed (or invalid)" })
+	}
+
+	/**
+	 * Posts a value to this [handle][WvWindowHandle]'s [window][WvWindow].
+	 * Returns `true` on success, or `false` if this [handle][WvWindowHandle] is
+	 * already [closed][isClosed] (or invalid).
+	 *
+	 * @see post
+	 */
+	@MainThread
+	abstract fun <T> postOrDiscard(bus: WvWindowBus<T>, value: T): Boolean
+
+	// --
 
 	@MainThread
 	protected abstract fun onClose()
@@ -170,6 +216,10 @@ abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : 
 }
 
 internal expect class WvWindowHandleImpl : WvWindowHandle {
+
+	override fun launch(windowFactoryId: String): WvWindowHandle
+
+	override fun <T> postOrDiscard(bus: WvWindowBus<T>, value: T): Boolean
 
 	override fun onClose()
 
