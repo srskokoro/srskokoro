@@ -6,15 +6,19 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.core.content.IntentCompat
 import kokoro.app.CoreApplication
 import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
 import kokoro.internal.check
+import kokoro.internal.os.SerializationParcelable
 
 @MainThread
 internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindowHandle?) : WvWindowHandle(parent), Parcelable {
 	private var context: Any? = null
+
+	val activity get() = context as? WvWindowActivity
 
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun attachContext(activity: WvWindowActivity) {
@@ -40,7 +44,7 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 			if (r != null) return r
 
 			val id = id
-			check(isOpen(id), or = { "Already closed (or not yet opened)" })
+			check(isOpen(id), or = { "Already closed (or invalid)" })
 
 			r = Uri.parse("$URI_SCHEME_to_ID_HEX:${Integer.toHexString(id)}")
 			uri_ = r
@@ -52,10 +56,24 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 	 * @see WvWindowHandleImpl.Companion.get
 	 */
 	@MainThread
-	fun toIntent() = Intent(CoreApplication.get(), WvWindowActivity::class.java).apply {
+	fun newLaunchIntent(windowFactoryId: String) = Intent(CoreApplication.get(), WvWindowActivity::class.java).apply {
 		data = uri // Requires the main thread. May throw on a closed handle.
-		putExtra(EXTRAS_KEY_to_ID_INT, id)
-		parent?.let { p -> putExtra(EXTRAS_KEY_to_PARENT_ID_INT, p.id) }
+		putExtra(EXTRAS_KEY_to_ID, id)
+		parent?.let { p -> putExtra(EXTRAS_KEY_to_PARENT_ID, p.id) }
+		putExtra(EXTRAS_KEY_to_WINDOW_FACTORY_ID, windowFactoryId)
+	}
+
+	/**
+	 * @see WvWindowHandleImpl.Companion.getPostBusId
+	 * @see WvWindowHandleImpl.Companion.getPostPayload
+	 */
+	@MainThread
+	fun <T> newPostIntent(bus: WvWindowBus<T>, payload: T) = Intent(CoreApplication.get(), WvWindowActivity::class.java).apply {
+		data = uri // Requires the main thread. May throw on a closed handle.
+		putExtra(EXTRAS_KEY_to_POST_BUS_ID, bus.id)
+		putExtra(EXTRAS_KEY_to_POST_PAYLOAD, SerializationParcelable().apply {
+			set(payload, bus.serialization)
+		})
 	}
 
 	@MainThread
@@ -72,8 +90,13 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 
 	actual companion object {
 		private const val URI_SCHEME_to_ID_HEX = "x:" // The 'x' stands for "hexadecimal"
-		private const val EXTRAS_KEY_to_ID_INT = "id"
-		private const val EXTRAS_KEY_to_PARENT_ID_INT = "parentId"
+
+		private const val EXTRAS_KEY_to_ID = "id"
+		private const val EXTRAS_KEY_to_PARENT_ID = "parent"
+		private const val EXTRAS_KEY_to_WINDOW_FACTORY_ID = "factory"
+
+		private const val EXTRAS_KEY_to_POST_BUS_ID = "postId"
+		private const val EXTRAS_KEY_to_POST_PAYLOAD = "payload"
 
 		/**
 		 * @see WvWindowHandleImpl.get
@@ -81,7 +104,7 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 		@Suppress("NOTHING_TO_INLINE")
 		@AnyThread
 		inline fun getId(intent: Intent): Int =
-			intent.getIntExtra(EXTRAS_KEY_to_ID_INT, INVALID_ID)
+			intent.getIntExtra(EXTRAS_KEY_to_ID, INVALID_ID)
 
 		/**
 		 * @see WvWindowHandleImpl.getId
@@ -89,15 +112,50 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 		@Suppress("NOTHING_TO_INLINE")
 		@AnyThread
 		inline fun getParentId(intent: Intent): Int =
-			intent.getIntExtra(EXTRAS_KEY_to_PARENT_ID_INT, INVALID_ID)
+			intent.getIntExtra(EXTRAS_KEY_to_PARENT_ID, INVALID_ID)
 
 		/**
-		 * @see WvWindowHandleImpl.toIntent
+		 * @see WvWindowHandleImpl.newLaunchIntent
+		 * @see WvWindowHandleImpl.getWindowFactory
+		 */
+		@Suppress("NOTHING_TO_INLINE")
+		@AnyThread
+		inline fun getWindowFactoryId(intent: Intent): String? =
+			intent.getStringExtra(EXTRAS_KEY_to_WINDOW_FACTORY_ID)
+
+		/**
+		 * @see WvWindowHandleImpl.newLaunchIntent
+		 * @see WvWindowHandleImpl.getWindowFactoryId
+		 */
+		@Suppress("NOTHING_TO_INLINE")
+		@MainThread
+		inline fun getWindowFactory(intent: Intent) = getWindowFactoryId(intent)?.let {
+			WvWindowFactory.get(it) // Presumably requires the main thread
+		}
+
+		/**
+		 * @see WvWindowHandleImpl.newLaunchIntent
 		 * @see WvWindowHandleImpl.getId
 		 */
 		@Suppress("NOTHING_TO_INLINE")
 		@AnyThread
 		inline fun get(intent: Intent): WvWindowHandleImpl? = get(getId(intent))
+
+		/**
+		 * @see WvWindowHandleImpl.newPostIntent
+		 */
+		@Suppress("NOTHING_TO_INLINE")
+		@AnyThread
+		inline fun getPostBusId(intent: Intent): String? =
+			intent.getStringExtra(EXTRAS_KEY_to_POST_BUS_ID)
+
+		/**
+		 * @see WvWindowHandleImpl.newPostIntent
+		 */
+		@Suppress("NOTHING_TO_INLINE")
+		@AnyThread
+		inline fun getPostPayload(intent: Intent): SerializationParcelable? =
+			IntentCompat.getParcelableExtra(intent, EXTRAS_KEY_to_POST_PAYLOAD, SerializationParcelable::class.java)
 
 		// --
 

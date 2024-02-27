@@ -3,6 +3,7 @@ package kokoro.app.ui.engine.window
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import kokoro.internal.os.SerializationParcelable
 
 class WvWindowActivity : ComponentActivity() {
 
@@ -14,16 +15,32 @@ class WvWindowActivity : ComponentActivity() {
 			val c = intent.component
 			return c != null && COMPONENT_CLASS_NAME == c.className
 		}
+
+		// --
+
+		private fun <T> WvWindowBusBinding<*, T>.route(
+			window: WvWindow, transport: SerializationParcelable,
+		) {
+			route(window) { bus -> transport.get(bus.serialization) }
+		}
 	}
 
 	private var handle: WvWindowHandleImpl? = null
+	private var window: WvWindow? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
-		WvWindowHandleImpl.get(intent)?.let { h ->
+		run<Unit> {
+			val intent = intent
+			val h = WvWindowHandleImpl.get(intent) ?: return@run
+
 			handle = h
 			h.attachContext(this@WvWindowActivity)
+
+			val f = WvWindowHandleImpl.getWindowFactory(intent) ?: return@run
+			window = f.init(WvWindowContextImpl(h))
+
 			return // Success. Skip code below.
 		}
 
@@ -37,10 +54,24 @@ class WvWindowActivity : ComponentActivity() {
 		finishAndRemoveTask()
 	}
 
+	override fun onNewIntent(intent: Intent?) {
+		super.onNewIntent(intent)
+		if (intent != null) window?.let { w ->
+			val busId = WvWindowHandleImpl.getPostBusId(intent) ?: return@let
+			val payload = WvWindowHandleImpl.getPostPayload(intent) ?: return@let
+
+			@OptIn(nook::class)
+			(w.getDoOnPost_(busId) ?: return@let).route(w, payload)
+		}
+	}
+
 	override fun onDestroy() {
-		if (isFinishing) handle?.run {
-			detachContext() // So that `finishAndRemoveTask()` isn't called by `close()` below
-			close()
+		if (isFinishing) {
+			handle?.run {
+				detachContext() // So that `finishAndRemoveTask()` isn't called by `close()` below
+				close()
+			}
+			window?.onDestroy()
 		}
 		super.onDestroy()
 	}
