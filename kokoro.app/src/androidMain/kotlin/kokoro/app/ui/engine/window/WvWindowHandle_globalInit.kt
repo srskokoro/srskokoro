@@ -40,7 +40,7 @@ private class WvWindowHandle_globalRestore(tasks: List<AppTask>) {
 			if (id > INVALID_ID) {
 				// NOTE: Parent ID is `INVALID_ID` when purposely not set.
 				val parentId = WvWindowHandleImpl.getParentId(intent)
-				entries.put(id, Entry(id, parentId))
+				entries.put(id, Entry(id, parentId, task))
 			} else {
 				task.finishAndRemoveTask()
 			}
@@ -51,6 +51,7 @@ private class WvWindowHandle_globalRestore(tasks: List<AppTask>) {
 	private class Entry(
 		@JvmField val id: Int,
 		@JvmField val parentId: Int,
+		@JvmField val task: AppTask,
 	) {
 		@JvmField var visited = false
 		@JvmField var handle: WvWindowHandleImpl? = null
@@ -81,6 +82,7 @@ private class WvWindowHandle_globalRestore(tasks: List<AppTask>) {
 				val h = WvWindowHandleImpl(p)
 				if (WvWindowHandle.openAt(id, h)) {
 					handle = h
+					h.attachContext(task)
 					return h
 				}
 				// Otherwise, fail.
