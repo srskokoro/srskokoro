@@ -44,7 +44,7 @@ fun interface WvWindowFactory<out T : WvWindow> {
 		 * @see register
 		 */
 		@MainThread
-		inline fun <reified T : WvWindow> register(tag: String? = null, factory: WvWindowFactory<T>) =
+		inline fun <reified T : WvWindow> register(tag: String?, factory: WvWindowFactory<T>) =
 			register(factory, id<T>(tag))
 
 		/**
