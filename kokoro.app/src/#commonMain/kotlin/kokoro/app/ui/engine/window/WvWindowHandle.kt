@@ -149,7 +149,7 @@ abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : 
 					return true
 				} else {
 					openHandles[id] = prev // Restore
-					assertUnreachable(or_fail_with = { "ID already in use: $id" })
+					assertUnreachable(or_fail_with = { "Handle ID already in use: $id" })
 					return false
 				}
 			}
