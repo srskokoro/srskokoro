@@ -9,9 +9,11 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.core.content.IntentCompat
 import kokoro.app.CoreApplication
+import kokoro.internal.ASSERTIONS_ENABLED
 import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
+import kokoro.internal.errorAssertion
 import kokoro.internal.os.SerializationParcelable
 
 @MainThread
@@ -135,6 +137,20 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 
 		private const val EXTRAS_KEY_to_POST_BUS_ID = "postId"
 		private const val EXTRAS_KEY_to_POST_PAYLOAD = "payload"
+
+		private val globalRoot_ = WvWindowHandleImpl(null)
+
+		init {
+			if (ASSERTIONS_ENABLED) open(globalRoot_)
+		}
+
+		val globalRoot
+			get() = globalRoot_.apply {
+				if (isClosed) {
+					if (ASSERTIONS_ENABLED) errorAssertion("Unexpected: something closed the global root handle.")
+					open(this)
+				}
+			}
 
 		/**
 		 * @see WvWindowHandleImpl.get

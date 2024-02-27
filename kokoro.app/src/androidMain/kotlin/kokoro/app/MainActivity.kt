@@ -3,6 +3,8 @@ package kokoro.app
 import android.app.Activity
 import android.os.Bundle
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import kokoro.app.ui.DummyWindow
+import kokoro.app.ui.engine.window.WvWindowHandleImpl
 
 class MainActivity : Activity() {
 
@@ -25,6 +27,6 @@ class MainActivity : Activity() {
 	 * This should start the "real" main activity in a separate task entry.
 	 */
 	private fun startMainWindow() {
-		// TODO Implement!
+		WvWindowHandleImpl.globalRoot.launch<DummyWindow>() // TODO!
 	}
 }
