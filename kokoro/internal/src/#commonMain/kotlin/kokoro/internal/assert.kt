@@ -33,3 +33,13 @@ inline fun assertSucceeds(statement: () -> Unit, or: () -> Any = { "Should be un
 		throw AssertionError(message, ex)
 	}
 }
+
+/**
+ * Similar to [kotlin.error]`()` but throws [AssertionError] instead.
+ *
+ * It's a less verbose way of writing,
+ * ```
+ * throw AssertionError(message)
+ * ```
+ */
+inline fun errorAssertion(message: Any): Nothing = throw AssertionError(message)
