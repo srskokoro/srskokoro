@@ -17,19 +17,19 @@ inline fun check(condition: Boolean) {
 /**
  * Alternative to [kotlin.check]`()` with better parameter names.
  */
-inline fun check(condition: Boolean, or_fail_with: () -> Any) {
+inline fun check(condition: Boolean, or: () -> Any) {
 	contract {
 		returns() implies condition
 	}
-	kotlin.check(condition, or_fail_with)
+	kotlin.check(condition, or)
 }
 
 /**
  * Alternative to [kotlin.check]`()` with better parameter names.
  */
-inline fun <T : Any> checkNotNull(value: T?, or_fail_with: () -> Any): T {
+inline fun <T : Any> checkNotNull(value: T?, or: () -> Any): T {
 	contract {
 		returns() implies (value != null)
 	}
-	return kotlin.checkNotNull(value, or_fail_with)
+	return kotlin.checkNotNull(value, or)
 }

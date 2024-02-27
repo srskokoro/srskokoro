@@ -17,19 +17,19 @@ inline fun require(condition: Boolean) {
 /**
  * Alternative to [kotlin.require]`()` with better parameter names.
  */
-inline fun require(condition: Boolean, or_fail_with: () -> Any) {
+inline fun require(condition: Boolean, or: () -> Any) {
 	contract {
 		returns() implies condition
 	}
-	kotlin.require(condition, or_fail_with)
+	kotlin.require(condition, or)
 }
 
 /**
  * Alternative to [kotlin.require]`()` with better parameter names.
  */
-inline fun <T : Any> requireNotNull(value: T?, or_fail_with: () -> Any): T {
+inline fun <T : Any> requireNotNull(value: T?, or: () -> Any): T {
 	contract {
 		returns() implies (value != null)
 	}
-	return kotlin.requireNotNull(value, or_fail_with)
+	return kotlin.requireNotNull(value, or)
 }

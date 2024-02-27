@@ -18,7 +18,7 @@ internal fun WvWindowHandle_globalInit() {
 
 	val activityManager = CoreApplication.get().getSystemService<ActivityManager>()
 	if (activityManager == null) {
-		assertUnreachable(or_fail_with = { "`ActivityManager` seems unsupported" })
+		assertUnreachable(or = { "`ActivityManager` seems unsupported" })
 		return
 	}
 

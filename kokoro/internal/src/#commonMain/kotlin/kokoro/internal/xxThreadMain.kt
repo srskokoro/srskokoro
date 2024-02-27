@@ -4,13 +4,13 @@ expect fun isThreadMain(): Boolean
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun assertThreadMain(
-	or_fail_with: () -> Any = { @Suppress("DEPRECATION_ERROR") checkThreadMain_lazyMessage() },
-) = assert({ isThreadMain() }, or_fail_with = or_fail_with)
+	or: () -> Any = { @Suppress("DEPRECATION_ERROR") checkThreadMain_lazyMessage() },
+) = assert({ isThreadMain() }, or = or)
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun checkThreadMain(
-	or_fail_with: () -> Any = { @Suppress("DEPRECATION_ERROR") checkThreadMain_lazyMessage() },
-) = check(isThreadMain(), or_fail_with = or_fail_with)
+	or: () -> Any = { @Suppress("DEPRECATION_ERROR") checkThreadMain_lazyMessage() },
+) = check(isThreadMain(), or = or)
 
 @Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
 @PublishedApi internal expect fun checkThreadMain_lazyMessage(): String

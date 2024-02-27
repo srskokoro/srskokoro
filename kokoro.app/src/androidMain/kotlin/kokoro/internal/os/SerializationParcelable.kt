@@ -31,7 +31,7 @@ class SerializationParcelable : Parcelable {
 
 	fun <T> get(serializer: KSerializer<T>): T {
 		if (this.serializer != null) {
-			if (DEBUG) require(this.serializer == serializer, or_fail_with = {
+			if (DEBUG) require(this.serializer == serializer, or = {
 				"`serializer` used must be the same as before"
 			})
 			@Suppress("UNCHECKED_CAST")
@@ -102,7 +102,7 @@ class SerializationParcelable : Parcelable {
 
 		fun init(module: SerializersModule) {
 			with(ModuleHolderInit) {
-				if (DEBUG) check(value == null, or_fail_with = {
+				if (DEBUG) check(value == null, or = {
 					"Must only be called once"
 				})
 				value = module
