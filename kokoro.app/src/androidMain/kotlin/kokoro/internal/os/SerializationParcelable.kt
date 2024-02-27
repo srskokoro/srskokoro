@@ -22,7 +22,7 @@ class SerializationParcelable : Parcelable {
 
 	inline fun <reified T> set(value: T) = set(value, module.serializer())
 
-	inline fun <T> set(value: T, serialization: SerializersModule.() -> KSerializer<T>) = set(value, serialization(module))
+	inline fun <T> set(value: T, serialization: SerializersModule.() -> KSerializer<T>) = set(value, serialization.invoke(module))
 
 	fun <T> set(value: T, serializer: KSerializer<T>) {
 		this.value = value
@@ -31,7 +31,7 @@ class SerializationParcelable : Parcelable {
 
 	inline fun <reified T> get(): T = get(module.serializer())
 
-	inline fun <T> get(serialization: SerializersModule.() -> KSerializer<T>) = get(serialization(module))
+	inline fun <T> get(serialization: SerializersModule.() -> KSerializer<T>) = get(serialization.invoke(module))
 
 	fun <T> get(serializer: KSerializer<T>): T {
 		if (this.serializer != null) {
