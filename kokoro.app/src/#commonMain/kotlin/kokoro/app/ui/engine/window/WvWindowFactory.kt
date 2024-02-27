@@ -17,7 +17,6 @@ fun interface WvWindowFactory<out T : WvWindow> {
 		 * @see register
 		 * @see get
 		 */
-		@MainThread
 		inline fun <reified T : WvWindow> id(tag: String? = null): String {
 			return T::class.qualifiedName.toString().let { type ->
 				if (tag == null) type else "$type#$tag"
