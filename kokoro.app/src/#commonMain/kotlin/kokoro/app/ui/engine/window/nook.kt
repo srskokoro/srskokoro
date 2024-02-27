@@ -1,0 +1,8 @@
+package kokoro.app.ui.engine.window
+
+import kokoro.internal.NOOK
+import kokoro.internal.NookContract
+
+@NookContract
+@RequiresOptIn(NOOK)
+annotation class nook
