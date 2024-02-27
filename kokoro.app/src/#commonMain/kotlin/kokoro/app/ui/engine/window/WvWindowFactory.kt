@@ -18,21 +18,32 @@ fun interface WvWindowFactory<out T : WvWindow> {
 		 * @see get
 		 */
 		@MainThread
-		inline fun <reified T : WvWindow> id() = T::class.qualifiedName!!
+		inline fun <reified T : WvWindow> id(tag: String? = null): String {
+			return T::class.qualifiedName.toString().let { type ->
+				if (tag == null) type else "$type#$tag"
+			}
+		}
 
 		/**
 		 * @see id
 		 * @see get
 		 */
 		@MainThread
-		inline fun <reified T : WvWindow> register(factory: WvWindowFactory<T>) =
-			register(id<T>(), factory)
+		inline fun <reified T : WvWindow> register(tag: String? = null, factory: WvWindowFactory<T>) =
+			register(factory, id<T>(tag))
 
 		/**
 		 * @see register
 		 */
 		@MainThread
-		fun register(id: String, factory: WvWindowFactory<*>) {
+		inline fun <reified T : WvWindow> register(factory: WvWindowFactory<T>) =
+			register(factory, id<T>())
+
+		/**
+		 * @see register
+		 */
+		@MainThread
+		fun register(factory: WvWindowFactory<*>, id: String) {
 			assertThreadMain()
 			map.initWithAssert(id, factory, or = { "Factory ID already in use: $id" })
 		}
