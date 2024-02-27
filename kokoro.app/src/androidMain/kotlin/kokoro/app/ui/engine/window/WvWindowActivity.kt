@@ -39,7 +39,7 @@ class WvWindowActivity : ComponentActivity() {
 			h.attachContext(this@WvWindowActivity)
 
 			val f = WvWindowHandleImpl.getWindowFactory(intent) ?: return@run
-			window = f.init(WvWindowContextImpl(h))
+			window = f.init(WvContextImpl(h))
 
 			return // Success. Skip code below.
 		}

@@ -9,7 +9,7 @@ import kotlin.jvm.JvmField
 
 @Suppress("MemberVisibilityCanBePrivate")
 @OptIn(nook::class)
-abstract class WvWindow(@JvmField val context: WvWindowContext) {
+abstract class WvWindow(@JvmField val context: WvContext) {
 
 	val handle: WvWindowHandle inline get() = context.handle
 

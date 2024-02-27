@@ -1,8 +1,8 @@
 package kokoro.app.ui.engine.window
 
-internal class WvWindowContextImpl(
+internal class WvContextImpl(
 	@JvmField val handle_: WvWindowHandleImpl,
-) : WvWindowContext() {
+) : WvContext() {
 
 	override val handle: WvWindowHandle
 		get() = handle_

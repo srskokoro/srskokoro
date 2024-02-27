@@ -7,7 +7,7 @@ import kokoro.internal.collections.initWithAssert
 
 fun interface WvWindowFactory<out T : WvWindow> {
 
-	fun init(context: WvWindowContext): T
+	fun init(context: WvContext): T
 
 	companion object {
 		/** WARNING: Must only be accessed (and modified) from the main thread. */

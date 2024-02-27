@@ -1,6 +1,6 @@
 package kokoro.app.ui.engine.window
 
-abstract class WvWindowContext {
+abstract class WvContext {
 
 	abstract val handle: WvWindowHandle
 

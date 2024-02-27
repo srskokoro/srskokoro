@@ -1,6 +1,6 @@
 package kokoro.app.ui
 
+import kokoro.app.ui.engine.window.WvContext
 import kokoro.app.ui.engine.window.WvWindow
-import kokoro.app.ui.engine.window.WvWindowContext
 
-class DummyWindow(context: WvWindowContext) : WvWindow(context)
+class DummyWindow(context: WvContext) : WvWindow(context)
