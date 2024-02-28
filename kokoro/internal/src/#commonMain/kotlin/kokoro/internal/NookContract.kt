@@ -4,6 +4,7 @@ package kokoro.internal
  * Example usage:
  *
  * ```
+ * @Retention(AnnotationRetention.BINARY)
  * @NookContract
  * @RequiresOptIn(NOOK)
  * annotation class nook
@@ -15,5 +16,6 @@ package kokoro.internal
  *
  * @see NOOK
  */
+@Retention(AnnotationRetention.BINARY)
 @RequiresOptIn("Requires build plugin setup or manual module-wide opt-in via compiler arguments.")
 annotation class NookContract

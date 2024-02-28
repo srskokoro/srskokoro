@@ -5,6 +5,7 @@ package kokoro.internal
  * for creating `@nook` annotations. Example:
  *
  * ```kt
+ * @Retention(AnnotationRetention.BINARY)
  * @NookContract
  * @RequiresOptIn(NOOK)
  * annotation class nook
