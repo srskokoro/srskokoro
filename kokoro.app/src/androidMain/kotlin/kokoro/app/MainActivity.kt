@@ -1,9 +1,11 @@
 package kokoro.app
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import kokoro.app.ui.DummyWindow
+import kokoro.app.ui.engine.window.WvWindowFactory
 import kokoro.app.ui.engine.window.WvWindowHandleImpl
 
 class MainActivity : Activity() {
@@ -27,6 +29,9 @@ class MainActivity : Activity() {
 	 * This should start the "real" main activity in a separate task entry.
 	 */
 	private fun startMainWindow() {
-		WvWindowHandleImpl.globalRoot.launch<DummyWindow>() // TODO!
+		val windowFactoryId = WvWindowFactory.id<DummyWindow>() // TODO!
+		WvWindowHandleImpl.globalRoot.launch(windowFactoryId) {
+			addFlags(Intent.FLAG_ACTIVITY_RETAIN_IN_RECENTS)
+		}
 	}
 }

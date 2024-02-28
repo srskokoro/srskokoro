@@ -85,7 +85,16 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 	// --
 
 	@MainThread
-	actual override fun launch(windowFactoryId: String): WvWindowHandle {
+	actual override fun launch(windowFactoryId: String): WvWindowHandle = launch(windowFactoryId, null)
+
+	/**
+	 * @throws IllegalStateException
+	 *
+	 * @see launch
+	 * @see WvWindowFactory.id
+	 */
+	@MainThread
+	fun launch(windowFactoryId: String, config: (Intent.() -> Unit)?): WvWindowHandle {
 		assertThreadMain()
 		ensureOpen()
 
@@ -96,6 +105,7 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 		Intent(app, WvWindowActivity::class.java)
 
 		val intent = child.newLaunchIntent(app, windowFactoryId)
+		config?.invoke(intent)
 		app.startActivity(intent)
 
 		return child
