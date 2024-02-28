@@ -7,7 +7,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.core.content.IntentCompat
 import kokoro.app.CoreApplication
 import kokoro.app.ui.engine.UiBus
 import kokoro.internal.ASSERTIONS_ENABLED
@@ -15,7 +14,7 @@ import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
 import kokoro.internal.errorAssertion
-import kokoro.internal.os.SerializationParcelable
+import kokoro.internal.os.SerializationEncoded
 
 @MainThread
 internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindowHandle?) : WvWindowHandle(parent), Parcelable {
@@ -79,9 +78,8 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 	private fun <T> newPostIntent(app: Application, bus: UiBus<T>, payload: T) = Intent(app, WvWindowActivity::class.java).apply {
 		data = uri // Requires the main thread. May throw on a closed handle.
 		putExtra(EXTRAS_KEY_to_POST_BUS_ID, bus.id)
-		putExtra(EXTRAS_KEY_to_POST_PAYLOAD, SerializationParcelable().apply {
-			set(payload, bus.serialization)
-		})
+		SerializationEncoded(payload, bus.serialization)
+			.putInto(this, EXTRAS_KEY_to_POST_PAYLOAD)
 	}
 
 	// --
@@ -209,8 +207,8 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 		 */
 		@Suppress("NOTHING_TO_INLINE")
 		@AnyThread
-		inline fun getPostPayload(intent: Intent): SerializationParcelable? =
-			IntentCompat.getParcelableExtra(intent, EXTRAS_KEY_to_POST_PAYLOAD, SerializationParcelable::class.java)
+		inline fun getPostPayload(intent: Intent): SerializationEncoded? =
+			SerializationEncoded.getFrom(intent, EXTRAS_KEY_to_POST_PAYLOAD)
 
 		// --
 

@@ -3,7 +3,7 @@ package kokoro.app.ui.engine.window
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import kokoro.internal.os.SerializationParcelable
+import kokoro.internal.os.SerializationEncoded
 
 class WvWindowActivity : ComponentActivity() {
 
@@ -19,9 +19,9 @@ class WvWindowActivity : ComponentActivity() {
 		// --
 
 		private fun <T> WvWindowBusBinding<*, T>.route(
-			window: WvWindow, transport: SerializationParcelable,
+			window: WvWindow, encoded: SerializationEncoded,
 		) {
-			route(window) { bus -> transport.get(bus.serialization) }
+			route(window) { bus -> encoded.decode(bus.serialization) }
 		}
 	}
 
