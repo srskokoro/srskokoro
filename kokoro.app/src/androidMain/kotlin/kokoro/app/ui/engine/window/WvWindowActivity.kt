@@ -18,6 +18,8 @@ class WvWindowActivity : ComponentActivity() {
 
 		// --
 
+		private const val EXTRAS_KEY_to_OLD_STATE_ENTRIES = "oldStateEntries"
+
 		private fun <T> WvWindowBusBinding<*, T>.route(
 			window: WvWindow, encoded: SerializationEncoded,
 		) {
@@ -39,7 +41,8 @@ class WvWindowActivity : ComponentActivity() {
 			h.attachContext(this@WvWindowActivity)
 
 			val f = WvWindowHandleImpl.getWindowFactory(intent) ?: return@run
-			window = f.init(WvContextImpl(h))
+			val o = savedInstanceState?.getBundle(EXTRAS_KEY_to_OLD_STATE_ENTRIES) ?: Bundle()
+			window = f.init(WvContextImpl(h, oldStateEntries = o))
 
 			return // Success. Skip code below.
 		}
@@ -73,6 +76,17 @@ class WvWindowActivity : ComponentActivity() {
 	override fun onPause() {
 		super.onPause()
 		window?.onPause()
+	}
+
+	override fun onSaveInstanceState(outState: Bundle) {
+		super.onSaveInstanceState(outState)
+		@OptIn(nook::class)
+		window?.run {
+			(context as? WvContextImpl)
+		}?.run {
+			val o = encodeStateEntries()
+			outState.putBundle(EXTRAS_KEY_to_OLD_STATE_ENTRIES, o)
+		}
 	}
 
 	override fun onDestroy() {

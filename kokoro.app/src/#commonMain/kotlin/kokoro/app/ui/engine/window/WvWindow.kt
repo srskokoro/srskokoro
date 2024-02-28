@@ -30,6 +30,13 @@ abstract class WvWindow(@JvmField val context: WvContext) {
 	open fun onPause() = Unit
 
 	/**
+	 * @see WvContext.state
+	 */
+	@EmptySuper
+	@MainThread
+	open fun onSaveState() = Unit
+
+	/**
 	 * NOTE: By the time this is called, [handle] is expected to be already
 	 * [closed][WvWindowHandle.isClosed] and invalid.
 	 */

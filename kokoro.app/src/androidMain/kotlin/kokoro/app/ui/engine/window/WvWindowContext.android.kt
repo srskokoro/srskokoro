@@ -1,7 +1,18 @@
 package kokoro.app.ui.engine.window
 
+import android.os.Bundle
+import kokoro.app.ui.engine.UiBus
+import kokoro.app.ui.engine.UiState
+import kokoro.internal.ASSERTIONS_ENABLED
+import kokoro.internal.annotation.MainThread
+import kokoro.internal.assertThreadMain
+import kokoro.internal.errorAssertion
+import kokoro.internal.os.SerializationEncoded
+import kotlinx.serialization.modules.SerializersModule
+
 internal class WvContextImpl(
 	@JvmField val handle_: WvWindowHandleImpl,
+	private val oldStateEntries: Bundle,
 ) : WvContext() {
 
 	override val handle: WvWindowHandle
@@ -13,5 +24,54 @@ internal class WvContextImpl(
 
 	override fun finish() {
 		handle_.activity?.finish()
+	}
+
+	// --
+
+	@MainThread
+	override fun <T> loadOldState(bus: UiBus<T>): T? {
+		assertThreadMain()
+
+		val src = oldStateEntries
+		val id = bus.id
+		SerializationEncoded.getFrom(src, id)?.let { enc ->
+			val v = enc.decode(bus.serialization) // May throw
+			src.remove(id)
+			return v
+		}
+		return null
+	}
+
+	@MainThread
+	@nook internal fun encodeStateEntries(): Bundle {
+		assertThreadMain()
+
+		val out = Bundle()
+		out.putAll(oldStateEntries)
+
+		val m = SerializationEncoded.module
+		stateEntries.forEachValue { it.encodeInto(out, m) }
+
+		return out
+	}
+
+	companion object {
+		private fun <T> UiState<T>.encodeInto(out: Bundle, module: SerializersModule) {
+			val v = value
+			if (v != null) {
+				val bus = bus
+				val serializer = bus.serialization.invoke(module)
+				val enc = SerializationEncoded(v, serializer) // May throw
+				enc.putInto(out, bus.id)
+			} else {
+				// NOTE: The old state entry data should've been discarded
+				// already, since we now have a `UiState` instance loaded.
+				if (ASSERTIONS_ENABLED) bus.id.let { id ->
+					if (out.containsKey(id)) errorAssertion(
+						"Unexpected: old state entry data still exists at ID $id"
+					)
+				}
+			}
+		}
 	}
 }
