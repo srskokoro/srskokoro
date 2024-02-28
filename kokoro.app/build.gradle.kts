@@ -39,4 +39,5 @@ dependencies {
 
 	androidMainImplementation("androidx.activity:activity-ktx")
 	//androidMainImplementation("androidx.fragment:fragment-ktx")
+	androidMainImplementation("androidx.webkit:webkit")
 }
