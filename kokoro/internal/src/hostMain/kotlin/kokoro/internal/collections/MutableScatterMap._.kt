@@ -3,7 +3,7 @@ package kokoro.internal.collections
 import androidx.collection.MutableScatterMap
 import kokoro.internal.ASSERTIONS_ENABLED
 
-fun <K, V> MutableScatterMap<K, V>.initWithAssert(key: K, value: V, or: () -> String = { "Already set.\n- Key: $key\n- Value: $value" }) {
+inline fun <K, V> MutableScatterMap<K, V>.initWithAssert(key: K, value: V, or: () -> String = { "Already set.\n- Key: $key\n- Value: $value" }) {
 	if (!ASSERTIONS_ENABLED) {
 		set(key, value)
 	} else {
