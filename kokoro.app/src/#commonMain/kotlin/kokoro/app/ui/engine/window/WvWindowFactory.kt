@@ -3,7 +3,7 @@ package kokoro.app.ui.engine.window
 import androidx.collection.MutableScatterMap
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
-import kokoro.internal.collections.initWithAssert
+import kokoro.internal.check
 
 fun interface WvWindowFactory<out T : WvWindow> {
 
@@ -30,7 +30,10 @@ fun interface WvWindowFactory<out T : WvWindow> {
 		@MainThread
 		fun register(factory: WvWindowFactory<*>, id: String) {
 			assertThreadMain()
-			map.initWithAssert(id, factory, or = { "Factory ID already in use: $id" })
+			map.compute(id) { k, v ->
+				check(v == null, or = { "Factory ID already in use: $k" })
+				factory
+			}
 		}
 
 		/**

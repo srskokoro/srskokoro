@@ -5,7 +5,7 @@ import androidx.collection.MutableScatterMap
 import kokoro.app.ui.engine.UiBus
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
-import kokoro.internal.collections.initWithAssert
+import kokoro.internal.check
 import kotlin.jvm.JvmField
 
 @OptIn(nook::class)
@@ -58,9 +58,10 @@ abstract class WvWindow(@JvmField val context: WvContext) {
 	@MainThread
 	@PublishedApi @nook internal fun <W : WvWindow, T> doOnPost_(bus: UiBus<T>, action: WvWindowBusAction<W, T>) {
 		assertThreadMain()
-		doOnPostMap.initWithAssert(bus.id, WvWindowBusBinding(bus, action), or = {
-			"Bus already bound. ID: ${bus.id}"
-		})
+		doOnPostMap.compute(bus.id) { k, v ->
+			check(v == null, or = { "Bus already bound. ID: $k" })
+			WvWindowBusBinding(bus, action)
+		}
 	}
 
 	@MainThread
