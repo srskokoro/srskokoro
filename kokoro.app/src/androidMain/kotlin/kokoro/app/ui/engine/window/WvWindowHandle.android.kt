@@ -64,6 +64,8 @@ internal actual class WvWindowHandleImpl @AnyThread constructor(parent: WvWindow
 	@MainThread
 	private fun newLaunchIntent(app: Application, windowFactoryId: String) = Intent(app, WvWindowActivity::class.java).apply {
 		data = uri // Requires the main thread. May throw on a closed handle.
+		addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) // Necessary or `startActivity()` will fail
+
 		putExtra(EXTRAS_KEY_to_ID, id)
 		parent?.let { p -> putExtra(EXTRAS_KEY_to_PARENT_ID, p.id) }
 		putExtra(EXTRAS_KEY_to_WINDOW_FACTORY_ID, windowFactoryId)
