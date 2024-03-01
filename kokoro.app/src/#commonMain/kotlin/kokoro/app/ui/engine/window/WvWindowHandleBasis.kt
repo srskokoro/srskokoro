@@ -3,7 +3,6 @@ package kokoro.app.ui.engine.window
 import kokoro.app.ui.engine.UiBus
 import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
-import kotlin.jvm.JvmField
 
 expect sealed class WvWindowHandleBasis @AnyThread constructor(
 	id: String?,
@@ -14,7 +13,7 @@ expect sealed class WvWindowHandleBasis @AnyThread constructor(
 	val windowFactoryId: WvWindowFactoryId
 
 	/** WARNING: Must only be modified from the main thread. */
-	@JvmField @nook var parent_: WvWindowHandle?
+	@nook var parent_: WvWindowHandle?
 
 	@MainThread
 	fun launch()
