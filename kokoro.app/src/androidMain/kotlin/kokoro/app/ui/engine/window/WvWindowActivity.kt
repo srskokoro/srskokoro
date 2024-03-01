@@ -3,8 +3,10 @@ package kokoro.app.ui.engine.window
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import kokoro.internal.checkNotNull
 import kokoro.internal.os.SerializationEncoded
 
+@OptIn(nook::class)
 class WvWindowActivity : ComponentActivity() {
 
 	companion object {
@@ -27,7 +29,7 @@ class WvWindowActivity : ComponentActivity() {
 		}
 	}
 
-	private var handle: WvWindowHandleImpl? = null
+	private var handle: WvWindowHandle? = null
 	private var window: WvWindow? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,14 +37,22 @@ class WvWindowActivity : ComponentActivity() {
 
 		run<Unit> {
 			val intent = intent
-			val h = WvWindowHandleImpl.get(intent) ?: return@run
+			val fid = WvWindowHandleBasis.getWindowFactoryIdStr(intent)
+				?: return@run // Not a window display request. Ignore.
+
+			val f = checkNotNull(WvWindowFactory.get(fid), or = {
+				"No factory registered for window factory ID: $fid"
+			})
+
+			val h = WvWindowHandleBasis.get(intent)
+				?: return@run // Handle was closed before we can start.
 
 			handle = h
 			h.attachContext(this@WvWindowActivity)
 
-			val f = WvWindowHandleImpl.getWindowFactory(intent) ?: return@run
 			val o = savedInstanceState?.getBundle(EXTRAS_KEY_to_OLD_STATE_ENTRIES) ?: Bundle()
-			window = f.init(WvContextImpl(h, oldStateEntries = o))
+			val wc = WvContextImpl(h, oldStateEntries = o)
+			window = f.init(wc) // May throw
 
 			return // Success. Skip code below.
 		}
@@ -60,10 +70,8 @@ class WvWindowActivity : ComponentActivity() {
 	override fun onNewIntent(intent: Intent?) {
 		super.onNewIntent(intent)
 		if (intent != null) window?.let { w ->
-			val busId = WvWindowHandleImpl.getPostBusId(intent) ?: return@let
-			val payload = WvWindowHandleImpl.getPostPayload(intent) ?: return@let
-
-			@OptIn(nook::class)
+			val busId = WvWindowHandleBasis.getPostBusId(intent) ?: return@let
+			val payload = WvWindowHandleBasis.getPostPayload(intent) ?: return@let
 			(w.getDoOnPost_(busId) ?: return@let).route(w, payload)
 		}
 	}
@@ -80,7 +88,6 @@ class WvWindowActivity : ComponentActivity() {
 
 	override fun onSaveInstanceState(outState: Bundle) {
 		super.onSaveInstanceState(outState)
-		@OptIn(nook::class)
 		window?.run {
 			(context as? WvContextImpl)
 		}?.run {

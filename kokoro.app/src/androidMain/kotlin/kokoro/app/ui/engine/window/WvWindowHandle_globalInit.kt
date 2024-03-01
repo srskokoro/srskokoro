@@ -2,10 +2,9 @@ package kokoro.app.ui.engine.window
 
 import android.app.ActivityManager
 import android.app.ActivityManager.AppTask
-import androidx.collection.MutableIntObjectMap
+import androidx.collection.MutableScatterMap
 import androidx.core.content.getSystemService
 import kokoro.app.CoreApplication
-import kokoro.app.ui.engine.window.WvWindowHandle.Companion.INVALID_ID
 import kokoro.internal.SPECIAL_USE_DEPRECATION
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
@@ -28,33 +27,43 @@ internal fun WvWindowHandle_globalInit() {
 
 @MainThread
 private class WvWindowHandle_globalRestore(tasks: List<AppTask>) {
-	private val entries: MutableIntObjectMap<Entry>
-
-	init {
-		val entries = MutableIntObjectMap<Entry>()
-		for (task in tasks) {
+	private val entries = MutableScatterMap<String, Entry>().also { entries ->
+		tasks.forEach { task ->
 			val intent = task.taskInfo.baseIntent
-			if (!WvWindowActivity.shouldHandle(intent)) continue
+			if (!WvWindowActivity.shouldHandle(intent)) return@forEach
 
-			val id = WvWindowHandleImpl.getId(intent)
-			if (id > INVALID_ID) {
-				// NOTE: Parent ID is `INVALID_ID` when purposely not set.
-				val parentId = WvWindowHandleImpl.getParentId(intent)
-				entries.put(id, Entry(id, parentId, task))
-			} else {
-				task.finishAndRemoveTask()
+			val id = WvWindowHandleBasis.getId(intent)
+			run<Unit> {
+				if (id == null) return@run // Invalid request.
+
+				val fid = WvWindowHandleBasis.getWindowFactoryIdStr(intent)
+					?: return@run // Not a window display request.
+
+				// NOTE: Parent ID is `null` when there should be no parent.
+				val parentId = WvWindowHandleBasis.getParentId(intent)
+
+				entries[id] = Entry(
+					id,
+					fid = fid,
+					parentId = parentId,
+					task,
+				)
+				return@forEach // Done. Skip code below.
 			}
+
+			// The task with an invalid request should be removed.
+			task.finishAndRemoveTask()
 		}
-		this.entries = entries
 	}
 
 	private class Entry(
-		@JvmField val id: Int,
-		@JvmField val parentId: Int,
+		@JvmField val id: String,
+		@JvmField val fid: String,
+		@JvmField val parentId: String?,
 		@JvmField val task: AppTask,
 	) {
 		@JvmField var visited = false
-		@JvmField var handle: WvWindowHandleImpl? = null
+		@JvmField var handle: WvWindowHandle? = null
 	}
 
 	fun resolve() {
@@ -62,32 +71,27 @@ private class WvWindowHandle_globalRestore(tasks: List<AppTask>) {
 	}
 
 	/**
-	 * @return the [WvWindowHandleImpl] for the [Entry] or null (on failure).
+	 * @return the [WvWindowHandle] for the [Entry] or null (on failure).
 	 */
 	@MainThread
-	private fun Entry.resolve(): WvWindowHandleImpl? {
+	private fun Entry.resolve(): WvWindowHandle? {
 		// NOTE: The following is set up in such a way that even on circular
 		// references, it would still fail gracefully by returning null.
 
 		if (visited) return handle
 		visited = true
 
-		run<Unit> {
-			val parentId = parentId
-			if (parentId != INVALID_ID) {
-				entries[parentId]?.resolve() ?: return@run // Fail
-			} else {
-				null
-			}.let { p ->
-				val h = WvWindowHandleImpl(p)
-				if (WvWindowHandle.openAt(id, h)) {
-					handle = h
-					h.attachContext(task)
-					return h
-				}
-				// Otherwise, fail.
-			}
+		val parentId = parentId
+		val p = if (parentId == null) null // Parent was purposely not set.
+		else entries[parentId]?.resolve() ?: return null // Resolution failed.
+
+		return WvWindowHandle.create(
+			id = id,
+			WvWindowFactoryId.wrap(fid),
+			parent = p,
+		).also { h ->
+			handle = h
+			h.attachContext(task)
 		}
-		return null
 	}
 }

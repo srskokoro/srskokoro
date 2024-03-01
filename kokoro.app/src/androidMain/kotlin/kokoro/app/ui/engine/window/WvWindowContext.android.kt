@@ -10,20 +10,21 @@ import kokoro.internal.errorAssertion
 import kokoro.internal.os.SerializationEncoded
 import kotlinx.serialization.modules.SerializersModule
 
-internal class WvContextImpl(
-	@JvmField val handle_: WvWindowHandleImpl,
+@nook internal class WvContextImpl(
+	handle: WvWindowHandle,
 	private val oldStateEntries: Bundle,
-) : WvContext() {
+) : WvContext(handle) {
 
-	override val handle: WvWindowHandle
-		get() = handle_
-
+	@MainThread
 	override fun load(url: String) {
+		assertThreadMain()
 		TODO("Not yet implemented")
 	}
 
+	@MainThread
 	override fun finish() {
-		handle_.activity?.finish()
+		assertThreadMain()
+		handle.activity?.finish()
 	}
 
 	// --
@@ -43,7 +44,7 @@ internal class WvContextImpl(
 	}
 
 	@MainThread
-	@nook internal fun encodeStateEntries(): Bundle {
+	@nook fun encodeStateEntries(): Bundle {
 		assertThreadMain()
 
 		val out = Bundle()

@@ -5,33 +5,42 @@ import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
 import kokoro.internal.check
 
-fun interface WvWindowFactory<out T : WvWindow> {
+fun interface WvWindowFactory<out W : WvWindow> {
 
-	fun init(context: WvContext): T
+	fun init(context: WvContext): W
 
 	companion object {
-		/** WARNING: Must only be accessed (and modified) from the main thread. */
-		private val map = MutableScatterMap<String, WvWindowFactory<*>>()
 
 		/**
-		 * @see register
-		 * @see get
+		 * @see WvWindowFactoryId.NOTHING
 		 */
-		inline fun <reified T : WvWindow> id(tag: String? = null): String {
-			return T::class.qualifiedName.toString().let { type ->
-				if (tag == null) type else "$type#$tag"
-			}
+		val NOTHING: WvWindowFactory<Nothing> = WvWindowFactory {
+			throw UnsupportedOperationException(
+				"The ${::NOTHING.name} factory cannot be used to create windows."
+			)
+		}
+
+		/** WARNING: Must only be accessed (and modified) from the main thread. */
+		private val map = MutableScatterMap<String?, WvWindowFactory<*>>().also { map ->
+			map[WvWindowFactoryId.NOTHING.id] = NOTHING
 		}
 
 		/**
-		 * @see id
-		 * @see get
+		 * @see WvWindowFactoryId.of
+		 * @see WvWindowFactoryId.NOTHING
+		 */
+		inline fun <reified W : WvWindow> id(tag: String? = null) =
+			WvWindowFactoryId.of<W>(tag)
+
+		/**
+		 * @see WvWindowFactory.id
+		 * @see WvWindowFactory.get
 		 */
 		@MainThread
-		fun register(factory: WvWindowFactory<*>, id: String) {
+		fun register(id: WvWindowFactoryId, factory: WvWindowFactory<*>) {
 			assertThreadMain()
-			map.compute(id) { k, v ->
-				check(v == null, or = { "Factory ID already in use: $k" })
+			map.compute(id.id) { _, v ->
+				check(v == null, or = { "Factory ID already in use: $id" })
 				factory
 			}
 		}
@@ -40,21 +49,27 @@ fun interface WvWindowFactory<out T : WvWindow> {
 		 * @see register
 		 */
 		@MainThread
-		inline fun <reified T : WvWindow> register(factory: WvWindowFactory<T>) =
-			register(factory, id<T>())
+		inline fun <reified W : WvWindow> register(factory: WvWindowFactory<W>) = register(id<W>(), factory)
 
 		/**
 		 * @see register
 		 */
 		@MainThread
-		inline fun <reified T : WvWindow> register(tag: String?, factory: WvWindowFactory<T>) =
-			register(factory, id<T>(tag))
+		inline fun <reified T : WvWindow> register(tag: String?, factory: WvWindowFactory<T>) = register(id<T>(tag), factory)
 
 		/**
 		 * @see register
 		 */
+		@Suppress("NOTHING_TO_INLINE")
 		@MainThread
-		fun get(id: String): WvWindowFactory<*>? {
+		inline fun get(id: WvWindowFactoryId) = get(id.id)
+
+		/**
+		 * @see register
+		 * @see get
+		 */
+		@MainThread
+		fun get(id: String?): WvWindowFactory<*>? {
 			assertThreadMain()
 			return map[id]
 		}

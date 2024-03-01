@@ -1,90 +1,51 @@
 package kokoro.app.ui.engine.window
 
 import androidx.annotation.GuardedBy
-import androidx.annotation.IntRange
-import androidx.collection.MutableIntList
-import androidx.collection.MutableIntObjectMap
+import androidx.collection.MutableScatterMap
 import androidx.collection.MutableScatterSet
 import kokoro.app.ui.engine.UiBus
 import kokoro.internal.AutoCloseable2
-import kokoro.internal.SPECIAL_USE_DEPRECATION
+import kokoro.internal.DEBUG
 import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assert
 import kokoro.internal.assertThreadMain
-import kokoro.internal.assertUnreachable
-import kokoro.internal.check
+import kokoro.internal.require
 import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
 
 @OptIn(nook::class)
-@MainThread
-abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : AutoCloseable2 {
-	/** WARNING: Must only be modified from the main thread. */
-	private var id_: Int = INVALID_ID
-	val id: Int get() = id_
+class WvWindowHandle @AnyThread private constructor(
+	id: String?,
+	windowFactoryId: WvWindowFactoryId,
+	parent: WvWindowHandle?,
+) : WvWindowHandleBasis(id, windowFactoryId, parent), AutoCloseable2 {
 
-	/** WARNING: Must only be modified from the main thread. */
-	private var parent_: WvWindowHandle? = parent
-	val parent: WvWindowHandle? get() = parent_
+	val parent: WvWindowHandle? inline get() = parent_
 
 	/** WARNING: Must only be accessed (and modified) from the main thread. */
 	private val children = MutableScatterSet<WvWindowHandle>()
 
-	// --
-
-	/**
-	 * Launches a new child [window][WvWindow] and returns its [handle][WvWindowHandle].
-	 *
-	 * @throws IllegalStateException when this [handle][WvWindowHandle] is
-	 * already [closed][isClosed] (or invalid).
-	 */
+	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
-	inline fun <reified T : WvWindow> launch() = launch(WvWindowFactory.id<T>())
+	@Throws(IdConflictException::class)
+	inline fun create(
+		id: String,
+		windowFactoryId: WvWindowFactoryId,
+	) = create(id, windowFactoryId, this)
 
-	/**
-	 * @throws IllegalStateException
-	 *
-	 * @see launch
-	 * @see WvWindowFactory.id
-	 */
-	@MainThread
-	abstract fun launch(windowFactoryId: String): WvWindowHandle
-
-	/**
-	 * Posts a value to this [handle][WvWindowHandle]'s [window][WvWindow].
-	 *
-	 * @throws IllegalStateException when this [handle][WvWindowHandle] is
-	 * already [closed][isClosed] (or invalid).
-	 *
-	 * @see postOrDiscard
-	 */
 	@MainThread
 	fun <T> post(bus: UiBus<T>, value: T) {
-		check(postOrDiscard(bus, value), or = { E_CLOSED })
+		if (!postOrDiscard(bus, value)) {
+			throw E_Closed()
+		}
 	}
-
-	/**
-	 * Posts a value to this [handle][WvWindowHandle]'s [window][WvWindow].
-	 * Returns `true` on success, or `false` if this [handle][WvWindowHandle] is
-	 * already [closed][isClosed] (or invalid).
-	 *
-	 * @see post
-	 */
-	@MainThread
-	abstract fun <T> postOrDiscard(bus: UiBus<T>, value: T): Boolean
-
-	// --
-
-	@MainThread
-	protected abstract fun onClose()
 
 	@MainThread
 	override fun close() {
 		assertThreadMain()
 
-		val id = id_
-		if (id == INVALID_ID) return // Already closed before
+		val id = id ?: return // Already closed before
 
 		children.removeIf { child ->
 			assert({ child.parent_.let { it == null || it == this } })
@@ -99,6 +60,9 @@ abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : 
 		}
 
 		onClose() // May throw
+		assert({ isClosed }, or = {
+			"Unexpected: `${::onClose.name}()` should cause `${::isClosed.name}` to become true."
+		})
 
 		// NOTE: The code hereafter must not throw.
 		// --
@@ -108,140 +72,69 @@ abstract class WvWindowHandle @AnyThread constructor(parent: WvWindowHandle?) : 
 			parent_ = null
 		}
 
-		// NOTE: The operation below not only marks the object as "closed" but
-		// also prevents multiple `close()` calls from affecting the globals as
-		// the code afterwards would.
-		id_ = INVALID_ID
-
-		synchronized(globalLock) {
+		synchronized(openHandles_lock) {
 			val prev = openHandles.remove(id)
-			if (prev == this) {
-				recycledIds.add(id)
-				return // Skip code below
-			}
-			if (prev != null) openHandles[id] = prev // Restore
+			assert({ prev == this })
 		}
-		assertUnreachable(or = { "Unexpected open handle with ID $id" })
 	}
-
-	val isClosed: Boolean inline get() = isClose(id)
-	val isOpen: Boolean inline get() = isOpen(id)
-
-	/**
-	 * @throws IllegalStateException when this [handle][WvWindowHandle] is
-	 * already [closed][isClosed] (or invalid).
-	 *
-	 * @see WvWindowHandle.Companion.ensureOpen
-	 */
-	@Suppress("NOTHING_TO_INLINE")
-	inline fun ensureOpen() = ensureOpen(id)
 
 	companion object {
-		const val INVALID_ID = 0
 
-		@Suppress("NOTHING_TO_INLINE") inline fun isClose(id: Int): Boolean = id == INVALID_ID
-		@Suppress("NOTHING_TO_INLINE") inline fun isOpen(id: Int): Boolean = id != INVALID_ID
+		@nook const val E_CLOSED = "Already closed (or invalid)"
 
-		@PublishedApi @nook internal const val E_CLOSED = "Already closed (or invalid)"
+		@nook fun E_Closed() = IllegalStateException(E_CLOSED)
 
-		/**
-		 * @throws IllegalStateException when the given ID is already
-		 * [closed][isClose] (or invalid).
-		 */
-		@Suppress("NOTHING_TO_INLINE")
-		inline fun ensureOpen(id: Int) = check(isOpen(id), or = { E_CLOSED })
-
-		// --
-
-		private val globalLock = SynchronizedObject()
-		@GuardedBy("globalLock") private val openHandles = MutableIntObjectMap<WvWindowHandle>()
-		@GuardedBy("globalLock") private val recycledIds = MutableIntList()
-		@GuardedBy("globalLock") private var lastId = INVALID_ID
-
-		@GuardedBy("globalLock")
-		private fun nextId_unsafe(): Int {
-			recycledIds.run {
-				val l = lastIndex
-				if (l >= 0) {
-					return removeAt(l)
-				}
-			}
-
-			val id = ++lastId
-			if (id <= INVALID_ID) {
-				lastId--
-				throw Error("Overflow: maximum ID exceeded")
-			}
-			return id
-		}
-
-		//--
-
-		@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
-		@AnyThread
-		@PublishedApi internal fun get_(id: Int): WvWindowHandle? {
-			synchronized(globalLock) {
-				return openHandles[id]
-			}
-		}
+		private val openHandles_lock = SynchronizedObject()
+		@GuardedBy("openHandles_lock") private val openHandles = MutableScatterMap<String, WvWindowHandle>()
 
 		@AnyThread
-		inline fun <reified T : WvWindowHandle> get(id: Int): T? {
-			@Suppress("DEPRECATION_ERROR")
-			return get_(id) as? T
-		}
+		fun get(id: String): WvWindowHandle? = synchronized(openHandles_lock) { openHandles[id] }
 
-		@MainThread
-		fun open(handle: WvWindowHandle) {
-			assertThreadMain()
-
-			synchronized(globalLock) {
-				val id = nextId_unsafe()
-				openHandles[id] = handle
-				initialize(handle, id) // Requires the main thread
+		@AnyThread
+		fun get(id: String, windowFactoryId: WvWindowFactoryId): WvWindowHandle? {
+			val h = get(id)
+			if (h != null && h.windowFactoryId == windowFactoryId) {
+				return h
 			}
+			return null
 		}
 
-		@MainThread
-		fun openAt(@IntRange(from = INVALID_ID + 1L) id: Int, handle: WvWindowHandle): Boolean {
-			assertThreadMain()
-
-			assert({ id > INVALID_ID })
-			synchronized(globalLock) {
-				val prev = openHandles.put(id, handle)
-				if (prev == null) {
-					if (id > lastId) lastId = id
-					initialize(handle, id) // Requires the main thread
-					return true
-				} else {
-					openHandles[id] = prev // Restore
-					assertUnreachable(or = { "Handle ID already in use: $id" })
-					return false
-				}
-			}
-		}
-
-		/**
-		 * WARNING: May be called inside a synchronization block.
-		 */
 		@Suppress("NOTHING_TO_INLINE")
+		@AnyThread
+		inline fun createClosed() = createClosed(WvWindowFactoryId.NOTHING)
+
+		@AnyThread
+		fun createClosed(windowFactoryId: WvWindowFactoryId) = WvWindowHandle(
+			id = null,
+			windowFactoryId,
+			parent = null,
+		)
+
 		@MainThread
-		private inline fun initialize(handle: WvWindowHandle, @IntRange(from = INVALID_ID + 1L) id: Int) {
+		@Throws(IdConflictException::class)
+		fun create(
+			id: String,
+			windowFactoryId: WvWindowFactoryId,
+			parent: WvWindowHandle?,
+		): WvWindowHandle {
 			assertThreadMain()
 
-			handle.id_ = id
-			handle.parent_?.children?.add(handle)
+			if (DEBUG) require(WvWindowFactory.get(windowFactoryId) != null, or = {
+				"Window factory ID not registered: $windowFactoryId"
+			})
+
+			return synchronized(openHandles_lock) {
+				openHandles.compute(id) { _, v ->
+					if (v != null) throw IdConflictException(v)
+					WvWindowHandle(id, windowFactoryId, parent)
+				}
+			}.also { h ->
+				parent?.children?.add(h) // Requires the main thread
+			}
 		}
 	}
-}
 
-internal expect class WvWindowHandleImpl : WvWindowHandle {
-
-	override fun launch(windowFactoryId: String): WvWindowHandle
-
-	override fun <T> postOrDiscard(bus: UiBus<T>, value: T): Boolean
-
-	override fun onClose()
-
-	companion object
+	class IdConflictException(val oldHandle: WvWindowHandle) : IllegalStateException(
+		"Handle ID already in use: ${oldHandle.id}"
+	)
 }

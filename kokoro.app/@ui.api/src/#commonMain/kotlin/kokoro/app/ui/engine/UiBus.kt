@@ -1,6 +1,9 @@
 package kokoro.app.ui.engine
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.builtins.NothingSerializer
+import kotlinx.serialization.builtins.nullable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
 import kotlin.jvm.JvmField
@@ -11,7 +14,15 @@ data class UiBus<T> private constructor(
 	@JvmField val id: String,
 	@JvmField val serialization: SerializersModule.() -> KSerializer<T>,
 ) {
+	private object NothingHolder {
+		@JvmField val NULLABLE_NOTHING_SERIALIZER: KSerializer<Nothing?> = @OptIn(ExperimentalSerializationApi::class) NothingSerializer().nullable
+		@JvmField val NOTHING: UiBus<Nothing?> = wrap(::NOTHING.name) { NULLABLE_NOTHING_SERIALIZER }
+	}
+
 	companion object {
+
+		val NOTHING get() = NothingHolder.NOTHING
+
 		inline fun <reified T> defaultSerialization(): SerializersModule.() -> KSerializer<T> = { serializer() }
 
 		/**
@@ -27,6 +38,13 @@ data class UiBus<T> private constructor(
 			tag: String? = null,
 			noinline serialization: SerializersModule.() -> KSerializer<T> = defaultSerialization<T>(),
 		) = wrap(id<T>(tag), serialization)
+
+		/**
+		 * @see UiBus.of
+		 */
+		// Exists simply because of IDE auto-complete annoyance in which the
+		// first result is often the one with the lambda block.
+		inline fun <reified T> of() = of<T>(null)
 
 		/**
 		 * @see UiBus.of

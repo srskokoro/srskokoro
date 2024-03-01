@@ -59,7 +59,7 @@ abstract class WvWindow(@JvmField val context: WvContext) {
 	@PublishedApi @nook internal fun <W : WvWindow, T> doOnPost_(bus: UiBus<T>, action: WvWindowBusAction<W, T>) {
 		assertThreadMain()
 		doOnPostMap.compute(bus.id) { k, v ->
-			check(v == null, or = { "Bus already bound. ID: $k" })
+			check(v == null, or = { "Bus ID already bound: $k" })
 			WvWindowBusBinding(bus, action)
 		}
 	}

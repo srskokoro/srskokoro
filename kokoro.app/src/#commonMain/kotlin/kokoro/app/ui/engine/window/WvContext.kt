@@ -7,12 +7,14 @@ import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
 import kotlin.jvm.JvmField
 
-abstract class WvContext {
+abstract class WvContext(
+	@JvmField val handle: WvWindowHandle,
+) {
 
-	abstract val handle: WvWindowHandle
-
+	@MainThread
 	abstract fun load(url: String)
 
+	@MainThread
 	abstract fun finish()
 
 	// --
