@@ -5,6 +5,7 @@ import kokoro.app.ui.engine.UiBus
 import kokoro.app.ui.engine.UiState
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
+import kokoro.internal.collections.computeIfAbsent
 import kotlin.jvm.JvmField
 
 abstract class WvContext(
@@ -45,7 +46,7 @@ abstract class WvContext(
 	fun <T> state(bus: UiBus<T>): UiState<T> {
 		assertThreadMain()
 
-		val entry = stateEntries.getOrPut(bus.id) {
+		val entry = stateEntries.computeIfAbsent(bus.id) {
 			val v = loadOldState(bus) // May throw
 			UiState(v, bus)
 		}
