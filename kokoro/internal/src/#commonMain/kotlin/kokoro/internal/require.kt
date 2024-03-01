@@ -25,7 +25,7 @@ inline fun require(condition: Boolean, or: () -> Any) {
 }
 
 /**
- * Alternative to [kotlin.require]`()` with better parameter names.
+ * Alternative to [kotlin.requireNotNull]`()` with better parameter names.
  */
 inline fun <T : Any> requireNotNull(value: T?, or: () -> Any): T {
 	contract {

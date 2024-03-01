@@ -25,7 +25,7 @@ inline fun check(condition: Boolean, or: () -> Any) {
 }
 
 /**
- * Alternative to [kotlin.check]`()` with better parameter names.
+ * Alternative to [kotlin.checkNotNull]`()` with better parameter names.
  */
 inline fun <T : Any> checkNotNull(value: T?, or: () -> Any): T {
 	contract {
