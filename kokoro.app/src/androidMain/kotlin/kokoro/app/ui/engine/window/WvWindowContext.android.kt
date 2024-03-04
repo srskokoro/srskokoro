@@ -8,6 +8,8 @@ import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
 import kokoro.internal.errorAssertion
 import kokoro.internal.os.SerializationEncoded
+import kokoro.internal.os.SerializationEncoded.Companion.getSerializationEncoded
+import kokoro.internal.os.SerializationEncoded.Companion.putSerializationEncoded
 import kotlinx.serialization.modules.SerializersModule
 
 @nook internal class WvContextImpl(
@@ -35,7 +37,7 @@ import kotlinx.serialization.modules.SerializersModule
 
 		val src = oldStateEntries
 		val id = bus.id
-		SerializationEncoded.getFrom(src, id)?.let { enc ->
+		src.getSerializationEncoded(id)?.let { enc ->
 			val v = enc.decode(bus.serialization) // May throw
 			src.remove(id)
 			return v
@@ -63,7 +65,7 @@ import kotlinx.serialization.modules.SerializersModule
 				val bus = bus
 				val serializer = bus.serialization.invoke(module)
 				val enc = SerializationEncoded(v, serializer) // May throw
-				enc.putInto(out, bus.id)
+				out.putSerializationEncoded(bus.id, enc)
 			} else {
 				// NOTE: The old state entry data should've been discarded
 				// already, since we now have a `UiState` instance loaded.

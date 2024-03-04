@@ -12,6 +12,7 @@ import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
 import kokoro.internal.os.SerializationEncoded
+import kokoro.internal.os.SerializationEncoded.Companion.getSerializationEncodedExtra
 
 @OptIn(nook::class)
 actual sealed class WvWindowHandleBasis @AnyThread actual constructor(
@@ -88,8 +89,9 @@ actual sealed class WvWindowHandleBasis @AnyThread actual constructor(
 
 			data = uri
 			putExtra(EXTRAS_KEY_to_POST_BUS_ID, bus.id)
-			SerializationEncoded(payload, bus.serialization)
-				.putInto(this, EXTRAS_KEY_to_POST_PAYLOAD)
+
+			val enc = SerializationEncoded(payload, bus.serialization) // May throw
+			putExtra(EXTRAS_KEY_to_POST_PAYLOAD, enc)
 		}
 	}
 
@@ -178,6 +180,6 @@ actual sealed class WvWindowHandleBasis @AnyThread actual constructor(
 
 		@Suppress("NOTHING_TO_INLINE")
 		inline fun getPostPayload(intent: Intent): SerializationEncoded? =
-			SerializationEncoded.getFrom(intent, EXTRAS_KEY_to_POST_PAYLOAD)
+			intent.getSerializationEncodedExtra(EXTRAS_KEY_to_POST_PAYLOAD)
 	}
 }
