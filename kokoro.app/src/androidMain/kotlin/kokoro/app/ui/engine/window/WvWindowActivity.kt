@@ -37,18 +37,18 @@ class WvWindowActivity : ComponentActivity() {
 
 		run<Unit> {
 			val intent = intent
-			val fid = WvWindowHandleBasis.getWindowFactoryIdStr(intent)
+			val fid = WvWindowHandle.getWindowFactoryIdStr(intent)
 				?: return@run // Not a window display request. Ignore.
 
 			val f = checkNotNull(WvWindowFactory.get(fid), or = {
 				"No factory registered for window factory ID: $fid"
 			})
 
-			val h = WvWindowHandleBasis.get(intent)
+			val h = WvWindowHandle.get(intent)
 				?: return@run // Handle was closed before we can start.
 
 			handle = h
-			(h as WvWindowHandleBasis).attachContext(this@WvWindowActivity)
+			h.attachContext(this@WvWindowActivity)
 
 			val o = savedInstanceState?.getBundle(EXTRAS_KEY_to_OLD_STATE_ENTRIES) ?: Bundle()
 			val wc = WvContextImpl(h, oldStateEntries = o)
@@ -70,8 +70,8 @@ class WvWindowActivity : ComponentActivity() {
 	override fun onNewIntent(intent: Intent?) {
 		super.onNewIntent(intent)
 		if (intent != null) window?.let { w ->
-			val busId = WvWindowHandleBasis.getPostBusId(intent) ?: return@let
-			val payload = WvWindowHandleBasis.getPostPayload(intent) ?: return@let
+			val busId = WvWindowHandle.getPostBusId(intent) ?: return@let
+			val payload = WvWindowHandle.getPostPayload(intent) ?: return@let
 			(w.getDoOnPost_(busId) ?: return@let).route(w, payload)
 		}
 	}
@@ -99,7 +99,7 @@ class WvWindowActivity : ComponentActivity() {
 	override fun onDestroy() {
 		if (isFinishing) {
 			handle?.run {
-				(this as WvWindowHandleBasis).detachContext() // So that `finishAndRemoveTask()` isn't called by `close()` below
+				detachContext() // So that `finishAndRemoveTask()` isn't called by `close()` below
 				close()
 			}
 			window?.onDestroy()

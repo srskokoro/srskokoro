@@ -8,27 +8,25 @@ import android.net.Uri
 import kokoro.app.CoreApplication
 import kokoro.app.ui.engine.UiBus
 import kokoro.internal.DEBUG
-import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
 import kokoro.internal.os.SerializationEncoded
 import kokoro.internal.os.SerializationEncoded.Companion.getSerializationEncodedExtra
 
 @OptIn(nook::class)
-actual sealed class WvWindowHandleBasis @AnyThread actual constructor(
+actual class WvWindowHandle @nook actual constructor(
 	id: String?,
-	actual val windowFactoryId: WvWindowFactoryId,
-	parent: WvWindowHandle?,
-) {
+	windowFactoryId: WvWindowFactoryId,
+	parent: WvWindowHandleGroup?,
+) : WvWindowHandleGroup(windowFactoryId, parent) {
+
 	/** WARNING: Must only be modified from the main thread. */
 	@JvmField @nook var uri_ =
 		if (id == null) null else Uri.fromParts("x", id, null)
 
-	actual val id: String?
+	@Suppress("OVERRIDE_BY_INLINE")
+	actual override val id: String?
 		inline get() = uri_?.let { getId(it) }
-
-	/** WARNING: Must only be modified from the main thread. */
-	@JvmField @nook actual var parent_: WvWindowHandle? = parent
 
 	// --
 
@@ -40,19 +38,19 @@ actual sealed class WvWindowHandleBasis @AnyThread actual constructor(
 	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
 	inline fun attachContext(activity: WvWindowActivity) {
-		this.context_ = activity
+		context_ = activity
 	}
 
 	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
 	inline fun attachContext(task: ActivityManager.AppTask) {
-		this.context_ = task
+		context_ = task
 	}
 
 	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
 	inline fun detachContext() {
-		this.context_ = null
+		context_ = null
 	}
 
 	// --
@@ -61,7 +59,7 @@ actual sealed class WvWindowHandleBasis @AnyThread actual constructor(
 	fun newLaunchIntent(app: Application): Intent {
 		assertThreadMain()
 
-		val uri = uri_ ?: throw WvWindowHandle.E_Closed()
+		val uri = uri_ ?: throw E_Closed()
 		if (DEBUG) windowFactoryId.let { fid ->
 			if (fid.isNothing || WvWindowFactory.get(fid) == null) error(
 				"Window factory ID cannot be used to launch windows: $fid"
@@ -73,7 +71,7 @@ actual sealed class WvWindowHandleBasis @AnyThread actual constructor(
 			addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
 			data = uri
-			parent_?.let { p -> putExtra(EXTRAS_KEY_to_PARENT_ID, (p as WvWindowHandleBasis).id) }
+			parent_?.let { p -> putExtra(EXTRAS_KEY_to_PARENT_ID, (p as WvWindowHandle).id) }
 			putExtra(EXTRAS_KEY_to_WINDOW_FACTORY_ID, windowFactoryId.id)
 		}
 	}
@@ -95,8 +93,6 @@ actual sealed class WvWindowHandleBasis @AnyThread actual constructor(
 		}
 	}
 
-	// --
-
 	@MainThread
 	inline fun launch(config: Intent.() -> Unit) {
 		val app = CoreApplication.get()
@@ -104,19 +100,25 @@ actual sealed class WvWindowHandleBasis @AnyThread actual constructor(
 	}
 
 	@MainThread
-	actual fun launch() {
+	actual override fun launch() {
 		launch {}
 	}
 
 	@MainThread
-	actual fun <T> postOrDiscard(bus: UiBus<T>, value: T): Boolean {
+	actual override fun <T> postOrDiscard(bus: UiBus<T>, value: T): Boolean {
 		val app = CoreApplication.get()
 		app.startActivity(newPostIntent(app, bus, value) ?: return false)
 		return true
 	}
 
+	// --
+
+	@Suppress("OVERRIDE_BY_INLINE")
+	actual override val isClosed: Boolean
+		inline get() = uri_ == null
+
 	@MainThread
-	protected actual fun onClose() {
+	actual override fun onClose() {
 		uri_ = null // Marks as closed
 		when (val c = context_) {
 			null -> return // Skip code below
@@ -127,9 +129,9 @@ actual sealed class WvWindowHandleBasis @AnyThread actual constructor(
 		detachContext()
 	}
 
-	actual val isClosed: Boolean inline get() = uri_ == null
+	// --
 
-	companion object {
+	actual companion object {
 		@nook const val EXTRAS_KEY_to_PARENT_ID = "parent"
 		@nook const val EXTRAS_KEY_to_WINDOW_FACTORY_ID = "factory"
 
@@ -146,7 +148,7 @@ actual sealed class WvWindowHandleBasis @AnyThread actual constructor(
 
 				assertThreadMain()
 
-				r = WvWindowHandle.create(
+				r = create(
 					id = "GLOBAL",
 					WvWindowFactoryId.NOTHING,
 					parent = null,
@@ -172,7 +174,7 @@ actual sealed class WvWindowHandleBasis @AnyThread actual constructor(
 
 		@Suppress("NOTHING_TO_INLINE")
 		inline fun get(intent: Intent): WvWindowHandle? =
-			getId(intent)?.let { WvWindowHandle.get(it) }
+			getId(intent)?.let { get(it) }
 
 		@Suppress("NOTHING_TO_INLINE")
 		inline fun getPostBusId(intent: Intent): String? =

@@ -26,7 +26,7 @@ import kotlinx.serialization.modules.SerializersModule
 	@MainThread
 	override fun finish() {
 		assertThreadMain()
-		(handle as WvWindowHandleBasis).activity?.finish()
+		handle.activity?.finish()
 	}
 
 	// --

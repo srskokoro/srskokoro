@@ -32,15 +32,15 @@ private class WvWindowHandle_globalRestore(tasks: List<AppTask>) {
 			val intent = task.taskInfo.baseIntent
 			if (!WvWindowActivity.shouldHandle(intent)) return@forEach
 
-			val id = WvWindowHandleBasis.getId(intent)
+			val id = WvWindowHandle.getId(intent)
 			run<Unit> {
 				if (id == null) return@run // Invalid request.
 
-				val fid = WvWindowHandleBasis.getWindowFactoryIdStr(intent)
+				val fid = WvWindowHandle.getWindowFactoryIdStr(intent)
 					?: return@run // Not a window display request.
 
 				// NOTE: Parent ID is `null` when there should be no parent.
-				val parentId = WvWindowHandleBasis.getParentId(intent)
+				val parentId = WvWindowHandle.getParentId(intent)
 
 				entries[id] = Entry(
 					id,
@@ -91,7 +91,7 @@ private class WvWindowHandle_globalRestore(tasks: List<AppTask>) {
 			parent = p,
 		).also { h ->
 			handle = h
-			(h as WvWindowHandleBasis).attachContext(task)
+			h.attachContext(task)
 		}
 	}
 }
