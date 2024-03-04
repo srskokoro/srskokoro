@@ -40,6 +40,9 @@ class MainActivity : Activity() {
 			// Already launched before and currently not closed.
 			ex.oldHandle.postOrDiscard(UiBus.NOTHING, null) // Bring to front!
 			return // Done. Skip code below.
+		}.let {
+			@Suppress("USELESS_CAST")
+			it as WvWindowHandleBasis
 		}.launch {
 			addFlags(Intent.FLAG_ACTIVITY_RETAIN_IN_RECENTS)
 		}

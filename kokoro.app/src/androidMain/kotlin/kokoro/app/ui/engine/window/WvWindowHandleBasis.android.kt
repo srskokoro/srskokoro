@@ -73,7 +73,7 @@ actual sealed class WvWindowHandleBasis @AnyThread actual constructor(
 			addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
 			data = uri
-			parent_?.let { p -> putExtra(EXTRAS_KEY_to_PARENT_ID, p.id) }
+			parent_?.let { p -> putExtra(EXTRAS_KEY_to_PARENT_ID, (p as WvWindowHandleBasis).id) }
 			putExtra(EXTRAS_KEY_to_WINDOW_FACTORY_ID, windowFactoryId.id)
 		}
 	}

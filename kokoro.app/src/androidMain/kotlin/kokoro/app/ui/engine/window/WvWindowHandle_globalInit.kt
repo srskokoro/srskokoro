@@ -91,7 +91,7 @@ private class WvWindowHandle_globalRestore(tasks: List<AppTask>) {
 			parent = p,
 		).also { h ->
 			handle = h
-			h.attachContext(task)
+			(h as WvWindowHandleBasis).attachContext(task)
 		}
 	}
 }
