@@ -115,7 +115,7 @@ dependencySettings {
 	plugin(kotlin("plugin.serialization"), kotlin)
 	module(kotlin("plugin.serialization").marker(), kotlin)
 
-	val kotlinx_serialization = "1.6.2" // https://github.com/Kotlin/kotlinx.serialization/releases
+	val kotlinx_serialization = "1.6.3" // https://github.com/Kotlin/kotlinx.serialization/releases
 	module("org.jetbrains.kotlinx:kotlinx-serialization-core", kotlinx_serialization)
 	module("org.jetbrains.kotlinx:kotlinx-serialization-json", kotlinx_serialization)
 	module("org.jetbrains.kotlinx:kotlinx-serialization-json-okio", kotlinx_serialization)
