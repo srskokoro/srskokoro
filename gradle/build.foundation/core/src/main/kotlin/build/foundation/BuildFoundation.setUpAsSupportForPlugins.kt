@@ -3,13 +3,11 @@ package build.foundation
 import org.gradle.api.HasImplicitReceiver
 import org.gradle.api.Project
 import org.gradle.api.SupportsKotlinAssignmentOverloading
-import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.assignment.plugin.gradle.AssignmentExtension
 import org.jetbrains.kotlin.assignment.plugin.gradle.AssignmentSubplugin
 import org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension
 import org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverGradleSubplugin
-import java.io.File
 
 /**
  * WARNING: Assumes that [setUpAsBuildInclusive]`()` has already been called
@@ -17,13 +15,6 @@ import java.io.File
  */
 fun BuildFoundation.setUpAsSupportForPlugins(project: Project): Unit = with(project) {
 	mimicKotlinDslCompiler()
-
-	tasks.withType<Test>().configureEach {
-		doFirst {
-			// NOTE: Can be used for the Gradle TestKit.
-			environment("BUILD_PLUGINS_TEST_CLASSPATH", classpath.joinToString(File.pathSeparator))
-		}
-	}
 
 	dependencies.run {
 		compileOnlyTestImpl(embeddedKotlin("reflect"))
