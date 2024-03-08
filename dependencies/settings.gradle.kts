@@ -17,7 +17,7 @@ dependencySettings {
 		prop("jvm.implementation", JvmImplementation::VENDOR_SPECIFIC.name)
 	}
 
-	val kotlin = "1.9.22" // https://kotlinlang.org/docs/releases.html
+	val kotlin = "1.9.23" // https://kotlinlang.org/docs/releases.html
 
 	plugin(kotlin("android"), kotlin)
 	plugin(kotlin("jvm"), kotlin)
