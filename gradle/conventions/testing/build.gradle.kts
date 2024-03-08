@@ -52,11 +52,14 @@ kotlin {
 }
 
 dependencies {
+	"jreMainImplementation"(kotlin("reflect"))
+
 	commonMainRuntimeOnly("io.kotest:${Build.KOTEST_ASSERTIONS_SHARED}")
 	"nativeMainImplementation"("io.kotest:${Build.KOTEST_ASSERTIONS_SHARED}")
 	commonMainApi("io.kotest:kotest-framework-engine", Build::excludeKotestAssertionsShared)
 	"jreMainApi"("io.kotest:kotest-runner-junit5", Build::excludeKotestAssertionsShared)
 	afterEvaluate { tasks.run { Build.assert_JUnit5(named<KotlinJvmTest>("jreTest")) } }
 	commonMainApi("io.kotest:kotest-property", Build::excludeKotestAssertionsShared)
+
 	commonMainApi("com.willowtreeapps.assertk:assertk")
 }
