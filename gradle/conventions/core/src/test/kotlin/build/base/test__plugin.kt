@@ -14,6 +14,7 @@ class test__plugin : FreeSpec({
 	"All known convention plugins delegate to the 'base' plugin" {
 		assertAll {
 			assertTrue { hasBasePlugin<build.kt.jvm._plugin>() }
+			assertTrue { hasBasePlugin<build.kt.jvm.app._plugin>() }
 			assertTrue { hasBasePlugin<build.kt.jvm.lib._plugin>() }
 			assertTrue { hasBasePlugin<build.kt.jvm.inclusive._plugin>() }
 
@@ -23,6 +24,15 @@ class test__plugin : FreeSpec({
 
 			assertTrue { hasBasePlugin<build.plugins._plugin>() }
 			assertTrue { hasBasePlugin<build.plugins.support._plugin>() }
+
+			assertTrue { hasBasePlugin<build.kt.android.app._plugin>() }
+			assertTrue { hasBasePlugin<build.kt.android.lib._plugin>() }
+
+			assertTrue { hasBasePlugin<build.kt.mpp.jre._plugin>() }
+			assertTrue { hasBasePlugin<build.kt.mpp.js._plugin>() }
+			assertTrue { hasBasePlugin<build.kt.mpp.js.browser._plugin>() }
+			assertTrue { hasBasePlugin<build.kt.mpp.js.node._plugin>() }
+			assertTrue { hasBasePlugin<build.kt.mpp.ios._plugin>() }
 		}
 	}
 })
