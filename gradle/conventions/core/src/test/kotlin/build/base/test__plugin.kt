@@ -5,8 +5,8 @@ import assertk.assertThat
 import assertk.assertions.isTrue
 import build.plugins.test.buildProject
 import build.plugins.test.io.TestTemp
+import io.kotest.core.spec.Spec
 import io.kotest.core.spec.style.FreeSpec
-import io.kotest.core.test.TestScope
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -29,10 +29,10 @@ class test__plugin : FreeSpec({
 
 private inline fun assertTrue(block: () -> Boolean) = assertThat(block()).isTrue()
 
-private inline fun <reified P : Plugin<Project>> TestScope.hasBasePlugin() = hasBasePlugin(P::class.java)
+private inline fun <reified P : Plugin<Project>> Spec.hasBasePlugin() = hasBasePlugin(P::class.java)
 
-private fun TestScope.hasBasePlugin(plugin: Class<out Plugin<Project>>): Boolean {
-	return buildProject(TestTemp.from(this, plugin.name)).run {
+private fun Spec.hasBasePlugin(plugin: Class<out Plugin<Project>>): Boolean {
+	return buildProject(TestTemp(plugin.name)).run {
 		apply(fun(x) { x.plugin(plugin) })
 		// NOTE: Using `pluginManager.hasPlugin()` is preferred over
 		// `plugins.hasPlugin()` according to `PluginAware.plugins` docs.

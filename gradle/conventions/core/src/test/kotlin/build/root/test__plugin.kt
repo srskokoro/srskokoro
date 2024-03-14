@@ -11,8 +11,8 @@ import org.gradle.kotlin.dsl.*
 
 class test__plugin : FreeSpec({
 	"The 'root' plugin can only be applied to root projects" {
-		val parent = buildProject(TestTemp.from(this, "0"))
-		val child = buildProject(TestTemp.from(this, "0/0")) { withParent(parent) }
+		val parent = buildProject(TestTemp("0"))
+		val child = buildProject(TestTemp("0/0")) { withParent(parent) }
 
 		assertAll {
 			assertResult { parent.apply<_plugin>() }.isSuccess()
