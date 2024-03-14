@@ -1,6 +1,7 @@
 package build.plugins.test.io
 
 import java.io.File
+import kotlin.reflect.KClass
 
 object TestTemp {
 	/**
@@ -20,6 +21,12 @@ object TestTemp {
 	fun of(testClass: Class<*>) = named(testClass.name)
 
 	fun of(testClass: Class<*>, subPath: String) = named("${testClass.name}${File.separatorChar}$subPath")
+
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun of(testClass: KClass<*>) = of(testClass.java)
+
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun of(testClass: KClass<*>, subPath: String) = of(testClass.java, subPath)
 
 	fun from(testInstance: Any) = of(testInstance::class.java)
 
