@@ -82,6 +82,10 @@ dependencySettings {
 
 	//#region Build support
 
+	val shadow = "8.1.1" // https://github.com/johnrengelman/shadow/releases
+	plugin("com.github.johnrengelman.shadow", shadow)
+	module("com.github.johnrengelman.shadow".marker(), shadow)
+
 	val gmazzo_buildconfig = "5.3.5" // https://github.com/gmazzo/gradle-buildconfig-plugin/releases
 	plugin("com.github.gmazzo.buildconfig", gmazzo_buildconfig)
 	module("com.github.gmazzo.buildconfig".marker(), gmazzo_buildconfig)

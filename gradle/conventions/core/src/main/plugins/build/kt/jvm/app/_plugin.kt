@@ -2,6 +2,7 @@ package build.kt.jvm.app
 
 import build.api.ProjectPlugin
 import build.api.dsl.*
+import com.github.jengelman.gradle.plugins.shadow.ShadowApplicationPlugin
 import org.gradle.api.plugins.ApplicationPlugin
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.application.CreateStartScripts
@@ -11,6 +12,7 @@ class _plugin : ProjectPlugin({
 	apply {
 		plugin<build.kt.jvm._plugin>()
 		plugin("application")
+		plugin("com.github.johnrengelman.shadow")
 	}
 
 	val tasks = tasks
@@ -18,7 +20,12 @@ class _plugin : ProjectPlugin({
 	// KLUDGE to force the inclusion of `application.applicationDefaultJvmArgs`,
 	//  since `Gradle` seems to set it up via `jvmArguments.convention()` at the
 	//  moment.
-	tasks.named<JavaExec>(ApplicationPlugin.TASK_RUN_NAME) { jvmArgs = jvmArgs }
+	tasks.named<JavaExec>(ApplicationPlugin.TASK_RUN_NAME) {
+		jvmArgs = jvmArgs
+	}
+	tasks.named<JavaExec>(ShadowApplicationPlugin.SHADOW_RUN_TASK_NAME) {
+		jvmArgs = jvmArgs
+	}
 	// NOTE: It seems that `application.applicationDefaultJvmArgs` is set up via
 	// `convention()` now, contrary to what we previously believed, or perhaps,
 	// this was introduced to `Gradle` by mistake when `jvmArguments` was
