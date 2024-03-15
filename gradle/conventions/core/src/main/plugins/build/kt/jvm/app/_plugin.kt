@@ -17,15 +17,18 @@ class _plugin : ProjectPlugin({
 
 	val tasks = tasks
 
+	tasks.named<JavaExec>(ApplicationPlugin.TASK_RUN_NAME, ::setUpRunTask)
+	tasks.named<JavaExec>(ShadowApplicationPlugin.SHADOW_RUN_TASK_NAME, ::setUpRunTask)
+
+	tasks.named<CreateStartScripts>(ApplicationPlugin.TASK_START_SCRIPTS_NAME, ::setUpStartScriptsTask)
+	tasks.named<CreateStartScripts>(ShadowApplicationPlugin.SHADOW_SCRIPTS_TASK_NAME, ::setUpStartScriptsTask)
+})
+
+private fun setUpRunTask(task: JavaExec): Unit = with(task) {
 	// KLUDGE to force the inclusion of `application.applicationDefaultJvmArgs`,
 	//  since `Gradle` seems to set it up via `jvmArguments.convention()` at the
 	//  moment.
-	tasks.named<JavaExec>(ApplicationPlugin.TASK_RUN_NAME) {
-		jvmArgs = jvmArgs
-	}
-	tasks.named<JavaExec>(ShadowApplicationPlugin.SHADOW_RUN_TASK_NAME) {
-		jvmArgs = jvmArgs
-	}
+	jvmArgs = jvmArgs
 	// NOTE: It seems that `application.applicationDefaultJvmArgs` is set up via
 	// `convention()` now, contrary to what we previously believed, or perhaps,
 	// this was introduced to `Gradle` by mistake when `jvmArguments` was
@@ -38,20 +41,19 @@ class _plugin : ProjectPlugin({
 
 	// -=-
 
-	tasks.withType<JavaExec>().configureEach {
-		if (this.project.isDebug) {
-			jvmArgs(mutableListOf<String>().apply(::setUpJvmArgsForDebug))
+	if (this.project.isDebug) {
+		jvmArgs(mutableListOf<String>().apply(::setUpJvmArgsForDebug))
+	}
+}
+
+private fun setUpStartScriptsTask(task: CreateStartScripts): Unit = with(task) {
+	if (this.project.isDebug) {
+		defaultJvmOpts = mutableListOf<String>().apply {
+			defaultJvmOpts?.let(::addAll)
+			setUpJvmArgsForDebug(this)
 		}
 	}
-	tasks.withType<CreateStartScripts>().configureEach {
-		if (this.project.isDebug) {
-			defaultJvmOpts = mutableListOf<String>().apply {
-				defaultJvmOpts?.let(::addAll)
-				setUpJvmArgsForDebug(this)
-			}
-		}
-	}
-})
+}
 
 private fun setUpJvmArgsForDebug(jvmArgs: MutableList<String>) {
 	jvmArgs.add("-ea") // Also enables stacktrace recovery for kotlinx coroutines
