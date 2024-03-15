@@ -2,6 +2,7 @@ package build.api.dsl.accessors
 
 import build.api.dsl.*
 import org.gradle.api.Project
+import org.gradle.api.distribution.DistributionContainer
 import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.tasks.SourceSetContainer
@@ -19,6 +20,9 @@ val Project.baseOrNull: BasePluginExtension?
 
 val Project.application: JavaApplication
 	get() = x("application")
+
+val Project.distributions: DistributionContainer
+	get() = x("distributions")
 
 
 val Project.sourceSets: SourceSetContainer

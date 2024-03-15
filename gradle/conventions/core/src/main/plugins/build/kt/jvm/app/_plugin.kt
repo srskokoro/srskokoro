@@ -2,11 +2,18 @@ package build.kt.jvm.app
 
 import build.api.ProjectPlugin
 import build.api.dsl.*
+import build.api.dsl.accessors.distributions
 import com.github.jengelman.gradle.plugins.shadow.ShadowApplicationPlugin
+import org.gradle.api.distribution.Distribution
 import org.gradle.api.plugins.ApplicationPlugin
 import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.Sync
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.kotlin.dsl.*
+
+private const val DIST_APP_HOME_NAME = "appHome"
+private const val DIST_APP_HOME_INSTALL_TASK_NAME = "installAppHomeDist"
 
 class _plugin : ProjectPlugin({
 	apply {
@@ -15,16 +22,38 @@ class _plugin : ProjectPlugin({
 		plugin("com.github.johnrengelman.shadow")
 	}
 
+	val distributions = distributions
+	distributions.register(DIST_APP_HOME_NAME)
+
 	val tasks = tasks
+	val installAppHomeDist = tasks.named<Sync>(DIST_APP_HOME_INSTALL_TASK_NAME)
 
-	tasks.named<JavaExec>(ApplicationPlugin.TASK_RUN_NAME, ::setUpRunTask)
-	tasks.named<JavaExec>(ShadowApplicationPlugin.SHADOW_RUN_TASK_NAME, ::setUpRunTask)
+	distributions.named("main") { setUp(installAppHomeDist) }
+	distributions.named("shadow") { setUp(installAppHomeDist) }
 
-	tasks.named<CreateStartScripts>(ApplicationPlugin.TASK_START_SCRIPTS_NAME, ::setUpStartScriptsTask)
-	tasks.named<CreateStartScripts>(ShadowApplicationPlugin.SHADOW_SCRIPTS_TASK_NAME, ::setUpStartScriptsTask)
+	tasks.named<JavaExec>(ApplicationPlugin.TASK_RUN_NAME) { setUp(installAppHomeDist) }
+	tasks.named<JavaExec>(ShadowApplicationPlugin.SHADOW_RUN_TASK_NAME) { setUp(installAppHomeDist) }
+
+	tasks.named<CreateStartScripts>(ApplicationPlugin.TASK_START_SCRIPTS_NAME) { setUp() }
+	tasks.named<CreateStartScripts>(ShadowApplicationPlugin.SHADOW_SCRIPTS_TASK_NAME) { setUp() }
 })
 
-private fun setUpRunTask(task: JavaExec): Unit = with(task) {
+private fun Distribution.setUp(installAppHomeDist: TaskProvider<Sync>) {
+	contents.from(installAppHomeDist)
+}
+
+private fun JavaExec.setUp(installAppHomeDist: TaskProvider<Sync>) {
+	dependsOn(installAppHomeDist)
+
+	val appHomeDirProv = installAppHomeDist.map { it.destinationDir }
+	doFirst(fun(task) = with(task as JavaExec) {
+		val appHomeDir = appHomeDirProv.get()
+		appHomeDir.mkdirs()
+		environment("APP_HOME", appHomeDir)
+	})
+
+	// -=-
+
 	// KLUDGE to force the inclusion of `application.applicationDefaultJvmArgs`,
 	//  since `Gradle` seems to set it up via `jvmArguments.convention()` at the
 	//  moment.
@@ -46,7 +75,7 @@ private fun setUpRunTask(task: JavaExec): Unit = with(task) {
 	}
 }
 
-private fun setUpStartScriptsTask(task: CreateStartScripts): Unit = with(task) {
+private fun CreateStartScripts.setUp() {
 	if (this.project.isDebug) {
 		defaultJvmOpts = mutableListOf<String>().apply {
 			defaultJvmOpts?.let(::addAll)
