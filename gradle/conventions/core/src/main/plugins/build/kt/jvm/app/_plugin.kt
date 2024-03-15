@@ -28,28 +28,33 @@ class _plugin : ProjectPlugin({
 	val tasks = tasks
 	val installAppHomeDist = tasks.named<Sync>(DIST_APP_HOME_INSTALL_TASK_NAME)
 
+	val startScripts =
+		tasks.named<CreateStartScripts>(ApplicationPlugin.TASK_START_SCRIPTS_NAME) { setUp() }
+	tasks.named<CreateStartScripts>(ShadowApplicationPlugin.SHADOW_SCRIPTS_TASK_NAME) { setUp() }
+
 	distributions.named("main") { setUp(installAppHomeDist) }
 	distributions.named("shadow") { setUp(installAppHomeDist) }
 
-	tasks.named<JavaExec>(ApplicationPlugin.TASK_RUN_NAME) { setUp(installAppHomeDist) }
-	tasks.named<JavaExec>(ShadowApplicationPlugin.SHADOW_RUN_TASK_NAME) { setUp(installAppHomeDist) }
-
-	tasks.named<CreateStartScripts>(ApplicationPlugin.TASK_START_SCRIPTS_NAME) { setUp() }
-	tasks.named<CreateStartScripts>(ShadowApplicationPlugin.SHADOW_SCRIPTS_TASK_NAME) { setUp() }
+	tasks.named<JavaExec>(ApplicationPlugin.TASK_RUN_NAME) { setUp(installAppHomeDist, startScripts) }
+	tasks.named<JavaExec>(ShadowApplicationPlugin.SHADOW_RUN_TASK_NAME) { setUp(installAppHomeDist, startScripts) }
 })
 
 private fun Distribution.setUp(installAppHomeDist: TaskProvider<Sync>) {
 	contents.from(installAppHomeDist)
 }
 
-private fun JavaExec.setUp(installAppHomeDist: TaskProvider<Sync>) {
+private fun JavaExec.setUp(installAppHomeDist: TaskProvider<Sync>, startScripts: TaskProvider<CreateStartScripts>) {
 	dependsOn(installAppHomeDist)
 
-	val appHomeDirProv = installAppHomeDist.map { it.destinationDir }
+	val appHomeDir = installAppHomeDist.map { it.destinationDir }
+	val appBaseName = startScripts.map { it.applicationName!! }
+
 	doFirst(fun(task) = with(task as JavaExec) {
-		val appHomeDir = appHomeDirProv.get()
-		appHomeDir.mkdirs()
-		environment("APP_HOME", appHomeDir)
+		appHomeDir.get().let {
+			it.mkdirs()
+			environment("APP_HOME", it)
+		}
+		environment("APP_BASE_NAME", appBaseName.get())
 	})
 
 	// -=-

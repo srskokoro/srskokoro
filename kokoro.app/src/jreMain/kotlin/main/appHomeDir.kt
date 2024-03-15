@@ -16,7 +16,7 @@ import java.io.File
 
 	System.getenv("APP_HOME")?.let {
 		if (it.isNotBlank()) with(File(it)) {
-			if (isDirectory) return this
+			if (isDirectory) return absoluteFile
 		}
 	}
 
