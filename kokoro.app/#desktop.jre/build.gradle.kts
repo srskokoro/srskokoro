@@ -9,6 +9,7 @@ group = evaluatedParent.group
 
 application {
 	mainClass.set("main.MainKt")
+	applicationName = extra["kokoro.app.exe.name"] as String
 }
 
 dependencies {
