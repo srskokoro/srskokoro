@@ -13,7 +13,11 @@ import java.nio.charset.Charset
 import java.util.Properties
 import javax.inject.Inject
 
-internal data class InternalVersion(val name: String?, val code: Int) : Serializable
+internal data class InternalVersion(val name: String?, val code: Int) : Serializable {
+	companion object {
+		const val SUFFIX_START_CHAR = '+'
+	}
+}
 
 internal abstract class InternalVersionLoader : ValueSource<InternalVersion, InternalVersionLoader.Parameters> {
 
@@ -51,7 +55,7 @@ internal abstract class InternalVersionLoader : ValueSource<InternalVersion, Int
 						output.toByteArray(),
 						Charset.defaultCharset(),
 					).trim()
-					versionName = "$it+commit#$headId"
+					versionName = "$it${InternalVersion.SUFFIX_START_CHAR}commit#$headId"
 				}
 				versionCode += NON_RELEASE_CODE_INCREMENT
 			}
