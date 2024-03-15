@@ -8,9 +8,13 @@ plugins {
 
 group = evaluatedParent.group
 
+private object Build {
+	const val APP_NAME = "kokoro-app"
+}
+
 application {
 	mainClass.set("main.MainKt")
-	applicationName = extra["kokoro.app.exe.name"] as String
+	applicationName = Build.APP_NAME
 }
 
 tasks.startShadowScripts {
