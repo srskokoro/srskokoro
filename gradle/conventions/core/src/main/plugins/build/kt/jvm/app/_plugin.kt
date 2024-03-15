@@ -76,6 +76,14 @@ private fun JavaExec.setUp(installAppHomeDist: TaskProvider<Sync>) {
 }
 
 private fun CreateStartScripts.setUp() {
+	doFirst(fun(task) = with(task as CreateStartScripts) {
+		// Ensure that there isn't any stale file in the output directory (which
+		// may be present if the application name changes).
+		outputDir?.deleteRecursively()
+	})
+
+	// -=-
+
 	if (this.project.isDebug) {
 		defaultJvmOpts = mutableListOf<String>().apply {
 			defaultJvmOpts?.let(::addAll)
