@@ -10,11 +10,16 @@ group = evaluatedParent.group
 
 private object Build {
 	const val APP_NAME = "kokoro-app"
+	const val APP_SHADOW_JAR = "$APP_NAME.jar"
 }
 
 application {
 	mainClass.set("main.MainKt")
 	applicationName = Build.APP_NAME
+}
+
+tasks.shadowJar {
+	archiveFileName = Build.APP_SHADOW_JAR
 }
 
 tasks.startShadowScripts {
