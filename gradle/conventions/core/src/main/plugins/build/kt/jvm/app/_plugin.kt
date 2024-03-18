@@ -2,6 +2,7 @@ package build.kt.jvm.app
 
 import build.api.ProjectPlugin
 import build.api.dsl.*
+import build.api.dsl.accessors.application
 import build.api.dsl.accessors.distributions
 import com.github.jengelman.gradle.plugins.shadow.ShadowApplicationPlugin
 import org.gradle.api.distribution.Distribution
@@ -22,18 +23,22 @@ class _plugin : ProjectPlugin({
 		plugin("com.github.johnrengelman.shadow")
 	}
 
+	val applicationName = provider { application.applicationName }
+
 	val distributions = distributions
-	val mainDist = distributions.named("main")
 	distributions.register(DIST_APP_HOME_NAME) {
-		distributionBaseName = mainDist.flatMap { distributionBaseName.map { "$it-home" } }
+		distributionBaseName = applicationName.map { "$it-home" }
 	}
 
 	val tasks = tasks
 	val installAppHomeDist = tasks.named<Sync>(DIST_APP_HOME_INSTALL_TASK_NAME)
 
-	mainDist.configure { setUp(installAppHomeDist) }
+	distributions.named("main") {
+		distributionBaseName = applicationName
+		setUp(installAppHomeDist)
+	}
 	distributions.named("shadow") {
-		distributionBaseName = mainDist.flatMap { distributionBaseName.map { "$it-shadow" } }
+		distributionBaseName = applicationName.map { "$it-shadow" }
 		setUp(installAppHomeDist)
 	}
 
