@@ -23,7 +23,9 @@ class _plugin : ProjectPlugin({
 	}
 
 	val distributions = distributions
-	distributions.register(DIST_APP_HOME_NAME)
+	distributions.register(DIST_APP_HOME_NAME) {
+		distributionBaseName = "${DIST_APP_HOME_NAME}Dist"
+	}
 
 	val tasks = tasks
 	val installAppHomeDist = tasks.named<Sync>(DIST_APP_HOME_INSTALL_TASK_NAME)
