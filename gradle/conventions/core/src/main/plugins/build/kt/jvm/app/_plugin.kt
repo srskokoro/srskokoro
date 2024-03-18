@@ -23,19 +23,23 @@ class _plugin : ProjectPlugin({
 	}
 
 	val distributions = distributions
+	val mainDist = distributions.named("main")
 	distributions.register(DIST_APP_HOME_NAME) {
-		distributionBaseName = "${DIST_APP_HOME_NAME}Dist"
+		distributionBaseName = mainDist.flatMap { distributionBaseName.map { "$it-home" } }
 	}
 
 	val tasks = tasks
 	val installAppHomeDist = tasks.named<Sync>(DIST_APP_HOME_INSTALL_TASK_NAME)
 
+	mainDist.configure { setUp(installAppHomeDist) }
+	distributions.named("shadow") {
+		distributionBaseName = mainDist.flatMap { distributionBaseName.map { "$it-shadow" } }
+		setUp(installAppHomeDist)
+	}
+
 	val startScripts =
 		tasks.named<CreateStartScripts>(ApplicationPlugin.TASK_START_SCRIPTS_NAME) { setUp() }
 	tasks.named<CreateStartScripts>(ShadowApplicationPlugin.SHADOW_SCRIPTS_TASK_NAME) { setUp() }
-
-	distributions.named("main") { setUp(installAppHomeDist) }
-	distributions.named("shadow") { setUp(installAppHomeDist) }
 
 	tasks.named<JavaExec>(ApplicationPlugin.TASK_RUN_NAME) { setUp(installAppHomeDist, startScripts) }
 	tasks.named<JavaExec>(ShadowApplicationPlugin.SHADOW_RUN_TASK_NAME) { setUp(installAppHomeDist, startScripts) }
