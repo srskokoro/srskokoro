@@ -23,7 +23,7 @@ packaged {
 	packageVersionCode = projectThis.getVersionBaseName()
 	description = "${appTitle.get()} for desktop"
 	vendor = "SRS Kokoro Project & N.N."
-	copyright = "Copyright (C) 2021-2023, ${vendor.get()}"
+	copyright = "(c) 2021-2023, ${vendor.get()}"
 
 	licenseFile = rootProject.file("LICENSE.txt", PathValidation.FILE)
 }
