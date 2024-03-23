@@ -2,7 +2,7 @@ import build.api.dsl.*
 import build.support.cast
 
 plugins {
-	id("build.kt.jvm.app")
+	id("build.kt.jvm.app.packaged")
 	id("build.version")
 }
 
@@ -11,6 +11,21 @@ group = evaluatedParent.group
 private object Build {
 	const val APP_NAME = "kokoro-app"
 	const val APP_SHADOW_JAR = "$APP_NAME.jar"
+}
+
+packaged {
+	bundleName = Build.APP_NAME
+	appNs = "$group.app"
+
+	appTitle = extra["kokoro.app.title"] as String
+	appTitleShort = extra["kokoro.app.title.short"] as String
+
+	packageVersionCode = projectThis.getVersionBaseName()
+	description = "${appTitle.get()} for desktop"
+	vendor = "SRS Kokoro Project & N.N."
+	copyright = "Copyright (C) 2021-2023, ${vendor.get()}"
+
+	licenseFile = rootProject.file("LICENSE.txt", PathValidation.FILE)
 }
 
 application {
