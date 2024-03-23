@@ -64,8 +64,8 @@ abstract class JPackageDist : JPackageAbstractTask() {
 			args = freeArgs.get()
 			setUpForJPackage(jpackageImageDest, jpackageImageName)
 		}.run {
-			assertNormalExitValue()
 			rethrowFailure()
+			assertNormalExitValue()
 		}
 
 		for (s in File(jpackageImageDest, jpackageImageName).listFiles()!!) {
