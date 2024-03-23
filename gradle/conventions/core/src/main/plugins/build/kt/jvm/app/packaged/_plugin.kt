@@ -9,6 +9,10 @@ import com.github.jengelman.gradle.plugins.shadow.ShadowApplicationPlugin
 import com.github.jengelman.gradle.plugins.shadow.ShadowJavaPlugin
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.tasks.Sync
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.gradle.api.tasks.bundling.Tar
+import org.gradle.api.tasks.bundling.Zip
 import org.gradle.kotlin.dsl.*
 import java.io.File
 
@@ -47,7 +51,7 @@ class _plugin : ProjectPlugin({
 	val installShadowDist = tasks.named<Sync>(ShadowApplicationPlugin.SHADOW_INSTALL_TASK_NAME)
 	val shadowJar = tasks.named<ShadowJar>(ShadowJavaPlugin.SHADOW_JAR_TASK_NAME)
 
-	tasks.register<JPackageDist>("jpackageDist") {
+	val jpackageDist by tasks.registering(JPackageDist::class) {
 		group = DISTRIBUTION_GROUP
 
 		jdkHome = jdkHomeFromToolchain
@@ -60,4 +64,16 @@ class _plugin : ProjectPlugin({
 		appDir = installShadowDist.map { File(it.destinationDir, "lib") }
 		mainJar = shadowJar.flatMap { it.archiveFile }.map { it.asFile.name }
 	}
+	tasks.register<Zip>("jpackageDistZip") { fromJPackageDist(jpackageDist) }
+	tasks.register<Tar>("jpackageDistTar") { fromJPackageDist(jpackageDist) }
 })
+
+private fun AbstractArchiveTask.fromJPackageDist(jpackageDist: TaskProvider<JPackageDist>) {
+	group = DISTRIBUTION_GROUP
+
+	from(jpackageDist)
+	val jpackageDistOutput = jpackageDist.flatMap { it.outputDir }
+
+	destinationDirectory = jpackageDistOutput.map { it.asFile.parentFile }
+	archiveBaseName = jpackageDistOutput.map { it.asFile.name }
+}
