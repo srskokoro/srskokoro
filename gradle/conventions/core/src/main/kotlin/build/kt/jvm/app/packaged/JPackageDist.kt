@@ -103,9 +103,7 @@ abstract class JPackageDist : JPackageAbstractTask() {
 		args("--main-jar", mainJar.get())
 
 		val spec = spec
-		spec.packageVersionCode.orNull
-			?.let { args("--app-version", it) }
-
+		spec.packageVersionCode.orNull?.let { args("--app-version", it) }
 		spec.description.orNull?.let { args("--description", it) }
 		spec.vendor.orNull?.let { args("--vendor", it) }
 		spec.copyright.orNull?.let { args("--copyright", it) }

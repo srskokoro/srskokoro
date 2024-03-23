@@ -75,8 +75,6 @@ abstract class PackagedSpec @Inject constructor(objects: ObjectFactory) {
 	@get:Input
 	val packageVersionCode: Property<String> = objects.property()
 
-	// --
-
 	@get:Optional
 	@get:Input
 	val description: Property<String> = objects.property()
@@ -88,8 +86,6 @@ abstract class PackagedSpec @Inject constructor(objects: ObjectFactory) {
 	@get:Optional
 	@get:Input
 	val copyright: Property<String> = objects.property()
-
-	// --
 
 	@get:Optional
 	@get:InputFile
