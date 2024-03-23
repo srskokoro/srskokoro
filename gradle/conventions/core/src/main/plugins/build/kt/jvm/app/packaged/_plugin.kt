@@ -38,10 +38,6 @@ class _plugin : ProjectPlugin({
 		resources.source(jpackageRes)
 	}
 
-	val jdkHomeFromToolchain = javaToolchains
-		.compilerFor(java.toolchain)
-		.map { it.metadata.installationPath }
-
 	val tasks = tasks
 	val packaged_validate = tasks.register<PackagedSpecValidationTask>("checkPackagedSpec") {
 		spec = packaged
@@ -49,6 +45,10 @@ class _plugin : ProjectPlugin({
 		tasks.named("check") { dependsOn(it) }
 		tasks.runOnIdeSync(it)
 	}
+
+	val jdkHomeFromToolchain = javaToolchains
+		.compilerFor(java.toolchain)
+		.map { it.metadata.installationPath }
 
 	val installShadowDist = tasks.named<Sync>(ShadowApplicationPlugin.SHADOW_INSTALL_TASK_NAME)
 	val shadowJar = tasks.named<ShadowJar>(ShadowJavaPlugin.SHADOW_JAR_TASK_NAME)
