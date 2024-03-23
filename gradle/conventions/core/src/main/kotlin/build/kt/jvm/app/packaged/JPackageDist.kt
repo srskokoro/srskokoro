@@ -156,5 +156,9 @@ abstract class JPackageDist : JPackageAbstractTask() {
 		}
 
 		if (icon.isFile) args("--icon", icon)
+
+		spec.jvmArgs.get().forEach {
+			args("--java-options", it)
+		}
 	}
 }

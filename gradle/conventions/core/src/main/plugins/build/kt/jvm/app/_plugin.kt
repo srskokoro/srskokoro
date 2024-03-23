@@ -108,6 +108,6 @@ private fun CreateStartScripts.setUp() {
 	}
 }
 
-private fun setUpJvmArgsForDebug(jvmArgs: MutableList<String>) {
+internal fun setUpJvmArgsForDebug(jvmArgs: MutableList<String>) {
 	jvmArgs.add("-ea") // Also enables stacktrace recovery for kotlinx coroutines
 }

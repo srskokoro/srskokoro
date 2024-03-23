@@ -6,6 +6,7 @@ import org.gradle.api.file.FileTree
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
@@ -95,6 +96,9 @@ abstract class PackagedSpec @Inject constructor(objects: ObjectFactory) {
 	val licenseFileName: Property<String> = objects.property()
 
 	// --
+
+	@get:Input
+	val jvmArgs: ListProperty<String> = objects.listProperty()
 
 	@get:Internal
 	val jpackageResources: DirectoryProperty = objects.directoryProperty()

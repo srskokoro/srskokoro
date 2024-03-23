@@ -19,7 +19,9 @@ class test__plugin : FreeSpec({
 			val expectedJvmArgs = arrayOf("-Dfoo=bar").also {
 				application.applicationDefaultJvmArgs = it.asList()
 			}.let { applicationDefaultJvmArgs ->
-				listOf(*applicationDefaultJvmArgs, "-ea")
+				mutableListOf(*applicationDefaultJvmArgs).also {
+					setUpJvmArgsForDebug(it)
+				}
 			}
 			val tasks = tasks
 
