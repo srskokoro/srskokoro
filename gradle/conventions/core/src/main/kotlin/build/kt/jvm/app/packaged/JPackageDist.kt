@@ -28,8 +28,8 @@ abstract class JPackageDist : JPackageAbstractTask() {
 	}
 
 	/**
-	 * The main JAR of the application containing the main class (specified as a
-	 * path relative to the [appDir] path).
+	 * The main JAR of the application (containing the main class), specified as
+	 * a path relative to the [appDir] path).
 	 */
 	@get:Input
 	abstract val mainJar: Property<String>
