@@ -13,7 +13,7 @@ import org.gradle.process.ExecSpec
 import java.io.File
 import javax.inject.Inject
 
-abstract class JPackageDist : AbstractJPackageTask() {
+abstract class JPackageDist : JPackageAbstractTask() {
 
 	@get:Internal
 	abstract val appDir: DirectoryProperty
