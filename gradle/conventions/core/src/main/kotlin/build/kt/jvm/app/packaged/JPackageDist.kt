@@ -105,6 +105,9 @@ abstract class JPackageDist : AbstractJPackageTask() {
 		args("--main-jar", mainJar.get())
 
 		val spec = spec
+		spec.packageVersionCode.orNull
+			?.let { args("--app-version", it) }
+
 		val res = spec.jpackageResources.get()
 		val icon: File
 

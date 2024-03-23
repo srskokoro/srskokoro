@@ -60,6 +60,21 @@ abstract class PackagedSpec @Inject constructor(objects: ObjectFactory) {
 	@get:Input
 	val appTitleShort: Property<String> = objects.property()
 
+	/**
+	 * Version code used for the output package.
+	 *
+	 * This is more restrictive than [project.version][org.gradle.api.Project.setVersion]:
+	 * the value must consist of 2 or 3 nonnegative integer components. This
+	 * restriction exists so as to ensure that the version can be used for all
+	 * supported platforms.
+	 *
+	 * Used by the [`--app-version`](https://docs.oracle.com/en/java/javase/21/docs/specs/man/jpackage.html#option-app-version)
+	 * option passed to the `jpackage` command.
+	 */
+	@get:Optional
+	@get:Input
+	val packageVersionCode: Property<String> = objects.property()
+
 	// --
 
 	@get:Optional
@@ -91,12 +106,21 @@ abstract class PackagedSpec @Inject constructor(objects: ObjectFactory) {
 
 	companion object {
 		private val appNs_regex = Pattern.compile("""[A-Za-z0-9\-.]+""")
+		private val packageVersionCode_regex = Pattern.compile("""\d+\.\d+(?:\.\d+)?""")
 	}
 
 	fun validate(logger: Logger) {
 		check(appNs_regex.matcher(appNs.get()).matches()) {
 			"Property `${::appNs.name}` is invalid."
 		}
+		packageVersionCode.orNull?.let {
+			check(packageVersionCode_regex.matcher(it).matches()) {
+				"Property `${::packageVersionCode.name}` is invalid.\n" +
+					"- The version code must consist of 2 or 3 nonnegative integer components (e.g., \"1.3\")\n" +
+					"- Current value: $it"
+			}
+		}
+
 		if (appTitleShort.get().length >= 16) logger.warn("" +
 			"`Value for ${::appTitleShort.name}` seems too long to be " +
 			"displayed in the menu bar, in the dock (on macOS), etc."
