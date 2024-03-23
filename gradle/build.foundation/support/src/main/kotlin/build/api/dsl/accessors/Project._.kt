@@ -5,7 +5,9 @@ import org.gradle.api.Project
 import org.gradle.api.distribution.DistributionContainer
 import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.plugins.JavaApplication
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 
 val Project.gradlePlugin: GradlePluginDevelopmentExtension
@@ -21,9 +23,16 @@ val Project.baseOrNull: BasePluginExtension?
 val Project.distributions: DistributionContainer
 	get() = x("distributions")
 
+
+val Project.java: JavaPluginExtension
+	get() = x("java")
+
 val Project.application: JavaApplication
 	get() = x("application")
 
 
 val Project.sourceSets: SourceSetContainer
 	get() = x("sourceSets")
+
+val Project.javaToolchains: JavaToolchainService
+	get() = x("javaToolchains")
