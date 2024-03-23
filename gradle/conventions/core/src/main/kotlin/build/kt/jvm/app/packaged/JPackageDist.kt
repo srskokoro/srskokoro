@@ -5,6 +5,7 @@ import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
@@ -33,6 +34,10 @@ abstract class JPackageDist : JPackageAbstractTask() {
 	 */
 	@get:Input
 	abstract val mainJar: Property<String>
+
+	@get:Optional
+	@get:Input
+	abstract val mainClass: Property<String>
 
 	@get:OutputDirectory
 	abstract val outputDir: DirectoryProperty
@@ -101,6 +106,7 @@ abstract class JPackageDist : JPackageAbstractTask() {
 
 		args("-i", appDir.get().asFile)
 		args("--main-jar", mainJar.get())
+		mainClass.orNull?.let { args("--main-class", it) }
 
 		val spec = spec
 		spec.packageVersionCode.orNull?.let { args("--app-version", it) }
