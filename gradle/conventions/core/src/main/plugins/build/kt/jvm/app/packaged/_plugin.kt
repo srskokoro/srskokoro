@@ -1,6 +1,7 @@
 package build.kt.jvm.app.packaged
 
 import build.api.ProjectPlugin
+import build.api.dsl.*
 import build.api.dsl.accessors.java
 import build.api.dsl.accessors.javaToolchains
 import build.api.dsl.accessors.kotlinSourceSets
@@ -36,6 +37,13 @@ class _plugin : ProjectPlugin({
 		.map { it.metadata.installationPath }
 
 	val tasks = tasks
+	val packaged_validate = tasks.register<PackagedSpecValidationTask>("checkPackagedSpec") {
+		spec = packaged
+	}.also {
+		tasks.named("check") { dependsOn(it) }
+		tasks.runOnIdeSync(it)
+	}
+
 	val installShadowDist = tasks.named<Sync>(ShadowApplicationPlugin.SHADOW_INSTALL_TASK_NAME)
 	val shadowJar = tasks.named<ShadowJar>(ShadowJavaPlugin.SHADOW_JAR_TASK_NAME)
 
@@ -44,6 +52,7 @@ class _plugin : ProjectPlugin({
 
 		jdkHome = jdkHomeFromToolchain
 		spec = packaged
+		dependsOn(packaged_validate)
 
 		outputDir = this.project.layout.buildDirectory
 			.dir(packaged.bundleName.map { "jpackage/$it" })

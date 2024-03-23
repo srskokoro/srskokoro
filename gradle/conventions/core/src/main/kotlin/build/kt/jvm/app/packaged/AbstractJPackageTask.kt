@@ -1,19 +1,14 @@
 package build.kt.jvm.app.packaged
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Nested
 import org.gradle.work.DisableCachingByDefault
 
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
-abstract class AbstractJPackageTask : DefaultTask() {
-
-	@get:Nested
-	lateinit var spec: PackagedSpec
+abstract class AbstractJPackageTask : PackagedSpecProcessorTask() {
 
 	/**
 	 * The list of free arguments passed directly to the `jpackage` command.

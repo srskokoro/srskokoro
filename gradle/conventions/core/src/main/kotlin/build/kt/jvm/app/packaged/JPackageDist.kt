@@ -47,8 +47,6 @@ abstract class JPackageDist : AbstractJPackageTask() {
 
 	@TaskAction
 	fun execute() {
-		spec.validate(logger)
-
 		val outputDir = outputDir.get().asFile
 		files.delete(outputDir)
 		outputDir.mkdirs()
