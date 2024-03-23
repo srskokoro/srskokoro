@@ -30,5 +30,7 @@ abstract class JPackageAbstractTask : PackagedSpecAbstractTask() {
 
 	fun jdkPath(path: String): String = jdkHome.file(path).get().asFile.path
 
+	fun jdepsPath() = jdkPath("bin/jdeps")
+
 	fun jpackagePath() = jdkPath("bin/jpackage")
 }

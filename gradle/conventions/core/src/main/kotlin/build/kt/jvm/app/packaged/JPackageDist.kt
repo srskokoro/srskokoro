@@ -1,5 +1,6 @@
 package build.kt.jvm.app.packaged
 
+import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.provider.Property
@@ -11,6 +12,7 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import org.gradle.process.ExecSpec
+import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
 
@@ -56,13 +58,33 @@ abstract class JPackageDist : JPackageAbstractTask() {
 		files.delete(outputDir)
 		outputDir.mkdirs()
 
+		val appDir = appDir.get()
+		val mainJar = mainJar.get()
+
+		val jdepsOutput = ByteArrayOutputStream()
+		exec.exec {
+			standardOutput = jdepsOutput
+			executable = jdepsPath()
+			args("--print-module-deps")
+			args(appDir.file(mainJar).asFile)
+		}.run {
+			rethrowFailure()
+			assertNormalExitValue()
+		}
+		val addModulesArg = jdepsOutput.toString().trim()
+
 		val jpackageImageDest = File(temporaryDir, "d")
 		val jpackageImageName = spec.appTitle.get()
 
 		exec.exec {
 			executable = jpackagePath()
 			args = freeArgs.get()
-			setUpForJPackage(jpackageImageDest, jpackageImageName)
+			setUpForJPackage(
+				appDir, mainJar,
+				addModulesArg,
+				jpackageImageDest,
+				jpackageImageName,
+			)
 		}.run {
 			rethrowFailure()
 			assertNormalExitValue()
@@ -96,6 +118,9 @@ abstract class JPackageDist : JPackageAbstractTask() {
 	}
 
 	private fun ExecSpec.setUpForJPackage(
+		appDir: Directory,
+		mainJar: String,
+		addModulesArg: String,
 		jpackageImageDest: File,
 		jpackageImageName: String,
 	) {
@@ -104,9 +129,10 @@ abstract class JPackageDist : JPackageAbstractTask() {
 		args("-d", jpackageImageDest)
 		args("-n", jpackageImageName)
 
-		args("-i", appDir.get().asFile)
-		args("--main-jar", mainJar.get())
+		args("-i", appDir.asFile)
+		args("--main-jar", mainJar)
 		mainClass.orNull?.let { args("--main-class", it) }
+		args("--add-modules", addModulesArg)
 
 		val spec = spec
 		spec.packageVersionCode.orNull?.let { args("--app-version", it) }
