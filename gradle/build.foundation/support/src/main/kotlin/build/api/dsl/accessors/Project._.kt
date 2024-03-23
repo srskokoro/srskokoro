@@ -18,11 +18,11 @@ val Project.base: BasePluginExtension
 val Project.baseOrNull: BasePluginExtension?
 	get() = xs().getSafelyOrNull("base")
 
-val Project.application: JavaApplication
-	get() = x("application")
-
 val Project.distributions: DistributionContainer
 	get() = x("distributions")
+
+val Project.application: JavaApplication
+	get() = x("application")
 
 
 val Project.sourceSets: SourceSetContainer
