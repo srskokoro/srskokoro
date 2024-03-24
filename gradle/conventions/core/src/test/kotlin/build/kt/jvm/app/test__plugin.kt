@@ -2,6 +2,7 @@ package build.kt.jvm.app
 
 import assertk.assertThat
 import assertk.assertions.isNotNull
+import build.api.dsl.*
 import build.api.dsl.accessors.application
 import build.plugins.test.buildProject
 import build.plugins.test.io.TestTemp
@@ -20,7 +21,7 @@ class test__plugin : FreeSpec({
 				application.applicationDefaultJvmArgs = it.asList()
 			}.let { applicationDefaultJvmArgs ->
 				mutableListOf(*applicationDefaultJvmArgs).also {
-					setUpJvmArgsForDebug(it)
+					if (isDebug) setUpJvmArgsForDebug(it)
 				}
 			}
 			val tasks = tasks
