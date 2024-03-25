@@ -1,14 +1,11 @@
 package build.kt.jvm.app
 
 import build.api.ProjectPlugin
-import build.api.dsl.*
 import build.api.dsl.accessors.application
 import build.api.dsl.accessors.distributions
-import build.api.dsl.accessors.jvmArgs
 import com.github.jengelman.gradle.plugins.shadow.ShadowApplicationPlugin
 import org.gradle.api.distribution.Distribution
 import org.gradle.api.plugins.ApplicationPlugin
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskProvider
@@ -26,8 +23,6 @@ class _plugin : ProjectPlugin({
 	}
 
 	val application = application
-	if (isDebug) setUpJvmArgsForDebug(application.jvmArgs)
-
 	val applicationName = provider { application.applicationName }
 
 	val distributions = distributions
@@ -72,22 +67,6 @@ private fun JavaExec.setUp(installAppHomeDist: TaskProvider<Sync>, startScripts:
 		}
 		environment("APP_BASE_NAME", appBaseName.get())
 	})
-
-	// -=-
-
-	// KLUDGE to force the inclusion of `application.applicationDefaultJvmArgs`,
-	//  since `Gradle` seems to set it up via `jvmArguments.convention()` at the
-	//  moment.
-	jvmArgs = jvmArgs
-	// NOTE: It seems that `application.applicationDefaultJvmArgs` is set up via
-	// `convention()` now, contrary to what we previously believed, or perhaps,
-	// this was introduced to `Gradle` by mistake when `jvmArguments` was
-	// introduced (as an alternative to `jvmArgs`). Moreover, the docs isn't
-	// even clear about `applicationDefaultJvmArgs` being a "convention" value.
-	// - See, https://github.com/gradle/gradle/pull/23924
-	// - See also,
-	//   - https://github.com/gradle/gradle/issues/15239
-	//   - https://github.com/gradle/gradle/issues/13463#issuecomment-1468710781
 }
 
 private fun CreateStartScripts.setUp() {
@@ -96,8 +75,4 @@ private fun CreateStartScripts.setUp() {
 		// may be present if the application name changes).
 		outputDir?.deleteRecursively()
 	})
-}
-
-private fun setUpJvmArgsForDebug(jvmArgs: ListProperty<String>) {
-	jvmArgs.add("-ea") // Also enables stacktrace recovery for kotlinx coroutines
 }

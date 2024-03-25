@@ -8,6 +8,7 @@ import build.plugins.test.buildProject
 import build.plugins.test.io.TestTemp
 import build.test.hasExactly
 import io.kotest.core.spec.style.FreeSpec
+import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.kotlin.dsl.*
@@ -21,6 +22,7 @@ class test__plugin : FreeSpec({
 				.asList().also { application.jvmArgs.addAll(it) }
 				.let { ArrayList(it) }.apply { add("-ea") }
 
+			(this as ProjectInternal).evaluate()
 			val tasks = tasks
 
 			tasks.getByName<JavaExec>("run").run {
