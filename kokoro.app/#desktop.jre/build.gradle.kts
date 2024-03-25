@@ -19,7 +19,6 @@ application {
 }
 
 packaged {
-	bundleName = Build.APP_NAME
 	appNs = "$group.app"
 
 	appTitle = extra["kokoro.app.title"] as String

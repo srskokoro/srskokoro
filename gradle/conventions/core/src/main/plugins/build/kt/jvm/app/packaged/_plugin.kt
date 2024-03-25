@@ -3,6 +3,7 @@ package build.kt.jvm.app.packaged
 import build.api.ProjectPlugin
 import build.api.dsl.*
 import build.api.dsl.accessors.application
+import build.api.dsl.accessors.distributions
 import build.api.dsl.accessors.java
 import build.api.dsl.accessors.javaToolchains
 import build.api.dsl.accessors.jvmArgs
@@ -28,7 +29,8 @@ class _plugin : ProjectPlugin({
 	}
 
 	val packaged: PackagedSpec = xs().create("packaged")
-	packaged.bundleName.convention(provider { name })
+	val distributionBaseName = distributions.named("main").flatMap { it.distributionBaseName }
+	packaged.bundleName.convention(distributionBaseName)
 	packaged.appNs.convention(provider { "$group.$name" })
 
 	val jpackageResources = packaged.jpackageResources
