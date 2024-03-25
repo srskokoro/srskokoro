@@ -4,9 +4,11 @@ import build.api.ProjectPlugin
 import build.api.dsl.*
 import build.api.dsl.accessors.application
 import build.api.dsl.accessors.distributions
+import build.api.dsl.accessors.jvmArgs
 import com.github.jengelman.gradle.plugins.shadow.ShadowApplicationPlugin
 import org.gradle.api.distribution.Distribution
 import org.gradle.api.plugins.ApplicationPlugin
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskProvider
@@ -22,6 +24,9 @@ class _plugin : ProjectPlugin({
 		plugin("application")
 		plugin("com.github.johnrengelman.shadow")
 	}
+
+	val application = application
+	if (isDebug) setUpJvmArgsForDebug(application.jvmArgs)
 
 	val applicationName = provider { application.applicationName }
 
@@ -83,12 +88,6 @@ private fun JavaExec.setUp(installAppHomeDist: TaskProvider<Sync>, startScripts:
 	// - See also,
 	//   - https://github.com/gradle/gradle/issues/15239
 	//   - https://github.com/gradle/gradle/issues/13463#issuecomment-1468710781
-
-	// -=-
-
-	if (this.project.isDebug) {
-		jvmArgs(mutableListOf<String>().apply(::setUpJvmArgsForDebug))
-	}
 }
 
 private fun CreateStartScripts.setUp() {
@@ -97,17 +96,8 @@ private fun CreateStartScripts.setUp() {
 		// may be present if the application name changes).
 		outputDir?.deleteRecursively()
 	})
-
-	// -=-
-
-	if (this.project.isDebug) doFirst(fun(task) = with(task as CreateStartScripts) {
-		defaultJvmOpts = mutableListOf<String>().apply {
-			defaultJvmOpts?.let(::addAll)
-			setUpJvmArgsForDebug(this)
-		}
-	})
 }
 
-internal fun setUpJvmArgsForDebug(jvmArgs: MutableList<String>) {
+private fun setUpJvmArgsForDebug(jvmArgs: ListProperty<String>) {
 	jvmArgs.add("-ea") // Also enables stacktrace recovery for kotlinx coroutines
 }

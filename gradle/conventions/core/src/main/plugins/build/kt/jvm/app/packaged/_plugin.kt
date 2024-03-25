@@ -5,8 +5,8 @@ import build.api.dsl.*
 import build.api.dsl.accessors.application
 import build.api.dsl.accessors.java
 import build.api.dsl.accessors.javaToolchains
+import build.api.dsl.accessors.jvmArgs
 import build.api.dsl.accessors.kotlinSourceSets
-import build.kt.jvm.app.setUpJvmArgsForDebug
 import com.github.jengelman.gradle.plugins.shadow.ShadowApplicationPlugin
 import com.github.jengelman.gradle.plugins.shadow.ShadowJavaPlugin
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
@@ -41,8 +41,7 @@ class _plugin : ProjectPlugin({
 	}
 
 	packaged.jvmArgs.run {
-		addAll(provider(application::getApplicationDefaultJvmArgs))
-		addAll(provider { ArrayList<String>().also { setUpJvmArgsForDebug(it) } })
+		addAll(application.jvmArgs)
 	}
 
 	val tasks = tasks

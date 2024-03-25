@@ -2,13 +2,14 @@ package build.kt.jvm.app
 
 import assertk.assertThat
 import assertk.assertions.isNotNull
-import build.api.dsl.*
 import build.api.dsl.accessors.application
+import build.api.dsl.accessors.jvmArgs
 import build.plugins.test.buildProject
 import build.plugins.test.io.TestTemp
 import build.test.hasExactly
 import io.kotest.core.spec.style.FreeSpec
 import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.kotlin.dsl.*
 
 class test__plugin : FreeSpec({
@@ -16,13 +17,10 @@ class test__plugin : FreeSpec({
 		buildProject(TestTemp()).run {
 			apply(fun(x) { x.plugin<_plugin>() })
 
-			val expectedJvmArgs = arrayOf("-Dfoo=bar").also {
-				application.applicationDefaultJvmArgs = it.asList()
-			}.let { applicationDefaultJvmArgs ->
-				mutableListOf(*applicationDefaultJvmArgs).also {
-					if (isDebug) setUpJvmArgsForDebug(it)
-				}
-			}
+			val expectedJvmArgs = arrayOf("-Dfoo=bar")
+				.asList().also { application.jvmArgs.addAll(it) }
+				.let { ArrayList(it) }.apply { add("-ea") }
+
 			val tasks = tasks
 
 			tasks.getByName<JavaExec>("run").run {
@@ -30,6 +28,13 @@ class test__plugin : FreeSpec({
 			}
 			tasks.getByName<JavaExec>("runShadow").run {
 				assertThat(jvmArgs).isNotNull().hasExactly(expectedJvmArgs)
+			}
+
+			tasks.getByName<CreateStartScripts>("startScripts").run {
+				assertThat(defaultJvmOpts).isNotNull().hasExactly(expectedJvmArgs)
+			}
+			tasks.getByName<CreateStartScripts>("startShadowScripts").run {
+				assertThat(defaultJvmOpts).isNotNull().hasExactly(expectedJvmArgs)
 			}
 		}
 	}
