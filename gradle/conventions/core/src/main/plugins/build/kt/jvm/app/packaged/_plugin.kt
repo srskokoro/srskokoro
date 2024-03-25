@@ -27,7 +27,7 @@ class _plugin : ProjectPlugin({
 		plugin<build.kt.jvm.app._plugin>()
 	}
 
-	val packaged: PackagedSpec = extensions.create("packaged")
+	val packaged: PackagedSpec = xs().create("packaged")
 	packaged.bundleName.convention(provider { name })
 	packaged.appNs.convention(provider { "$group.$name" })
 
