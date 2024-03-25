@@ -100,12 +100,12 @@ private fun CreateStartScripts.setUp() {
 
 	// -=-
 
-	if (this.project.isDebug) {
+	if (this.project.isDebug) doFirst(fun(task) = with(task as CreateStartScripts) {
 		defaultJvmOpts = mutableListOf<String>().apply {
 			defaultJvmOpts?.let(::addAll)
 			setUpJvmArgsForDebug(this)
 		}
-	}
+	})
 }
 
 internal fun setUpJvmArgsForDebug(jvmArgs: MutableList<String>) {

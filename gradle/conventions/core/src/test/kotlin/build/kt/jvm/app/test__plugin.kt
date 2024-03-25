@@ -9,7 +9,6 @@ import build.plugins.test.io.TestTemp
 import build.test.hasExactly
 import io.kotest.core.spec.style.FreeSpec
 import org.gradle.api.tasks.JavaExec
-import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.kotlin.dsl.*
 
 class test__plugin : FreeSpec({
@@ -31,13 +30,6 @@ class test__plugin : FreeSpec({
 			}
 			tasks.getByName<JavaExec>("runShadow").run {
 				assertThat(jvmArgs).isNotNull().hasExactly(expectedJvmArgs)
-			}
-
-			tasks.getByName<CreateStartScripts>("startScripts").run {
-				assertThat(defaultJvmOpts).isNotNull().hasExactly(expectedJvmArgs)
-			}
-			tasks.getByName<CreateStartScripts>("startShadowScripts").run {
-				assertThat(defaultJvmOpts).isNotNull().hasExactly(expectedJvmArgs)
 			}
 		}
 	}
