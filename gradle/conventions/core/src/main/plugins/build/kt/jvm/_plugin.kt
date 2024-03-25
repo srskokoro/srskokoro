@@ -42,8 +42,9 @@ private fun Project.setUpApplicationJvmArgs() {
 	val application = application
 	(application as ExtensionAware).xs().add(typeOf(), "jvmArgs", jvmArgs)
 
-	val jvmArgsIterable = Iterable {
-		jvmArgs.orNull?.iterator()
+	val jvmArgsIterable: Iterable<String> = object : Iterable<String> {
+		override fun toString() = jvmArgs.toString()
+		override fun iterator() = jvmArgs.orNull?.iterator()
 			?: emptyList<String>().iterator()
 	}
 
