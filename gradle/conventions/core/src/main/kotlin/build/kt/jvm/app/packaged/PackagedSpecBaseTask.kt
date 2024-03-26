@@ -5,7 +5,7 @@ import org.gradle.api.tasks.Nested
 import org.gradle.work.DisableCachingByDefault
 
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
-abstract class PackagedSpecAbstractTask : DefaultTask() {
+abstract class PackagedSpecBaseTask : DefaultTask() {
 
 	@get:Nested
 	lateinit var spec: PackagedSpec

@@ -16,7 +16,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
 
-abstract class JPackageDist : JPackageAbstractTask() {
+abstract class JPackageDist : JPackageBaseTask() {
 
 	@get:Internal
 	abstract val appDir: DirectoryProperty

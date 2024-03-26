@@ -8,7 +8,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.work.DisableCachingByDefault
 
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
-abstract class JPackageAbstractTask : PackagedSpecAbstractTask() {
+abstract class JPackageBaseTask : PackagedSpecBaseTask() {
 
 	/**
 	 * The list of free arguments passed directly to the `jpackage` command.
