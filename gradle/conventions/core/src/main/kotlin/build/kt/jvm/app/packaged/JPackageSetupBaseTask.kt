@@ -22,12 +22,6 @@ abstract class JPackageSetupBaseTask : JPackageBaseTask() {
 	@get:Internal
 	abstract val iconResFileName: String
 
-	companion object {
-		const val RES_ICON_WIN_FILE = "icon-win.ico"
-		const val RES_ICON_MAC_FILE = "icon-mac.icns"
-		const val RES_ICON_LINUX_FILE = "icon-linux.png"
-	}
-
 	// --
 
 	@get:Internal
@@ -103,7 +97,7 @@ abstract class JPackageSetupBaseTask : JPackageBaseTask() {
 			args("--app-image", appImage.path)
 
 			val spec = spec
-			File(appImage, JPackageDist.DIR_LEGAL + File.separatorChar + spec.licenseFileName.get()).run {
+			File(appImage, DIR_LEGAL + File.separatorChar + spec.licenseFileName.get()).run {
 				if (isFile) args("--license-file", path)
 			}
 			File(spec.jpackageResources.file, iconResFileName).run {

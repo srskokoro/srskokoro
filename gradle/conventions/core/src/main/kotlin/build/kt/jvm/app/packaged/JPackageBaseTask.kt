@@ -73,4 +73,12 @@ abstract class JPackageBaseTask : PackagedSpecBaseTask() {
 			}
 		}
 	}
+
+	companion object {
+		const val DIR_LEGAL = "legal"
+
+		const val RES_ICON_WIN_FILE = "icon-win.ico"
+		const val RES_ICON_MAC_FILE = "icon-mac.icns"
+		const val RES_ICON_LINUX_FILE = "icon-linux.png"
+	}
 }

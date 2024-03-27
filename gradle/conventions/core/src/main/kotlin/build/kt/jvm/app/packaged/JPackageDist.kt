@@ -2,9 +2,6 @@ package build.kt.jvm.app.packaged
 
 import build.api.file.file
 import build.api.process.ExecArgs
-import build.kt.jvm.app.packaged.JPackageSetupBaseTask.Companion.RES_ICON_LINUX_FILE
-import build.kt.jvm.app.packaged.JPackageSetupBaseTask.Companion.RES_ICON_MAC_FILE
-import build.kt.jvm.app.packaged.JPackageSetupBaseTask.Companion.RES_ICON_WIN_FILE
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.provider.Property
@@ -168,9 +165,5 @@ abstract class JPackageDist : JPackageBaseTask() {
 			from(spec.bundleAdditions)
 			into(outputDir)
 		}
-	}
-
-	companion object {
-		const val DIR_LEGAL = "legal"
 	}
 }
