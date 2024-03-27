@@ -6,6 +6,7 @@ dependencies {
 	implementation("build.foundation:complement")
 	implementation("build.foundation:dependencies")
 
+	implementation(plugin("de.undercouch.download"))
 	implementation(plugin("com.github.johnrengelman.shadow"))
 
 	api(project(":support.kotlin-gradle-plugin"))

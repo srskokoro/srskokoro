@@ -82,6 +82,14 @@ dependencySettings {
 
 	//#region Build support
 
+	// WiX Toolset v3 -- https://github.com/wixtoolset/wix3/releases/
+	val wixBinZipUrl = "https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314-binaries.zip"
+	prop("build.wixBinZipUrl", wixBinZipUrl)
+
+	val download = "5.6.0" // https://github.com/michel-kraemer/gradle-download-task/releases
+	plugin("de.undercouch.download", download)
+	module("de.undercouch.download".marker(), download)
+
 	val shadow = "8.1.1" // https://github.com/johnrengelman/shadow/releases
 	plugin("com.github.johnrengelman.shadow", shadow)
 	module("com.github.johnrengelman.shadow".marker(), shadow)

@@ -46,5 +46,8 @@ tasks.startShadowScripts {
 }
 
 dependencies {
+	deps {
+		wixBinZipUrl = prop("build.wixBinZipUrl")
+	}
 	implementation(project(":kokoro.app"))
 }

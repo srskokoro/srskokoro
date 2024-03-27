@@ -67,6 +67,7 @@ abstract class JPackageSetupBaseTask : JPackageBaseTask() {
 		exec.exec {
 			executable = jpackagePath()
 			args(jpackageExecArgs)
+			jpackageConfigure()
 		}.run {
 			rethrowFailure()
 			assertNormalExitValue()
@@ -87,6 +88,8 @@ abstract class JPackageSetupBaseTask : JPackageBaseTask() {
 
 		del.deleteRecursively(tmpDestDir)
 	}
+
+	protected open fun ExecSpec.jpackageConfigure() = Unit
 
 	override fun initJPackageExecArgs() {
 		super.initJPackageExecArgs()

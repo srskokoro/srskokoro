@@ -14,10 +14,13 @@ import build.kt.jvm.app.packaged.mac.JPackageSetupDmg
 import build.kt.jvm.app.packaged.mac.JPackageSetupPkg
 import build.kt.jvm.app.packaged.win.JPackageSetupExe
 import build.kt.jvm.app.packaged.win.JPackageSetupMsi
+import build.kt.jvm.app.packaged.win.JPackageSetupWindowsBaseTask
+import build.kt.jvm.app.packaged.win.WixInstallTask
 import com.github.jengelman.gradle.plugins.shadow.ShadowApplicationPlugin
 import com.github.jengelman.gradle.plugins.shadow.ShadowJavaPlugin
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Action
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.bundling.Tar
@@ -101,20 +104,38 @@ class _plugin : ProjectPlugin({
 		outputFile = jpackageBuildDir.flatMap { it.file(outputFileName) }
 
 		appImage = jpackageDist.flatMap { it.outputDir }
-	}.also { config ->
+	}.also(fun(config) {
+		val wixBinZipUrlProp: Property<String> = objects.property()
+		projectThis.xs().add(typeOf(), "wixBinZipUrl", wixBinZipUrlProp)
+
 		when (JPackagePlatform.current) {
 			JPackagePlatform.WINDOWS -> {
-				tasks.register("jpackageSetupExe", JPackageSetupExe::class.java, config)
-				tasks.register("jpackageSetupMsi", JPackageSetupMsi::class.java, config)
+				val installWix by tasks.registering(WixInstallTask::class) {
+					wixBinZipUrl = wixBinZipUrlProp
+
+					val buildDir = this.project.layout.buildDirectory
+					wixBinZipDestination = buildDir.file("wix/bin.zip")
+					wixBinDestination = buildDir.dir("wix/bin")
+				}
+
+				Action<JPackageSetupWindowsBaseTask> {
+					config.execute(this)
+					wixBinaries = installWix.flatMap { it.wixBinDestination }
+				}.let(fun(config) {
+					tasks.register("jpackageSetupExe", JPackageSetupExe::class.java, config)
+					tasks.register("jpackageSetupMsi", JPackageSetupMsi::class.java, config)
+				})
 			}
+
 			JPackagePlatform.MACOS -> {
 				tasks.register("jpackageSetupDmg", JPackageSetupDmg::class.java, config)
 				tasks.register("jpackageSetupPkg", JPackageSetupPkg::class.java, config)
 			}
+
 			JPackagePlatform.LINUX -> {
 				tasks.register("jpackageSetupDeb", JPackageSetupDeb::class.java, config)
 				tasks.register("jpackageSetupRpm", JPackageSetupRpm::class.java, config)
 			}
 		}
-	}
+	})
 })
