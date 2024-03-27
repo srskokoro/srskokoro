@@ -1,6 +1,7 @@
 package build.kt.jvm.app.packaged
 
-import org.gradle.api.file.Directory
+import build.api.file.file
+import build.api.process.ExecArgs
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.provider.Property
@@ -11,7 +12,6 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
-import org.gradle.process.ExecSpec
 import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
@@ -52,64 +52,114 @@ abstract class JPackageDist : JPackageBaseTask() {
 	@get:Inject
 	protected abstract val exec: ExecOperations
 
+	/**
+	 * Provides a way to inspect the arguments used after execution; exposed
+	 * only for debugging purposes.
+	 *
+	 * @see org.apache.tools.ant.types.Commandline.toString
+	 */
+	@get:Internal
+	lateinit var jdepsExecArgs: ExecArgs
+
 	@TaskAction
-	fun execute() {
-		val outputDir = outputDir.get().asFile
+	open fun execute() {
+		val outputDir = outputDir.file
 		files.delete(outputDir)
 		outputDir.mkdirs()
 
-		val appDir = appDir.get()
+		// --
+
+		initJPackageExecArgs()
+
+		val tmpDestDir = temporaryDir
+		files.delete(tmpDestDir)
+
+		val appDir = appDir.file
 		val mainJar = mainJar.get()
+
+		jpackageExecArgs.apply {
+			args("-t", "app-image")
+			args("-d", tmpDestDir.path)
+			args("-i", appDir.path)
+			args("--main-jar", mainJar)
+			mainClass.orNull?.let {
+				args("--main-class", it)
+			}
+		}
+
+		jdepsExecArgs = ExecArgs {
+			args("--print-module-deps")
+			args(File(appDir, mainJar).path)
+		}
 
 		val jdepsOutput = ByteArrayOutputStream()
 		exec.exec {
 			standardOutput = jdepsOutput
 			executable = jdepsPath()
-			args("--print-module-deps")
-			args(appDir.file(mainJar).asFile)
+			args(jdepsExecArgs)
 		}.run {
 			rethrowFailure()
 			assertNormalExitValue()
 		}
-		val addModulesArg = jdepsOutput.toString().trim()
 
-		val jpackageImageDest = File(temporaryDir, "d")
-		val jpackageImageName = spec.appTitle.get()
+		jdepsOutput.toString().trim().let {
+			jpackageExecArgs.args("--add-modules", it)
+		}
+
+		val res = spec.jpackageResources.file
+		val icon: File
+
+		when (JPackagePlatform.current) {
+			JPackagePlatform.WINDOWS -> {
+				icon = File(res, "icon-win.ico")
+			}
+			JPackagePlatform.MACOS -> {
+				icon = File(res, "icon-mac.icns")
+			}
+			JPackagePlatform.LINUX -> {
+				icon = File(res, "icon-linux.png")
+			}
+		}
+
+		if (icon.isFile) {
+			jpackageExecArgs.args("--icon", icon.path)
+		}
+
+		jpackageExecArgs.apply {
+			spec.jvmArgs.get().forEach {
+				args("--java-options", it)
+			}
+		}
 
 		exec.exec {
 			executable = jpackagePath()
-			args = freeArgs.get()
-			setUpForJPackage(
-				appDir, mainJar,
-				addModulesArg,
-				jpackageImageDest,
-				jpackageImageName,
-			)
+			args(jpackageExecArgs)
 		}.run {
 			rethrowFailure()
 			assertNormalExitValue()
 		}
 
-		for (s in File(jpackageImageDest, jpackageImageName).listFiles()!!) {
+		// --
+
+		for (x in File(tmpDestDir, jpackageExecArgs_name).listFiles()!!) {
 			// Necessary since `jpackage` seems to output executable files as
 			// read-only, which may prevent the JVM from deleting them.
-			s.setWritable(true) // Allow the JVM (and Gradle) to delete it.
+			x.setWritable(true) // Allow the JVM (and Gradle) to delete it.
 
-			File(outputDir, s.name).let { d ->
-				if (!s.renameTo(d))
-					throw FileSystemException(s, d, "Failed to move file.")
+			File(outputDir, x.name).let { d ->
+				if (!x.renameTo(d))
+					throw FileSystemException(x, d, "Failed to move file.")
 			}
 		}
 
 		val files = files
-		files.delete(jpackageImageDest)
-
+		files.delete(tmpDestDir)
 		files.copy {
 			val spec = spec
 			spec.licenseFile.orNull?.let { licenseFile ->
 				from(licenseFile) {
 					rename { spec.licenseFileName.get() }
-					into("legal")
+					into(DIR_LEGAL)
 				}
 			}
 			from(spec.bundleAdditions)
@@ -117,48 +167,7 @@ abstract class JPackageDist : JPackageBaseTask() {
 		}
 	}
 
-	private fun ExecSpec.setUpForJPackage(
-		appDir: Directory,
-		mainJar: String,
-		addModulesArg: String,
-		jpackageImageDest: File,
-		jpackageImageName: String,
-	) {
-		args("-t", "app-image")
-
-		args("-d", jpackageImageDest)
-		args("-n", jpackageImageName)
-
-		args("-i", appDir.asFile)
-		args("--main-jar", mainJar)
-		mainClass.orNull?.let { args("--main-class", it) }
-		args("--add-modules", addModulesArg)
-
-		val spec = spec
-		spec.packageVersionCode.orNull?.let { args("--app-version", it) }
-		spec.description.orNull?.let { args("--description", it) }
-		spec.vendor.orNull?.let { args("--vendor", it) }
-		spec.copyright.orNull?.let { args("--copyright", it) }
-
-		val res = spec.jpackageResources.get()
-		val icon: File
-
-		when (JPackagePlatform.current) {
-			JPackagePlatform.WINDOWS -> {
-				icon = res.file("icon-win.ico").asFile
-			}
-			JPackagePlatform.MACOS -> {
-				icon = res.file("icon-mac.icns").asFile
-			}
-			JPackagePlatform.LINUX -> {
-				icon = res.file("icon-linux.png").asFile
-			}
-		}
-
-		if (icon.isFile) args("--icon", icon)
-
-		spec.jvmArgs.get().forEach {
-			args("--java-options", it)
-		}
+	companion object {
+		const val DIR_LEGAL = "legal"
 	}
 }
