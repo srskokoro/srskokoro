@@ -41,7 +41,10 @@ class MainActivity : Activity() {
 			ex.oldHandle.postOrDiscard(UiBus.NOTHING, null) // Bring to front!
 			return // Done. Skip code below.
 		}.launch {
-			addFlags(Intent.FLAG_ACTIVITY_RETAIN_IN_RECENTS)
+			addFlags(0 or
+				Intent.FLAG_ACTIVITY_RETAIN_IN_RECENTS or
+				Intent.FLAG_ACTIVITY_NO_ANIMATION
+			)
 		}
 	}
 }
