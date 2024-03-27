@@ -52,7 +52,6 @@ abstract class JPackageSetupBaseTask : JPackageBaseTask() {
 	open fun execute() {
 		val outputFile = outputFile.file
 		del.delete(outputFile)
-		outputFile.parentFile.mkdirs()
 
 		// --
 
