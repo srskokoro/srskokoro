@@ -8,6 +8,12 @@ import build.api.dsl.accessors.java
 import build.api.dsl.accessors.javaToolchains
 import build.api.dsl.accessors.jvmArgs
 import build.api.dsl.accessors.kotlinSourceSets
+import build.kt.jvm.app.packaged.linux.JPackageSetupDeb
+import build.kt.jvm.app.packaged.linux.JPackageSetupRpm
+import build.kt.jvm.app.packaged.mac.JPackageSetupDmg
+import build.kt.jvm.app.packaged.mac.JPackageSetupPkg
+import build.kt.jvm.app.packaged.win.JPackageSetupExe
+import build.kt.jvm.app.packaged.win.JPackageSetupMsi
 import com.github.jengelman.gradle.plugins.shadow.ShadowApplicationPlugin
 import com.github.jengelman.gradle.plugins.shadow.ShadowJavaPlugin
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
@@ -82,5 +88,33 @@ class _plugin : ProjectPlugin({
 	}.also { config ->
 		tasks.register("jpackageDistZip", Zip::class.java, config)
 		tasks.register("jpackageDistTar", Tar::class.java, config)
+	}
+
+	Action<JPackageSetupBaseTask> {
+		group = DISTRIBUTION_GROUP
+
+		jdkHome = jdkHomeFromToolchain
+		spec = packaged
+		dependsOn(packaged_validate)
+
+		val outputFileName = packaged.bundleName.map { "$it-setup.$type" }
+		outputFile = jpackageBuildDir.flatMap { it.file(outputFileName) }
+
+		appImage = jpackageDist.flatMap { it.outputDir }
+	}.also { config ->
+		when (JPackagePlatform.current) {
+			JPackagePlatform.WINDOWS -> {
+				tasks.register("jpackageSetupExe", JPackageSetupExe::class.java, config)
+				tasks.register("jpackageSetupMsi", JPackageSetupMsi::class.java, config)
+			}
+			JPackagePlatform.MACOS -> {
+				tasks.register("jpackageSetupDmg", JPackageSetupDmg::class.java, config)
+				tasks.register("jpackageSetupPkg", JPackageSetupPkg::class.java, config)
+			}
+			JPackagePlatform.LINUX -> {
+				tasks.register("jpackageSetupDeb", JPackageSetupDeb::class.java, config)
+				tasks.register("jpackageSetupRpm", JPackageSetupRpm::class.java, config)
+			}
+		}
 	}
 })

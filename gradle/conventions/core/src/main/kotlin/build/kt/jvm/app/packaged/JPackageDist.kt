@@ -2,6 +2,9 @@ package build.kt.jvm.app.packaged
 
 import build.api.file.file
 import build.api.process.ExecArgs
+import build.kt.jvm.app.packaged.JPackageSetupBaseTask.Companion.RES_ICON_LINUX_FILE
+import build.kt.jvm.app.packaged.JPackageSetupBaseTask.Companion.RES_ICON_MAC_FILE
+import build.kt.jvm.app.packaged.JPackageSetupBaseTask.Companion.RES_ICON_WIN_FILE
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.provider.Property
@@ -111,13 +114,13 @@ abstract class JPackageDist : JPackageBaseTask() {
 
 		when (JPackagePlatform.current) {
 			JPackagePlatform.WINDOWS -> {
-				icon = File(res, "icon-win.ico")
+				icon = File(res, RES_ICON_WIN_FILE)
 			}
 			JPackagePlatform.MACOS -> {
-				icon = File(res, "icon-mac.icns")
+				icon = File(res, RES_ICON_MAC_FILE)
 			}
 			JPackagePlatform.LINUX -> {
-				icon = File(res, "icon-linux.png")
+				icon = File(res, RES_ICON_LINUX_FILE)
 			}
 		}
 
