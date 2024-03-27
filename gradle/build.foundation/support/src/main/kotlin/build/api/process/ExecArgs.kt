@@ -1,5 +1,6 @@
 package build.api.process
 
+import org.apache.tools.ant.types.Commandline
 import java.util.LinkedList
 
 @Suppress("NOTHING_TO_INLINE")
@@ -46,4 +47,11 @@ open class ExecArgs : LinkedList<String>() {
 			configure: ExecArgs.() -> Unit = {},
 		) = ExecArgs().apply(configure)
 	}
+
+	/**
+	 * Quotes the arguments in a way that makes them usable as command line
+	 * arguments.
+	 * @return Every argument split by spaces and quoted by quoting rules.
+	 */
+	override fun toString(): String = Commandline.toString(toArray(arrayOfNulls(size)))
 }

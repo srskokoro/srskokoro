@@ -60,7 +60,7 @@ abstract class JPackageDist : JPackageBaseTask() {
 	 * Provides a way to inspect the arguments used after execution; exposed
 	 * only for debugging purposes.
 	 *
-	 * @see org.apache.tools.ant.types.Commandline.toString
+	 * @see ExecArgs.toString
 	 */
 	@get:Internal
 	lateinit var jdepsExecArgs: ExecArgs
