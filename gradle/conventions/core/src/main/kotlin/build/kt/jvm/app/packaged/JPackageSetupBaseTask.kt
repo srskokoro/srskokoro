@@ -3,12 +3,13 @@ package build.kt.jvm.app.packaged
 import build.api.file.file
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
+import org.gradle.internal.file.Deleter
 import org.gradle.process.ExecOperations
+import org.gradle.process.ExecSpec
 import org.gradle.work.DisableCachingByDefault
 import java.io.File
 import javax.inject.Inject
@@ -42,7 +43,7 @@ abstract class JPackageSetupBaseTask : JPackageBaseTask() {
 	// --
 
 	@get:Inject
-	protected abstract val files: FileOperations
+	protected abstract val del: Deleter
 
 	@get:Inject
 	protected abstract val exec: ExecOperations
@@ -50,7 +51,7 @@ abstract class JPackageSetupBaseTask : JPackageBaseTask() {
 	@TaskAction
 	open fun execute() {
 		val outputFile = outputFile.file
-		files.delete(outputFile)
+		del.delete(outputFile)
 		outputFile.parentFile.mkdirs()
 
 		// --
@@ -58,7 +59,7 @@ abstract class JPackageSetupBaseTask : JPackageBaseTask() {
 		initJPackageExecArgs()
 
 		val tmpDestDir = temporaryDir
-		files.delete(tmpDestDir)
+		del.ensureEmptyDirectory(tmpDestDir)
 
 		jpackageExecArgs.apply {
 			args("-d", tmpDestDir.path)
@@ -85,7 +86,7 @@ abstract class JPackageSetupBaseTask : JPackageBaseTask() {
 			)
 		}
 
-		files.delete(tmpDestDir)
+		del.deleteRecursively(tmpDestDir)
 	}
 
 	override fun initJPackageExecArgs() {

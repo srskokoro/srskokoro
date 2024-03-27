@@ -11,6 +11,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
+import org.gradle.internal.file.Deleter
 import org.gradle.process.ExecOperations
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -47,6 +48,9 @@ abstract class JPackageDist : JPackageBaseTask() {
 	// --
 
 	@get:Inject
+	protected abstract val del: Deleter
+
+	@get:Inject
 	protected abstract val files: FileOperations
 
 	@get:Inject
@@ -64,15 +68,14 @@ abstract class JPackageDist : JPackageBaseTask() {
 	@TaskAction
 	open fun execute() {
 		val outputDir = outputDir.file
-		files.delete(outputDir)
-		outputDir.mkdirs()
+		del.ensureEmptyDirectory(outputDir)
 
 		// --
 
 		initJPackageExecArgs()
 
 		val tmpDestDir = temporaryDir
-		files.delete(tmpDestDir)
+		del.ensureEmptyDirectory(tmpDestDir)
 
 		val appDir = appDir.file
 		val mainJar = mainJar.get()
@@ -152,8 +155,7 @@ abstract class JPackageDist : JPackageBaseTask() {
 			}
 		}
 
-		val files = files
-		files.delete(tmpDestDir)
+		del.deleteRecursively(tmpDestDir)
 		files.copy {
 			val spec = spec
 			spec.licenseFile.orNull?.let { licenseFile ->
