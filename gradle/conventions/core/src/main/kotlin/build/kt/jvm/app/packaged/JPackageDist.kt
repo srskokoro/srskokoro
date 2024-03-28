@@ -132,7 +132,7 @@ abstract class JPackageDist : JPackageBaseTask() {
 			}.visit {
 				val path = file.absolutePath
 				check(',' !in path) {
-					"Option `--app-content` does not support paths with commas.\n" +
+					"Option `--app-content` does not support paths with commas (i.e., ',')\n" +
 						"- Offending path: $path"
 					// See, https://docs.oracle.com/en/java/javase/21/docs/specs/man/jpackage.html#options-for-creating-the-application-image
 				}
