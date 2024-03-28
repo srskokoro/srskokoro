@@ -8,7 +8,7 @@ import kokoro.app.ui.DummyWindow
 import kokoro.app.ui.engine.UiBus
 import kokoro.app.ui.engine.window.WvWindowFactory
 import kokoro.app.ui.engine.window.WvWindowHandle
-import kokoro.app.ui.engine.window.WvWindowHandleGroup
+import kokoro.app.ui.engine.window.WvWindowManager
 import kokoro.internal.annotation.MainThread
 
 class MainActivity : Activity() {
@@ -36,7 +36,7 @@ class MainActivity : Activity() {
 		try {
 			val fid = WvWindowFactory.id<DummyWindow>() // TODO!
 			WvWindowHandle.globalRoot.create("MAIN", fid)
-		} catch (ex: WvWindowHandleGroup.IdConflictException) {
+		} catch (ex: WvWindowManager.IdConflictException) {
 			// Already launched before and currently not closed.
 			ex.oldHandle.postOrDiscard(UiBus.NOTHING, null) // Bring to front!
 			return // Done. Skip code below.

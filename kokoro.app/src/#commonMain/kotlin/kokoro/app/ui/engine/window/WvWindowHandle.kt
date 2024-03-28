@@ -6,8 +6,8 @@ import kokoro.internal.annotation.MainThread
 expect class WvWindowHandle @nook constructor(
 	id: String?,
 	windowFactoryId: WvWindowFactoryId,
-	parent: WvWindowHandleGroup?,
-) : WvWindowHandleGroup {
+	parent: WvWindowManager?,
+) : WvWindowManager {
 
 	override val id: String?
 

@@ -15,18 +15,18 @@ import kotlinx.atomicfu.locks.synchronized
 import kotlin.jvm.JvmField
 
 @OptIn(nook::class)
-abstract class WvWindowHandleGroup @nook constructor(
+abstract class WvWindowManager @nook constructor(
 	val windowFactoryId: WvWindowFactoryId,
-	parent: WvWindowHandleGroup?,
+	parent: WvWindowManager?,
 ) {
 	abstract val id: String?
 
 	/** WARNING: Must only be modified from the main thread. */
-	@JvmField @nook var parent_: WvWindowHandleGroup? = parent
-	val parent: WvWindowHandleGroup? inline get() = parent_
+	@JvmField @nook var parent_: WvWindowManager? = parent
+	val parent: WvWindowManager? inline get() = parent_
 
 	/** WARNING: Must only be accessed (and modified) from the main thread. */
-	private val children = MutableScatterSet<WvWindowHandleGroup>()
+	private val children = MutableScatterSet<WvWindowManager>()
 
 	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
@@ -134,7 +134,7 @@ abstract class WvWindowHandleGroup @nook constructor(
 		fun create(
 			id: String,
 			windowFactoryId: WvWindowFactoryId,
-			parent: WvWindowHandleGroup?,
+			parent: WvWindowManager?,
 		): WvWindowHandle {
 			assertThreadMain()
 
@@ -160,27 +160,27 @@ abstract class WvWindowHandleGroup @nook constructor(
 
 @Suppress("NOTHING_TO_INLINE")
 @AnyThread
-inline fun WvWindowHandle.Companion.get(id: String) = WvWindowHandleGroup.get(id)
+inline fun WvWindowHandle.Companion.get(id: String) = WvWindowManager.get(id)
 
 @Suppress("NOTHING_TO_INLINE")
 @AnyThread
 inline fun WvWindowHandle.Companion.get(id: String, windowFactoryId: WvWindowFactoryId) =
-	WvWindowHandleGroup.get(id, windowFactoryId)
+	WvWindowManager.get(id, windowFactoryId)
 
 @Suppress("NOTHING_TO_INLINE")
 @AnyThread
-inline fun WvWindowHandle.Companion.createClosed() = WvWindowHandleGroup.createClosed()
+inline fun WvWindowHandle.Companion.createClosed() = WvWindowManager.createClosed()
 
 @Suppress("NOTHING_TO_INLINE")
 @AnyThread
 inline fun WvWindowHandle.Companion.createClosed(windowFactoryId: WvWindowFactoryId) =
-	WvWindowHandleGroup.createClosed(windowFactoryId)
+	WvWindowManager.createClosed(windowFactoryId)
 
 @Suppress("NOTHING_TO_INLINE")
 @MainThread
-@Throws(WvWindowHandleGroup.IdConflictException::class)
+@Throws(WvWindowManager.IdConflictException::class)
 inline fun WvWindowHandle.Companion.create(
 	id: String,
 	windowFactoryId: WvWindowFactoryId,
-	parent: WvWindowHandleGroup?,
-) = WvWindowHandleGroup.create(id, windowFactoryId, parent)
+	parent: WvWindowManager?,
+) = WvWindowManager.create(id, windowFactoryId, parent)

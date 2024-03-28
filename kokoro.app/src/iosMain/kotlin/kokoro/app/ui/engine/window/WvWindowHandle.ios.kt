@@ -7,8 +7,8 @@ import kokoro.internal.annotation.MainThread
 actual class WvWindowHandle @nook actual constructor(
 	id: String?,
 	windowFactoryId: WvWindowFactoryId,
-	parent: WvWindowHandleGroup?,
-) : WvWindowHandleGroup(windowFactoryId, parent) {
+	parent: WvWindowManager?,
+) : WvWindowManager(windowFactoryId, parent) {
 
 	actual override val id: String?
 		get() = TODO("Not yet implemented")

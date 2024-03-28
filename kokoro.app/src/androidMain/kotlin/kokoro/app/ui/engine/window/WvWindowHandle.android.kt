@@ -17,8 +17,8 @@ import kokoro.internal.os.SerializationEncoded.Companion.getSerializationEncoded
 actual class WvWindowHandle @nook actual constructor(
 	id: String?,
 	windowFactoryId: WvWindowFactoryId,
-	parent: WvWindowHandleGroup?,
-) : WvWindowHandleGroup(windowFactoryId, parent) {
+	parent: WvWindowManager?,
+) : WvWindowManager(windowFactoryId, parent) {
 
 	/** WARNING: Must only be modified from the main thread. */
 	@JvmField @nook var uri_ =
