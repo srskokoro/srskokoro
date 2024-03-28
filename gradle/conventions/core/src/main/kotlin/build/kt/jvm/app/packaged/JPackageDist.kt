@@ -131,10 +131,10 @@ abstract class JPackageDist : JPackageBaseTask() {
 				include("*")
 			}.visit {
 				val path = file.absolutePath
-				check(',' !in path) {
-					"Option `--app-content` does not support paths with commas (i.e., ',')\n" +
+				check(path.none { it == ',' || it == '\'' || it == '"' }) {
+					"Option `--app-content` does not support paths containing commas (i.e., ',') or quotes (i.e., `\'` or `\"`)\n" +
 						"- Offending path: $path"
-					// See, https://docs.oracle.com/en/java/javase/21/docs/specs/man/jpackage.html#options-for-creating-the-application-image
+					// See also, https://docs.oracle.com/en/java/javase/21/docs/specs/man/jpackage.html#options-for-creating-the-application-image
 				}
 				args("--app-content", path)
 			}
