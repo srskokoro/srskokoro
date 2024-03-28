@@ -32,6 +32,14 @@ packaged {
 	licenseFile = rootProject.file("LICENSE.txt", PathValidation.FILE)
 }
 
+distributions {
+	appHome {
+		contents.from(packaged.licenseFile) {
+			into("legal")
+		}
+	}
+}
+
 tasks.shadowJar {
 	archiveFileName = Build.APP_SHADOW_JAR
 }
