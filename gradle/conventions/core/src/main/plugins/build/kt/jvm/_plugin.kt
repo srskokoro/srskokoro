@@ -14,6 +14,8 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.kotlin.dsl.*
+import java.io.ObjectStreamException
+import java.io.Serializable
 
 class _plugin : ProjectPlugin({
 	apply {
@@ -33,11 +35,15 @@ class _plugin : ProjectPlugin({
 })
 
 private class JvmArgsIterable(
-	private val jvmArgsProperty: ListProperty<String>,
-) : Iterable<String> {
-	override fun toString() = "JvmArgsIterable(${jvmArgsProperty.orNull})"
-	override fun iterator() = jvmArgsProperty.orNull?.iterator()
-		?: emptyList<String>().iterator()
+	private val jvmArgs: ListProperty<String>,
+) : Iterable<String>, Serializable {
+	private fun asList(): List<String> = jvmArgs.orNull ?: emptyList()
+	override fun toString() = "JvmArgsIterable(${asList()})"
+	override fun iterator() = asList().iterator()
+
+	@Suppress("unused")
+	@Throws(ObjectStreamException::class)
+	private fun writeReplace(): Any = asList().toTypedArray().asList()
 }
 
 /**
