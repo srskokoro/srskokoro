@@ -76,10 +76,6 @@ abstract class JPackageSetupBaseTask : JPackageBaseTask() {
 		// --
 
 		tmpDestDir.listFiles()!!.single().let { x ->
-			// Necessary since `jpackage` seems to output executable files as
-			// read-only, which may prevent the JVM from deleting/moving them.
-			x.setWritable(true)
-
 			if (!x.renameTo(outputFile)) throw FileSystemException(
 				x, outputFile,
 				"Failed to move file.",
