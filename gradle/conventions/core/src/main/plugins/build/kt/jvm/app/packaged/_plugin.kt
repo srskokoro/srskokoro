@@ -115,6 +115,7 @@ class _plugin : ProjectPlugin({
 
 					val buildDir = this.project.layout.buildDirectory
 					wixBinZipDestination = buildDir.file("wix/bin.zip")
+					wixBinZipPropertiesDestination = buildDir.file("wix/bin.zip.properties")
 					wixBinDestination = buildDir.dir("wix/bin")
 				}
 
