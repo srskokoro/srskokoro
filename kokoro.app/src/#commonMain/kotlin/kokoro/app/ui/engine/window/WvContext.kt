@@ -37,7 +37,7 @@ abstract class WvContext(
 	 * [UiState] has not been created yet, the saved state is first loaded as
 	 * the initial value of the [UiState] that would be returned by this method.
 	 *
-	 * Subsequent calls this method with the same [bus] argument will always
+	 * Subsequent calls to this method with the same [bus] argument will always
 	 * return the same [UiState] instance as before.
 	 *
 	 * @see WvWindow.onSaveState
