@@ -14,7 +14,7 @@ class MainApplication : CoreApplication() {
 
 		SerializationEncoded.init(EmptySerializersModule()) // TODO!
 
-		@Suppress("DEPRECATION_ERROR") WvWindowHandle_globalInit()
 		@Suppress("DEPRECATION_ERROR") WvWindowFactory.globalInit()
+		@Suppress("DEPRECATION_ERROR") WvWindowHandle_globalInit()
 	}
 }
