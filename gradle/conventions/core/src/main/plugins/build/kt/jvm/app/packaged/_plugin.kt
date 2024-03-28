@@ -8,6 +8,7 @@ import build.api.dsl.accessors.java
 import build.api.dsl.accessors.javaToolchains
 import build.api.dsl.accessors.jvmArgs
 import build.api.dsl.accessors.kotlinSourceSets
+import build.kt.jvm.app.DIST_APP_HOME_INSTALL_TASK_NAME
 import build.kt.jvm.app.packaged.linux.JPackageSetupDeb
 import build.kt.jvm.app.packaged.linux.JPackageSetupRpm
 import build.kt.jvm.app.packaged.mac.JPackageSetupDmg
@@ -54,6 +55,12 @@ class _plugin : ProjectPlugin({
 	}
 
 	val tasks = tasks
+	tasks.named<Sync>(DIST_APP_HOME_INSTALL_TASK_NAME).let {
+		packaged.bundleAdditions.from(it)
+	}
+
+	// --
+
 	val packaged_validate = tasks.register<PackagedSpecValidationTask>("checkPackagedSpec") {
 		spec = packaged
 	}.also {

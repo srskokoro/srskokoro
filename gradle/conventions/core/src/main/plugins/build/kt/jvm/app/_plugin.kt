@@ -12,8 +12,8 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.kotlin.dsl.*
 
-private const val DIST_APP_HOME_NAME = "appHome"
-private const val DIST_APP_HOME_INSTALL_TASK_NAME = "installAppHomeDist"
+internal const val DIST_APP_HOME_NAME = "appHome"
+internal const val DIST_APP_HOME_INSTALL_TASK_NAME = "installAppHomeDist"
 
 class _plugin : ProjectPlugin({
 	apply {
