@@ -134,26 +134,28 @@ abstract class JPackageDist : JPackageBaseTask() {
 			}
 		}
 
-		exec.exec {
+		val result = exec.exec {
 			executable = jpackagePath()
 			args(jpackageExecArgs)
-		}.run {
+		}.runCatching {
 			rethrowFailure()
 			assertNormalExitValue()
 		}
 
 		// --
 
+		val isSuccess = result.isSuccess
 		for (x in File(tmpDestDir, jpackageExecArgs_name).listFiles()!!) {
 			// Necessary since `jpackage` seems to output executable files as
 			// read-only, which may prevent the JVM from deleting them.
 			x.setWritable(true) // Allow the JVM (and Gradle) to delete it.
 
-			File(outputDir, x.name).let { d ->
+			if (isSuccess) File(outputDir, x.name).let { d ->
 				if (!x.renameTo(d))
 					throw FileSystemException(x, d, "Failed to move file.")
 			}
 		}
+		result.onFailure { throw it }
 
 		del.deleteRecursively(tmpDestDir)
 		files.copy {
