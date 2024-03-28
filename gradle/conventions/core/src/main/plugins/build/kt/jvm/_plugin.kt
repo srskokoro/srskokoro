@@ -3,7 +3,6 @@ package build.kt.jvm
 import build.api.ProjectPlugin
 import build.api.dsl.*
 import build.api.dsl.accessors.application
-import build.api.dsl.accessors.jvmArgs
 import build.api.dsl.accessors.testImplementation
 import build.setUp
 import com.github.jengelman.gradle.plugins.shadow.ShadowApplicationPlugin
@@ -59,7 +58,7 @@ private fun Project.setUpApplicationJvmArgs() {
 	// -=-
 
 	if (isDebug) afterEvaluate {
-		setUpJvmArgsForDebug(application.jvmArgs)
+		setUpJvmArgsForDebug(jvmArgs)
 	}
 
 	val tasks = tasks
