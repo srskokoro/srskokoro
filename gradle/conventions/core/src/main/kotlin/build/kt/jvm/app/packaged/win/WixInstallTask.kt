@@ -59,7 +59,6 @@ abstract class WixInstallTask : DefaultTask() {
 		downloader.apply {
 			src(wixBinZipUrl)
 			dest(wixBinZipDestination)
-			overwrite(true)
 		}.execute().get()
 
 		files.sync {
