@@ -18,7 +18,7 @@ value class WvWindowFactoryId private constructor(
 		 */
 		val NOTHING: WvWindowFactoryId = wrap(::NOTHING.name)
 
-		inline fun <reified W : WvWindow> of(tag: String?) = wrap(
+		inline fun <reified W : WvWindow> of(tag: String? = null) = wrap(
 			W::class.qualifiedName.toString().let { type ->
 				if (tag == null) type else "$type#$tag"
 			},
