@@ -32,6 +32,14 @@ class _plugin : ProjectPlugin({
 	}
 })
 
+private class JvmArgsIterable(
+	private val jvmArgsProperty: ListProperty<String>,
+) : Iterable<String> {
+	override fun toString() = "JvmArgsIterable(${jvmArgsProperty.orNull})"
+	override fun iterator() = jvmArgsProperty.orNull?.iterator()
+		?: emptyList<String>().iterator()
+}
+
 /**
  * @see build.api.dsl.accessors.jvmArgs
  */
@@ -41,12 +49,7 @@ private fun Project.setUpApplicationJvmArgs() {
 	val application = application
 	(application as ExtensionAware).xs().add(typeOf(), "jvmArgs", jvmArgs)
 
-	val jvmArgsIterable: Iterable<String> = object : Iterable<String> {
-		override fun toString() = jvmArgs.toString()
-		override fun iterator() = jvmArgs.orNull?.iterator()
-			?: emptyList<String>().iterator()
-	}
-
+	val jvmArgsIterable: Iterable<String> = JvmArgsIterable(jvmArgs)
 	application.applicationDefaultJvmArgs = jvmArgsIterable
 	afterEvaluate(fun Project.(): Unit = afterEvaluate(fun Project.() = afterEvaluate(fun(_) {
 		check(application.applicationDefaultJvmArgs === jvmArgsIterable) {
