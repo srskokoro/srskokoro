@@ -92,9 +92,6 @@ abstract class PackagedSpec @Inject constructor(objects: ObjectFactory) {
 	@get:InputFile
 	val licenseFile: RegularFileProperty = objects.fileProperty()
 
-	@get:Input
-	val licenseFileName: Property<String> = objects.property()
-
 	// --
 
 	@get:Input
@@ -114,8 +111,6 @@ abstract class PackagedSpec @Inject constructor(objects: ObjectFactory) {
 	init {
 		appTitle.convention(bundleName)
 		appTitleShort.convention(appTitle)
-		licenseFileName.convention(licenseFile
-			.map { it.asFile.name }.orElse("LICENSE"))
 	}
 
 	companion object {
@@ -134,28 +129,10 @@ abstract class PackagedSpec @Inject constructor(objects: ObjectFactory) {
 					"- Current value: $it"
 			}
 		}
-
 		if (appTitleShort.get().length >= 16) logger.warn("" +
 			"`Value for ${::appTitleShort.name}` seems too long to be " +
 			"displayed in the menu bar, in the dock (on macOS), etc."
 		)
-
-		licenseFileName.get().let {
-			if (it.equals("LICENSE", ignoreCase = true)) return@let
-			if (it.startsWith("LICENSE.", ignoreCase = true)) return@let
-			if (it.endsWith(".LICENSE", ignoreCase = true)) return@let
-
-			if (it.equals("COPYING", ignoreCase = true)) return@let
-			if (it.startsWith("COPYING.", ignoreCase = true)) return@let
-
-			logger.warn(
-				"""
-				License file should ideally be named 'LICENSE' or 'COPYING' (or similar).
-				- Current license filename: {}
-				""".trimIndent(),
-				it,
-			)
-		}
 	}
 
 	/**

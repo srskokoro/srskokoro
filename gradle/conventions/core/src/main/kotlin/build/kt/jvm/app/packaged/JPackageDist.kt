@@ -126,6 +126,19 @@ abstract class JPackageDist : JPackageBaseTask() {
 		}
 
 		jpackageExecArgs.apply {
+			val spec = spec
+			spec.bundleAdditions.asFileTree.matching {
+				include("*")
+			}.visit {
+				val path = file.absolutePath
+				check(',' !in path) {
+					"Option `--app-content` does not support paths with commas.\n" +
+						"- Offending path: $path"
+					// See, https://docs.oracle.com/en/java/javase/21/docs/specs/man/jpackage.html#options-for-creating-the-application-image
+				}
+				args("--app-content", path)
+			}
+
 			spec.jvmArgs.get().forEach {
 				args("--java-options", it)
 			}
@@ -156,16 +169,5 @@ abstract class JPackageDist : JPackageBaseTask() {
 		result.onFailure { throw it }
 
 		del.deleteRecursively(tmpDestDir)
-		files.copy {
-			val spec = spec
-			spec.licenseFile.orNull?.let { licenseFile ->
-				from(licenseFile) {
-					rename { spec.licenseFileName.get() }
-					into(DIR_LEGAL)
-				}
-			}
-			from(spec.bundleAdditions)
-			into(outputDir)
-		}
 	}
 }

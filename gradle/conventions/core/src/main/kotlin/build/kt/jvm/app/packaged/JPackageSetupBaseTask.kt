@@ -93,7 +93,7 @@ abstract class JPackageSetupBaseTask : JPackageBaseTask() {
 			args("--app-image", appImage.path)
 
 			val spec = spec
-			File(appImage, DIR_LEGAL + File.separatorChar + spec.licenseFileName.get()).run {
+			spec.licenseFile.file.run {
 				if (isFile) args("--license-file", path)
 			}
 			File(spec.jpackageResources.file, iconResFileName).run {
