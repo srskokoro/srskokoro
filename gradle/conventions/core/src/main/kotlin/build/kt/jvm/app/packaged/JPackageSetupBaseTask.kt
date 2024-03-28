@@ -73,6 +73,10 @@ abstract class JPackageSetupBaseTask : JPackageBaseTask() {
 		// --
 
 		tmpDestDir.listFiles()!!.single().let { x ->
+			if (x.extension != type) throw AssertionError(
+				"Unexpected: output file extension is different from expected `type` (which is \"$type\").\n" +
+					"- Output file: $x"
+			)
 			if (!x.renameTo(outputFile)) throw FileSystemException(
 				x, outputFile,
 				"Failed to move file.",
