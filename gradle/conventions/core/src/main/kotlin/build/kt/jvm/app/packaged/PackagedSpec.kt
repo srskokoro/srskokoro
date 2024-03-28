@@ -29,6 +29,18 @@ abstract class PackagedSpec @Inject constructor(objects: ObjectFactory) {
 	@get:Input
 	val bundleName: Property<String> = objects.property()
 
+	/**
+	 * Used by the [`--app-content`](https://docs.oracle.com/en/java/javase/21/docs/specs/man/jpackage.html#options-for-creating-the-application-image)
+	 * option passed to the `jpackage` command. They'll reside at the same level
+	 * as the "app" and "runtime" directories in the packaged app, that is,
+	 * - on Windows, in the top level app-image directory;
+	 * - on macOS, in the "Contents" directory of the app-image;
+	 * - on Linux, in the "lib" directory of the app-image;
+	 *
+	 * Additionally, they'll be subject to signing on macOS.
+	 *
+	 * See also, [JDK-8274346](https://bugs.openjdk.org/browse/JDK-8274346)
+	 */
 	@get:InputFiles
 	val bundleAdditions: ConfigurableFileCollection = objects.fileCollection()
 
