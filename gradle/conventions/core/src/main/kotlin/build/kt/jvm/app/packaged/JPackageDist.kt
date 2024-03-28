@@ -100,10 +100,7 @@ abstract class JPackageDist : JPackageBaseTask() {
 			standardOutput = jdepsOutput
 			executable = jdepsPath()
 			args(jdepsExecArgs)
-		}.run {
-			rethrowFailure()
-			assertNormalExitValue()
-		}
+		}.rethrowFailure()
 
 		jdepsOutput.toString().trim().let {
 			jpackageExecArgs.args("--add-modules", it)
@@ -137,6 +134,7 @@ abstract class JPackageDist : JPackageBaseTask() {
 		val result = exec.exec {
 			executable = jpackagePath()
 			args(jpackageExecArgs)
+			isIgnoreExitValue = true
 		}.runCatching {
 			rethrowFailure()
 			assertNormalExitValue()

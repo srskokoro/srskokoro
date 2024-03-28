@@ -68,10 +68,7 @@ abstract class JPackageSetupBaseTask : JPackageBaseTask() {
 			executable = jpackagePath()
 			args(jpackageExecArgs)
 			jpackageConfigure()
-		}.run {
-			rethrowFailure()
-			assertNormalExitValue()
-		}
+		}.rethrowFailure()
 
 		// --
 
