@@ -18,6 +18,13 @@ import kotlinx.serialization.modules.SerializersModule
 	private val oldStateEntries: Bundle,
 ) : WvContext(handle) {
 
+	override var title: CharSequence?
+		@MainThread get() = activity.title
+		@MainThread set(v) {
+			assertThreadMain()
+			activity.title = v
+		}
+
 	@MainThread
 	override fun load(url: String) {
 		assertThreadMain()

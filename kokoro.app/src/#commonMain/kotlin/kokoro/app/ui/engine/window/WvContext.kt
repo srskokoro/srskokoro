@@ -11,6 +11,9 @@ import kotlin.jvm.JvmField
 abstract class WvContext(
 	@JvmField val handle: WvWindowHandle,
 ) {
+	@get:MainThread
+	@set:MainThread
+	abstract var title: CharSequence?
 
 	@MainThread
 	abstract fun load(url: String)
