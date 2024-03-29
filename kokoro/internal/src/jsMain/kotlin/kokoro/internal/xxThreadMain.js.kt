@@ -4,4 +4,4 @@ package kokoro.internal
 actual inline fun isThreadMain(): Boolean = true
 
 @Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
-@PublishedApi internal actual fun checkThreadMain_lazyMessage(): String = error("Unreachable")
+@PublishedApi internal actual fun checkThreadMain_lazyMessage(): String = errorAssertion("Unreachable")
