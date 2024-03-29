@@ -14,6 +14,7 @@ import kotlinx.serialization.modules.SerializersModule
 
 @nook internal class WvContextImpl(
 	handle: WvWindowHandle,
+	private val activity: WvWindowActivity,
 	private val oldStateEntries: Bundle,
 ) : WvContext(handle) {
 
@@ -26,7 +27,7 @@ import kotlinx.serialization.modules.SerializersModule
 	@MainThread
 	override fun finish() {
 		assertThreadMain()
-		handle.activity?.finish()
+		activity.finish()
 	}
 
 	// --

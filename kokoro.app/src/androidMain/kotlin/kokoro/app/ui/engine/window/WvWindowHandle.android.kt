@@ -33,8 +33,6 @@ actual class WvWindowHandle @nook actual constructor(
 	/** WARNING: Must only be modified from the main thread. */
 	@JvmField @nook var platformContext_: Any? = null
 
-	val activity inline get() = platformContext_ as? WvWindowActivity
-
 	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
 	@nook internal inline fun attachPlatformContext(activity: WvWindowActivity) {

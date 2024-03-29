@@ -51,7 +51,7 @@ class WvWindowActivity : ComponentActivity() {
 			h.attachPlatformContext(this@WvWindowActivity)
 
 			val o = savedInstanceState?.getBundle(EXTRAS_KEY_to_OLD_STATE_ENTRIES) ?: Bundle()
-			val wc = WvContextImpl(h, oldStateEntries = o)
+			val wc = WvContextImpl(h, this@WvWindowActivity, oldStateEntries = o)
 			window = f.init(wc) // May throw
 
 			return // Success. Skip code below.
