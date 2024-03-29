@@ -59,6 +59,9 @@ open class ScopedWindowFrame @JvmOverloads constructor(
 
 	open fun disposePermanently() {
 		if (_isDisposedPermanently.compareAndSet(expect = false, true)) try {
+			// Ensures `onCreateScope()` is always called first, before the call
+			// to `onDisposePermanently()` below.
+			val scope = scope
 			onDisposePermanently()
 			scope.coroutineContext[Job]?.cancel(null)
 		} catch (ex: Throwable) {
