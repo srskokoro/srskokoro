@@ -58,8 +58,11 @@ open class ScopedWindowFrame @JvmOverloads constructor(
 	val isDisposedPermanently: Boolean get() = _isDisposedPermanently.value
 
 	open fun disposePermanently() {
-		if (_isDisposedPermanently.compareAndSet(expect = false, true)) {
+		if (_isDisposedPermanently.compareAndSet(expect = false, true)) try {
 			onDisposePermanently()
+		} catch (ex: Throwable) {
+			_isDisposedPermanently.value = false
+			throw ex
 		}
 	}
 
