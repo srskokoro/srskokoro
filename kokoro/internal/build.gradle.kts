@@ -33,5 +33,6 @@ buildConfig {
 
 dependencies {
 	hostMainApi("androidx.annotation:annotation")
+	commonMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 	hostMainApi("androidx.collection:collection")
 }
