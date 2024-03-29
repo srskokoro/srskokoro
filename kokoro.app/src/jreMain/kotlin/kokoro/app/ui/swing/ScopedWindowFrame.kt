@@ -68,7 +68,7 @@ open class ScopedWindowFrame @JvmOverloads constructor(
 
 	protected open fun onDisposePermanently() {
 		disposeLightly()
-		scope.coroutineContext[Job]?.run { cancel(null) }
+		scope.coroutineContext[Job]?.cancel(null)
 	}
 
 	open fun disposeLightly() = super.dispose()
