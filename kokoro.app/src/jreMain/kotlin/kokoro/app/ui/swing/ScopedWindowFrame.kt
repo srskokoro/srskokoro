@@ -60,6 +60,7 @@ open class ScopedWindowFrame @JvmOverloads constructor(
 	open fun disposePermanently() {
 		if (_isDisposedPermanently.compareAndSet(expect = false, true)) try {
 			onDisposePermanently()
+			scope.coroutineContext[Job]?.cancel(null)
 		} catch (ex: Throwable) {
 			_isDisposedPermanently.value = false
 			throw ex
@@ -68,7 +69,6 @@ open class ScopedWindowFrame @JvmOverloads constructor(
 
 	protected open fun onDisposePermanently() {
 		disposeLightly()
-		scope.coroutineContext[Job]?.cancel(null)
 	}
 
 	open fun disposeLightly() = super.dispose()
