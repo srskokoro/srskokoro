@@ -31,26 +31,26 @@ actual class WvWindowHandle @nook actual constructor(
 	// --
 
 	/** WARNING: Must only be modified from the main thread. */
-	@JvmField @nook var context_: Any? = null
+	@JvmField @nook var platformContext_: Any? = null
 
-	val activity inline get() = context_ as? WvWindowActivity
+	val activity inline get() = platformContext_ as? WvWindowActivity
 
 	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
-	inline fun attachContext(activity: WvWindowActivity) {
-		context_ = activity
+	inline fun attachPlatformContext(activity: WvWindowActivity) {
+		platformContext_ = activity
 	}
 
 	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
-	inline fun attachContext(task: ActivityManager.AppTask) {
-		context_ = task
+	inline fun attachPlatformContext(task: ActivityManager.AppTask) {
+		platformContext_ = task
 	}
 
 	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
-	inline fun detachContext() {
-		context_ = null
+	inline fun detachPlatformContext() {
+		platformContext_ = null
 	}
 
 	// --
@@ -120,13 +120,13 @@ actual class WvWindowHandle @nook actual constructor(
 	@MainThread
 	actual override fun onClose() {
 		uri_ = null // Marks as closed
-		when (val c = context_) {
+		when (val c = platformContext_) {
 			null -> return // Skip code below
 			is Activity -> c.finishAndRemoveTask()
 			is ActivityManager.AppTask -> c.finishAndRemoveTask()
 			else -> throw AssertionError("Unexpected: $c")
 		}
-		detachContext()
+		detachPlatformContext()
 	}
 
 	// --
