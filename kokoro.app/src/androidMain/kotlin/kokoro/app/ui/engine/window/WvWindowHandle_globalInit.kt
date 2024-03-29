@@ -25,6 +25,7 @@ internal fun WvWindowHandle_globalInit() {
 		.resolve()
 }
 
+@OptIn(nook::class)
 @MainThread
 private class WvWindowHandle_globalRestore(tasks: List<AppTask>) {
 	private val entries = MutableScatterMap<String, Entry>().also { entries ->

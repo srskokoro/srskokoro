@@ -37,19 +37,19 @@ actual class WvWindowHandle @nook actual constructor(
 
 	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
-	inline fun attachPlatformContext(activity: WvWindowActivity) {
+	@nook internal inline fun attachPlatformContext(activity: WvWindowActivity) {
 		platformContext_ = activity
 	}
 
 	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
-	inline fun attachPlatformContext(task: ActivityManager.AppTask) {
+	@nook internal inline fun attachPlatformContext(task: ActivityManager.AppTask) {
 		platformContext_ = task
 	}
 
 	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
-	inline fun detachPlatformContext() {
+	@nook internal inline fun detachPlatformContext() {
 		platformContext_ = null
 	}
 
