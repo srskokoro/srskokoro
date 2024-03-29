@@ -48,7 +48,7 @@ open class ScopedWindowFrame @JvmOverloads constructor(
 	protected open fun onCreateScope(context: CoroutineContext): CoroutineScope {
 		val job = SupervisorJob(context[Job])
 		job.invokeOnCompletion { disposePermanently() }
-		return RawCoroutineScope(context, job)
+		return RawCoroutineScope(context + super.ref, job)
 	}
 
 	// --
