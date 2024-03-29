@@ -1,9 +1,7 @@
 package kokoro.app.ui.engine
 
-import kotlinx.serialization.ExperimentalSerializationApi
+import kokoro.internal.serialization.NullableNothingSerializer
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.builtins.NothingSerializer
-import kotlinx.serialization.builtins.nullable
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
 import kotlin.jvm.JvmField
@@ -15,8 +13,7 @@ data class UiBus<T> private constructor(
 	@JvmField val serialization: SerializersModule.() -> KSerializer<T>,
 ) {
 	private object NothingHolder {
-		@JvmField val NULLABLE_NOTHING_SERIALIZER: KSerializer<Nothing?> = @OptIn(ExperimentalSerializationApi::class) NothingSerializer().nullable
-		@JvmField val NOTHING: UiBus<Nothing?> = wrap(::NOTHING.name) { NULLABLE_NOTHING_SERIALIZER }
+		@JvmField val NOTHING: UiBus<Nothing?> = wrap(::NOTHING.name) { NullableNothingSerializer() }
 	}
 
 	companion object {
