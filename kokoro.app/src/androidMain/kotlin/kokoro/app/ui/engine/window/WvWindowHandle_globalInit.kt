@@ -92,7 +92,7 @@ private class WvWindowHandle_globalRestore(tasks: List<AppTask>) {
 			parent = p,
 		).also { h ->
 			handle = h
-			h.attachPlatformContext(task)
+			h.attachPeer(task)
 		}
 	}
 }

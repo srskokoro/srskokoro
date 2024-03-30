@@ -48,7 +48,7 @@ class WvWindowActivity : ComponentActivity() {
 				?: return@run // Handle was closed before we can start.
 
 			handle = h
-			h.attachPlatformContext(this@WvWindowActivity)
+			h.attachPeer(this@WvWindowActivity)
 
 			val o = savedInstanceState?.getBundle(EXTRAS_KEY_to_OLD_STATE_ENTRIES) ?: Bundle()
 			val wc = WvContextImpl(h, this@WvWindowActivity, oldStateEntries = o)
@@ -99,7 +99,7 @@ class WvWindowActivity : ComponentActivity() {
 	override fun onDestroy() {
 		if (isFinishing) {
 			handle?.run {
-				detachPlatformContext() // So that `finishAndRemoveTask()` isn't called by `close()` below
+				detachPeer() // So that `finishAndRemoveTask()` isn't called by `close()` below
 				close()
 			}
 			window?.onDestroy()
