@@ -117,14 +117,14 @@ actual class WvWindowHandle @nook actual constructor(
 
 	@MainThread
 	actual override fun onClose() {
+		uri_ = null // Marks as closed now (so that we don't get called again)
 		when (val c = platformContext_) {
-			null -> {}
+			null -> return // Skip code below
 			is Activity -> c.finishAndRemoveTask()
 			is ActivityManager.AppTask -> c.finishAndRemoveTask()
 			else -> throw AssertionError("Unexpected: $c")
 		}
 		detachPlatformContext()
-		uri_ = null // Marks as closed
 	}
 
 	// --
