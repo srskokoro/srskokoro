@@ -8,6 +8,7 @@ import java.awt.EventQueue
  * will be scheduled for later execution on the Swing EDT.
  *
  * @see withThreadSwing
+ * @see doOnThreadSwingNoInline
  */
 inline fun doOnThreadSwing(crossinline block: () -> Unit) {
 	if (EventQueue.isDispatchThread()) block()
@@ -15,10 +16,10 @@ inline fun doOnThreadSwing(crossinline block: () -> Unit) {
 }
 
 /**
+ * @see withThreadSwingNoInline
  * @see doOnThreadSwing
- * @see withThreadSwing
  */
-fun doOnThreadSwing(runnable: Runnable) {
+fun doOnThreadSwingNoInline(runnable: Runnable) {
 	if (EventQueue.isDispatchThread()) runnable.run()
 	else EventQueue.invokeLater(runnable)
 }
@@ -28,6 +29,7 @@ fun doOnThreadSwing(runnable: Runnable) {
  * happened.
  *
  * @see doOnThreadSwing
+ * @see withThreadSwingNoInline
  */
 inline fun withThreadSwing(crossinline block: () -> Unit) {
 	if (EventQueue.isDispatchThread()) block()
@@ -35,10 +37,10 @@ inline fun withThreadSwing(crossinline block: () -> Unit) {
 }
 
 /**
+ * @see doOnThreadSwingNoInline
  * @see withThreadSwing
- * @see doOnThreadSwing
  */
-fun withThreadSwing(runnable: Runnable) {
+fun withThreadSwingNoInline(runnable: Runnable) {
 	if (EventQueue.isDispatchThread()) runnable.run()
 	else EventQueue.invokeAndWait(runnable)
 }
