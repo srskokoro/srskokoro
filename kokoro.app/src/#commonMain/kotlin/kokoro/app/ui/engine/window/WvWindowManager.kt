@@ -74,7 +74,7 @@ abstract class WvWindowManager @nook constructor(
 			try {
 				child.close()
 			} catch (ex: Throwable) {
-				child.parent_ = this // Restore
+				child.parent_ = this // Revert
 				throw ex
 			}
 			true // Remove child
