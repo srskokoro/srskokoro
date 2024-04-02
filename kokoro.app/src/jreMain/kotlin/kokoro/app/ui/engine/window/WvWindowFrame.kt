@@ -6,8 +6,15 @@ import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
 import kokoro.internal.checkNotNull
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.swing.Swing
+import kotlinx.coroutines.withContext
 import java.awt.Dimension
 import java.awt.GraphicsConfiguration
+import java.awt.event.ComponentAdapter
+import java.awt.event.ComponentEvent
 import java.awt.event.WindowEvent
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -20,19 +27,22 @@ class WvWindowFrame @JvmOverloads constructor(
 ) : ScopedWindowFrame(context, DEFAULT_TITLE, gc), WvWindowHandle.Peer {
 
 	private var window: WvWindow? = null
+	private var isSetUp = false
 
 	@MainThread
 	override fun onLaunch() {
 		if (isDisposedPermanently) return // Already disposed
-		initWvWindow() // Asserts thread main
-		isVisible = true // Reactivates frame if already visible before
+		if (window != null) {
+			// Reactivates frame if already visible before.
+			if (isSetUp) isVisible = true
+			return // Already set up or setting up. Skip code below.
+		}
+		setUpAndShow() // Asserts thread main
 	}
 
 	@MainThread
-	private fun initWvWindow() {
+	private fun setUpAndShow() {
 		assertThreadMain()
-		if (window != null) return // Already initialized
-
 		val h = handle
 
 		val fid = h.windowFactoryId
@@ -42,24 +52,49 @@ class WvWindowFrame @JvmOverloads constructor(
 
 		val wc = WvContextImpl(h, this)
 		val w = f.init(wc) // May throw
-		window = w
+		window = w // Set now so that we don't get called again by `onLaunch()`
 
-		val sizePrefs = w.initSizePrefs()
-		val sizeRule = sizePrefs.rule
-		contentPane.let { c ->
-			c.preferredSize = Dimension(sizeRule.initWidth, sizeRule.initHeight)
-			pack()
-			minimumSize = Dimension(
-				width - c.width + sizeRule.minWidth,
-				height - c.height + sizeRule.minHeight,
-			)
+		wc.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+			val sizePrefs = w.initSizePrefs()
+			withContext(Dispatchers.Swing) {
+				// Set this first, since on some platforms, changing the
+				// resizable state affects the insets of the window.
+				if (!sizePrefs.isResizable) isResizable = false
+
+				contentPane.let { c ->
+					c.preferredSize = Dimension(sizePrefs.width, sizePrefs.height)
+					pack()
+					minimumSize = Dimension(
+						width - c.width + sizePrefs.minWidth,
+						height - c.height + sizePrefs.minHeight,
+					)
+					c.preferredSize = null // Reset
+				}
+
+				window = w
+				isVisible = true
+
+				// Done!
+				isSetUp = true
+			}
 		}
+	}
 
-		val sizePrefsFlags = sizePrefs.flags
-		if ((sizePrefsFlags and WvWindow.SizePrefs.FLAG_RESIZABLE) == 0) {
-			isResizable = false
-		} else if ((sizePrefsFlags and WvWindow.SizePrefs.FLAG_REMEMBER_USER_SIZE) != 0) {
-			// TODO Implement!
+	init {
+		contentPane.addComponentListener(object : ComponentAdapter() {
+			override fun componentResized(e: ComponentEvent?): Unit =
+				doOnThreadSwing(::dispatchWvWindowResize)
+		})
+	}
+
+	@MainThread
+	private fun dispatchWvWindowResize() {
+		assertThreadMain()
+		val w = window
+		// NOTE: Ignore the dispatch if currently maximized in either axes.
+		if (w != null && extendedState and MAXIMIZED_BOTH == 0) {
+			val c = contentPane
+			w.onResize(c.width, c.height)
 		}
 	}
 
