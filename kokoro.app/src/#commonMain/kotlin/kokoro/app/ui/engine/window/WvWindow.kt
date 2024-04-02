@@ -3,7 +3,6 @@ package kokoro.app.ui.engine.window
 import androidx.annotation.EmptySuper
 import androidx.collection.MutableScatterMap
 import kokoro.app.ui.engine.UiBus
-import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
 import kokoro.internal.check
@@ -48,7 +47,7 @@ abstract class WvWindow(@JvmField val context: WvContext) {
 	/**
 	 * @see onResize
 	 */
-	@AnyThread
+	@MainThread
 	open suspend fun initSizePrefs(): SizePrefs = SizePrefs.SQUARE
 
 	/**

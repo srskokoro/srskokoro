@@ -10,7 +10,6 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.swing.Swing
-import kotlinx.coroutines.withContext
 import java.awt.Dimension
 import java.awt.GraphicsConfiguration
 import java.awt.event.ComponentAdapter
@@ -63,38 +62,37 @@ class WvWindowFrame @JvmOverloads constructor(
 		val w = f.init(wc) // May throw
 		window = w // Set now so that we don't get called again by `onLaunch()`
 
-		wc.scope.launch(start = CoroutineStart.UNDISPATCHED) {
+		wc.scope.launch(Dispatchers.Swing, start = CoroutineStart.UNDISPATCHED) {
 			val sizePrefs = w.initSizePrefs()
-			withContext(Dispatchers.Swing) {
-				// Set this first, since on some platforms, changing the
-				// resizable state affects the insets of the window.
-				if (!sizePrefs.isResizable) isResizable = false
 
-				contentPane.let { c ->
-					c.preferredSize = Dimension(sizePrefs.width, sizePrefs.height)
-					pack()
-					minimumSize = Dimension(
-						width - c.width + sizePrefs.minWidth,
-						height - c.height + sizePrefs.minHeight,
-					)
-					c.preferredSize = null // Reset
-				}
+			// Set this first, since on some platforms, changing the resizable
+			// state affects the insets of the window.
+			if (!sizePrefs.isResizable) isResizable = false
 
-				val pc = (w.handle.parent as? WvWindowHandle)
-					?.run { peer_ as? WvWindowFrame }
-					?.run { contentPane }
-
-				// NOTE: The following also gracefully handles the case for when
-				// the location would cause the window bounds to be outside of
-				// the screen.
-				setLocationRelativeTo(pc)
-
-				window = w
-				isVisible = true
-
-				// Done!
-				isSetUp = true
+			contentPane.let { c ->
+				c.preferredSize = Dimension(sizePrefs.width, sizePrefs.height)
+				pack()
+				minimumSize = Dimension(
+					width - c.width + sizePrefs.minWidth,
+					height - c.height + sizePrefs.minHeight,
+				)
+				c.preferredSize = null // Reset
 			}
+
+			val pc = (w.handle.parent as? WvWindowHandle)
+				?.run { peer_ as? WvWindowFrame }
+				?.run { contentPane }
+
+			// NOTE: The following also gracefully handles the case for when the
+			// location would cause the window bounds to be outside of the
+			// screen.
+			setLocationRelativeTo(pc)
+
+			window = w
+			isVisible = true
+
+			// Done!
+			isSetUp = true
 		}
 	}
 
