@@ -156,7 +156,7 @@ actual class WvWindowHandle @nook actual constructor(
 	// --
 
 	actual companion object {
-		private fun E_AlreadyInit() = IllegalStateException("`init()` already called")
-		private fun E_NotYetInit() = IllegalStateException("Must first call `init()`")
+		private fun E_AlreadyInit() = IllegalStateException("`${WvWindowHandle::init.name}()` already called")
+		private fun E_NotYetInit() = IllegalStateException("Must first call `${WvWindowHandle::init.name}()`")
 	}
 }
