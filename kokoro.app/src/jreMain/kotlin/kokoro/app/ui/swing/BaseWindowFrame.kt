@@ -1,5 +1,6 @@
 package kokoro.app.ui.swing
 
+import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
 import java.awt.GraphicsConfiguration
 import java.awt.event.WindowEvent
@@ -25,7 +26,7 @@ open class BaseWindowFrame @JvmOverloads constructor(
 
 		/** @see javax.swing.JOptionPane.getRootFrame */
 		val lastActive: BaseWindowFrame?
-			get() {
+			@MainThread get() {
 				assertThreadMain()
 				return lastActiveRef.get()
 			}
