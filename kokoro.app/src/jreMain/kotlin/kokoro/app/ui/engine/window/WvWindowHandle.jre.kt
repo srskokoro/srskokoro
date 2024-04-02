@@ -1,11 +1,17 @@
 package kokoro.app.ui.engine.window
 
 import kokoro.app.ui.engine.UiBus
+import kokoro.app.ui.engine.WvSerialization
 import kokoro.internal.DEBUG
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerializationStrategy
+import kotlinx.serialization.cbor.Cbor
+import kotlinx.serialization.modules.SerializersModule
 import kotlin.coroutines.CoroutineContext
 
 @OptIn(nook::class)
@@ -27,6 +33,7 @@ actual class WvWindowHandle @nook actual constructor(
 	@nook internal interface Peer {
 		val scope: CoroutineScope
 		@MainThread fun onLaunch()
+		@MainThread fun onPost(busId: String, payload: ByteArray)
 		fun dispose()
 	}
 
@@ -34,6 +41,7 @@ actual class WvWindowHandle @nook actual constructor(
 		override val scope: CoroutineScope,
 	) : Peer {
 		override fun onLaunch() = Unit
+		override fun onPost(busId: String, payload: ByteArray) = Unit
 		override fun dispose() {
 			scope.coroutineContext[Job]?.cancel(null)
 		}
@@ -87,7 +95,41 @@ actual class WvWindowHandle @nook actual constructor(
 
 	@MainThread
 	actual override fun <T> postOrDiscard(bus: UiBus<T>, value: T): Boolean {
-		TODO("Not yet implemented")
+		assertThreadMain()
+		if (id_ == null) return false
+		val peer = ensurePeer()
+		val enc = PostSerialization.encode(value, bus.serialization) // May throw
+		peer.onPost(bus.id, enc)
+		return true
+	}
+
+	@nook internal object PostSerialization {
+
+		inline val module: SerializersModule
+			get() = WvSerialization.module
+
+		@OptIn(ExperimentalSerializationApi::class)
+		private val cbor = Cbor { serializersModule = module }
+
+		inline fun <T> encode(
+			value: T,
+			serialization: SerializersModule.() -> SerializationStrategy<T>,
+		): ByteArray = encode(value, serialization.invoke(module))
+
+		fun <T> encode(value: T, serializer: SerializationStrategy<T>): ByteArray {
+			@OptIn(ExperimentalSerializationApi::class)
+			return cbor.encodeToByteArray(serializer, value)
+		}
+
+		inline fun <T> decode(
+			bytes: ByteArray,
+			deserialization: SerializersModule.() -> DeserializationStrategy<T>,
+		): T = decode(bytes, deserialization.invoke(module))
+
+		fun <T> decode(bytes: ByteArray, deserializer: DeserializationStrategy<T>): T {
+			@OptIn(ExperimentalSerializationApi::class)
+			return cbor.decodeFromByteArray(deserializer, bytes)
+		}
 	}
 
 	// --

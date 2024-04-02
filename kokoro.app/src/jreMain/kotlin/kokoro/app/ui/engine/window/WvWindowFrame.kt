@@ -26,6 +26,15 @@ class WvWindowFrame @JvmOverloads constructor(
 	gc: GraphicsConfiguration? = DEFAULT_GRAPHICS_CONFIGURATION,
 ) : ScopedWindowFrame(context, DEFAULT_TITLE, gc), WvWindowHandle.Peer {
 
+	companion object {
+
+		private fun <T> WvWindowBusBinding<*, T>.route(
+			window: WvWindow, encoded: ByteArray,
+		): Unit = route(window) { bus ->
+			WvWindowHandle.PostSerialization.decode(encoded, bus.serialization)
+		}
+	}
+
 	private var window: WvWindow? = null
 	private var isSetUp = false
 
@@ -88,6 +97,14 @@ class WvWindowFrame @JvmOverloads constructor(
 			}
 		}
 	}
+
+	@MainThread
+	override fun onPost(busId: String, payload: ByteArray) {
+		assertThreadMain()
+		window?.let { w -> (w.getDoOnPost_(busId) ?: return@let).route(w, payload) }
+	}
+
+	// --
 
 	init {
 		contentPane.addComponentListener(object : ComponentAdapter() {
