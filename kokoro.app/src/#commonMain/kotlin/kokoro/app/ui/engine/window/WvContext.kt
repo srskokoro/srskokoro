@@ -6,10 +6,12 @@ import kokoro.app.ui.engine.UiState
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
 import kokoro.internal.collections.computeIfAbsent
+import kotlinx.coroutines.CoroutineScope
 import kotlin.jvm.JvmField
 
 abstract class WvContext(
 	@JvmField val handle: WvWindowHandle,
+	@JvmField val scope: CoroutineScope,
 ) {
 	@get:MainThread
 	@set:MainThread

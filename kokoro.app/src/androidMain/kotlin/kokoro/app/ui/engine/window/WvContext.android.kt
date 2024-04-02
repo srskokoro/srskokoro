@@ -1,6 +1,7 @@
 package kokoro.app.ui.engine.window
 
 import android.os.Bundle
+import androidx.lifecycle.lifecycleScope
 import kokoro.app.ui.engine.UiBus
 import kokoro.app.ui.engine.UiState
 import kokoro.internal.ASSERTIONS_ENABLED
@@ -16,7 +17,7 @@ import kotlinx.serialization.modules.SerializersModule
 	handle: WvWindowHandle,
 	private val activity: WvWindowActivity,
 	private val oldStateEntries: Bundle,
-) : WvContext(handle) {
+) : WvContext(handle, activity.lifecycleScope) {
 
 	override var title: CharSequence?
 		@MainThread get() = activity.title

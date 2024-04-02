@@ -7,12 +7,14 @@ import kokoro.app.ui.engine.UiBus
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
 import kokoro.internal.check
+import kotlinx.coroutines.CoroutineScope
 import kotlin.jvm.JvmField
 
 @OptIn(nook::class)
 abstract class WvWindow(@JvmField val context: WvContext) {
 
 	val handle: WvWindowHandle inline get() = context.handle
+	val scope: CoroutineScope inline get() = context.scope
 
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun loadUrl(url: String) = context.load(url = url)

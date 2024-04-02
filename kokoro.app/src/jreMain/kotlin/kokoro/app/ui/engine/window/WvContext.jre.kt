@@ -7,7 +7,7 @@ import kokoro.internal.assertThreadMain
 @nook internal class WvContextImpl(
 	handle: WvWindowHandle,
 	private val frame: WvWindowFrame,
-) : WvContext(handle) {
+) : WvContext(handle, frame.scope) {
 
 	override var title: CharSequence?
 		@MainThread get() = frame.title
