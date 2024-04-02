@@ -6,6 +6,7 @@ import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
 import kokoro.internal.checkNotNull
+import java.awt.Dimension
 import java.awt.GraphicsConfiguration
 import java.awt.event.WindowEvent
 import kotlin.coroutines.CoroutineContext
@@ -42,6 +43,24 @@ class WvWindowFrame @JvmOverloads constructor(
 		val wc = WvContextImpl(h, this)
 		val w = f.init(wc) // May throw
 		window = w
+
+		val sizePrefs = w.initSizePrefs()
+		val sizeRule = sizePrefs.rule
+		contentPane.let { c ->
+			c.preferredSize = Dimension(sizeRule.initWidth, sizeRule.initHeight)
+			pack()
+			minimumSize = Dimension(
+				width - c.width + sizeRule.minWidth,
+				height - c.height + sizeRule.minHeight,
+			)
+		}
+
+		val sizePrefsFlags = sizePrefs.flags
+		if ((sizePrefsFlags and WvWindow.SizePrefs.FLAG_RESIZABLE) == 0) {
+			isResizable = false
+		} else if ((sizePrefsFlags and WvWindow.SizePrefs.FLAG_REMEMBER_USER_SIZE) != 0) {
+			// TODO Implement!
+		}
 	}
 
 	@AnyThread
