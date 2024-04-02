@@ -18,6 +18,8 @@ dependencies {
 	commonMainApi(project(":kokoro:internal"))
 	commonMainApi(project(":kokoro"))
 
+	commonMainImplementation(kotlin("reflect"))
+
 	commonMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 	commonTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
 
