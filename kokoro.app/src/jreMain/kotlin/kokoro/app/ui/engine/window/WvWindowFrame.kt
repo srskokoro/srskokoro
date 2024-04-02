@@ -71,6 +71,15 @@ class WvWindowFrame @JvmOverloads constructor(
 					c.preferredSize = null // Reset
 				}
 
+				val pc = (w.handle.parent as? WvWindowHandle)
+					?.run { peer_ as? WvWindowFrame }
+					?.run { contentPane }
+
+				// NOTE: The following also gracefully handles the case for when
+				// the location would cause the window bounds to be outside of
+				// the screen.
+				setLocationRelativeTo(pc)
+
 				window = w
 				isVisible = true
 
