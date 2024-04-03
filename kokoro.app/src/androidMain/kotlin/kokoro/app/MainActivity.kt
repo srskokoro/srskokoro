@@ -1,50 +1,23 @@
 package kokoro.app
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import kokoro.app.ui.DummyWindow
-import kokoro.app.ui.engine.UiBus
+import kokoro.app.ui.engine.window.WvWindowActivity
 import kokoro.app.ui.engine.window.WvWindowFactory
 import kokoro.app.ui.engine.window.WvWindowHandle
-import kokoro.app.ui.engine.window.WvWindowManager
-import kokoro.internal.annotation.MainThread
 
-class MainActivity : Activity() {
+class MainActivity : WvWindowActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		// See, https://developer.android.com/develop/ui/views/launch/splash-screen/migrate
 		// - See also https://developer.android.com/reference/kotlin/androidx/core/splashscreen/SplashScreen
-		val splashScreen = installSplashScreen()
-
+		installSplashScreen()
 		super.onCreate(savedInstanceState)
-
-		// Keep the splash screen visible for this Activity.
-		// - https://developer.android.com/develop/ui/views/launch/splash-screen/migrate#prevent
-		splashScreen.setKeepOnScreenCondition { true }
-
-		startMainWindow()
-		finishAndRemoveTask() // Done!
 	}
 
-	/**
-	 * This should start the "real" main activity in a separate task entry.
-	 */
-	@MainThread
-	private fun startMainWindow() {
-		try {
-			val fid = WvWindowFactory.id<DummyWindow>() // TODO!
-			WvWindowHandle.globalRoot.create("MAIN", fid)
-		} catch (ex: WvWindowManager.IdConflictException) {
-			// Already launched before and currently not closed.
-			ex.oldHandle.postOrDiscard(UiBus.NOTHING, null) // Bring to front!
-			return // Done. Skip code below.
-		}.launch {
-			addFlags(0 or
-				Intent.FLAG_ACTIVITY_RETAIN_IN_RECENTS or
-				Intent.FLAG_ACTIVITY_NO_ANIMATION
-			)
-		}
+	override fun initHandle(): WvWindowHandle {
+		val fid = WvWindowFactory.id<DummyWindow>() // TODO!
+		return WvWindowHandle.globalRoot.create("MAIN", fid)
 	}
 }

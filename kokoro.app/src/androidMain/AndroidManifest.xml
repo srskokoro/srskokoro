@@ -18,10 +18,10 @@
 		android:theme="@style/Theme.App"
 		android:name=".MainApplication">
 		<activity
-			android:autoRemoveFromRecents="true"
 			android:exported="true"
+			android:launchMode="singleInstance"
 			android:label="${APP_TITLE_SHORT}"
-			android:theme="@style/Theme.App.Routing.Splash"
+			android:theme="@style/Theme.App.Splash"
 			android:name=".MainActivity">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />

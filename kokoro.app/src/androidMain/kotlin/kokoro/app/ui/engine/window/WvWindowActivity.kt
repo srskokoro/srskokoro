@@ -3,11 +3,12 @@ package kokoro.app.ui.engine.window
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import kokoro.internal.annotation.MainThread
 import kokoro.internal.checkNotNull
 import kokoro.internal.os.SerializationEncoded
 
 @OptIn(nook::class)
-class WvWindowActivity : ComponentActivity() {
+open class WvWindowActivity : ComponentActivity() {
 
 	companion object {
 
@@ -32,20 +33,23 @@ class WvWindowActivity : ComponentActivity() {
 	private var handle: WvWindowHandle? = null
 	private var window: WvWindow? = null
 
+	@MainThread
+	open fun initHandle(): WvWindowHandle? {
+		// Returns `null` if `intent` isn't a window display request or the
+		// handle was closed before we can start.
+		return WvWindowHandle.get(intent)
+	}
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
 		run<Unit> {
-			val intent = intent
-			val fid = WvWindowHandle.getWindowFactoryIdStr(intent)
-				?: return@run // Not a window display request. Ignore.
+			val h = initHandle() ?: return@run
 
+			val fid = h.windowFactoryId
 			val f = checkNotNull(WvWindowFactory.get(fid), or = {
 				"No factory registered for window factory ID: $fid"
 			})
-
-			val h = WvWindowHandle.get(intent)
-				?: return@run // Handle was closed before we can start.
 
 			handle = h
 			h.attachPeer(this@WvWindowActivity)
