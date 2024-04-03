@@ -29,6 +29,7 @@
 			</intent-filter>
 		</activity>
 		<activity
+			android:autoRemoveFromRecents="true"
 			android:exported="false"
 			android:documentLaunchMode="intoExisting"
 			android:name=".ui.engine.window.WvWindowActivity" />
