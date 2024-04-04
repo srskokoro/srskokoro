@@ -3,11 +3,7 @@ package main
 import java.io.File
 
 @JvmField val appHomeDir = run(fun(): File {
-	class X
-
-	File(
-		X::class.java.protectionDomain!!.codeSource.location.toURI(),
-	).parentFile?.run {
+	appLibDir?.run {
 		// The "app home" is the directory containing the "app" directory.
 		if (name == "app") parentFile?.let {
 			return it
