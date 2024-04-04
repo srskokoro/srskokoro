@@ -8,6 +8,7 @@ import build.api.dsl.accessors.java
 import build.api.dsl.accessors.javaToolchains
 import build.api.dsl.accessors.jvmArgs
 import build.api.dsl.accessors.kotlinSourceSets
+import build.api.platform.Os
 import build.kt.jvm.app.DIST_APP_HOME_INSTALL_TASK_NAME
 import build.kt.jvm.app.packaged.linux.JPackageSetupDeb
 import build.kt.jvm.app.packaged.linux.JPackageSetupRpm
@@ -115,8 +116,8 @@ class _plugin : ProjectPlugin({
 		val wixBinZipUrlProp: Property<String> = objects.property()
 		projectThis.xs().add(typeOf(), "wixBinZipUrl", wixBinZipUrlProp)
 
-		when (JPackagePlatform.current) {
-			JPackagePlatform.WINDOWS -> {
+		when (Os.current) {
+			Os.WINDOWS -> {
 				val installWix by tasks.registering(WixInstallTask::class) {
 					wixBinZipUrl = wixBinZipUrlProp
 
@@ -135,12 +136,12 @@ class _plugin : ProjectPlugin({
 				})
 			}
 
-			JPackagePlatform.MACOS -> {
+			Os.MACOS -> {
 				tasks.register("jpackageSetupDmg", JPackageSetupDmg::class.java, config)
 				tasks.register("jpackageSetupPkg", JPackageSetupPkg::class.java, config)
 			}
 
-			JPackagePlatform.LINUX -> {
+			Os.LINUX -> {
 				tasks.register("jpackageSetupDeb", JPackageSetupDeb::class.java, config)
 				tasks.register("jpackageSetupRpm", JPackageSetupRpm::class.java, config)
 			}

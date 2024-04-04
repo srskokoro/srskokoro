@@ -1,6 +1,7 @@
 package build.kt.jvm.app.packaged
 
 import build.api.file.file
+import build.api.platform.Os
 import build.api.process.ExecArgs
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.file.FileOperations
@@ -109,14 +110,14 @@ abstract class JPackageDist : JPackageBaseTask() {
 		val res = spec.jpackageResources.file
 		val icon: File
 
-		when (JPackagePlatform.current) {
-			JPackagePlatform.WINDOWS -> {
+		when (Os.current) {
+			Os.WINDOWS -> {
 				icon = File(res, RES_ICON_WIN_FILE)
 			}
-			JPackagePlatform.MACOS -> {
+			Os.MACOS -> {
 				icon = File(res, RES_ICON_MAC_FILE)
 			}
-			JPackagePlatform.LINUX -> {
+			Os.LINUX -> {
 				icon = File(res, RES_ICON_LINUX_FILE)
 			}
 		}
