@@ -6,6 +6,8 @@ import build.api.dsl.accessors.application
 import build.api.dsl.accessors.testImplementation
 import build.setUp
 import com.github.jengelman.gradle.plugins.shadow.ShadowApplicationPlugin
+import com.github.jengelman.gradle.plugins.shadow.ShadowJavaPlugin
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Project
 import org.gradle.api.plugins.ApplicationPlugin
 import org.gradle.api.plugins.ExtensionAware
@@ -25,8 +27,15 @@ class _plugin : ProjectPlugin({
 
 	setUp(this)
 
+	val pluginManager = pluginManager
 	pluginManager.withPlugin("application") {
 		setUpApplicationJvmArgs()
+	}
+	pluginManager.withPlugin("com.github.johnrengelman.shadow") {
+		tasks.named<ShadowJar>(ShadowJavaPlugin.SHADOW_JAR_TASK_NAME) {
+			// KLUDGE for https://github.com/johnrengelman/shadow/issues/729
+			exclude("META-INF/versions/*/module-info.class")
+		}
 	}
 
 	if (group != "inclusives" && name != "testing") {
