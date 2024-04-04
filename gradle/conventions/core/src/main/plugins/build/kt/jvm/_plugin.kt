@@ -71,13 +71,13 @@ private fun Project.setUpApplicationJvmArgs() {
 	}
 
 	val tasks = tasks
-	tasks.setUpApplicationRunTasks(
+	tasks.setUpApplicationJvmArgsForRunTasks(
 		runTaskName = ApplicationPlugin.TASK_RUN_NAME,
 		startScriptsTaskName = ApplicationPlugin.TASK_START_SCRIPTS_NAME,
 		jvmArgs, jvmArgsIterable,
 	)
 	pluginManager.withPlugin("com.github.johnrengelman.shadow") {
-		tasks.setUpApplicationRunTasks(
+		tasks.setUpApplicationJvmArgsForRunTasks(
 			runTaskName = ShadowApplicationPlugin.SHADOW_RUN_TASK_NAME,
 			startScriptsTaskName = ShadowApplicationPlugin.SHADOW_SCRIPTS_TASK_NAME,
 			jvmArgs, jvmArgsIterable,
@@ -85,7 +85,7 @@ private fun Project.setUpApplicationJvmArgs() {
 	}
 }
 
-private fun TaskContainer.setUpApplicationRunTasks(
+private fun TaskContainer.setUpApplicationJvmArgsForRunTasks(
 	runTaskName: String,
 	startScriptsTaskName: String,
 	jvmArgs: ListProperty<String>,
