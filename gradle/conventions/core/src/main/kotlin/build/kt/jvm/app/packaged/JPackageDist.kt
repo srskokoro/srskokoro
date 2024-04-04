@@ -3,6 +3,7 @@ package build.kt.jvm.app.packaged
 import build.api.file.file
 import build.api.platform.Os
 import build.api.process.ExecArgs
+import build.support.io.MulticastOutputStream
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.provider.Property
@@ -98,7 +99,9 @@ abstract class JPackageDist : JPackageBaseTask() {
 
 		val jdepsOutput = ByteArrayOutputStream()
 		exec.exec {
-			standardOutput = jdepsOutput
+			standardOutput = MulticastOutputStream(
+				standardOutput, jdepsOutput,
+			)
 			executable = jdepsPath()
 			args(jdepsExecArgs)
 		}.rethrowFailure()
