@@ -3,7 +3,6 @@ package build.kt.jvm.app.packaged
 import build.api.file.file
 import build.api.platform.Os
 import build.api.process.ExecArgs
-import build.support.io.MulticastOutputStream
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.provider.Property
@@ -15,6 +14,7 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.file.Deleter
 import org.gradle.process.ExecOperations
+import org.gradle.process.internal.ExecException
 import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.inject.Inject
@@ -98,15 +98,29 @@ abstract class JPackageDist : JPackageBaseTask() {
 		}
 
 		val jdepsOutput = ByteArrayOutputStream()
-		exec.exec {
-			standardOutput = MulticastOutputStream(
-				standardOutput, jdepsOutput,
-			)
+		val jdepsExecResult = exec.exec {
+			standardOutput = jdepsOutput
 			executable = jdepsPath()
 			args(jdepsExecArgs)
-		}.rethrowFailure()
+			isIgnoreExitValue = true // We'll manually throw below
+		}
+		val jdepsOutputStr = jdepsOutput.toString()
+		try {
+			jdepsExecResult.rethrowFailure().assertNormalExitValue()
+		} catch (ex: ExecException) {
+			throw ExecException(StringBuilder().apply {
+				val m = ex.message
+				if (!m.isNullOrEmpty()) {
+					m.lineSequence()
+						.forEach { appendLine(it) }
+					appendLine()
+				}
+				jdepsOutputStr.lineSequence()
+					.forEach { appendLine(it) }
+			}.trimEnd() as String, ex)
+		}
 
-		jdepsOutput.toString().trim().let {
+		jdepsOutputStr.trim().let {
 			jpackageExecArgs.args("--add-modules", it)
 		}
 
