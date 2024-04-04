@@ -16,6 +16,7 @@ import kotlinx.serialization.modules.SerializersModule
 @nook internal class WvContextImpl(
 	handle: WvWindowHandle,
 	private val activity: WvWindowActivity,
+	/** NOTE: Can be [Bundle.EMPTY] (which is unmodifiable). */
 	private val oldStateEntries: Bundle,
 ) : WvContext(handle, activity.lifecycleScope) {
 
@@ -48,7 +49,7 @@ import kotlinx.serialization.modules.SerializersModule
 		val id = bus.id
 		src.getSerializationEncoded(id)?.let { enc ->
 			val v = enc.decode(bus.serialization) // May throw
-			src.remove(id)
+			src.remove(id) // Does nothing on `Bundle.EMPTY`
 			return v
 		}
 		return null

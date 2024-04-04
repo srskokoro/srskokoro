@@ -54,7 +54,7 @@ open class WvWindowActivity : ComponentActivity() {
 			handle = h
 			h.attachPeer(this)
 
-			val o = savedInstanceState?.getBundle(EXTRAS_KEY_to_OLD_STATE_ENTRIES) ?: Bundle()
+			val o = savedInstanceState?.getBundle(EXTRAS_KEY_to_OLD_STATE_ENTRIES) ?: Bundle.EMPTY
 			val wc = WvContextImpl(h, this, oldStateEntries = o)
 			window = f.init(wc) // May throw
 
