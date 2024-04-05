@@ -1,5 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
+import build.api.dsl.*
+
 pluginManagement {
 	apply(from = "gradle/discardInitialIdeaSync.settings.gradle.kts")
 	extra["build.structure.root"] = "."
@@ -38,6 +40,17 @@ dependencyResolutionManagement {
 	repositories {
 		mavenCentral()
 		google()
+
+		// Download arbitrary files from GitHub releases.
+		// - See, https://stackoverflow.com/a/34327202
+		ivy("https://github.com/") {
+			onlyIfAcceptedAs("githubReleases")
+			patternLayout {
+				// Dependency notation: "[organization]:[module]:[revision]:[classifier]@[ext]"
+				artifact("/[organization]/[module]/releases/download/[revision]/[classifier](.[ext])")
+			}
+			metadataSources.artifact()
+		}
 	}
 
 	// Self-include build to allow projects in the main build be addressable by
