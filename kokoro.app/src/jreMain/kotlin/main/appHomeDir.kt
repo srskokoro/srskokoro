@@ -4,8 +4,10 @@ import java.io.File
 
 @JvmField val appHomeDir = run(fun(): File {
 	appLibDir?.run {
-		// The "app home" is the directory containing the "app" directory.
-		if (name == "app") parentFile?.let {
+		val name = name
+		// The "app home" is the directory containing either the "app" directory
+		// (when using `jpackage`) or the "lib" directory (when otherwise).
+		if (name == "app" || name == "lib") parentFile?.let {
 			return it
 		}
 	}
