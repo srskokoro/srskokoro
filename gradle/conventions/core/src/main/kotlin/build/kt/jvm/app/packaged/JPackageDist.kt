@@ -94,6 +94,7 @@ abstract class JPackageDist : JPackageBaseTask() {
 
 		jdepsExecArgs = ExecArgs {
 			args("--print-module-deps")
+			args("--ignore-missing-deps")
 			args(File(appDir, mainJar).path)
 		}
 
