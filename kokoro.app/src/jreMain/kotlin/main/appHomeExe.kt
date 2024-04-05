@@ -12,10 +12,10 @@ import kotlin.jvm.optionals.getOrNull
 			// -- https://docs.oracle.com/en/java/javase/21/jpackage/packaging-overview.html#GUID-DAE6A497-6E6F-4895-90CA-3C71AF052271
 			val exeDir = exeFile.parentFile
 			val appHomeDir = appHomeDir
-			if (appHomeDir == exeDir) return@check
+			if (appHomeDir == exeDir) return@check // On Windows
 			exeDir.parentFile.let {
-				if (appHomeDir == it) return@check
-				if (appHomeDir == File(it, "lib")) return@check
+				if (appHomeDir == it) return@check // On macOS
+				if (appHomeDir == File(it, "lib")) return@check // On Linux
 			}
 			return@let // All checks failed!
 		}
