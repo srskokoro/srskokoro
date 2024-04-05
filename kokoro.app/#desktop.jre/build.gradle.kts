@@ -1,4 +1,6 @@
 import build.api.dsl.*
+import build.api.platform.Os
+import build.api.platform.OsArch
 import build.support.cast
 
 plugins {
@@ -32,10 +34,30 @@ packaged {
 	licenseFile = rootProject.file("LICENSE.txt", PathValidation.FILE)
 }
 
+// --
+
+val flatlaf_natives: Configuration by configurations.creating
+
 distributions {
 	appHome {
+		val contents = contents
+
 		contents.from(packaged.licenseFile) {
 			into("legal")
+		}
+
+		contents.from(flatlaf_natives) {
+			into("flatlaf")
+
+			eachFile(fun(e): Unit = e.name.run {
+				if (startsWith("flatlaf-", ignoreCase = true)) {
+					val components = split('-')
+					check(components.size == 4)
+
+					val (_, _, os, archExt) = components
+					e.name = "flatlaf-$os-$archExt"
+				}
+			})
 		}
 	}
 }
@@ -55,9 +77,39 @@ tasks.startShadowScripts {
 		startScripts.windowsStartScriptGenerator.cast<TemplateBasedScriptGenerator>().template
 }
 
+// --
+
+private object Utils {
+	fun E_UnsupportedOsAndArch(os: Os, osArch: OsArch) =
+		IllegalStateException("Unsupported OS + Arch combination: $os + $osArch")
+}
+
 dependencies {
 	deps {
 		wixBinZipUrl = prop("build.wixBinZipUrl")
 	}
+
+	val os = Os.current
+	val osArch = OsArch.current
+
+	// See, "Native Libraries distribution | FlatLaf - Flat Look and Feel" --
+	// https://www.formdev.com/flatlaf/native-libraries/#gradle_no_natives_jar
+	flatlaf_natives("com.formdev:flatlaf::" + when (os) {
+		Os.WINDOWS -> when (osArch) {
+			OsArch.X86 -> "windows-x86@dll"
+			OsArch.X86_64 -> "windows-x86_64@dll"
+			OsArch.AARCH64 -> "windows-arm64@dll"
+		}
+		Os.MACOS -> when (osArch) {
+			OsArch.X86_64 -> "macos-x86_64@dylib"
+			OsArch.AARCH64 -> "macos-arm64@dylib"
+			else -> throw Utils.E_UnsupportedOsAndArch(os, osArch)
+		}
+		Os.LINUX -> when (osArch) {
+			OsArch.X86_64 -> "linux-x86_64@so"
+			else -> throw Utils.E_UnsupportedOsAndArch(os, osArch)
+		}
+	})
+
 	implementation(project(":kokoro.app"))
 }

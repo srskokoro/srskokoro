@@ -157,6 +157,10 @@ dependencySettings {
 	val androidx_webkit = "1.9.0" // https://developer.android.com/jetpack/androidx/releases/webkit
 	module("androidx.webkit:webkit", androidx_webkit)
 
+	val flatlaf = "3.4.1" // https://github.com/JFormDesigner/FlatLaf/releases
+	module("com.formdev:flatlaf", flatlaf)
+	module("com.formdev:flatlaf-extras", flatlaf) // https://github.com/JFormDesigner/FlatLaf/tree/main/flatlaf-extras
+
 	//#endregion
 
 	//#region Test infrastructure

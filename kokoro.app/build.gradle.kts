@@ -37,4 +37,11 @@ dependencies {
 	androidMainImplementation("androidx.activity:activity-ktx")
 	//androidMainImplementation("androidx.fragment:fragment-ktx")
 	androidMainImplementation("androidx.webkit:webkit")
+
+	// See, "Native Libraries distribution | FlatLaf - Flat Look and Feel" --
+	// https://www.formdev.com/flatlaf/native-libraries/#gradle_no_natives_jar
+	jreMainImplementation("com.formdev:flatlaf::no-natives")
+	jreMainImplementation("com.formdev:flatlaf-extras") {
+		exclude("com.formdev", "flatlaf")
+	}
 }
