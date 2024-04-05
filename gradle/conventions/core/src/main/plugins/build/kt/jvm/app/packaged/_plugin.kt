@@ -69,9 +69,8 @@ class _plugin : ProjectPlugin({
 		tasks.runOnIdeSync(it)
 	}
 
-	val jdkHomeFromToolchain = javaToolchains
-		.compilerFor(java.toolchain)
-		.map { it.metadata.installationPath }
+	val jdkInstallationFromToolchain = javaToolchains.compilerFor(java.toolchain).map { it.metadata }
+	val jdkHomeFromToolchain = jdkInstallationFromToolchain.map { it.installationPath }
 
 	val installShadowDist = tasks.named<Sync>(ShadowApplicationPlugin.SHADOW_INSTALL_TASK_NAME)
 	val shadowJar = tasks.named<ShadowJar>(ShadowJavaPlugin.SHADOW_JAR_TASK_NAME)
@@ -80,6 +79,7 @@ class _plugin : ProjectPlugin({
 	val jpackageDist by tasks.registering(JPackageDist::class) {
 		group = DISTRIBUTION_GROUP
 
+		runtimeVersion = jdkInstallationFromToolchain.map { it.languageVersion.asInt() }
 		jdkHome = jdkHomeFromToolchain
 		spec = packaged
 		dependsOn(packaged_validate)

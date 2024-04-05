@@ -17,9 +17,14 @@ import org.gradle.process.ExecOperations
 import org.gradle.process.internal.ExecException
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.util.jar.JarFile
 import javax.inject.Inject
 
 abstract class JPackageDist : JPackageBaseTask() {
+
+	/** The expected version of the Java runtime for running the application. */
+	@get:Input
+	abstract val runtimeVersion: Property<Int>
 
 	@get:Internal
 	abstract val appDir: DirectoryProperty
@@ -93,9 +98,13 @@ abstract class JPackageDist : JPackageBaseTask() {
 		}
 
 		jdepsExecArgs = ExecArgs {
+			val mainJarFile = File(appDir, mainJar)
+			if (JarFile(mainJarFile, false).isMultiRelease) {
+				args("--multi-release", runtimeVersion.get().str)
+			}
 			args("--print-module-deps")
 			args("--ignore-missing-deps")
-			args(File(appDir, mainJar).path)
+			args(mainJarFile.path)
 		}
 
 		val jdepsOutput = ByteArrayOutputStream()

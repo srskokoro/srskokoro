@@ -42,6 +42,8 @@ distributions {
 
 tasks.shadowJar {
 	archiveFileName = Build.APP_SHADOW_JAR
+	// KLUDGE for https://github.com/johnrengelman/shadow/issues/449
+	manifest.attributes["Multi-Release"] = true
 }
 
 tasks.startShadowScripts {
