@@ -54,4 +54,18 @@ open class ExecArgs : LinkedList<String>() {
 	 * @return Every argument split by spaces and quoted by quoting rules.
 	 */
 	override fun toString(): String = Commandline.toString(toArray(arrayOfNulls(size)))
+
+	// --
+
+	/**
+	 * Same as calling [Any.toString]`()` but less verbose.
+	 *
+	 * Useful for feeding arguments into one of the [args]`(…)` methods, e.g.,
+	 * compare the following:
+	 * ```kt
+	 * args(v1.toString())
+	 * args(v2.str)
+	 * ```
+	 */
+	inline val Any.str get() = toString()
 }
