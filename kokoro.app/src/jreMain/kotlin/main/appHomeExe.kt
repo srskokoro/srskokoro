@@ -21,5 +21,10 @@ import kotlin.jvm.optionals.getOrNull
 		}
 		return exeFile.name
 	}
-	return System.getenv("APP_BASE_NAME")
+
+	System.getenv("APP_BASE_NAME")?.let {
+		if (it.isNotBlank()) return it
+	}
+
+	return appLibJar?.name
 })
