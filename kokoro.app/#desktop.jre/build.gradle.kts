@@ -75,6 +75,7 @@ tasks.startShadowScripts {
 		startScripts.unixStartScriptGenerator.cast<TemplateBasedScriptGenerator>().template
 	windowsStartScriptGenerator.cast<TemplateBasedScriptGenerator>().template =
 		startScripts.windowsStartScriptGenerator.cast<TemplateBasedScriptGenerator>().template
+	mainClass = startScripts.mainClass
 }
 
 // --
