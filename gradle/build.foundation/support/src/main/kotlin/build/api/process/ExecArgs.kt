@@ -6,8 +6,6 @@ import java.util.LinkedList
 @Suppress("NOTHING_TO_INLINE")
 open class ExecArgs : LinkedList<String>() {
 
-	inline fun args() = this
-
 	inline fun args(arg1: String) = apply {
 		add(arg1)
 	}
@@ -29,6 +27,8 @@ open class ExecArgs : LinkedList<String>() {
 		add(arg3)
 		add(arg4)
 	}
+
+	inline fun args() = this
 
 	inline fun args(vararg args: String) = argsFrom(args)
 
