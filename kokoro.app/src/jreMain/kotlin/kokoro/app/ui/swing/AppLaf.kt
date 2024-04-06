@@ -8,6 +8,7 @@ import kokoro.internal.SPECIAL_USE_DEPRECATION
 import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assert
+import kokoro.internal.assertThreadMain
 import java.awt.EventQueue
 import java.awt.Toolkit
 import java.awt.Window
@@ -25,12 +26,36 @@ object AppLaf {
 
 	inline val isDark get() = @Suppress("DEPRECATION_ERROR") _isDark
 
+	enum class DarkMode {
+		USE_SYSTEM,
+		FORCE_LIGHT,
+		FORCE_DARK,
+	}
+
+	/**
+	 * NOTE: Implicitly calls [ensure]`()` (or at least, achieves the same
+	 * effect).
+	 */
+	var darkMode: DarkMode
+		inline get() = @Suppress("DEPRECATION_ERROR") _darkMode
+		@MainThread set(mode) {
+			assertThreadMain()
+			@Suppress("DEPRECATION_ERROR")
+			if (mode != _darkMode) {
+				_darkMode = mode
+				AppLafSetup.maybeInitOrUpdate()
+			}
+		}
+
 	/**
 	 * Should be set to match the current LAF, which isn't necessarily when the
 	 * system changes dark mode.
 	 */
 	@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
 	@PublishedApi @JvmField internal var _isDark = false
+
+	@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
+	@PublishedApi @JvmField internal var _darkMode = DarkMode.USE_SYSTEM
 }
 
 @Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
@@ -101,7 +126,13 @@ internal object AppLafSetup :
 
 	@MainThread
 	private fun updateLaf() {
-		val isDark = this.isOsThemeDark
+		@Suppress("DEPRECATION_ERROR")
+		val isDark = when (AppLaf._darkMode) {
+			AppLaf.DarkMode.USE_SYSTEM -> isOsThemeDark
+			AppLaf.DarkMode.FORCE_LIGHT -> false
+			AppLaf.DarkMode.FORCE_DARK -> true
+		}
+
 		@Suppress("DEPRECATION_ERROR")
 		AppLaf._isDark = isDark
 
@@ -123,6 +154,14 @@ internal object AppLafSetup :
 		if ((nonInitStatus ?: return) == this) {
 			return initialize()
 		}
+		throw wrapThrown()
+	}
+
+	@Suppress("NOTHING_TO_INLINE", "FoldInitializerAndIfToElvis")
+	inline fun maybeInitOrUpdate() {
+		val status = nonInitStatus
+		if (status == null) return withThreadSwingNoInline(this)
+		if (status == this) return initialize()
 		throw wrapThrown()
 	}
 
