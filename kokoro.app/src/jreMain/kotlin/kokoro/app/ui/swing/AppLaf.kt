@@ -50,6 +50,8 @@ object AppLaf {
 			if (mode != _darkMode) {
 				_darkMode = mode
 				AppLafSetup.maybeInitOrUpdate()
+			} else {
+				AppLafSetup.maybeInit()
 			}
 		}
 
