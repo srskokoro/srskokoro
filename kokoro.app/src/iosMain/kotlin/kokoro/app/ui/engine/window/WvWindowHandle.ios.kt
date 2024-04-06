@@ -4,7 +4,7 @@ import kokoro.app.ui.engine.UiBus
 import kokoro.internal.annotation.MainThread
 
 @OptIn(nook::class)
-actual class WvWindowHandle @nook actual constructor(
+actual class WvWindowHandle @nook internal actual constructor(
 	id: String?,
 	windowFactoryId: WvWindowFactoryId,
 	parent: WvWindowManager?,

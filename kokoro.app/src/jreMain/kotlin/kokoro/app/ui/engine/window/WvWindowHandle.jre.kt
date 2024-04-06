@@ -15,7 +15,7 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlin.coroutines.CoroutineContext
 
 @OptIn(nook::class)
-actual class WvWindowHandle @nook actual constructor(
+actual class WvWindowHandle @nook internal actual constructor(
 	id: String?,
 	windowFactoryId: WvWindowFactoryId,
 	parent: WvWindowManager?,

@@ -14,7 +14,7 @@ import kokoro.internal.os.SerializationEncoded
 import kokoro.internal.os.SerializationEncoded.Companion.getSerializationEncodedExtra
 
 @OptIn(nook::class)
-actual class WvWindowHandle @nook actual constructor(
+actual class WvWindowHandle @nook internal actual constructor(
 	id: String?,
 	windowFactoryId: WvWindowFactoryId,
 	parent: WvWindowManager?,

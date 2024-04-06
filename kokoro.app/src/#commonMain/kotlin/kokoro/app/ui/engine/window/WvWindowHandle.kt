@@ -3,7 +3,7 @@ package kokoro.app.ui.engine.window
 import kokoro.app.ui.engine.UiBus
 import kokoro.internal.annotation.MainThread
 
-expect class WvWindowHandle @nook constructor(
+expect class WvWindowHandle @nook internal constructor(
 	id: String?,
 	windowFactoryId: WvWindowFactoryId,
 	parent: WvWindowManager?,
