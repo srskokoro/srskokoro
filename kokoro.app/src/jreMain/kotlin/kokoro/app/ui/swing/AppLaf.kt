@@ -115,8 +115,9 @@ internal object AppLafSetup :
 
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun maybeInit() {
-		if (nonInitStatus == null) return
-		if (nonInitStatus == this) return initialize()
+		if ((nonInitStatus ?: return) == this) {
+			return initialize()
+		}
 		throw wrapThrown()
 	}
 
