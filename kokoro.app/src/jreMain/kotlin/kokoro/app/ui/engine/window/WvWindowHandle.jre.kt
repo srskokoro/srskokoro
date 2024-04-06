@@ -66,6 +66,7 @@ actual class WvWindowHandle @nook internal actual constructor(
 	@MainThread
 	fun init(coroutineContext: CoroutineContext) {
 		assertThreadMain()
+		if (id_ == null) throw E_Closed()
 		if (peer_ != null) throw E_AlreadyInit()
 		peer_ = if (!windowFactoryId.isNothing) {
 			WvWindowFrame(this, coroutineContext)
