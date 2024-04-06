@@ -175,6 +175,7 @@ internal object AppLafSetup :
 		// In Swing EDT...
 
 		try {
+			AppLafNatives.init()
 			// TODO More initialization logic goes here
 			//  ...
 			updateLaf()
