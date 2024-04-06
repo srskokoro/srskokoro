@@ -30,6 +30,12 @@ object AppLaf {
 		USE_SYSTEM,
 		FORCE_LIGHT,
 		FORCE_DARK,
+		;
+
+		@Suppress("NOTHING_TO_INLINE")
+		inline fun setUp() {
+			darkMode = this
+		}
 	}
 
 	/**
