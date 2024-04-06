@@ -56,6 +56,8 @@ abstract class WvWindowManager @nook constructor(
 
 	// --
 
+	val isOpen inline get() = !isClosed
+
 	abstract val isClosed: Boolean
 
 	/**
@@ -145,14 +147,16 @@ abstract class WvWindowManager @nook constructor(
 				"Window factory ID not registered: $windowFactoryId"
 			})
 
-			return synchronized(openHandles_lock) {
-				openHandles.compute(id) { _, v ->
-					if (v != null) throw IdConflictException(v)
-					WvWindowHandle(id, windowFactoryId, parent)
+			return if (parent == null || parent.isOpen) {
+				synchronized(openHandles_lock) {
+					openHandles.compute(id) { _, v ->
+						if (v != null) throw IdConflictException(v)
+						WvWindowHandle(id, windowFactoryId, parent)
+					}
+				}.also { h ->
+					parent?.children?.add(h) // Requires the main thread
 				}
-			}.also { h ->
-				parent?.children?.add(h) // Requires the main thread
-			}
+			} else createClosed(windowFactoryId)
 		}
 	}
 
