@@ -5,6 +5,8 @@ import com.formdev.flatlaf.FlatLightLaf
 import com.formdev.flatlaf.extras.FlatAnimatedLafChange
 import com.jthemedetecor.OsThemeDetector
 import kokoro.internal.SPECIAL_USE_DEPRECATION
+import kokoro.internal.annotation.AnyThread
+import kokoro.internal.annotation.MainThread
 import kokoro.internal.assert
 import java.awt.EventQueue
 import java.awt.Toolkit
@@ -58,6 +60,7 @@ internal object AppLafSetup :
 		// OS theme change, thus causing us to miss the current theme change.
 	}
 
+	@AnyThread
 	override fun accept(isOsThemeDark: Boolean) {
 		// The following 'write' is guaranteed to *happen before* the
 		// `invokeLater()`, even if the field wasn't marked volatile.
@@ -65,6 +68,7 @@ internal object AppLafSetup :
 		EventQueue.invokeLater(this)
 	}
 
+	@MainThread
 	override fun run() {
 		try {
 			FlatAnimatedLafChange.showSnapshot()
@@ -95,6 +99,7 @@ internal object AppLafSetup :
 		}
 	}
 
+	@MainThread
 	private fun updateLaf() {
 		val isDark = this.isOsThemeDark
 		@Suppress("DEPRECATION_ERROR")
