@@ -44,4 +44,7 @@ dependencies {
 	jreMainImplementation("com.formdev:flatlaf-extras") {
 		exclude("com.formdev", "flatlaf")
 	}
+
+	jreMainImplementation("com.github.Dansoftowner:jSystemThemeDetector")
+	jreMainImplementation("org.slf4j:slf4j-jdk14") // Needed for `jSystemThemeDetector`
 }

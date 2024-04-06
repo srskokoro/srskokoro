@@ -102,6 +102,9 @@ dependencySettings {
 
 	//#region General support
 
+	val slf4j = "2.0.12" // https://www.slf4j.org/download.html
+	module("org.slf4j:slf4j-jdk14", slf4j) // Needed for `jSystemThemeDetector`
+
 	val androidx_annotation = "1.7.1"// https://developer.android.com/jetpack/androidx/releases/annotation
 	module("androidx.annotation:annotation", androidx_annotation)
 
@@ -160,6 +163,11 @@ dependencySettings {
 	val flatlaf = "3.4.1" // https://github.com/JFormDesigner/FlatLaf/releases
 	module("com.formdev:flatlaf", flatlaf)
 	module("com.formdev:flatlaf-extras", flatlaf) // https://github.com/JFormDesigner/FlatLaf/tree/main/flatlaf-extras
+
+	// TODO! Update as soon as issue is fixed: https://github.com/Dansoftowner/jSystemThemeDetector/issues/18
+	//  - See also, https://github.com/Dansoftowner/jSystemThemeDetector/pull/30
+	val jSystemThemeDetector = "3.8" // https://github.com/Dansoftowner/jSystemThemeDetector/releases
+	module("com.github.Dansoftowner:jSystemThemeDetector", jSystemThemeDetector)
 
 	//#endregion
 
