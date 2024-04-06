@@ -21,7 +21,10 @@ actual class WvWindowHandle @nook actual constructor(
 	parent: WvWindowManager?,
 ) : WvWindowManager(windowFactoryId, parent) {
 
-	/** WARNING: Must only be modified from the main thread. */
+	/**
+	 * - WARNING: Must only be modified from the main thread.
+	 * - CONTRACT: `null` on [close].
+	 */
 	@JvmField @nook var id_ = id
 
 	@Suppress("OVERRIDE_BY_INLINE")
@@ -47,7 +50,10 @@ actual class WvWindowHandle @nook actual constructor(
 		}
 	}
 
-	/** WARNING: Must only be modified from the main thread. */
+	/**
+	 * - WARNING: Must only be modified from the main thread.
+	 * - CONTRACT: `null` on [close].
+	 */
 	@JvmField @nook internal var peer_: Peer? = null
 
 	init {

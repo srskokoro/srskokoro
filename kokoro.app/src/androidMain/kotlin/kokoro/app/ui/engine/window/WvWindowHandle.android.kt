@@ -20,7 +20,10 @@ actual class WvWindowHandle @nook actual constructor(
 	parent: WvWindowManager?,
 ) : WvWindowManager(windowFactoryId, parent) {
 
-	/** WARNING: Must only be modified from the main thread. */
+	/**
+	 * - WARNING: Must only be modified from the main thread.
+	 * - CONTRACT: `null` on [close].
+	 */
 	@JvmField @nook var uri_ =
 		if (id == null) null else Uri.fromParts("x", id, null)
 
@@ -30,7 +33,10 @@ actual class WvWindowHandle @nook actual constructor(
 
 	// --
 
-	/** WARNING: Must only be modified from the main thread. */
+	/**
+	 * - WARNING: Must only be modified from the main thread.
+	 * - CONTRACT: `null` on [close].
+	 */
 	@JvmField @nook var peer_: Any? = null
 
 	@Suppress("NOTHING_TO_INLINE")

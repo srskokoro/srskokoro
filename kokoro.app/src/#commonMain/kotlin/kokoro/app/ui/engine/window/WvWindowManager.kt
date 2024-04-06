@@ -21,7 +21,10 @@ abstract class WvWindowManager @nook constructor(
 ) {
 	abstract val id: String?
 
-	/** WARNING: Must only be modified from the main thread. */
+	/**
+	 * - WARNING: Must only be modified from the main thread.
+	 * - CONTRACT: `null` on [close].
+	 */
 	@JvmField @nook var parent_: WvWindowManager? = parent
 	val parent: WvWindowManager? inline get() = parent_
 
