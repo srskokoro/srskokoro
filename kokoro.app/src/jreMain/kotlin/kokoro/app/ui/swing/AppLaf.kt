@@ -40,14 +40,14 @@ internal object AppLafSetup :
 	// ^ Not `private` to avoid the extra synthetic accessor.
 	// ^ Deliberately not `@Volatile` -- it's OK for threads to not immediately see updates.
 
-	private var isDark: Boolean
+	private var isOsThemeDark: Boolean
 
 	init {
 		val detector = OsThemeDetector.getDetector()
 		// NOTE: The listener registered below will only be called after an OS
 		// theme change is detected, i.e., it won't be called until then.
 		detector.registerListener(this)
-		isDark = detector.isDark
+		isOsThemeDark = detector.isDark
 		// NOTE: `detector.isDark` must be queried 'after' registering as a
 		// listener above. Otherwise, if it's queried 'before' the registration,
 		// there's a possibility of a race with the OS changing the theme just
@@ -56,10 +56,10 @@ internal object AppLafSetup :
 		// OS theme change, thus causing us to miss the current theme change.
 	}
 
-	override fun accept(isDark: Boolean) {
+	override fun accept(isOsThemeDark: Boolean) {
 		// The following 'write' is guaranteed to *happen before* the
 		// `invokeLater()`, even if the field wasn't marked volatile.
-		this.isDark = isDark
+		this.isOsThemeDark = isOsThemeDark
 		EventQueue.invokeLater(this)
 	}
 
@@ -94,7 +94,7 @@ internal object AppLafSetup :
 	}
 
 	private fun updateLaf() {
-		val isDark = this.isDark
+		val isDark = this.isOsThemeDark
 		@Suppress("DEPRECATION_ERROR")
 		_isDarkAppLaf = isDark
 
