@@ -16,19 +16,20 @@ import javax.swing.SwingUtilities
 import javax.swing.UIManager
 import javax.swing.UnsupportedLookAndFeelException
 
-@Suppress("NOTHING_TO_INLINE")
-inline fun ensureAppLaf() = @Suppress("DEPRECATION_ERROR") AppLafSetup.maybeInit()
+object AppLaf {
 
-inline val isDarkAppLaf get() = @Suppress("DEPRECATION_ERROR") _isDarkAppLaf
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun ensure() = @Suppress("DEPRECATION_ERROR") AppLafSetup.maybeInit()
 
-/**
- * Should be set to match the current LAF, which isn't necessarily when the
- * system changes dark mode.
- */
-@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
-@PublishedApi @JvmField internal var _isDarkAppLaf = false
+	inline val isDark get() = @Suppress("DEPRECATION_ERROR") _isDark
 
-// --
+	/**
+	 * Should be set to match the current LAF, which isn't necessarily when the
+	 * system changes dark mode.
+	 */
+	@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
+	@PublishedApi @JvmField internal var _isDark = false
+}
 
 @Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
 @PublishedApi
@@ -97,7 +98,7 @@ internal object AppLafSetup :
 	private fun updateLaf() {
 		val isDark = this.isOsThemeDark
 		@Suppress("DEPRECATION_ERROR")
-		_isDarkAppLaf = isDark
+		AppLaf._isDark = isDark
 
 		UIManager.setLookAndFeel(
 			if (!isDark) {
