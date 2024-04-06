@@ -13,12 +13,14 @@ fun main(): Unit = runBlocking(Dispatchers.Swing) {
 	AppLafNatives.init()
 	println("Hello World!")
 
-	AppLaf.DarkMode.FORCE_DARK.setUp()
+	AppLaf.DarkMode.USE_SYSTEM.setUp()
 	BaseWindowFrame(appHomeExe.toString()).apply {
-		contentPane.add(JLabel("Hello World!", JLabel.CENTER))
+		contentPane.add(JLabel("Hello World!", JLabel.CENTER).apply {
+			preferredSize = Dimension(250, 250)
+		})
 	}.apply {
 		pack()
-		minimumSize = Dimension(250, 250)
+		minimumSize = Dimension(15, 250)
 		isLocationByPlatform = true
 		isVisible = true
 	}
