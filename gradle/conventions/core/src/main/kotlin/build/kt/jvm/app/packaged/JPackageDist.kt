@@ -99,7 +99,7 @@ abstract class JPackageDist : JPackageBaseTask() {
 
 		jdepsExecArgs = ExecArgs {
 			val mainJarFile = File(appDir, mainJar)
-			if (JarFile(mainJarFile, false).isMultiRelease) {
+			if (JarFile(mainJarFile, false).use { it.isMultiRelease }) {
 				args("--multi-release", runtimeVersion.get().str)
 			}
 			args("--print-module-deps")
