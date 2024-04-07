@@ -5,11 +5,13 @@ import assertk.assertThat
 import assertk.assertions.isTrue
 import build.plugins.test.buildProject
 import build.plugins.test.io.TestTemp
+import io.kotest.core.annotation.DoNotParallelize
 import io.kotest.core.spec.Spec
 import io.kotest.core.spec.style.FreeSpec
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
+@DoNotParallelize
 class test__plugin : FreeSpec({
 	"All known convention plugins delegate to the 'base' plugin" {
 		assertAll {
