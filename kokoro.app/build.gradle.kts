@@ -3,6 +3,7 @@ plugins {
 	id("build.kt.x.expect_actual")
 	id("build.ktx.atomicfu")
 	id("kokoro.internal.nook")
+	id("kokoro.build.jcef")
 }
 
 // NOTE: The `group` below is meant to be used by the application, such as the
@@ -47,4 +48,6 @@ dependencies {
 
 	jreMainImplementation("com.github.Dansoftowner:jSystemThemeDetector")
 	jreMainImplementation("org.slf4j:slf4j-jdk14") // Needed for `jSystemThemeDetector`
+
+	jreMainImplementation(jcef.dependency)
 }

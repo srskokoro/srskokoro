@@ -6,6 +6,7 @@ import build.support.cast
 plugins {
 	id("build.kt.jvm.app.packaged")
 	id("build.version")
+	id("kokoro.build.jcef.bundler")
 }
 
 group = evaluatedParent.group
@@ -18,6 +19,7 @@ private object Build {
 application {
 	applicationName = Build.APP_NAME
 	mainClass.set("main.MainKt")
+	jvmArgs.addAll(jcef.requiredJvmArgs)
 }
 
 packaged {
@@ -44,6 +46,10 @@ distributions {
 
 		contents.from(packaged.licenseFile) {
 			into("legal")
+		}
+
+		contents.from(jcef.natives) {
+			into("jcef")
 		}
 
 		contents.from(flatlaf_natives) {
