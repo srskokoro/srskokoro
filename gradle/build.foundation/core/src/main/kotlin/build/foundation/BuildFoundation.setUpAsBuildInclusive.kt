@@ -1,7 +1,6 @@
 package build.foundation
 
 import org.gradle.api.Project
-import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
@@ -25,7 +24,6 @@ private object Build {
 	// bytecode built with JVM target <higher version>…" etc., when the build
 	// isn't even complaining that.
 	inline val KOTLIN_JVM_TARGET get() = JvmTarget.JVM_1_8
-	const val JAVAC_RELEASE_OPT = "--release=8"
 }
 
 /**
@@ -33,9 +31,6 @@ private object Build {
  */
 fun BuildFoundation.setUpAsBuildInclusive(project: Project): Unit = with(project) {
 	tasks.run {
-		withType<JavaCompile>().configureEach {
-			options.compilerArgs.add(Build.JAVAC_RELEASE_OPT)
-		}
 		withType<KotlinCompile>().configureEach(fun(task) = with(task.compilerOptions) {
 			task.jvmTargetValidationMode.set(JvmTargetValidationMode.IGNORE)
 			jvmTarget.set(Build.KOTLIN_JVM_TARGET)
