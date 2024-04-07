@@ -1,8 +1,8 @@
 package build.kt.jvm.app.packaged
 
 import build.api.file.file
-import build.api.platform.Os
 import build.api.process.ExecArgs
+import build.support.Os
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.file.FileOperations
 import org.gradle.api.provider.Property

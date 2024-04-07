@@ -1,4 +1,4 @@
-package build.api.platform
+package build.support
 
 enum class OsArch {
 	X86,

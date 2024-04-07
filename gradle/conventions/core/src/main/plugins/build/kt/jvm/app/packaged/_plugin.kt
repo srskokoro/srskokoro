@@ -8,7 +8,6 @@ import build.api.dsl.accessors.java
 import build.api.dsl.accessors.javaToolchains
 import build.api.dsl.accessors.jvmArgs
 import build.api.dsl.accessors.kotlinSourceSets
-import build.api.platform.Os
 import build.kt.jvm.app.DIST_APP_HOME_INSTALL_TASK_NAME
 import build.kt.jvm.app.packaged.linux.JPackageSetupDeb
 import build.kt.jvm.app.packaged.linux.JPackageSetupRpm
@@ -18,6 +17,7 @@ import build.kt.jvm.app.packaged.win.JPackageSetupExe
 import build.kt.jvm.app.packaged.win.JPackageSetupMsi
 import build.kt.jvm.app.packaged.win.JPackageSetupWindowsBaseTask
 import build.kt.jvm.app.packaged.win.WixInstallTask
+import build.support.Os
 import com.github.jengelman.gradle.plugins.shadow.ShadowApplicationPlugin
 import com.github.jengelman.gradle.plugins.shadow.ShadowJavaPlugin
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar

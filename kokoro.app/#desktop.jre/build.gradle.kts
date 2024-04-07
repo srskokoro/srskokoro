@@ -1,6 +1,6 @@
 import build.api.dsl.*
-import build.api.platform.Os
-import build.api.platform.OsArch
+import build.support.Os
+import build.support.OsArch
 import build.support.cast
 
 plugins {
