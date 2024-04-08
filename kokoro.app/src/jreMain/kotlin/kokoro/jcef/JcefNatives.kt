@@ -53,8 +53,8 @@ object JcefNatives {
 	private const val init__name = "init"
 
 	fun init(bundleDir: File) {
-		require(bundleDir.isAbsolute) { "`$bundleDir__name` needs to be absolute." }
-		require(bundleDir.isDirectory) { "`$bundleDir__name` must be an existing directory." }
+		require(bundleDir.isAbsolute) { "`$bundleDir__name` needs to be absolute.\n- Path: $bundleDir" }
+		require(bundleDir.isDirectory) { "`$bundleDir__name` must be an existing directory.\n- Path: $bundleDir" }
 		check(bundleDir_.compareAndSet(null, bundleDir)) { E_CALL_ONCE }
 		// Patch the Java library path to include the `bundleDir`.
 		// - This is required for JCEF to find all resources.
