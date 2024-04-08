@@ -23,7 +23,19 @@ object JcefNatives {
 
 	private val LOG = Logger.getLogger(JcefNatives::class.java.getName())
 
+	// The "Java library path" system property used for loading native
+	// libraries.
+	//
+	// - On Windows, it defaults to the `PATH` environment variable.
+	// - On macOS, is defaults to the `DYLD_LIBRARY_PATH` environment variable.
+	// - On Linux, it defaults to the `LD_LIBRARY_PATH` environment variable.
+	//
+	// See also,
+	// - https://stackoverflow.com/a/20038808
+	// - https://stackoverflow.com/q/29968292
 	private const val JAVA_LIBRARY_PATH = "java.library.path"
+
+	// --
 
 	private val bundleDir_ = atomic<File?>(null)
 
