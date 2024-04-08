@@ -28,7 +28,7 @@ abstract class JcefBundlerExtension @Inject constructor(
 
 		@Suppress("LeakingThis")
 		val installJcef = project.tasks.register("installJcef", JcefBundlerTask::class.java, this)
-		installJcef.configure { outputDir = this.project.layout.buildDirectory.map { it.dir("generated/$name") } }
+		installJcef.configure { outputDir = this.project.layout.buildDirectory.dir("jcef") }
 		natives = installJcef.flatMap { it.outputDir }
 	}
 }
