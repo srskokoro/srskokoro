@@ -161,10 +161,10 @@ object JcefNatives {
 			LOG.log(Level.SEVERE, ex.message, ex)
 		}
 	}
-
-	private const val E_CALL_ONCE = "Can only be called once."
-
-	private fun E_UnknownOs() = UnsupportedOperationException("Unknown OS: ${System.getProperty("os.name")}")
-
-	private fun E_CefStartupFailed() = IllegalStateException("CEF startup failed.")
 }
+
+private const val E_CALL_ONCE = "Can only be called once."
+
+private fun E_UnknownOs() = UnsupportedOperationException("Unknown OS: ${System.getProperty("os.name")}")
+
+private fun E_CefStartupFailed() = IllegalStateException("CEF startup failed.")
