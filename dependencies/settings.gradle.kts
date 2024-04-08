@@ -39,6 +39,9 @@ dependencySettings {
 	module(kotlin("test"), kotlin)
 	module(kotlin("test-junit5"), kotlin)
 
+	// https://github.com/LouisCAD/CompleteKotlin/releases
+	plugin("com.louiscad.complete-kotlin", "1.1.0")
+
 	// Android Gradle Plugin (AGP) -- https://developer.android.com/build/releases/gradle-plugin
 	val android = "8.2.2" // https://maven.google.com/web/index.html#com.android.tools.build:gradle
 
