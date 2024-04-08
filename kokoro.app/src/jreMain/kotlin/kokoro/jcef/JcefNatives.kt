@@ -89,13 +89,16 @@ object JcefNatives {
 
 		loadJAWT() // Must manually load this (if not already loaded)
 
-		var cefArgs = emptyArray<String>()
+		val cefArgs: Array<String>
 		@Suppress("UnsafeDynamicallyLoadedCode")
 		if (OS.isWindows()) {
 			System.load(File(bundleDir, "chrome_elf.dll").path)
 			System.load(File(bundleDir, "libcef.dll").path) // CEF natives
 			System.load(File(bundleDir, "jcef.dll").path) // JCEF natives
+
 			cefSettings.browser_subprocess_path = File(bundleDir, "jcef_helper.exe").path
+
+			cefArgs = emptyArray()
 		} else if (OS.isLinux()) {
 			System.load(File(bundleDir, "libcef.so").path) // CEF natives
 			System.load(File(bundleDir, "libjcef.so").path) // JCEF natives
@@ -104,7 +107,7 @@ object JcefNatives {
 			cefSettings.resources_dir_path = bundleDir.path
 			cefSettings.locales_dir_path = File(bundleDir, "locales").path
 
-			if (!CefApp.startup(cefArgs)) throw E_CefStartupFailed()
+			cefArgs = emptyArray()
 		} else if (OS.isMacintosh()) {
 			System.load(File(bundleDir, "libjcef.dylib").path) // JCEF natives
 
@@ -119,9 +122,7 @@ object JcefNatives {
 			)
 		} else throw E_UnknownOs()
 
-			if (!CefApp.startup(cefArgs)) throw E_CefStartupFailed()
-		}
-
+		if (!CefApp.startup(cefArgs)) throw E_CefStartupFailed()
 		val cefApp = CefApp.getInstance(cefArgs, cefSettings)
 
 		// ASSUMPTION: At this point, all necessary native libraries have
