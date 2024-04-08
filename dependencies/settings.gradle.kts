@@ -169,9 +169,9 @@ dependencySettings {
 	val jSystemThemeDetector = "3.8" // https://github.com/Dansoftowner/jSystemThemeDetector/releases
 	module("com.github.Dansoftowner:jSystemThemeDetector", jSystemThemeDetector)
 
-	// JCEF Maven -- https://github.com/jcefmaven/jcefmaven/releases
-	prop("jcef.commit", "0b8e42e")
-	prop("jcef.cef", "122.1.10+gc902316+chromium-122.0.6261.112")
+	// See JCEF Maven releases at https://github.com/jcefmaven/jcefmaven/releases
+	prop("jcef.commit", "0b8e42e") // The "JCEF commit" indicated by the JCEF Maven release
+	prop("jcef.cef", "122.1.10+gc902316+chromium-122.0.6261.112") // The "CEF version" indicated by the JCEF Maven release
 
 	//#endregion
 
