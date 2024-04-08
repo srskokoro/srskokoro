@@ -117,6 +117,7 @@ object JcefNatives {
 				"--main-bundle-path=$bundleDirPath/jcef Helper.app",
 				"--framework-dir-path=$bundleDirPath/Chromium Embedded Framework.framework",
 			)
+		} else throw E_UnknownOs()
 
 			if (!CefApp.startup(cefArgs)) throw E_CefStartupFailed()
 		}
@@ -161,6 +162,8 @@ object JcefNatives {
 	}
 
 	private const val E_CALL_ONCE = "Can only be called once."
+
+	private fun E_UnknownOs() = UnsupportedOperationException("Unknown OS: ${System.getProperty("os.name")}")
 
 	private fun E_CefStartupFailed() = IllegalStateException("CEF startup failed.")
 }
