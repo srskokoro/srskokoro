@@ -65,6 +65,8 @@ object CleanProcessExit {
 
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun blockUntilExit(): Nothing {
+		// NOTE: The following doesn't care about a "lost unpark" -- its goal is
+		// to simply "park" indefinitely anyway.
 		while (true) LockSupport.park()
 	}
 
