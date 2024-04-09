@@ -67,7 +67,10 @@ object CleanProcessExit {
 	inline fun blockUntilExit(): Nothing {
 		// NOTE: The following doesn't care about a "lost unpark" -- its goal is
 		// to simply "park" indefinitely anyway.
-		while (true) LockSupport.park()
+		while (true) {
+			LockSupport.park() // Returns when "interrupted status" set
+			Thread.interrupted() // Clear and discard "interrupted status"
+		}
 	}
 
 	// --
@@ -193,8 +196,10 @@ private class CleanProcessExitThread : Thread(
 		val starter = Runnable {
 			this@CleanProcessExitThread.start()
 
-			while (!shutdownHook_allowTerminate)
+			while (!shutdownHook_allowTerminate) {
 				LockSupport.park()
+				interrupted() // Discard interrupts
+			}
 		}
 
 		val h = ofVirtual()
