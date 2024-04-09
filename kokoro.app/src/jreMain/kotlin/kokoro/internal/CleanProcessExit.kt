@@ -52,7 +52,8 @@ object CleanProcessExit {
 		blockUntilExit()
 	}
 
-	fun blockUntilExit(): Nothing {
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun blockUntilExit(): Nothing {
 		while (true) LockSupport.park()
 	}
 
