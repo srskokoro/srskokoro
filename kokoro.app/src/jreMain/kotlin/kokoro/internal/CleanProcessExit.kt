@@ -157,8 +157,15 @@ private class CleanProcessExitThread : Thread(
 	}
 
 	/**
-	 * The `Runtime` shutdown hook for starting [CleanProcessExitThread]
+	 * The [Runtime] shutdown hook for starting [CleanProcessExitThread]
 	 * automatically, just in case it won't be started manually.
+	 *
+	 * NOTE: Prior to the beginning of the [Runtime] shutdown sequence, it is
+	 * possible for a program to start a shutdown hook by calling its [Thread.start]
+	 * method explicitly. According to the docs, if this occurs, the behavior of
+	 * the shutdown sequence is unspecified. Given that [CleanProcessExitThread]
+	 * may be started manually, it is wise to have a different thread registered
+	 * as a [Runtime] shutdown hook.
 	 */
 	@JvmField val shutdownHook: Thread
 
