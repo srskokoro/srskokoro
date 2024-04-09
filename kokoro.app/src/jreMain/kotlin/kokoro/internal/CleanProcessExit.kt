@@ -14,6 +14,7 @@ import kokoro.internal.CleanProcessExitThread.Companion.isExiting as isExiting_
 /**
  * @see exitProcessCleanly
  * @see exitProcessCleanlyLater
+ * @see exitProcessCleanlyBlocking
  */
 object CleanProcessExit {
 
@@ -36,19 +37,30 @@ object CleanProcessExit {
 	/**
 	 * @see status
 	 * @see exitProcessCleanly
-	 * @see exitProcessCleanlyLater
+	 * @see ExitProcessRequested
 	 */
 	@Suppress("NOTHING_TO_INLINE")
-	inline fun run(): Unit = exitThread.start()
+	inline fun doExit(): Nothing {
+		doExitLater()
+		@Suppress("DEPRECATION_ERROR")
+		throw ExitProcessRequested.installCatcherThenThrow()
+	}
 
 	/**
 	 * @see status
-	 * @see exitProcessCleanly
 	 * @see exitProcessCleanlyLater
 	 */
 	@Suppress("NOTHING_TO_INLINE")
-	inline fun runBlocking(): Nothing {
-		run()
+	inline fun doExitLater(): Unit = exitThread.start()
+
+	/**
+	 * @see status
+	 * @see exitProcessCleanlyBlocking
+	 * @see blockUntilExit
+	 */
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun doExitBlocking(): Nothing {
+		doExitLater()
 		blockUntilExit()
 	}
 
@@ -215,7 +227,16 @@ private class CleanProcessExitThread : Thread(
 		for ((hook, rankBox) in entries) {
 			val x = rankBox.get()
 			if (x >= 0 && rankBox.compareAndSet(x, EXEC_HOOK_MARK)) try {
-				hook.onCleanup()
+				try {
+					hook.onCleanup()
+				} catch (ex: ExitProcessRequested) {
+					// No need to restore the UEH here. Let other hooks see the
+					// specially installed UEH (if any) that comes with the
+					// thrown `ExitProcessRequested`.
+					/** @see ExitProcessRequested.Catcher */
+					// --
+					ex.throwAnySuppressed()
+				}
 			} catch (ex: Throwable) {
 				ROOT_THREAD_GROUP.uncaughtException(this, ex)
 			}
