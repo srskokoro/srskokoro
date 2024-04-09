@@ -1,12 +1,12 @@
 package kokoro.jcef
 
 import kokoro.internal.DEBUG
+import kokoro.internal.Os
 import kokoro.internal.check
 import kokoro.internal.checkNotNull
 import kotlinx.atomicfu.atomic
 import org.cef.CefApp
 import org.cef.CefSettings
-import org.cef.OS
 import org.cef.SystemBootstrap
 import java.io.File
 import java.util.logging.Level
@@ -91,36 +91,40 @@ object JcefNatives {
 
 		val cefArgs: Array<String>
 		@Suppress("UnsafeDynamicallyLoadedCode")
-		if (OS.isWindows()) {
-			System.load(File(bundleDir, "chrome_elf.dll").path)
-			System.load(File(bundleDir, "libcef.dll").path) // CEF natives
-			System.load(File(bundleDir, "jcef.dll").path) // JCEF natives
+		when (Os.current) {
+			Os.WINDOWS -> {
+				System.load(File(bundleDir, "chrome_elf.dll").path)
+				System.load(File(bundleDir, "libcef.dll").path) // CEF natives
+				System.load(File(bundleDir, "jcef.dll").path) // JCEF natives
 
-			cefSettings.browser_subprocess_path = File(bundleDir, "jcef_helper.exe").path
+				cefSettings.browser_subprocess_path = File(bundleDir, "jcef_helper.exe").path
 
-			cefArgs = emptyArray()
-		} else if (OS.isLinux()) {
-			System.load(File(bundleDir, "libcef.so").path) // CEF natives
-			System.load(File(bundleDir, "libjcef.so").path) // JCEF natives
+				cefArgs = emptyArray()
+			}
+			Os.MACOS -> {
+				System.load(File(bundleDir, "libcef.so").path) // CEF natives
+				System.load(File(bundleDir, "libjcef.so").path) // JCEF natives
 
-			cefSettings.browser_subprocess_path = File(bundleDir, "jcef_helper").path
-			cefSettings.resources_dir_path = bundleDir.path
-			cefSettings.locales_dir_path = File(bundleDir, "locales").path
+				cefSettings.browser_subprocess_path = File(bundleDir, "jcef_helper").path
+				cefSettings.resources_dir_path = bundleDir.path
+				cefSettings.locales_dir_path = File(bundleDir, "locales").path
 
-			cefArgs = emptyArray()
-		} else if (OS.isMacintosh()) {
-			System.load(File(bundleDir, "libjcef.dylib").path) // JCEF natives
+				cefArgs = emptyArray()
+			}
+			Os.LINUX -> {
+				System.load(File(bundleDir, "libjcef.dylib").path) // JCEF natives
 
-			val bundleDirPath = bundleDir.path
-			val browser_subprocess_path = "$bundleDirPath/jcef Helper.app/Contents/MacOS/jcef Helper"
-			cefSettings.browser_subprocess_path = browser_subprocess_path
+				val bundleDirPath = bundleDir.path
+				val browser_subprocess_path = "$bundleDirPath/jcef Helper.app/Contents/MacOS/jcef Helper"
+				cefSettings.browser_subprocess_path = browser_subprocess_path
 
-			cefArgs = arrayOf(
-				"--browser-subprocess-path=$browser_subprocess_path",
-				"--main-bundle-path=$bundleDirPath/jcef Helper.app",
-				"--framework-dir-path=$bundleDirPath/Chromium Embedded Framework.framework",
-			)
-		} else throw E_UnknownOs()
+				cefArgs = arrayOf(
+					"--browser-subprocess-path=$browser_subprocess_path",
+					"--main-bundle-path=$bundleDirPath/jcef Helper.app",
+					"--framework-dir-path=$bundleDirPath/Chromium Embedded Framework.framework",
+				)
+			}
+		}
 
 		if (!CefApp.startup(cefArgs)) throw E_CefStartupFailed()
 		val cefApp = CefApp.getInstance(cefArgs, cefSettings)
@@ -164,7 +168,5 @@ object JcefNatives {
 }
 
 private const val E_CALL_ONCE = "Can only be called once."
-
-private fun E_UnknownOs() = UnsupportedOperationException("Unknown OS: ${System.getProperty("os.name")}")
 
 private fun E_CefStartupFailed() = IllegalStateException("CEF startup failed.")
