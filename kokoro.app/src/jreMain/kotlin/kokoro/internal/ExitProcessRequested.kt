@@ -10,7 +10,16 @@ class ExitProcessRequested : Throwable(null, null, true, false) {
 	companion object {
 
 		/** @see ExitProcessRequested.Catcher */
-		fun installCatcherThenThrow(): ExitProcessRequested {
+		@Suppress("NOTHING_TO_INLINE")
+		@JvmName("installCatcherThenThrow_")
+		inline fun installCatcherThenThrow(): Nothing {
+			@Suppress("DEPRECATION_ERROR")
+			throw installCatcherThenThrow_()
+		}
+
+		@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
+		@JvmName("installCatcherThenThrow")
+		fun installCatcherThenThrow_(): ExitProcessRequested {
 			Catcher.install()
 			throw ExitProcessRequested()
 		}

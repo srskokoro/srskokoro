@@ -42,7 +42,7 @@ object CleanProcessExit {
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun doExit(): Nothing {
 		doExitLater()
-		throw ExitProcessRequested.installCatcherThenThrow()
+		ExitProcessRequested.installCatcherThenThrow()
 	}
 
 	/**
