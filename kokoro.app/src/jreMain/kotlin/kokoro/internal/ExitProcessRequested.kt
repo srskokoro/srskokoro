@@ -5,17 +5,13 @@ package kokoro.internal
  * @see ExitProcessRequested.discardIn
  * @see ExitProcessRequested.Catcher
  */
-class ExitProcessRequested
-@Deprecated(SPECIAL_USE_DEPRECATION) constructor() : Throwable(
-	null, null, true, false,
-) {
+class ExitProcessRequested : Throwable(null, null, true, false) {
 
 	companion object {
 
-		@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
+		/** @see ExitProcessRequested.Catcher */
 		fun installCatcherThenThrow(): ExitProcessRequested {
 			Catcher.install()
-			@Suppress("DEPRECATION")
 			throw ExitProcessRequested()
 		}
 	}

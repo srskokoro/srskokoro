@@ -42,7 +42,6 @@ object CleanProcessExit {
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun doExit(): Nothing {
 		doExitLater()
-		@Suppress("DEPRECATION_ERROR")
 		throw ExitProcessRequested.installCatcherThenThrow()
 	}
 
