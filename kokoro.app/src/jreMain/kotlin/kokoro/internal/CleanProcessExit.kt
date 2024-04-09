@@ -11,6 +11,10 @@ import java.util.concurrent.locks.LockSupport
 import kotlin.collections.MutableMap.MutableEntry
 import kokoro.internal.CleanProcessExitThread.Companion.isExiting as isExiting_
 
+/**
+ * @see exitProcessCleanly
+ * @see exitProcessCleanlyLater
+ */
 object CleanProcessExit {
 
 	init {
