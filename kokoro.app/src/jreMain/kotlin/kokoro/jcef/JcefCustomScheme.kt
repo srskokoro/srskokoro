@@ -58,9 +58,9 @@ package kokoro.jcef
 data class JcefCustomScheme(
 	val schemeName: String,
 	val isStandard: Boolean = true,
-	val isLocal: Boolean,
-	val isDisplayIsolated: Boolean,
-	val isSecure: Boolean,
+	val isLocal: Boolean = false,
+	val isDisplayIsolated: Boolean = true,
+	val isSecure: Boolean = false,
 	val isCorsEnabled: Boolean = isStandard,
 	val isCspBypassing: Boolean = !isStandard,
 	val isFetchEnabled: Boolean = true,
