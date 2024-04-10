@@ -43,7 +43,7 @@ object Jcef {
 
 	fun init(config: JcefConfig) {
 		@Suppress("DEPRECATION_ERROR")
-		check(Init.bar.compareAndSet(false, true))
+		check(Init.bar.compareAndSet(false, true)) { "Can only be called once." }
 
 		if (CefApp.getState() != CefAppState.NONE) {
 			// Must not let someone else initialize `CefApp`, since we would
