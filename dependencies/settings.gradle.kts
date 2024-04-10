@@ -128,6 +128,13 @@ dependencySettings {
 
 	//#endregion
 
+	//#region IO support
+
+	val okio = "3.9.0" // https://github.com/square/okio
+	module("com.squareup.okio:okio", okio)
+
+	//#endregion
+
 	//#region Model foundations
 
 	plugin(kotlin("plugin.serialization"), kotlin)
