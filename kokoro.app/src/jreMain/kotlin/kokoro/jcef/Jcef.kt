@@ -25,8 +25,20 @@ import kotlin.jvm.optionals.getOrNull
 
 object Jcef {
 
+	/**
+	 * WARNING: All access to this field will fail unless [JcefNatives.bundleDir]
+	 * has already been initialized "beforehand" – that is, this must be done
+	 * before the "first" access to this field, or there's no way to recover
+	 * from the failure other than by restarting the executable's process.
+	 */
 	inline val bundleDir: File get() = @Suppress("DEPRECATION_ERROR") Init.bundleDir
 
+	/**
+	 * WARNING: All access to this field will fail unless [Jcef.init]`()` was
+	 * called "beforehand" – that is, this must be done before the "first"
+	 * access to this field, or there's no way to recover from the failure other
+	 * than by restarting the executable's process.
+	 */
 	inline val app: CefApp get() = @Suppress("DEPRECATION_ERROR") AppHolder.app
 
 	fun init(config: JcefConfig) {
