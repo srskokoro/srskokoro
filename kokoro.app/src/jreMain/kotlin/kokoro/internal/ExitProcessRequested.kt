@@ -7,6 +7,28 @@ package kokoro.internal
  */
 class ExitProcessRequested : Throwable(null, null, true, false) {
 
+	val safeMessage: String? get() = super.message
+
+	override val message: String?
+		get() {
+			// If we're here, then assume that this throwable was caught and
+			// intercepted for printing or logging.
+			if (CleanProcessExit.isExiting) {
+				// Assume that after this throwable is printed or logged, it'll
+				// be discarded in a way that it won't reach our `Catcher`, so
+				// uninstall the `Catcher` now (if any was installed).
+				Catcher.uninstall()
+				// Prevent this throwable from being printed or logged, for when
+				// the process is now exiting (via `CleanProcessExit`) and there
+				// aren't any suppressed exceptions that may need to be printed
+				// or logged.
+				if (suppressed.isEmpty()) {
+					CleanProcessExit.blockUntilExit()
+				}
+			}
+			return super.message
+		}
+
 	companion object {
 
 		/** @see ExitProcessRequested.Catcher */
