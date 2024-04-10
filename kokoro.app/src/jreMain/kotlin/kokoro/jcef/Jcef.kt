@@ -5,13 +5,16 @@ import kokoro.internal.CleanProcessExit
 import kokoro.internal.DEBUG
 import kokoro.internal.Os
 import kokoro.internal.SPECIAL_USE_DEPRECATION
-import kokoro.internal.collections.fastForEach
+import kokoro.internal.check
+import kokoro.internal.checkNotNull
+import kokoro.internal.collections.fastForEachDeferringThrow
+import kokoro.internal.collections.fastForEachIndexedDeferringThrow
 import kokoro.internal.i18n.currentLocale
 import kokoro.internal.io.NioPath
 import kokoro.internal.io.toNioPath
+import kotlinx.atomicfu.atomic
 import org.cef.CefApp
 import org.cef.CefApp.CefAppState
-import org.cef.CefSettings
 import org.cef.callback.CefCommandLine
 import org.cef.callback.CefSchemeRegistrar
 import org.cef.handler.CefAppHandlerAdapter
@@ -22,128 +25,122 @@ import kotlin.jvm.optionals.getOrNull
 
 object Jcef {
 
-	@JvmField val bundleDir = JcefNatives.bundleDir // May throw
+	inline val bundleDir: File get() = @Suppress("DEPRECATION_ERROR") Init.bundleDir
 
-	private val globalLock inline get() = this
-	@GuardedBy("globalLock") private var jcefAppInitialized = false
+	inline val app: CefApp get() = @Suppress("DEPRECATION_ERROR") AppHolder.app
 
-	private lateinit var debugLogFile_: File
-	// ^ Deliberately not `@Volatile` -- it's OK for threads to not immediately see updates.
+	fun init(config: JcefConfig) {
+		@Suppress("DEPRECATION_ERROR")
+		check(Init.bar.compareAndSet(false, true))
 
-	var debugLogFile: File
-		get() = debugLogFile_
-		set(f) = synchronized(globalLock) {
-			if (jcefAppInitialized) throw E_JcefAppAlreadyInitialized()
-			if (DEBUG) check(!f.isDirectory) { "Cannot be a directory: $f" }
-			debugLogFile_ = f // The `synchronized` block will prevent this write from being reordered much later
+		if (CefApp.getState() != CefAppState.NONE) {
+			// Must not let someone else initialize `CefApp`, since we would
+			// like to exclusively customize `CefApp` only here.
+			error("Someone else initialized `CefApp`")
 		}
 
-	private val jcefStateObservers = ArrayList<JcefStateObserver>()
+		CefApp.addAppHandler(AppHandler(
+			ArrayList(config.customSchemes),
+			ArrayList(config.stateObservers),
+		))
 
-	fun addStateObserver(observer: JcefStateObserver) {
-		synchronized(globalLock) {
-			if (jcefAppInitialized) throw E_JcefAppAlreadyInitialized()
-			jcefStateObservers.add(observer)
-		}
+		@Suppress("DEPRECATION_ERROR")
+		val cefSettings = config.asCefSettings()
+
+		val cefApp = JcefNatives.init(cefSettings.apply {
+			// Must be explicitly set to `false` or the entire UI (not just
+			// the browser UI) will refuse input, as if frozen --
+			// experienced on Windows 10; not sure on other OS though.
+			windowless_rendering_enabled = false
+
+			// NOTE: At the moment, there's currently no known way to update the
+			// locale once CEF has been initialized.
+			// - See, https://www.magpcss.org/ceforum/viewtopic.php?f=6&t=12816
+			locale = currentLocale().toLanguageTag()
+		})
+
+		@Suppress("DEPRECATION_ERROR")
+		Init.app = cefApp
+
+		CleanProcessExit.addHook(CPE_RANK, Teardown())
 	}
 
-	private val customSchemesRegistrants = ArrayList<JcefCustomSchemesRegistrant>()
-
-	fun addCustomSchemes(registrant: JcefCustomSchemesRegistrant) {
-		synchronized(globalLock) {
-			if (jcefAppInitialized) throw E_JcefAppAlreadyInitialized()
-			customSchemesRegistrants.add(registrant)
-		}
+	@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
+	@PublishedApi
+	internal object Init {
+		@JvmField internal val bar = atomic(false)
+		@JvmField val bundleDir = JcefNatives.bundleDir // May throw
+		@JvmField var app: CefApp? = null
 	}
 
-	inline val app: CefApp
-		get() = @Suppress("DEPRECATION_ERROR") CefAppSetup.app
+	@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
+	@PublishedApi
+	internal object AppHolder {
+		@Suppress("DEPRECATION_ERROR")
+		val app = checkNotNull(Init.app, or = {
+			"Must first call `${Jcef::class.simpleName}${::init.name}()`"
+		})
+	}
 
 	private class AppHandler(
-		val jcefStateObservers: ArrayList<JcefStateObserver>,
-		val customSchemesRegistrants: ArrayList<JcefCustomSchemesRegistrant>,
+		val customSchemes: ArrayList<JcefCustomScheme>,
+		val stateObservers: ArrayList<JcefStateObserver>,
 	) : CefAppHandlerAdapter(null) {
 
 		override fun stateHasChanged(state: CefAppState) {
 			if (state == CefAppState.TERMINATED) {
-				val lock = CefAppTeardown.terminated_lock
+				val lock = Teardown.terminated_lock
 				synchronized(lock) {
-					CefAppTeardown.terminated = true
+					Teardown.terminated = true
 					lock.notifyAll()
 				}
 			}
-			jcefStateObservers.fastForEach {
+			stateObservers.fastForEachDeferringThrow {
 				it.onStateChanged(state)
 			}
 		}
 
 		override fun onContextInitialized() {
-			jcefStateObservers.fastForEach {
+			stateObservers.fastForEachDeferringThrow {
 				it.onContextInitialized()
 			}
 		}
 
 		override fun onRegisterCustomSchemes(registrar: CefSchemeRegistrar) {
-			customSchemesRegistrants.fastForEach {
-				it.onRegisterCustomSchemes(registrar)
-			}
+			customSchemes.fastForEachIndexedDeferringThrow(fun(i, entry) = entry.run {
+				check(registrar.addCustomScheme(
+					/*        schemeName = */ schemeName,
+					/*        isStandard = */ isStandard,
+					/*           isLocal = */ isLocal,
+					/* isDisplayIsolated = */ isDisplayIsolated,
+					/*          isSecure = */ isSecure,
+					/*     isCorsEnabled = */ isCorsEnabled,
+					/*    isCspBypassing = */ isCspBypassing,
+					/*    isFetchEnabled = */ isFetchEnabled,
+				), or = {
+					"Registration failed for custom scheme: $schemeName\n" +
+						"\n" +
+						"- Index: $i\n" +
+						"- Entry: $entry\n" +
+						"\n" +
+						"To resolve this issue, make sure that the custom scheme is registered only once\n" +
+						"and that it isn't any of the built-in schemes (e.g., HTTP, HTTPS, FILE, FTP,\n" +
+						"ABOUT, DATA, etc.)"
+				})
+			})
 		}
 
-		// Necessary in order to avoid execution issues on macOS.
-		// - See, https://github.com/jcefmaven/jcefmaven/blob/122.1.10/jcefmaven/src/main/java/me/friwi/jcefmaven/MavenCefAppHandlerAdapter.java
+		// Avoid execution issues on macOS. See, https://github.com/jcefmaven/jcefmaven/blob/122.1.10/jcefmaven/src/main/java/me/friwi/jcefmaven/MavenCefAppHandlerAdapter.java
 		override fun onBeforeCommandLineProcessing(process_type: String?, command_line: CefCommandLine?) {
 			app.onBeforeCommandLineProcessing(process_type, command_line)
 		}
 	}
 
-	@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
-	@PublishedApi
-	internal object CefAppSetup {
-		@JvmField val app: CefApp
-
-		init {
-			synchronized(globalLock) { jcefAppInitialized = true }
-
-			if (CefApp.getState() != CefAppState.NONE) {
-				// Must not let someone else initialize `CefApp`, since we would
-				// like to exclusively customize `CefApp` only here.
-				error("Someone else initialized `CefApp`")
-			}
-
-			CefApp.addAppHandler(AppHandler(
-				jcefStateObservers.apply { trimToSize() },
-				customSchemesRegistrants.apply { trimToSize() },
-			))
-
-			val cefSettings = CefSettings().apply {
-				// Must be explicitly set to `false` or the entire UI (not just
-				// the browser UI) will refuse input, as if frozen --
-				// experienced on Windows 10; not sure on other OS though.
-				windowless_rendering_enabled = false
-
-				log_severity = CefSettings.LogSeverity.LOGSEVERITY_DISABLE
-				// NOTE: Even if logging is disabled, provide a path still, in
-				// case JCEF/CEF doesn't honor our request for disabled logging.
-				log_file = debugLogFile.absolutePath
-
-				// TODO How to handle locale changes while the app is already running?
-				locale = currentLocale().toLanguageTag()
-
-				// TODO
-				//root_cache_path = ...
-				//cache_path = ...
-				//remote_debugging_port = ...
-			}
-
-			this.app = JcefNatives.init(cefSettings)
-
-			CleanProcessExit.addHook(CPE_RANK, CefAppTeardown())
-		}
-	}
+	// --
 
 	const val CPE_RANK = 100
 
-	private class CefAppTeardown : CleanProcessExit.Hook {
+	private class Teardown : CleanProcessExit.Hook {
 		companion object {
 			@GuardedBy("terminated_lock")
 			@JvmField var terminated = false
@@ -202,5 +199,3 @@ object Jcef {
 		}
 	}
 }
-
-private fun E_JcefAppAlreadyInitialized() = IllegalStateException("No longer possible. JCEF app already initialized.")
