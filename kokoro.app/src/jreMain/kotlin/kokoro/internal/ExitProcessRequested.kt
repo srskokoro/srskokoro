@@ -65,6 +65,19 @@ class ExitProcessRequested : CancellationException(null) {
 		throwAnySuppressed()
 	}
 
+	fun throwAnySuppressed() {
+		val suppressed = suppressed
+		if (suppressed.isEmpty()) return
+
+		val ex = suppressed[0]
+		for (i in 1..<suppressed.size) {
+			@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+			(ex as java.lang.Throwable).addSuppressed(suppressed[i])
+		}
+		if (ex !is ExitProcessRequested) throw ex
+		ex.throwAnySuppressed()
+	}
+
 	/**
 	 * @see Catcher.install
 	 * @see Catcher.uninstall
