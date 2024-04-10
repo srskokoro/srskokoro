@@ -58,8 +58,8 @@ class ExitProcessRequested : Throwable(null, null, true, false) {
 	}
 
 	/**
-	 * @see install
-	 * @see uninstall
+	 * @see Catcher.install
+	 * @see Catcher.uninstall
 	 */
 	class Catcher(val base: Thread.UncaughtExceptionHandler) : Thread.UncaughtExceptionHandler {
 
