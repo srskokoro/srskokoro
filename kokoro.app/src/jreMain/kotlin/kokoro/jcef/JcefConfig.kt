@@ -25,17 +25,17 @@ class JcefConfig {
 	 * @param cacheDir
 	 * @param logFile
 	 * @param logSeverity The log severity. Only messages of this severity level
-	 * or higher will be logged.
+	 *   or higher will be logged.
 	 * @param userAgent Value that will be returned as the "`User-Agent`" HTTP
-	 * header. If empty the default "`User-Agent`" string will be used.
+	 *   header. If empty the default "`User-Agent`" string will be used.
 	 * @param userAgentProduct Value that will be inserted as the product
-	 * portion of the default "`User-Agent`" string. If empty the Chromium product
-	 * version will be used. If [userAgent] is specified this value will be
-	 * ignored.
+	 *   portion of the default "`User-Agent`" string. If empty the Chromium
+	 *   product version will be used. If [userAgent] is specified this value
+	 *   will be ignored.
 	 * @param remoteDebuggingPort Set to a value between 1024 and 65535 to
-	 * enable remote debugging on the specified port. For example, if 8080 is
-	 * specified, the remote debugging URL will be http://localhost:8080. CEF
-	 * can be remotely debugged from any CEF or Chrome browser window.
+	 *   enable remote debugging on the specified port. For example, if 8080 is
+	 *   specified, the remote debugging URL will be http://localhost:8080. CEF
+	 *   can be remotely debugged from any CEF or Chrome browser window.
 	 */
 	@Suppress("ConvertSecondaryConstructorToPrimary")
 	constructor(
