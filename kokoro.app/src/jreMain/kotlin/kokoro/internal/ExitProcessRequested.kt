@@ -9,11 +9,11 @@ import kotlin.coroutines.cancellation.CancellationException
  */
 class ExitProcessRequested : CancellationException(null) {
 
+	override fun fillInStackTrace(): Throwable = this
+
 	init {
 		initCause(null)
 	}
-
-	override fun fillInStackTrace(): Throwable = this
 
 	val safeMessage: String? get() = super.message
 
