@@ -1,11 +1,19 @@
 package kokoro.internal
 
+import kotlin.coroutines.cancellation.CancellationException
+
 /**
  * @see ExitProcessRequested.discard
  * @see ExitProcessRequested.discardIn
  * @see ExitProcessRequested.Catcher
  */
-class ExitProcessRequested : Throwable(null, null, true, false) {
+class ExitProcessRequested : CancellationException(null) {
+
+	init {
+		initCause(null)
+	}
+
+	override fun fillInStackTrace(): Throwable = this
 
 	val safeMessage: String? get() = super.message
 
