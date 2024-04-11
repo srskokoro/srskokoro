@@ -1,6 +1,7 @@
 package kokoro.internal
 
 import kokoro.internal.CleanProcessExit.Hook
+import kokoro.internal.CleanProcessExit.Signal
 import kokoro.internal.CleanProcessExit.status
 import kokoro.internal.CleanProcessExitThread.Companion.EXEC_HOOK_MARK
 import kokoro.internal.CleanProcessExitThread.Companion.hooks
@@ -248,7 +249,7 @@ private class CleanProcessExitThread : Thread(
 			if (x >= 0 && rankBox.compareAndSet(x, EXEC_HOOK_MARK)) try {
 				try {
 					hook.onCleanup()
-				} catch (ex: CleanProcessExit.Signal) {
+				} catch (ex: Signal) {
 					ex.throwAnySuppressed()
 				}
 			} catch (ex: Throwable) {
