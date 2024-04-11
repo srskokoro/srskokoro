@@ -244,7 +244,11 @@ private class CleanProcessExitThread : Thread(
 					ex.throwAnySuppressed()
 				}
 			} catch (ex: Throwable) {
-				ROOT_THREAD_GROUP.uncaughtException(this, ex)
+				try {
+					ROOT_THREAD_GROUP.uncaughtException(this, ex)
+				} catch (_: Throwable) {
+					// Ignore.
+				}
 			}
 		}
 
