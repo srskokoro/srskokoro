@@ -14,7 +14,6 @@ import kokoro.internal.CleanProcessExitThread.Companion.isExiting as isExiting_
 /**
  * @see exitProcessCleanly
  * @see exitProcessCleanlyLater
- * @see exitProcessCleanlyBlocking
  */
 object CleanProcessExit {
 
@@ -36,40 +35,54 @@ object CleanProcessExit {
 
 	/**
 	 * @see status
-	 * @see exitProcessCleanly
-	 * @see ExitProcessRequested
-	 */
-	@Suppress("NOTHING_TO_INLINE")
-	inline fun doExit(): Nothing {
-		doExitLater()
-		ExitProcessRequested.installCatcherThenThrow()
-	}
-
-	/**
-	 * @see status
 	 * @see exitProcessCleanlyLater
+	 * @see doExit
 	 */
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun doExitLater(): Unit = exitThread.start()
 
 	/**
 	 * @see status
-	 * @see exitProcessCleanlyBlocking
-	 * @see blockUntilExit
+	 * @see exitProcessCleanly
+	 * @see doExitLater
 	 */
 	@Suppress("NOTHING_TO_INLINE")
-	inline fun doExitBlocking(): Nothing {
-		doExitLater()
-		blockUntilExit()
+	@JvmName("doExit_")
+	inline fun doExit(): Nothing {
+		@Suppress("DEPRECATION_ERROR")
+		throw doExit_()
 	}
 
-	@Suppress("NOTHING_TO_INLINE")
-	inline fun blockUntilExit(): Nothing {
+	@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
+	@JvmName("doExit")
+	fun doExit_(): Signal {
+		doExitLater()
+
+		if (Thread.currentThread() === exitThread) {
+			throw Signal() // Prevent blocking the exit thread
+		}
+
 		// NOTE: The following doesn't care about a "lost unpark" -- its goal is
 		// to simply "park" indefinitely anyway.
 		while (true) {
 			LockSupport.park() // Returns when "interrupted status" set
 			Thread.interrupted() // Clear and discard "interrupted status"
+		}
+	}
+
+	class Signal : Throwable(null, null, true, false) {
+
+		fun throwAnySuppressed() {
+			val suppressed = suppressed
+			if (suppressed.isEmpty()) return
+
+			val ex = suppressed[0]
+			for (i in 1..<suppressed.size) {
+				@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+				(ex as java.lang.Throwable).addSuppressed(suppressed[i])
+			}
+			if (ex !is Signal) throw ex
+			ex.throwAnySuppressed()
 		}
 	}
 
@@ -235,12 +248,7 @@ private class CleanProcessExitThread : Thread(
 			if (x >= 0 && rankBox.compareAndSet(x, EXEC_HOOK_MARK)) try {
 				try {
 					hook.onCleanup()
-				} catch (ex: ExitProcessRequested) {
-					// No need to restore the UEH here. Let other hooks see the
-					// specially installed UEH (if any) that comes with the
-					// thrown `ExitProcessRequested`.
-					/** @see ExitProcessRequested.Catcher */
-					// --
+				} catch (ex: CleanProcessExit.Signal) {
 					ex.throwAnySuppressed()
 				}
 			} catch (ex: Throwable) {
