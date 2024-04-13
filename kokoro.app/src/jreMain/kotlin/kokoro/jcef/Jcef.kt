@@ -60,9 +60,9 @@ object Jcef {
 		val cefSettings = config.asCefSettings()
 
 		val cefApp = JcefNatives.init(cefSettings.apply {
-			// Must be explicitly set to `false` or the entire UI (not just
-			// the browser UI) will refuse input, as if frozen --
-			// experienced on Windows 10; not sure on other OS though.
+			// Must be explicitly set to `false` or the entire UI (not just the
+			// browser UI) will refuse input, as if frozen -- experienced on
+			// Windows 10 (not sure on other OS though).
 			windowless_rendering_enabled = false
 
 			// NOTE: At the moment, there's currently no known way to update the
