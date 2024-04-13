@@ -79,8 +79,7 @@ object CleanProcessExit {
 
 			val ex = suppressed[0]
 			for (i in 1..<suppressed.size) {
-				@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-				(ex as java.lang.Throwable).addSuppressed(suppressed[i])
+				ex.addSuppressed_(suppressed[i])
 			}
 			if (ex !is Signal) throw ex
 			ex.throwAnySuppressed()

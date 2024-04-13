@@ -5,6 +5,7 @@ import com.formdev.flatlaf.FlatLightLaf
 import com.formdev.flatlaf.extras.FlatAnimatedLafChange
 import com.jthemedetecor.OsThemeDetector
 import kokoro.internal.SPECIAL_USE_DEPRECATION
+import kokoro.internal.addSuppressed_
 import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assert
@@ -126,7 +127,7 @@ internal object AppLafSetup :
 			try {
 				FlatAnimatedLafChange.stop()
 			} catch (exx: Throwable) {
-				ex.addSuppressed(exx)
+				ex.addSuppressed_(exx)
 			}
 			throw ex
 		}

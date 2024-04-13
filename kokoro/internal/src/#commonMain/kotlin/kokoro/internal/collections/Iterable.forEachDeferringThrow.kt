@@ -1,5 +1,7 @@
 package kokoro.internal.collections
 
+import kokoro.internal.addSuppressed_
+
 /**
  * @see Iterable.forEach
  */
@@ -10,7 +12,7 @@ inline fun <T> Iterable<T>.forEachDeferringThrow(action: (T) -> Unit) {
 			action(element)
 		} catch (ex: Throwable) {
 			if (thrown == null) thrown = ex
-			else thrown.addSuppressed(ex)
+			else thrown.addSuppressed_(ex)
 		}
 	}
 	if (thrown != null) throw thrown
@@ -27,7 +29,7 @@ inline fun <T> Iterable<T>.forEachIndexedDeferringThrow(action: (index: Int, T) 
 			action(i++, element)
 		} catch (ex: Throwable) {
 			if (thrown == null) thrown = ex
-			else thrown.addSuppressed(ex)
+			else thrown.addSuppressed_(ex)
 		}
 	}
 	if (thrown != null) throw thrown
