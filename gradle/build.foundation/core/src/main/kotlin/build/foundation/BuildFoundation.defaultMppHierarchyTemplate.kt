@@ -8,6 +8,7 @@ import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyTemplate
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.extend
 
@@ -28,11 +29,18 @@ private val defaultMppHierarchyTemplate_ = KotlinHierarchyTemplate.default.exten
 			withAndroidTarget()
 			withJvm()
 		}
-		group("native") {
-			group(MPP.unix) {
-				group("apple")
-				group("linux")
-				group("androidNative")
+		group(MPP.nonjvm) {
+			withCompilations {
+				val p = it.target.platformType
+				p != KotlinPlatformType.jvm &&
+					p != KotlinPlatformType.common
+			}
+			group("native") {
+				group(MPP.unix) {
+					group("apple")
+					group("linux")
+					group("androidNative")
+				}
 			}
 		}
 		group(MPP.desktop) {
@@ -53,6 +61,7 @@ fun BuildFoundation.ensureMppHierarchyTemplateDefaultNodes(
 	configurations: ConfigurationContainer,
 ) {
 	ensureMppHierarchyTemplateDefaultNode(MPP.jvmish, sourceSets, configurations)
+	ensureMppHierarchyTemplateDefaultNode(MPP.nonjvm, sourceSets, configurations)
 
 	ensureMppHierarchyTemplateDefaultNode("apple", sourceSets, configurations)
 	ensureMppHierarchyTemplateDefaultNode(MPP.unix, sourceSets, configurations)
