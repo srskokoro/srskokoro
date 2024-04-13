@@ -211,7 +211,7 @@ private class CleanProcessExitThread : Thread(
 
 			while (!shutdownHook_allowTerminate) {
 				LockSupport.park()
-				interrupted() // Discard interrupts
+				interrupted() // Discard and ignore interrupts
 			}
 		}
 
