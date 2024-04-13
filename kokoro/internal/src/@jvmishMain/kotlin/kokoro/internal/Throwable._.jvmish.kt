@@ -1,6 +1,6 @@
 package kokoro.internal
 
-fun Throwable.throwAnySuppressed() {
+actual fun Throwable.throwAnySuppressed() {
 	val suppressed = suppressed
 	if (suppressed.isEmpty()) return
 
