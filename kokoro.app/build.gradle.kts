@@ -1,7 +1,11 @@
+import build.api.dsl.*
+
 plugins {
 	id("kokoro.build.kt.mpp.app")
+	id("build.version")
 	id("build.kt.x.expect_actual")
 	id("build.ktx.atomicfu")
+	id("build.gmazzo.buildconfig")
 	id("kokoro.internal.nook")
 	id("kokoro.build.jcef")
 }
@@ -11,8 +15,28 @@ plugins {
 group = extra["kokoro.app.group"] as String
 base.archivesName = "kokoro-app"
 
+private object Build {
+	const val NAMESPACE = "kokoro.app"
+}
+
 android {
-	namespace = "kokoro.app"
+	namespace = Build.NAMESPACE
+}
+
+buildConfig {
+	asPublicObject("AppBuild") inPackage Build.NAMESPACE
+
+	val versionCode = versionCode
+	if (versionCode == 0) throw InvalidUserDataException(
+		"Version code 0 (zero) should not be used"
+	)
+	buildConfigField("String", "VERSION", "\"$versionName\"")
+	buildConfigField("int", "VERSION_CODE", "$versionCode")
+}
+
+buildConfig.ss.named("jreMain") {
+	asPublicObject("AppBuildDesktop") inPackage Build.NAMESPACE
+	buildConfigField("String", "APP_DATA_DIR_NAME", "\"SRSKokoro${if (isReleasing) "" else "-Dev"}\"")
 }
 
 dependencies {
