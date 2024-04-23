@@ -44,6 +44,7 @@ dependencies {
 	commonMainApi(project(":kokoro"))
 
 	commonMainImplementation(kotlin("reflect"))
+	jreMainImplementation("net.java.dev.jna:jna-platform")
 
 	commonMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
 	commonTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")

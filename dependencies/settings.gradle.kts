@@ -111,6 +111,10 @@ dependencySettings {
 	val androidx_annotation = "1.7.1"// https://developer.android.com/jetpack/androidx/releases/annotation
 	module("androidx.annotation:annotation", androidx_annotation)
 
+	val jna = "5.14.0" // https://github.com/java-native-access/jna/blob/master/CHANGES.md
+	module("net.java.dev.jna:jna", jna)
+	module("net.java.dev.jna:jna-platform", jna)
+
 	//#endregion
 
 	//#region Concurrency support

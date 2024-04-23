@@ -26,5 +26,7 @@ enum class Os {
 		}
 
 		fun E_Unknown() = UnsupportedOperationException("Unknown OS: $SYS_PROP_VAL")
+
+		fun E_Unsupported() = UnsupportedOperationException("Unsupported OS: $SYS_PROP_VAL")
 	}
 }
