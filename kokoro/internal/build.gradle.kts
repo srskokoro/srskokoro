@@ -34,7 +34,7 @@ buildConfig {
 
 dependencies {
 	hostMainApi("androidx.annotation:annotation")
-	commonMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core")
-	commonMainImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core")
+	commonMainApi("org.jetbrains.kotlinx:kotlinx-coroutines-core")
+	commonMainApi("org.jetbrains.kotlinx:kotlinx-serialization-core")
 	hostMainApi("androidx.collection:collection")
 }
