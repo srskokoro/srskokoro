@@ -46,10 +46,6 @@ object JcefNatives {
 			"Must first call `$init__name($bundleDir__name)`"
 		})
 
-	/**
-	 * NOTE: Can't use `::`[init]`.name` due to overload ambiguity; so we
-	 * created this constant.
-	 */
 	private const val init__name = "init"
 
 	fun init(bundleDir: File) {
@@ -77,11 +73,11 @@ object JcefNatives {
 
 	// --
 
-	private val init = atomic(false)
+	private val initApp = atomic(false)
 
-	fun init(cefSettings: CefSettings): CefApp {
+	fun initApp(cefSettings: CefSettings): CefApp {
 		val bundleDir = bundleDir // May throw
-		check(init.compareAndSet(false, true)) { E_CALL_ONCE }
+		check(initApp.compareAndSet(false, true)) { E_CALL_ONCE }
 
 		// Prevent JCEF from loading any native libraries, as it causes
 		// unnecessary errors due to incorrect library names in JCEF.

@@ -59,7 +59,7 @@ object Jcef {
 		@Suppress("DEPRECATION_ERROR")
 		val cefSettings = config.asCefSettings()
 
-		val cefApp = JcefNatives.init(cefSettings.apply {
+		val cefApp = JcefNatives.initApp(cefSettings.apply {
 			// Must be explicitly set to `false` or the entire UI (not just the
 			// browser UI) will refuse input, as if frozen -- experienced on
 			// Windows 10 (not sure on other OS though).
