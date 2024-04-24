@@ -63,7 +63,7 @@ class WvWindowFrame @JvmOverloads constructor(
 		window = w // Set now so that we don't get called again by `onLaunch()`
 
 		wc.scope.launch(Dispatchers.Swing, start = CoroutineStart.UNDISPATCHED) {
-			val sizePrefs = w.initSizePrefs()
+			val sizePrefs = w.initSizePrefs() // NOTE: Suspending call
 
 			// Set this first, since on some platforms, changing the resizable
 			// state affects the insets of the window.
@@ -79,6 +79,7 @@ class WvWindowFrame @JvmOverloads constructor(
 				c.preferredSize = null // Reset
 			}
 
+			// Get the parent's content pane (if any)
 			val pc = (w.handle.parent as? WvWindowHandle)
 				?.run { peer_ as? WvWindowFrame }
 				?.run { contentPane }
@@ -89,9 +90,7 @@ class WvWindowFrame @JvmOverloads constructor(
 			setLocationRelativeTo(pc)
 
 			isVisible = true
-
-			// Done!
-			isSetUp = true
+			isSetUp = true // Mark as done!
 		}
 	}
 
