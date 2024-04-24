@@ -94,7 +94,14 @@ open class ScopedWindowFrame @JvmOverloads constructor(
 
 	// --
 
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun checkNotDisposedPermanently() {
+		if (isDisposedPermanently) {
+			throw E_AlreadyDisposedPermanently()
+		}
+	}
+
 	companion object {
-		private fun E_AlreadyDisposedPermanently() = IllegalStateException("Already disposed (permanently)")
+		fun E_AlreadyDisposedPermanently() = IllegalStateException("Already disposed (permanently)")
 	}
 }

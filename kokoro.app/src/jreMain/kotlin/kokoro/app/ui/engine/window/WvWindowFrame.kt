@@ -39,7 +39,7 @@ class WvWindowFrame @JvmOverloads constructor(
 
 	@MainThread
 	override fun onLaunch() {
-		if (isDisposedPermanently) return // Already disposed
+		checkNotDisposedPermanently()
 		if (window != null) {
 			// Reactivates frame if already visible before.
 			if (isSetUp) isVisible = true
