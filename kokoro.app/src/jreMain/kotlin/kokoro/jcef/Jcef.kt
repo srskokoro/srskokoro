@@ -162,10 +162,28 @@ object Jcef {
 		override fun onCleanup() {
 			app.dispose() // Expected to kill all JCEF helpers
 
-			val lock = terminated_lock
-			synchronized(lock) {
-				while (!terminated)
-					lock.wait()
+			// The following mechanism ensures that our process (along with all
+			// JCEF helpers) would eventually terminate in case it would not do
+			// so sooner (e.g., due to a locked resource or a bug in JCEF).
+			val th = Thread.currentThread()
+			Thread.ofVirtual().inheritInheritableThreadLocals(false).start {
+				Thread.sleep(5000) // Same span as Android's ANR
+				th.interrupt()
+			}
+
+			try {
+				val lock = terminated_lock
+				synchronized(lock) {
+					while (!terminated)
+						lock.wait()
+				}
+			} catch (_: InterruptedException) {
+				// Kill all JCEF helpers, including those that we don't own,
+				// that aren't in use, just in case they're preventing our
+				// process from terminating (e.g., due to a locked resource).
+				killExtraneousJcefHelpers()
+				System.err.println("All extraneous JCEF helpers (including those not owned by the process) were forcibly killed, as requested via interrupt.")
+				return // Early exit. Skip code below.
 			}
 
 			// Kills all JCEF helpers that should really not run anymore, to
