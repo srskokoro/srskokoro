@@ -106,7 +106,7 @@ open class WvWindowActivity : ComponentActivity() {
 				detachPeer() // So that `finishAndRemoveTask()` isn't called by `close()` below
 				close()
 			}
-			window?.onDestroy()
+			window?.onDestroy() // May throw
 		}
 		super.onDestroy()
 	}

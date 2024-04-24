@@ -237,7 +237,7 @@ class WvWindowFrame @JvmOverloads constructor(
 			close() // Asserts thread main
 		}
 		window?.let {
-			it.onDestroy()
+			it.onDestroy() // May throw
 			window = null
 		}
 	}

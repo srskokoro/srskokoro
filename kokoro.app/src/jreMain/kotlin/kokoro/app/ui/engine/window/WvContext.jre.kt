@@ -18,7 +18,7 @@ import kokoro.internal.assertThreadMain
 
 	@MainThread
 	override fun load(url: String) {
-		frame.loadUrl(url)
+		frame.loadUrl(url) // Asserts thread main
 	}
 
 	@MainThread
