@@ -171,25 +171,29 @@ object Jcef {
 				th.interrupt()
 			}
 
-			try {
+			val waitInterrupted: Boolean = try {
 				val lock = terminated_lock
 				synchronized(lock) {
 					while (!terminated)
 						lock.wait()
 				}
+				false
 			} catch (_: InterruptedException) {
-				// Kill all JCEF helpers, including those that we don't own,
-				// that aren't in use, just in case they're preventing our
-				// process from terminating (e.g., due to a locked resource).
-				killExtraneousJcefHelpers()
-				System.err.println("All extraneous JCEF helpers (including those not owned by the process) were forcibly killed, as requested via interrupt.")
-				return // Early exit. Skip code below.
+				true
 			}
 
 			// Kill all JCEF helpers that should really not run anymore, to
 			// prevent leaking them when our process isn't even running anymore.
 			// - See also, https://bugs.openjdk.org/browse/JDK-4770092
 			killDescendantJcefHelpers()
+
+			if (!waitInterrupted) return // Done. Skip code below.
+
+			// Kill all JCEF helpers that are no longer in use, including those
+			// that we don't own, just in case they're preventing our process
+			// from terminating (e.g., due to a locked resource or a JCEF bug).
+			killExtraneousJcefHelpers()
+			System.err.println("All extraneous JCEF helpers (including those not owned by the process) were forcibly killed, due to a termination timeout or interruption.")
 		}
 	}
 
