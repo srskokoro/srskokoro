@@ -1,20 +1,35 @@
 package kokoro.app.ui.engine.window
 
+import kokoro.app.AppData
+import kokoro.app.Jvm
+import kokoro.app.cacheDir
+import kokoro.app.logsDir
 import kokoro.app.ui.swing.ScopedWindowFrame
 import kokoro.app.ui.swing.doOnThreadSwing
 import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
+import kokoro.internal.assert
 import kokoro.internal.assertThreadMain
 import kokoro.internal.checkNotNull
+import kokoro.jcef.Jcef
+import kokoro.jcef.JcefConfig
+import kokoro.jcef.JcefStateObserver
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.swing.Swing
+import org.cef.CefApp
+import org.cef.CefApp.CefAppState
+import org.cef.CefClient
+import org.cef.browser.CefBrowser
+import java.awt.Component
 import java.awt.Dimension
 import java.awt.GraphicsConfiguration
+import java.awt.Window
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.awt.event.WindowEvent
+import java.io.File
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -26,6 +41,9 @@ class WvWindowFrame @JvmOverloads constructor(
 ) : ScopedWindowFrame(context, DEFAULT_TITLE, gc), WvWindowHandle.Peer {
 
 	companion object {
+		init {
+			Jcef_globalInit()
+		}
 
 		private fun <T> WvWindowBusBinding<*, T>.route(
 			window: WvWindow, encoded: ByteArray,
@@ -94,6 +112,72 @@ class WvWindowFrame @JvmOverloads constructor(
 		}
 	}
 
+	class JcefSetup(
+		val client: CefClient,
+		val browser: CefBrowser,
+		val component: Component,
+	)
+
+	@PublishedApi @JvmField
+	@nook internal var jcef_: JcefSetup? = null
+
+	val jcef: JcefSetup?
+		inline get() = jcef_
+
+	@MainThread
+	fun loadUrl(url: String) {
+		assertThreadMain()
+		checkNotDisposedPermanently()
+
+		jcef_?.let { jcef ->
+			jcef.browser.loadURL(url)
+			return // Done. Skip code below.
+		}
+
+		setUpJcef(url)
+	}
+
+	/** @see tearDownJcef */
+	@MainThread
+	private fun setUpJcef(initUrl: String) {
+		assertThreadMain()
+		assert({ jcef_ == null })
+
+		// TODO Hook some logging, so that we can detect errors, just like in
+		//  the JCEF Maven example app.
+
+		// Must be initialized before all other JCEF interactions, as the
+		// following would not only create a new `CefClient` but also initialize
+		// `CefApp` and link with the native library. At the time of writing,
+		// there is no other way to force that without also creating at least
+		// one `CefClient`.
+		val client = Jcef.app.createClient()
+
+		val browser = client.createBrowser(initUrl, false, false)
+		val component = browser.uiComponent
+		jcef_ = JcefSetup(client, browser, component)
+
+		contentPane.add(component)
+	}
+
+	/** @see setUpJcef */
+	@MainThread
+	private fun tearDownJcef() {
+		assertThreadMain()
+
+		val jcef = jcef_ ?: return
+		contentPane.remove(jcef.component)
+		jcef_ = null
+
+		// Synchronize on the same lock used by `CefApp.getInstance()`
+		synchronized(CefApp::class.java) {
+			if (CefApp.getState() < CefAppState.SHUTTING_DOWN) {
+				jcef.browser.close(true)
+				jcef.client.dispose()
+			}
+		}
+	}
+
 	@MainThread
 	override fun onPost(busId: String, payload: ByteArray) {
 		assertThreadMain()
@@ -147,6 +231,7 @@ class WvWindowFrame @JvmOverloads constructor(
 
 	@MainThread
 	private fun dispatchWvWindowDestroy() {
+		tearDownJcef()
 		handle.run {
 			detachPeer() // So that `dispose()` isn't called by `close()` below
 			close() // Asserts thread main
@@ -156,4 +241,21 @@ class WvWindowFrame @JvmOverloads constructor(
 			window = null
 		}
 	}
+}
+
+private fun Jcef_globalInit() {
+	Jcef.init(JcefConfig(
+		cacheDir = File(AppData.Jvm.cacheDir, "jcef"),
+		logFile = File(AppData.Jvm.logsDir, "jcef.debug.log").also {
+			if (!it.isFile || it.length() > /* 5 MiB */ 5 * 1024 * 1024) {
+				it.deleteRecursively()
+			}
+		},
+		stateObservers = listOf(JcefStateObserver(fun(state) {
+			if (state < CefAppState.SHUTTING_DOWN) return
+			for (w in Window.getWindows()) if (w is WvWindowFrame) {
+				w.dispose()
+			}
+		})),
+	))
 }

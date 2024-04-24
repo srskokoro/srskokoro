@@ -18,8 +18,7 @@ import kokoro.internal.assertThreadMain
 
 	@MainThread
 	override fun load(url: String) {
-		assertThreadMain()
-		TODO("Not yet implemented")
+		frame.loadUrl(url)
 	}
 
 	@MainThread
