@@ -90,7 +90,7 @@ object Jcef {
 	internal object AppHolder {
 		@Suppress("DEPRECATION_ERROR")
 		val app = checkNotNull(Init.app, or = {
-			"Must first call `${Jcef::class.simpleName}${::init.name}()`"
+			"Must first call `${Jcef::class.simpleName}.${::init.name}()`"
 		})
 	}
 
