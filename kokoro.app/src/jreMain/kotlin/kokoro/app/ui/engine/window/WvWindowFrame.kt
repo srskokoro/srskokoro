@@ -88,7 +88,6 @@ class WvWindowFrame @JvmOverloads constructor(
 			// screen.
 			setLocationRelativeTo(pc)
 
-			window = w
 			isVisible = true
 
 			// Done!
