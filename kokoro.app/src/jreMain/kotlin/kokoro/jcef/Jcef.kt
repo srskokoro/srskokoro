@@ -186,7 +186,7 @@ object Jcef {
 				return // Early exit. Skip code below.
 			}
 
-			// Kills all JCEF helpers that should really not run anymore, to
+			// Kill all JCEF helpers that should really not run anymore, to
 			// prevent leaking them when our process isn't even running anymore.
 			// - See also, https://bugs.openjdk.org/browse/JDK-4770092
 			killDescendantJcefHelpers()
