@@ -193,7 +193,10 @@ object Jcef {
 			// that we don't own, just in case they're preventing our process
 			// from terminating (e.g., due to a locked resource or a JCEF bug).
 			killExtraneousJcefHelpers()
-			System.err.println("All extraneous JCEF helpers (including those not owned by the process) were forcibly killed, due to a termination timeout or interruption.")
+			System.err.println("""
+				All extraneous JCEF helpers (including those not owned by the process) were
+				forcibly killed, due to a termination timeout or interrupt request.
+			""".trimIndent())
 		}
 	}
 
