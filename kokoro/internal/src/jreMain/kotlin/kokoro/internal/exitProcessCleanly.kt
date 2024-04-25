@@ -6,6 +6,7 @@ import kokoro.internal.CleanProcessExit.status as status_
 
 /**
  * @see CleanProcessExit.doExit
+ * @see CleanProcessExit.isDoExitNonBlocking
  */
 @Suppress("NOTHING_TO_INLINE")
 inline fun exitProcessCleanly(status: Int): Nothing {
@@ -15,6 +16,7 @@ inline fun exitProcessCleanly(status: Int): Nothing {
 
 /**
  * @see CleanProcessExit.doExit
+ * @see CleanProcessExit.isDoExitNonBlocking
  */
 @Suppress("NOTHING_TO_INLINE")
 inline fun exitProcessCleanly(): Nothing = exitProcessCleanly_()

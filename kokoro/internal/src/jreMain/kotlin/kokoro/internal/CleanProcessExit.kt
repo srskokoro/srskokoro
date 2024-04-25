@@ -2,6 +2,7 @@ package kokoro.internal
 
 import kokoro.internal.CleanProcessExit.Hook
 import kokoro.internal.CleanProcessExit.Signal
+import kokoro.internal.CleanProcessExit.isDoExitNonBlocking
 import kokoro.internal.CleanProcessExit.status
 import kokoro.internal.CleanProcessExitThread.Companion.EXEC_HOOK_MARK
 import kokoro.internal.CleanProcessExitThread.Companion.hooks
@@ -46,6 +47,7 @@ object CleanProcessExit {
 	 * @see status
 	 * @see exitProcessCleanly
 	 * @see doExitLater
+	 * @see isDoExitNonBlocking
 	 */
 	@Suppress("NOTHING_TO_INLINE")
 	@JvmName("doExit_")
@@ -59,8 +61,8 @@ object CleanProcessExit {
 	fun doExit_(): Signal {
 		doExitLater()
 
-		if (Thread.currentThread() === exitThread) {
-			throw Signal() // Prevent blocking the exit thread
+		if (isDoExitNonBlocking.get() == true) {
+			throw Signal()
 		}
 
 		// NOTE: The following doesn't care about a "lost unpark" -- its goal is
@@ -69,6 +71,11 @@ object CleanProcessExit {
 			LockSupport.park() // Returns when "interrupted status" set
 			Thread.interrupted() // Clear and discard "interrupted status"
 		}
+	}
+
+	/** @see doExit */
+	@JvmField val isDoExitNonBlocking = object : ThreadLocal<Boolean>() {
+		override fun initialValue(): Boolean = false
 	}
 
 	class Signal : Throwable(null, null, true, false) {
@@ -235,6 +242,9 @@ private class CleanProcessExitThread : Thread(
 	}
 
 	override fun run() {
+		// Prevent blocking the exit thread
+		isDoExitNonBlocking.set(true)
+
 		val entries = hooks.entries.toTypedArray()
 
 		// Sort by the set `rank` value
