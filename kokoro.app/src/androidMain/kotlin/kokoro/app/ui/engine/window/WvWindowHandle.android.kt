@@ -12,6 +12,9 @@ import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
 import kokoro.internal.os.SerializationEncoded
 import kokoro.internal.os.SerializationEncoded.Companion.getSerializationEncodedExtra
+import kotlinx.coroutines.DisposableHandle
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.selects.SelectClause0
 
 @OptIn(nook::class)
 actual class WvWindowHandle @nook internal actual constructor(
@@ -117,13 +120,22 @@ actual class WvWindowHandle @nook internal actual constructor(
 
 	// --
 
+	private val invokeOnCloseImpl = Job() // Perhaps `Job` is lightweight enough?
+
 	@Suppress("OVERRIDE_BY_INLINE")
 	actual override val isClosed: Boolean
 		inline get() = uri_ == null
 
 	@MainThread
 	actual override fun onClose() {
+		val uri = uri_ // Backup
 		uri_ = null // Marks as closed now (so that we don't get called again)
+		try {
+			invokeOnCloseImpl.complete()
+		} catch (ex: Throwable) {
+			uri_ = uri // Revert
+			throw ex
+		}
 		when (val c = peer_) {
 			null -> return // Skip code below
 			is Activity -> c.finishAndRemoveTask()
@@ -132,6 +144,13 @@ actual class WvWindowHandle @nook internal actual constructor(
 		}
 		detachPeer()
 	}
+
+	actual override fun invokeOnClose(handler: (WvWindowHandle) -> Unit): DisposableHandle =
+		invokeOnCloseImpl.invokeOnCompletion { handler(this) }
+
+	actual override suspend fun awaitClose(): Unit = invokeOnCloseImpl.join()
+
+	actual override val onAwaitClose: SelectClause0 get() = invokeOnCloseImpl.onJoin
 
 	// --
 

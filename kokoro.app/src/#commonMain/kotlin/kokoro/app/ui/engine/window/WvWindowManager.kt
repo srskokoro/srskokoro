@@ -12,6 +12,8 @@ import kokoro.internal.assertThreadMain
 import kokoro.internal.require
 import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
+import kotlinx.coroutines.DisposableHandle
+import kotlinx.coroutines.selects.SelectClause0
 import kotlin.jvm.JvmField
 
 @OptIn(nook::class)
@@ -67,6 +69,30 @@ abstract class WvWindowManager @nook constructor(
 	@MainThread
 	protected abstract fun onClose()
 
+	/**
+	 * @see awaitClose
+	 * @see onAwaitClose
+	 */
+	abstract fun invokeOnClose(handler: (WvWindowHandle) -> Unit): DisposableHandle
+
+	/**
+	 * Suspends until [close]`()` is called.
+	 *
+	 * @see invokeOnClose
+	 * @see onAwaitClose
+	 */
+	abstract suspend fun awaitClose()
+
+	/**
+	 * @see awaitClose
+	 * @see invokeOnClose
+	 */
+	abstract val onAwaitClose: SelectClause0
+
+	/**
+	 * @see awaitClose
+	 * @see invokeOnClose
+	 */
 	@MainThread
 	fun close() {
 		assertThreadMain()

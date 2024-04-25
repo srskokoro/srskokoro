@@ -2,6 +2,8 @@ package kokoro.app.ui.engine.window
 
 import kokoro.app.ui.engine.UiBus
 import kokoro.internal.annotation.MainThread
+import kotlinx.coroutines.DisposableHandle
+import kotlinx.coroutines.selects.SelectClause0
 
 expect class WvWindowHandle @nook internal constructor(
 	id: String?,
@@ -23,6 +25,12 @@ expect class WvWindowHandle @nook internal constructor(
 
 	@MainThread
 	override fun onClose()
+
+	override fun invokeOnClose(handler: (WvWindowHandle) -> Unit): DisposableHandle
+
+	override suspend fun awaitClose()
+
+	override val onAwaitClose: SelectClause0
 
 	// --
 
