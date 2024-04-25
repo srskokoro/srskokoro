@@ -39,14 +39,36 @@ object CleanProcessExit {
 	 * @see status
 	 * @see exitProcessCleanlyLater
 	 * @see doExit
+	 * @see doExitNonBlocking
 	 */
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun doExitLater(): Unit = exitThread.start()
 
 	/**
 	 * @see status
+	 * @see exitProcessCleanlyNonBlocking
+	 * @see doExit
+	 * @see doExitLater
+	 */
+	@Suppress("NOTHING_TO_INLINE")
+	@JvmName("doExitNonBlocking_")
+	inline fun doExitNonBlocking(): Nothing {
+		@Suppress("DEPRECATION_ERROR")
+		throw doExitNonBlocking_()
+	}
+
+	@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
+	@JvmName("doExitNonBlocking")
+	fun doExitNonBlocking_(): Signal {
+		doExitLater()
+		throw Signal()
+	}
+
+	/**
+	 * @see status
 	 * @see exitProcessCleanly
 	 * @see doExitLater
+	 * @see doExitNonBlocking
 	 * @see isDoExitNonBlocking
 	 */
 	@Suppress("NOTHING_TO_INLINE")
