@@ -231,11 +231,11 @@ class WvWindowFrame @JvmOverloads constructor(
 
 	@MainThread
 	private fun dispatchWvWindowDestroy() {
-		tearDownJcef()
 		handle.run {
 			detachPeer() // So that `dispose()` isn't called by `close()` below
 			close() // Asserts thread main
 		}
+		tearDownJcef()
 		window?.let {
 			it.onDestroy() // May throw
 			window = null
