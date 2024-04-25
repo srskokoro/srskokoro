@@ -8,6 +8,7 @@ import kokoro.internal.assertThreadMain
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DisposableHandle
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.job
 import kotlinx.coroutines.selects.SelectClause0
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -162,7 +163,7 @@ actual class WvWindowHandle @nook internal actual constructor(
 		}
 	}
 
-	private fun ensurePeerJob() = ensurePeer().scope.coroutineContext[Job]!!
+	private fun ensurePeerJob() = ensurePeer().scope.coroutineContext.job
 
 	actual override fun invokeOnClose(handler: (WvWindowHandle) -> Unit): DisposableHandle =
 		ensurePeerJob().invokeOnCompletion { handler(this) }
