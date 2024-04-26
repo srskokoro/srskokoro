@@ -30,7 +30,7 @@ import kotlinx.serialization.modules.SerializersModule
 	@MainThread
 	override fun load(url: String) {
 		assertThreadMain()
-		TODO("Not yet implemented")
+		activity.wv?.loadUrl(url)
 	}
 
 	@MainThread

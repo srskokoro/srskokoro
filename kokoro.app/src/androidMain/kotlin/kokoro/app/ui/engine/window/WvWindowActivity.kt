@@ -1,7 +1,9 @@
 package kokoro.app.ui.engine.window
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.webkit.WebView
 import androidx.activity.ComponentActivity
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.checkNotNull
@@ -33,6 +35,8 @@ open class WvWindowActivity : ComponentActivity() {
 	private var handle: WvWindowHandle? = null
 	private var window: WvWindow? = null
 
+	@nook internal var wv: WebView? = null
+
 	@MainThread
 	open fun initHandle(): WvWindowHandle? {
 		// Returns `null` if `intent` isn't a window display request or the
@@ -56,6 +60,8 @@ open class WvWindowActivity : ComponentActivity() {
 
 			val o = savedInstanceState?.getBundle(EXTRAS_KEY_to_OLD_STATE_ENTRIES) ?: Bundle.EMPTY
 			val wc = WvContextImpl(h, this, oldStateEntries = o)
+
+			setUpWebView()
 			window = f.init(wc) // May throw
 
 			return // Success. Skip code below.
@@ -69,6 +75,20 @@ open class WvWindowActivity : ComponentActivity() {
 		// make sense otherwise when the activity would never be displayed (as
 		// it must "finish" immediately due to an invalid request).
 		finishAndRemoveTask()
+	}
+
+	private fun setUpWebView() {
+		val wv = WebView(this)
+		setContentView(wv)
+		this.wv = wv
+
+		// TODO! Properly handle persistent web view state.
+		//  - See, https://github.com/google/accompanist/issues/1178
+		//  - See also, https://www.reddit.com/r/androiddev/comments/fqwohj/
+
+		val ws = wv.settings
+		@SuppressLint("SetJavaScriptEnabled")
+		ws.javaScriptEnabled = true
 	}
 
 	override fun onNewIntent(intent: Intent?) {
