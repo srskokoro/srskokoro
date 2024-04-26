@@ -7,6 +7,7 @@ import kokoro.internal.CleanProcessExit.status
 import kokoro.internal.CleanProcessExitThread.Companion.EXEC_HOOK_MARK
 import kokoro.internal.CleanProcessExitThread.Companion.hooks
 import kotlinx.atomicfu.atomic
+import java.awt.EventQueue
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.locks.LockSupport
@@ -61,6 +62,9 @@ object CleanProcessExit {
 	@JvmName("doExitNonBlocking")
 	fun doExitNonBlocking_(): Signal {
 		doExitLater()
+		if (Thread.currentThread() != exitThread) {
+			Thread.yield() // Give the exit thread an opportunity
+		}
 		throw Signal()
 	}
 
@@ -83,7 +87,14 @@ object CleanProcessExit {
 	fun doExit_(): Signal {
 		doExitLater()
 
-		if (isDoExitNonBlocking.get() == true) {
+		run<Unit> {
+			if (Thread.currentThread() != exitThread) {
+				Thread.yield() // Give the exit thread an opportunity
+				if (
+					isDoExitNonBlocking.get() != true &&
+					!EventQueue.isDispatchThread()
+				) return@run // Perform a blocking exit
+			}
 			throw Signal()
 		}
 
@@ -264,9 +275,6 @@ private class CleanProcessExitThread : Thread(
 	}
 
 	override fun run() {
-		// Prevent blocking the exit thread
-		isDoExitNonBlocking.set(true)
-
 		val entries = hooks.entries.toTypedArray()
 
 		// Sort by the set `rank` value
