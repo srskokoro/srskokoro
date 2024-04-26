@@ -24,14 +24,12 @@ import org.cef.CefApp.CefAppState
 import org.cef.CefClient
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
-import org.cef.handler.CefFocusHandlerAdapter
 import org.cef.handler.CefRequestHandlerAdapter
 import org.cef.network.CefRequest
 import java.awt.Component
 import java.awt.Desktop
 import java.awt.Dimension
 import java.awt.GraphicsConfiguration
-import java.awt.KeyboardFocusManager
 import java.awt.Window
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -159,25 +157,17 @@ class WvWindowFrame @JvmOverloads constructor(
 		// there is no other way to force that without also creating at least
 		// one `CefClient`.
 		val client = Jcef.app.createClient()
-
-		client.addFocusHandler(JcefFocusHandler())
 		client.addRequestHandler(JcefRequestHandler())
 
 		val browser = client.createBrowser(initUrl, false, false)
+		// Necessary or the browser component won't respond to the keyboard.
+		// Setting up the following once seems to be enough to allow keyboard
+		// interaction. See also, https://github.com/chromiumembedded/java-cef/blob/0b8e42e/java/tests/simple/MainFrame.java
+		browser.setFocus(true)
+
 		val component = browser.uiComponent
 		jcef_ = JcefSetup(client, browser, component)
-
 		contentPane.add(component)
-	}
-
-	// See, https://github.com/chromiumembedded/java-cef/blob/0b8e42e/java/tests/simple/MainFrame.java
-	private class JcefFocusHandler : CefFocusHandlerAdapter() {
-		override fun onGotFocus(browser: CefBrowser?) {
-			if (browser != null) {
-				KeyboardFocusManager.getCurrentKeyboardFocusManager().clearGlobalFocusOwner()
-				browser.setFocus(true)
-			}
-		}
 	}
 
 	private class JcefRequestHandler : CefRequestHandlerAdapter(), WvUrlLauncher {
