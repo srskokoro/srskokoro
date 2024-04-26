@@ -31,9 +31,13 @@ private val defaultMppHierarchyTemplate_ = KotlinHierarchyTemplate.default.exten
 		}
 		group(MPP.nonjvm) {
 			withCompilations {
-				val p = it.target.platformType
-				p != KotlinPlatformType.jvm &&
-					p != KotlinPlatformType.common
+				when (it.target.platformType) {
+					KotlinPlatformType.common,
+					KotlinPlatformType.jvm,
+					KotlinPlatformType.androidJvm,
+					-> false
+					else -> true
+				}
 			}
 			group("native") {
 				group(MPP.unix) {
