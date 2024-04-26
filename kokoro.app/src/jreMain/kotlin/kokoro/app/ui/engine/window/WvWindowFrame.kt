@@ -157,7 +157,7 @@ class WvWindowFrame @JvmOverloads constructor(
 		// there is no other way to force that without also creating at least
 		// one `CefClient`.
 		val client = Jcef.app.createClient()
-		client.addRequestHandler(JcefRequestHandler())
+		client.addRequestHandler(InternalRequestHandler())
 
 		val browser = client.createBrowser(initUrl, false, false)
 		// Necessary or the browser component won't respond to the keyboard.
@@ -170,7 +170,7 @@ class WvWindowFrame @JvmOverloads constructor(
 		contentPane.add(component)
 	}
 
-	private class JcefRequestHandler : CefRequestHandlerAdapter() {
+	private class InternalRequestHandler : CefRequestHandlerAdapter() {
 
 		private fun launchUrlExternally(url: String) {
 			if (Desktop.isDesktopSupported()) try {
