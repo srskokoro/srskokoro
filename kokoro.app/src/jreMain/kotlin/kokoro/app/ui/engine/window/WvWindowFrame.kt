@@ -170,9 +170,9 @@ class WvWindowFrame @JvmOverloads constructor(
 		contentPane.add(component)
 	}
 
-	private class JcefRequestHandler : CefRequestHandlerAdapter(), WvUrlLauncher {
+	private class JcefRequestHandler : CefRequestHandlerAdapter() {
 
-		override fun launchUrlExternally(url: String) {
+		private fun launchUrlExternally(url: String) {
 			if (Desktop.isDesktopSupported()) try {
 				val desktop = Desktop.getDesktop()
 				if (desktop.isSupported(Desktop.Action.BROWSE))
@@ -189,9 +189,15 @@ class WvWindowFrame @JvmOverloads constructor(
 			request: CefRequest?,
 			user_gesture: Boolean,
 			is_redirect: Boolean,
-		): Boolean = WvUrlLauncher.shouldOverrideUrlLoading(
-			frame?.url, request?.url, this,
-		)
+		): Boolean {
+			if (frame == null || !frame.isMain || !user_gesture) {
+				return false
+			}
+			if (request != null) {
+				launchUrlExternally(request.url)
+			}
+			return true // Override default behavior
+		}
 
 		override fun onOpenURLFromTab(
 			browser: CefBrowser?,
@@ -199,7 +205,9 @@ class WvWindowFrame @JvmOverloads constructor(
 			target_url: String?,
 			user_gesture: Boolean,
 		): Boolean {
-			launchUrlExternally(target_url ?: return false)
+			if (target_url != null) {
+				launchUrlExternally(target_url)
+			}
 			return true // Override default behavior
 		}
 	}
