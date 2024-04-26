@@ -3,8 +3,10 @@ package kokoro.app.ui.engine.window
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import androidx.activity.ComponentActivity
+import androidx.webkit.WebViewClientCompat
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.checkNotNull
 import kokoro.internal.os.SerializationEncoded
@@ -79,6 +81,7 @@ open class WvWindowActivity : ComponentActivity() {
 
 	private fun setUpWebView() {
 		val wv = WebView(this)
+		wv.webViewClient = InternalWebViewClient(this)
 		setContentView(wv)
 		this.wv = wv
 
@@ -89,6 +92,19 @@ open class WvWindowActivity : ComponentActivity() {
 		val ws = wv.settings
 		@SuppressLint("SetJavaScriptEnabled")
 		ws.javaScriptEnabled = true
+	}
+
+	private class InternalWebViewClient(
+		private val activity: WvWindowActivity,
+	) : WebViewClientCompat() {
+		override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+			if (!request.isForMainFrame || !request.hasGesture()) {
+				return false
+			}
+			// See, https://developer.android.com/develop/ui/views/layout/webapps/webview#HandlingNavigation
+			activity.startActivity(Intent(Intent.ACTION_VIEW, request.url))
+			return true
+		}
 	}
 
 	override fun onNewIntent(intent: Intent?) {
