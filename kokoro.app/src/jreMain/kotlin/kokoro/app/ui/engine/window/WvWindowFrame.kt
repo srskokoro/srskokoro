@@ -127,14 +127,13 @@ class WvWindowFrame @JvmOverloads constructor(
 	@MainThread
 	fun loadUrl(url: String) {
 		assertThreadMain()
-		checkNotDisposedPermanently()
-
-		jcef_?.let { jcef ->
-			jcef.browser.loadURL(url)
-			return // Done. Skip code below.
+		if (!isDisposedPermanently) {
+			jcef_?.let { jcef ->
+				jcef.browser.loadURL(url)
+				return // Done. Skip code below.
+			}
+			setUpJcef(url)
 		}
-
-		setUpJcef(url)
 	}
 
 	/** @see tearDownJcef */
