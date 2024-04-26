@@ -6,6 +6,7 @@ import kokoro.app.cacheDir
 import kokoro.app.logsDir
 import kokoro.app.ui.swing.ScopedWindowFrame
 import kokoro.app.ui.swing.doOnThreadSwing
+import kokoro.internal.DEBUG
 import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assert
@@ -22,8 +23,12 @@ import org.cef.CefApp
 import org.cef.CefApp.CefAppState
 import org.cef.CefClient
 import org.cef.browser.CefBrowser
+import org.cef.browser.CefFrame
 import org.cef.handler.CefFocusHandlerAdapter
+import org.cef.handler.CefRequestHandlerAdapter
+import org.cef.network.CefRequest
 import java.awt.Component
+import java.awt.Desktop
 import java.awt.Dimension
 import java.awt.GraphicsConfiguration
 import java.awt.KeyboardFocusManager
@@ -32,6 +37,7 @@ import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.awt.event.WindowEvent
 import java.io.File
+import java.net.URI
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -155,6 +161,7 @@ class WvWindowFrame @JvmOverloads constructor(
 		val client = Jcef.app.createClient()
 
 		client.addFocusHandler(JcefFocusHandler())
+		client.addRequestHandler(JcefRequestHandler())
 
 		val browser = client.createBrowser(initUrl, false, false)
 		val component = browser.uiComponent
@@ -170,6 +177,40 @@ class WvWindowFrame @JvmOverloads constructor(
 				KeyboardFocusManager.getCurrentKeyboardFocusManager().clearGlobalFocusOwner()
 				browser.setFocus(true)
 			}
+		}
+	}
+
+	private class JcefRequestHandler : CefRequestHandlerAdapter(), WvUrlLauncher {
+
+		override fun launchUrlExternally(url: String) {
+			if (Desktop.isDesktopSupported()) try {
+				val desktop = Desktop.getDesktop()
+				if (desktop.isSupported(Desktop.Action.BROWSE))
+					desktop.browse(URI(url))
+			} catch (ex: Throwable) {
+				if (DEBUG) throw ex
+				ex.printStackTrace()
+			}
+		}
+
+		override fun onBeforeBrowse(
+			browser: CefBrowser?,
+			frame: CefFrame?,
+			request: CefRequest?,
+			user_gesture: Boolean,
+			is_redirect: Boolean,
+		): Boolean = WvUrlLauncher.shouldOverrideUrlLoading(
+			frame?.url, request?.url, this,
+		)
+
+		override fun onOpenURLFromTab(
+			browser: CefBrowser?,
+			frame: CefFrame?,
+			target_url: String?,
+			user_gesture: Boolean,
+		): Boolean {
+			launchUrlExternally(target_url ?: return false)
+			return true // Override default behavior
 		}
 	}
 
