@@ -22,9 +22,11 @@ import org.cef.CefApp
 import org.cef.CefApp.CefAppState
 import org.cef.CefClient
 import org.cef.browser.CefBrowser
+import org.cef.handler.CefFocusHandlerAdapter
 import java.awt.Component
 import java.awt.Dimension
 import java.awt.GraphicsConfiguration
+import java.awt.KeyboardFocusManager
 import java.awt.Window
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -152,11 +154,23 @@ class WvWindowFrame @JvmOverloads constructor(
 		// one `CefClient`.
 		val client = Jcef.app.createClient()
 
+		client.addFocusHandler(JcefFocusHandler())
+
 		val browser = client.createBrowser(initUrl, false, false)
 		val component = browser.uiComponent
 		jcef_ = JcefSetup(client, browser, component)
 
 		contentPane.add(component)
+	}
+
+	// See, https://github.com/chromiumembedded/java-cef/blob/0b8e42e/java/tests/simple/MainFrame.java
+	private class JcefFocusHandler : CefFocusHandlerAdapter() {
+		override fun onGotFocus(browser: CefBrowser?) {
+			if (browser != null) {
+				KeyboardFocusManager.getCurrentKeyboardFocusManager().clearGlobalFocusOwner()
+				browser.setFocus(true)
+			}
+		}
 	}
 
 	/** @see setUpJcef */
