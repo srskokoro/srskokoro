@@ -11,7 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlin.jvm.JvmField
 
 @OptIn(nook::class)
-abstract class WvWindow(@JvmField val context: WvContext) {
+abstract class WvWindow @MainThread constructor(@JvmField val context: WvContext) {
 
 	companion object {
 		val DEFAULT_WEB_REQUEST_HANDLER inline get() = WebRequestHandler.NULL
@@ -24,9 +24,11 @@ abstract class WvWindow(@JvmField val context: WvContext) {
 	open fun initWebRequestHandler(): WebRequestHandler = DEFAULT_WEB_REQUEST_HANDLER
 
 	@Suppress("NOTHING_TO_INLINE")
+	@MainThread
 	inline fun loadUrl(url: String) = context.load(url = url)
 
 	@Suppress("NOTHING_TO_INLINE")
+	@MainThread
 	inline fun finish() = context.finish()
 
 	// --

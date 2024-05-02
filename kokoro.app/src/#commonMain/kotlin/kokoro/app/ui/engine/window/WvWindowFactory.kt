@@ -7,6 +7,7 @@ import kokoro.internal.check
 
 fun interface WvWindowFactory<out W : WvWindow> {
 
+	@MainThread
 	fun init(context: WvContext): W
 
 	companion object {
