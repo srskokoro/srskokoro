@@ -3,6 +3,7 @@ package kokoro.app.ui.engine.window
 import androidx.annotation.EmptySuper
 import androidx.collection.MutableScatterMap
 import kokoro.app.ui.engine.UiBus
+import kokoro.app.ui.engine.web.WebRequestHandler
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
 import kokoro.internal.check
@@ -12,8 +13,15 @@ import kotlin.jvm.JvmField
 @OptIn(nook::class)
 abstract class WvWindow(@JvmField val context: WvContext) {
 
+	companion object {
+		val DEFAULT_WEB_REQUEST_HANDLER inline get() = WebRequestHandler.NULL
+	}
+
 	val handle: WvWindowHandle inline get() = context.handle
 	val scope: CoroutineScope inline get() = context.scope
+
+	@MainThread
+	open fun initWebRequestHandler(): WebRequestHandler = DEFAULT_WEB_REQUEST_HANDLER
 
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun loadUrl(url: String) = context.load(url = url)
