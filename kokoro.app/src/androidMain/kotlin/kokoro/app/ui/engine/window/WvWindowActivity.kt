@@ -12,6 +12,9 @@ import kokoro.internal.assert
 import kokoro.internal.assertThreadMain
 import kokoro.internal.checkNotNull
 import kokoro.internal.os.SerializationEncoded
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(nook::class)
 open class WvWindowActivity : ComponentActivity() {
@@ -39,8 +42,6 @@ open class WvWindowActivity : ComponentActivity() {
 	private var handle: WvWindowHandle? = null
 	private var window: WvWindow? = null
 
-	@nook internal var wv: WebView? = null
-
 	@MainThread
 	open fun initHandle(): WvWindowHandle? {
 		// Returns `null` if `intent` isn't a window display request or the
@@ -64,10 +65,11 @@ open class WvWindowActivity : ComponentActivity() {
 
 			val o = savedInstanceState?.getBundle(EXTRAS_KEY_to_OLD_STATE_ENTRIES) ?: Bundle.EMPTY
 			val wc = WvContextImpl(h, this, oldStateEntries = o)
-
-			setUpWebView()
 			window = f.init(wc) // May throw
 
+			wc.scope.launch(Dispatchers.Main, start = CoroutineStart.UNDISPATCHED) {
+				setUpWebView()
+			}
 			return // Success. Skip code below.
 		}
 
@@ -81,6 +83,19 @@ open class WvWindowActivity : ComponentActivity() {
 		finishAndRemoveTask()
 	}
 
+	private var wv: WebView? = null
+	private var initUrl: String? = null
+
+	@MainThread
+	fun loadUrl(url: String) {
+		assertThreadMain()
+		wv?.let { wv ->
+			wv.loadUrl(url)
+			return // Done. Skip code below.
+		}
+		if (!isDestroyed) initUrl = url
+	}
+
 	@MainThread
 	private fun setUpWebView() {
 		assertThreadMain()
@@ -92,6 +107,8 @@ open class WvWindowActivity : ComponentActivity() {
 		val ws = wv.settings
 		@SuppressLint("SetJavaScriptEnabled")
 		ws.javaScriptEnabled = true
+
+		wv.loadUrl(initUrl.also { initUrl = null } ?: "")
 
 		// TODO! Properly handle persistent web view state.
 		//  - See, https://github.com/google/accompanist/issues/1178
