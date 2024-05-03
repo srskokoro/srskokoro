@@ -87,6 +87,8 @@ class WvWindowFrame @JvmOverloads constructor(
 		window = w // Set now so that we don't get called again by `onLaunch()`
 
 		wc.scope.launch(Dispatchers.Swing, start = CoroutineStart.UNDISPATCHED) {
+			setUpJcef()
+
 			val sizePrefs = w.initSizePrefs() // NOTE: Suspending call
 
 			// Set this first, since on some platforms, changing the resizable
@@ -130,21 +132,21 @@ class WvWindowFrame @JvmOverloads constructor(
 	val jcef: JcefSetup?
 		inline get() = jcef_
 
+	private var initUrl: String? = null
+
 	@MainThread
 	fun loadUrl(url: String) {
 		assertThreadMain()
-		if (!isDisposedPermanently) {
-			jcef_?.let { jcef ->
-				jcef.browser.loadURL(url)
-				return // Done. Skip code below.
-			}
-			setUpJcef(url)
+		jcef_?.let { jcef ->
+			jcef.browser.loadURL(url)
+			return // Done. Skip code below.
 		}
+		if (!isDisposedPermanently) initUrl = url
 	}
 
 	/** @see tearDownJcef */
 	@MainThread
-	private fun setUpJcef(initUrl: String) {
+	private fun setUpJcef() {
 		assertThreadMain()
 		assert({ jcef_ == null })
 
@@ -159,7 +161,7 @@ class WvWindowFrame @JvmOverloads constructor(
 		val client = Jcef.app.createClient()
 		client.addRequestHandler(InternalRequestHandler())
 
-		val browser = client.createBrowser(initUrl, false, false)
+		val browser = client.createBrowser(initUrl.also { initUrl = null }, false, false)
 		// Necessary or the browser component won't respond to the keyboard.
 		// Setting up the following once seems to be enough to allow keyboard
 		// interaction. See also, https://github.com/chromiumembedded/java-cef/blob/0b8e42e/java/tests/simple/MainFrame.java
