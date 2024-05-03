@@ -3,7 +3,7 @@ package kokoro.app.ui.engine.window
 import androidx.annotation.EmptySuper
 import androidx.collection.MutableScatterMap
 import kokoro.app.ui.engine.UiBus
-import kokoro.app.ui.engine.web.WebRequestHandler
+import kokoro.app.ui.engine.web.WebRequestResolver
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
 import kokoro.internal.check
@@ -14,14 +14,14 @@ import kotlin.jvm.JvmField
 abstract class WvWindow @MainThread constructor(@JvmField val context: WvContext) {
 
 	companion object {
-		val DEFAULT_WEB_REQUEST_HANDLER inline get() = WebRequestHandler.NULL
+		val DEFAULT_WEB_REQUEST_RESOLVER inline get() = WebRequestResolver.NULL
 	}
 
 	val handle: WvWindowHandle inline get() = context.handle
 	val scope: CoroutineScope inline get() = context.scope
 
 	@MainThread
-	open fun initWebRequestHandler(): WebRequestHandler = DEFAULT_WEB_REQUEST_HANDLER
+	open fun initWebRequestResolver(): WebRequestResolver = DEFAULT_WEB_REQUEST_RESOLVER
 
 	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
