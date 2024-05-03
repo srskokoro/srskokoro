@@ -21,7 +21,7 @@ abstract class WvWindow @MainThread constructor(@JvmField val context: WvContext
 	val scope: CoroutineScope inline get() = context.scope
 
 	@MainThread
-	open fun initWebRequestResolver(): WebRequestResolver = DEFAULT_WEB_REQUEST_RESOLVER
+	open suspend fun initWebRequestResolver(): WebRequestResolver = DEFAULT_WEB_REQUEST_RESOLVER
 
 	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
