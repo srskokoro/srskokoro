@@ -8,6 +8,8 @@ import android.webkit.WebView
 import androidx.activity.ComponentActivity
 import androidx.webkit.WebViewClientCompat
 import kokoro.internal.annotation.MainThread
+import kokoro.internal.assert
+import kokoro.internal.assertThreadMain
 import kokoro.internal.checkNotNull
 import kokoro.internal.os.SerializationEncoded
 
@@ -79,19 +81,24 @@ open class WvWindowActivity : ComponentActivity() {
 		finishAndRemoveTask()
 	}
 
+	@MainThread
 	private fun setUpWebView() {
+		assertThreadMain()
+		assert({ wv == null })
+
 		val wv = WebView(this)
 		wv.webViewClient = InternalWebViewClient(this)
-		setContentView(wv)
-		this.wv = wv
+
+		val ws = wv.settings
+		@SuppressLint("SetJavaScriptEnabled")
+		ws.javaScriptEnabled = true
 
 		// TODO! Properly handle persistent web view state.
 		//  - See, https://github.com/google/accompanist/issues/1178
 		//  - See also, https://www.reddit.com/r/androiddev/comments/fqwohj/
 
-		val ws = wv.settings
-		@SuppressLint("SetJavaScriptEnabled")
-		ws.javaScriptEnabled = true
+		this.wv = wv
+		setContentView(wv)
 	}
 
 	private class InternalWebViewClient(
