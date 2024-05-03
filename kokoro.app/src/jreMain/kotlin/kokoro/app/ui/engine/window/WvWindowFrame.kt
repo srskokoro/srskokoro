@@ -14,6 +14,7 @@ import kokoro.internal.assertThreadMain
 import kokoro.internal.checkNotNull
 import kokoro.jcef.Jcef
 import kokoro.jcef.JcefConfig
+import kokoro.jcef.JcefRequestHandlerAdapter
 import kokoro.jcef.JcefStateObserver
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +25,6 @@ import org.cef.CefApp.CefAppState
 import org.cef.CefClient
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
-import org.cef.handler.CefRequestHandlerAdapter
 import org.cef.network.CefRequest
 import java.awt.Component
 import java.awt.Desktop
@@ -170,7 +170,7 @@ class WvWindowFrame @JvmOverloads constructor(
 		contentPane.add(component)
 	}
 
-	private class InternalRequestHandler : CefRequestHandlerAdapter() {
+	private class InternalRequestHandler : JcefRequestHandlerAdapter() {
 
 		private fun launchUrlExternally(url: String) {
 			if (Desktop.isDesktopSupported()) try {
