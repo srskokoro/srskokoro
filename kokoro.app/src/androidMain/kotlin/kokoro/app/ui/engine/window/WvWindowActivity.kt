@@ -4,17 +4,23 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import androidx.activity.ComponentActivity
 import androidx.webkit.WebViewClientCompat
+import kokoro.app.ui.engine.web.PlatformWebRequest
+import kokoro.app.ui.engine.web.WebRequestResolver
+import kokoro.app.ui.engine.web.toWebkit
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assert
 import kokoro.internal.assertThreadMain
 import kokoro.internal.checkNotNull
 import kokoro.internal.os.SerializationEncoded
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @OptIn(nook::class)
 open class WvWindowActivity : ComponentActivity() {
@@ -65,10 +71,12 @@ open class WvWindowActivity : ComponentActivity() {
 
 			val o = savedInstanceState?.getBundle(EXTRAS_KEY_to_OLD_STATE_ENTRIES) ?: Bundle.EMPTY
 			val wc = WvContextImpl(h, this, oldStateEntries = o)
-			window = f.init(wc) // May throw
+			val w = f.init(wc) // May throw
+			window = w
 
 			wc.scope.launch(Dispatchers.Main, start = CoroutineStart.UNDISPATCHED) {
-				setUpWebView()
+				val wrr = w.initWebRequestResolver() // NOTE: Suspending call
+				setUpWebView(wrr, w.context.scope)
 			}
 			return // Success. Skip code below.
 		}
@@ -97,12 +105,12 @@ open class WvWindowActivity : ComponentActivity() {
 	}
 
 	@MainThread
-	private fun setUpWebView() {
+	private fun setUpWebView(wrr: WebRequestResolver, scope: CoroutineScope) {
 		assertThreadMain()
 		assert({ wv == null })
 
 		val wv = WebView(this)
-		wv.webViewClient = InternalWebViewClient(this)
+		wv.webViewClient = InternalWebViewClient(this, wrr, scope)
 
 		val ws = wv.settings
 		@SuppressLint("SetJavaScriptEnabled")
@@ -120,7 +128,22 @@ open class WvWindowActivity : ComponentActivity() {
 
 	private class InternalWebViewClient(
 		private val activity: WvWindowActivity,
+		private val wrr: WebRequestResolver,
+		scope: CoroutineScope,
 	) : WebViewClientCompat() {
+		private val coroutineContext = scope.coroutineContext + Dispatchers.IO
+
+		override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest): WebResourceResponse? {
+			@Suppress("NAME_SHADOWING") val request = PlatformWebRequest(request)
+			val h = wrr.findHandler(request.url)
+			if (h != null) {
+				return runBlocking(coroutineContext) {
+					h.handle(request).toWebkit()
+				}
+			}
+			return null
+		}
+
 		override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
 			if (!request.isForMainFrame || !request.hasGesture()) {
 				return false
