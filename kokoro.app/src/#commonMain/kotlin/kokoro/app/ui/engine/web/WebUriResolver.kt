@@ -9,4 +9,7 @@ fun interface WebUriResolver {
 	companion object {
 		@JvmField val NULL = WebUriResolver { null }
 	}
+
+	operator fun plus(other: WebUriResolver): WebUriResolver =
+		WebUriResolver { resolve(it) ?: other.resolve(it) }
 }
