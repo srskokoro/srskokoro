@@ -11,10 +11,10 @@ class PlatformWebRequest(
 	override val method: String = impl.method
 	override val url = WebUri(impl.url)
 
+	override fun headers() = headers_
+	override fun header(name: String) = headers_[name]
+
 	private var headers_ = buildMap<String, String> {
 		impl.getHeaderMap(this)
 	}
-
-	override fun headers() = headers_
-	override fun header(name: String) = headers_[name]
 }
