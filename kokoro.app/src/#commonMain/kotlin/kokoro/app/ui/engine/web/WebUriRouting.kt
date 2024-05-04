@@ -76,10 +76,9 @@ class WebUriRouting private constructor(
 			val entries = entries.toTypedArray()
 			entries.sortWith(BuildEntriesComparator)
 			return WebUriRouting(entries.asList(), run(fun(): Int {
-				var i = 0
-				val n = entries.size
-				while (i < n && !entries[i].isUriPrefix) i++
-				return i
+				var n = entries.size
+				while (--n >= 0 && entries[n].isUriPrefix) Unit
+				return n + 1
 			}))
 		}
 	}
