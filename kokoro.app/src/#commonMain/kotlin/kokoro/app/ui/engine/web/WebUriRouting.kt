@@ -20,8 +20,8 @@ inline fun WebUriRouting(block: Builder.() -> Unit): WebUriRouting {
 /** @see WebUriRouting.Builder */
 class WebUriRouting private constructor(
 	@JvmField val entries: List<Entry>,
+	@JvmField val nonPrefixUriCount: Int,
 ) : WebUriResolver {
-	@JvmField val nonPrefixUriCount: Int = entries.count { !it.isUriPrefix }
 
 	companion object {
 
@@ -75,7 +75,12 @@ class WebUriRouting private constructor(
 		fun build(): WebUriRouting {
 			val entries = entries.toTypedArray()
 			entries.sortWith(BuildEntriesComparator)
-			return WebUriRouting(entries.asList())
+			return WebUriRouting(entries.asList(), run(fun(): Int {
+				var i = 0
+				val n = entries.size
+				while (i < n && !entries[i].isUriPrefix) i++
+				return i
+			}))
 		}
 	}
 
