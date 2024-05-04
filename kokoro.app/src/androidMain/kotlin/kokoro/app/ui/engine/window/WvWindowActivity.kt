@@ -10,6 +10,7 @@ import androidx.activity.ComponentActivity
 import androidx.webkit.WebViewClientCompat
 import kokoro.app.ui.engine.web.PlatformWebRequest
 import kokoro.app.ui.engine.web.WebRequestResolver
+import kokoro.app.ui.engine.web.WebUri
 import kokoro.app.ui.engine.web.toWebkit
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assert
@@ -134,11 +135,10 @@ open class WvWindowActivity : ComponentActivity() {
 		private val coroutineContext = scope.coroutineContext + Dispatchers.IO
 
 		override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest): WebResourceResponse? {
-			@Suppress("NAME_SHADOWING") val request = PlatformWebRequest(request)
-			val h = wrr.findHandler(request.url)
+			val h = wrr.findHandler(WebUri(request.url))
 			if (h != null) {
 				return runBlocking(coroutineContext) {
-					h.handle(request).toWebkit()
+					h.handle(PlatformWebRequest(request)).toWebkit()
 				}
 			}
 			return null
