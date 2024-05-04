@@ -9,8 +9,8 @@ import android.webkit.WebView
 import androidx.activity.ComponentActivity
 import androidx.webkit.WebViewClientCompat
 import kokoro.app.ui.engine.web.PlatformWebRequest
-import kokoro.app.ui.engine.web.WebRequestResolver
 import kokoro.app.ui.engine.web.WebUri
+import kokoro.app.ui.engine.web.WebUriResolver
 import kokoro.app.ui.engine.web.toWebkit
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assert
@@ -76,8 +76,8 @@ open class WvWindowActivity : ComponentActivity() {
 			window = w
 
 			wc.scope.launch(Dispatchers.Main, start = CoroutineStart.UNDISPATCHED) {
-				val wrr = w.initWebRequestResolver() // NOTE: Suspending call
-				setUpWebView(wrr, w.context.scope)
+				val wur = w.initWebUriResolver() // NOTE: Suspending call
+				setUpWebView(wur, w.context.scope)
 			}
 			return // Success. Skip code below.
 		}
@@ -106,12 +106,12 @@ open class WvWindowActivity : ComponentActivity() {
 	}
 
 	@MainThread
-	private fun setUpWebView(wrr: WebRequestResolver, scope: CoroutineScope) {
+	private fun setUpWebView(wur: WebUriResolver, scope: CoroutineScope) {
 		assertThreadMain()
 		assert({ wv == null })
 
 		val wv = WebView(this)
-		wv.webViewClient = InternalWebViewClient(this, wrr, scope)
+		wv.webViewClient = InternalWebViewClient(this, wur, scope)
 
 		val ws = wv.settings
 		@SuppressLint("SetJavaScriptEnabled")
@@ -129,13 +129,13 @@ open class WvWindowActivity : ComponentActivity() {
 
 	private class InternalWebViewClient(
 		private val activity: WvWindowActivity,
-		private val wrr: WebRequestResolver,
+		private val wur: WebUriResolver,
 		scope: CoroutineScope,
 	) : WebViewClientCompat() {
 		private val coroutineContext = scope.coroutineContext + Dispatchers.IO
 
 		override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest): WebResourceResponse? {
-			val h = wrr.findHandler(WebUri(request.url))
+			val h = wur.resolve(WebUri(request.url))
 			if (h != null) {
 				return runBlocking(coroutineContext) {
 					h.handle(PlatformWebRequest(request)).toWebkit()

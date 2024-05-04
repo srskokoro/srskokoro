@@ -7,9 +7,9 @@ import kokoro.app.logsDir
 import kokoro.app.ui.engine.web.Bom
 import kokoro.app.ui.engine.web.PlatformWebRequest
 import kokoro.app.ui.engine.web.WebRequestHandler
-import kokoro.app.ui.engine.web.WebRequestResolver
 import kokoro.app.ui.engine.web.WebResponse
 import kokoro.app.ui.engine.web.WebUri
+import kokoro.app.ui.engine.web.WebUriResolver
 import kokoro.app.ui.swing.ScopedWindowFrame
 import kokoro.app.ui.swing.doOnThreadSwing
 import kokoro.internal.DEBUG
@@ -106,8 +106,8 @@ class WvWindowFrame @JvmOverloads constructor(
 		window = w // Set now so that we don't get called again by `onLaunch()`
 
 		wc.scope.launch(Dispatchers.Swing, start = CoroutineStart.UNDISPATCHED) {
-			val wrr = w.initWebRequestResolver() // NOTE: Suspending call
-			setUpJcef(wrr, w.context.scope)
+			val wur = w.initWebUriResolver() // NOTE: Suspending call
+			setUpJcef(wur, w.context.scope)
 
 			val sizePrefs = w.initSizePrefs() // NOTE: Suspending call
 
@@ -166,7 +166,7 @@ class WvWindowFrame @JvmOverloads constructor(
 
 	/** @see tearDownJcef */
 	@MainThread
-	private fun setUpJcef(wrr: WebRequestResolver, scope: CoroutineScope) {
+	private fun setUpJcef(wur: WebUriResolver, scope: CoroutineScope) {
 		assertThreadMain()
 		assert({ jcef_ == null })
 
@@ -179,7 +179,7 @@ class WvWindowFrame @JvmOverloads constructor(
 		// there is no other way to force that without also creating at least
 		// one `CefClient`.
 		val client = Jcef.app.createClient()
-		client.addRequestHandler(InternalRequestHandler(wrr, scope))
+		client.addRequestHandler(InternalRequestHandler(wur, scope))
 
 		val browser = client.createBrowser(initUrl.also { initUrl = null }, false, false)
 		// Necessary or the browser component won't respond to the keyboard.
@@ -193,13 +193,13 @@ class WvWindowFrame @JvmOverloads constructor(
 	}
 
 	private class InternalRequestHandler(
-		private val wrr: WebRequestResolver,
+		private val wur: WebUriResolver,
 		private val scope: CoroutineScope,
 	) : JcefRequestHandlerAdapter() {
 
 		override fun getResourceHandler(browser: CefBrowser?, frame: CefFrame?, request: CefRequest?): CefResourceHandler? {
 			if (request != null) {
-				val h = wrr.findHandler(WebUri(request.url))
+				val h = wur.resolve(WebUri(request.url))
 				if (h != null) return InternalResourceHandler(h, scope)
 			}
 			return null
