@@ -7,6 +7,8 @@ value class WebUri(val value: PlatformWebUri) {
 
 	constructor(uri: String) : this(PlatformWebUri(uri))
 
+	override fun toString() = value.toString()
+
 	companion object {
 		fun getPortForScheme(scheme: String) = when (scheme) {
 			"http" -> 80
