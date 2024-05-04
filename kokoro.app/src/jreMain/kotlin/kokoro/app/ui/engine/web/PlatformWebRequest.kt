@@ -3,20 +3,18 @@ package kokoro.app.ui.engine.web
 import org.cef.network.CefRequest
 
 class PlatformWebRequest(
-	private val impl: CefRequest,
+	// NOTE: Must not retain a reference to `CefRequest`, since it's often only
+	// valid within the scope of the calling method in which it was provided.
+	impl: CefRequest,
 ) : WebRequest {
 
-	override val method: String get() = impl.method
+	override val method: String = impl.method
+	override val url = WebUri(impl.url)
 
-	private var url_: WebUri? = null
-	override val url: WebUri
-		get() = url_ ?: WebUri(impl.url)
-			.also { url_ = it }
+	private var headers_ = buildMap<String, String> {
+		impl.getHeaderMap(this)
+	}
 
-	private var headers_: Map<String, String>? = null
-	override fun headers(): Map<String, String> =
-		headers_ ?: buildMap { impl.getHeaderMap(this) }
-			.also { headers_ = it }
-
-	override fun header(name: String): String? = impl.getHeaderByName(name)
+	override fun headers() = headers_
+	override fun header(name: String) = headers_[name]
 }
