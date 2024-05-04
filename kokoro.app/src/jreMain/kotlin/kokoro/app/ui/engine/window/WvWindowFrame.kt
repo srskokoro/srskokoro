@@ -199,8 +199,12 @@ class WvWindowFrame @JvmOverloads constructor(
 
 		override fun getResourceHandler(browser: CefBrowser?, frame: CefFrame?, request: CefRequest?): CefResourceHandler? {
 			if (request != null) {
-				val h = wur.resolve(WebUri(request.url))
-				if (h != null) return InternalResourceHandler(h, scope)
+				val uri = WebUri(request.url)
+				val h = wur.resolve(uri)
+				if (h != null) return InternalResourceHandler(
+					PlatformWebRequest(request, uri),
+					h, scope,
+				)
 			}
 			return null
 		}
@@ -248,6 +252,7 @@ class WvWindowFrame @JvmOverloads constructor(
 	}
 
 	private class InternalResourceHandler(
+		private val platformRequest: PlatformWebRequest,
 		private val handler: WebRequestHandler,
 		private val scope: CoroutineScope,
 	) : CefResourceHandler {
@@ -261,12 +266,11 @@ class WvWindowFrame @JvmOverloads constructor(
 			this.responseContent = response.content.buffer()
 		}
 
-		override fun processRequest(request: CefRequest, callback: CefCallback): Boolean {
-			@Suppress("NAME_SHADOWING") val request = PlatformWebRequest(request)
+		override fun processRequest(request: CefRequest?, callback: CefCallback): Boolean {
 			@OptIn(ExperimentalCoroutinesApi::class)
 			scope.launch(Dispatchers.IO, start = CoroutineStart.ATOMIC) {
 				try {
-					val r = handler.handle(request)
+					val r = handler.handle(platformRequest)
 					initWebResponse(r)
 					VarHandle.releaseFence()
 					// ^ NOTE: We don't trust that the call below (or its
