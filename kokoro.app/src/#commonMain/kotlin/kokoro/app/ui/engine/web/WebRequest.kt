@@ -2,9 +2,9 @@ package kokoro.app.ui.engine.web
 
 interface WebRequest {
 
-	val method: String
-
 	val url: WebUri
+
+	val method: String
 
 	fun headers(): Map<String, String>
 

@@ -6,9 +6,9 @@ class PlatformWebRequest(
 	private val impl: WebResourceRequest,
 ) : WebRequest {
 
-	override val method: String get() = impl.method
-
 	override val url: WebUri get() = WebUri(impl.url)
+
+	override val method: String get() = impl.method
 
 	override fun headers(): Map<String, String> = impl.requestHeaders
 
