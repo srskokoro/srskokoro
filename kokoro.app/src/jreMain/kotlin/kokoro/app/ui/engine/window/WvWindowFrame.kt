@@ -4,6 +4,12 @@ import kokoro.app.AppData
 import kokoro.app.Jvm
 import kokoro.app.cacheDir
 import kokoro.app.logsDir
+import kokoro.app.ui.engine.web.Bom
+import kokoro.app.ui.engine.web.PlatformWebRequest
+import kokoro.app.ui.engine.web.WebRequestHandler
+import kokoro.app.ui.engine.web.WebRequestResolver
+import kokoro.app.ui.engine.web.WebResponse
+import kokoro.app.ui.engine.web.WebUri
 import kokoro.app.ui.swing.ScopedWindowFrame
 import kokoro.app.ui.swing.doOnThreadSwing
 import kokoro.internal.DEBUG
@@ -12,20 +18,32 @@ import kokoro.internal.annotation.MainThread
 import kokoro.internal.assert
 import kokoro.internal.assertThreadMain
 import kokoro.internal.checkNotNull
+import kokoro.internal.coroutines.CancellationSignal
 import kokoro.jcef.Jcef
 import kokoro.jcef.JcefConfig
 import kokoro.jcef.JcefRequestHandlerAdapter
 import kokoro.jcef.JcefStateObserver
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.swing.Swing
+import okio.BufferedSource
+import okio.ByteString
+import okio.buffer
 import org.cef.CefApp
 import org.cef.CefApp.CefAppState
 import org.cef.CefClient
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
+import org.cef.callback.CefCallback
+import org.cef.handler.CefResourceHandler
+import org.cef.misc.IntRef
+import org.cef.misc.StringRef
 import org.cef.network.CefRequest
+import org.cef.network.CefResponse
 import java.awt.Component
 import java.awt.Desktop
 import java.awt.Dimension
@@ -35,6 +53,7 @@ import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.awt.event.WindowEvent
 import java.io.File
+import java.lang.invoke.VarHandle
 import java.net.URI
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
@@ -87,7 +106,8 @@ class WvWindowFrame @JvmOverloads constructor(
 		window = w // Set now so that we don't get called again by `onLaunch()`
 
 		wc.scope.launch(Dispatchers.Swing, start = CoroutineStart.UNDISPATCHED) {
-			setUpJcef()
+			val wrr = w.initWebRequestResolver() // NOTE: Suspending call
+			setUpJcef(wrr, w.context.scope)
 
 			val sizePrefs = w.initSizePrefs() // NOTE: Suspending call
 
@@ -146,7 +166,7 @@ class WvWindowFrame @JvmOverloads constructor(
 
 	/** @see tearDownJcef */
 	@MainThread
-	private fun setUpJcef() {
+	private fun setUpJcef(wrr: WebRequestResolver, scope: CoroutineScope) {
 		assertThreadMain()
 		assert({ jcef_ == null })
 
@@ -159,7 +179,7 @@ class WvWindowFrame @JvmOverloads constructor(
 		// there is no other way to force that without also creating at least
 		// one `CefClient`.
 		val client = Jcef.app.createClient()
-		client.addRequestHandler(InternalRequestHandler())
+		client.addRequestHandler(InternalRequestHandler(wrr, scope))
 
 		val browser = client.createBrowser(initUrl.also { initUrl = null }, false, false)
 		// Necessary or the browser component won't respond to the keyboard.
@@ -172,7 +192,20 @@ class WvWindowFrame @JvmOverloads constructor(
 		contentPane.add(component)
 	}
 
-	private class InternalRequestHandler : JcefRequestHandlerAdapter() {
+	private class InternalRequestHandler(
+		private val wrr: WebRequestResolver,
+		private val scope: CoroutineScope,
+	) : JcefRequestHandlerAdapter() {
+
+		override fun getResourceHandler(browser: CefBrowser?, frame: CefFrame?, request: CefRequest?): CefResourceHandler? {
+			if (request != null) {
+				val h = wrr.findHandler(WebUri(request.url))
+				if (h != null) return InternalResourceHandler(h, scope)
+			}
+			return null
+		}
+
+		// --
 
 		private fun launchUrlExternally(url: String) {
 			if (Desktop.isDesktopSupported()) try {
@@ -211,6 +244,163 @@ class WvWindowFrame @JvmOverloads constructor(
 				launchUrlExternally(target_url)
 			}
 			return true // Override default behavior
+		}
+	}
+
+	private class InternalResourceHandler(
+		private val handler: WebRequestHandler,
+		private val scope: CoroutineScope,
+	) : CefResourceHandler {
+		private var responseContentBom: ByteString? = null
+		private var responseContent: BufferedSource? = null
+		private var response: WebResponse? = null
+
+		private fun initWebResponse(response: WebResponse) {
+			check(this.response == null) { "Must only be called once" }
+			this.response = response
+			this.responseContent = response.content.buffer()
+		}
+
+		override fun processRequest(request: CefRequest, callback: CefCallback): Boolean {
+			@Suppress("NAME_SHADOWING") val request = PlatformWebRequest(request)
+			@OptIn(ExperimentalCoroutinesApi::class)
+			scope.launch(Dispatchers.IO, start = CoroutineStart.ATOMIC) {
+				try {
+					val r = handler.handle(request)
+					initWebResponse(r)
+					VarHandle.releaseFence()
+					// ^ NOTE: We don't trust that the call below (or its
+					// internals) won't be reordered before the code above.
+					callback.Continue()
+					return@launch // Skip code below
+				} catch (ex: Throwable) {
+					callback.cancel()
+					throw ex
+				}
+			}
+			return true // Handled
+		}
+
+		override fun getResponseHeaders(out: CefResponse, contentLengthOut: IntRef, redirectUrl: StringRef?) {
+			val r = this.response!!
+
+			out.status = r.status
+			out.setHeaderMap(r.headers)
+
+			var contentLength = r.contentLength
+			var contentType = r.mimeType
+			if (contentType != null) {
+				val charset = r.charset
+				if (charset != null) run<Unit> {
+					// NOTE: For the MIME types listed below, CEF currently
+					// doesn't support an explicit `charset` parameter for
+					// custom responses. The following mitigates this issue by
+					// automatically supplying a BOM.
+					//
+					// See also,
+					// - https://www.magpcss.org/ceforum/viewtopic.php?f=10&t=894
+					// - https://github.com/cefsharp/CefSharp/issues/689
+					when (contentType) {
+						"application/json",
+						"text/css",
+						"text/html",
+						"text/javascript",
+						-> Bom.forMediaCharset(r.charset)?.let { bom ->
+							this.responseContentBom = bom
+							if (contentLength >= 0) {
+								contentLength += bom.size
+							}
+							return@run // Skip code below
+						}
+					}
+					contentType = "$contentType; charset=$charset"
+				}
+				// NOTE: Even if we set a "Content-Type" header, the following
+				// `CefResponse.setMimeType()` configuration will overwrite it.
+				// Furthermore, CEF relies on `CefResponse.setMimeType()`, so
+				// setting only the "Content-Type" header will still have no
+				// effect even if we omit the `CefResponse.setMimeType()` call.
+				out.mimeType = contentType
+			}
+
+			if (contentLength >= 0) {
+				if (contentLength <= Int.MAX_VALUE) {
+					contentLengthOut.set(contentLength.toInt())
+				} else {
+					contentLengthOut.set(-1)
+					out.setHeaderByName(
+						"content-length",
+						contentLength.toString(),
+						/* overwrite = */ true,
+					)
+				}
+			} else {
+				contentLengthOut.set(-1)
+			}
+		}
+
+		override fun readResponse(dataOut: ByteArray, bytesToRead: Int, bytesRead: IntRef, callback: CefCallback): Boolean {
+			val source = responseContent!!
+
+			synchronized(source) {
+				assert({ source.buffer.isOpen }) // NOTE: `source.buffer` never really closes.
+				val transferred = source.buffer.read(dataOut, 0, bytesToRead)
+				if (transferred > 0) {
+					bytesRead.set(transferred)
+					return true // Not done yet
+				} else if (source.isOpen) {
+					bytesRead.set(0)
+					// Skip below
+				} else {
+					return false // Done
+				}
+			}
+
+			val bom = responseContentBom
+			if (bom != null) responseContentBom = null
+
+			@OptIn(ExperimentalCoroutinesApi::class)
+			scope.launch(Dispatchers.IO, start = CoroutineStart.ATOMIC) {
+				try {
+					runInterruptible {
+						synchronized(source) {
+							if (!source.isOpen) throw CancellationSignal()
+
+							if (bom != null) {
+								val bom_n = bom.size
+								val b = source.buffer
+								b.write(bom, 0, bom_n) // Prepend BOM
+								if (
+									source.request(bom_n * 2L) &&
+									b.rangeEquals(bom_n.toLong(), bom, 0, bom_n)
+								) {
+									// BOM was already present
+									b.skip(bom_n.toLong())
+								}
+							}
+
+							if (!source.request(bytesToRead.toLong())) {
+								// Already exhausted
+								source.close()
+							}
+						}
+					}
+					callback.Continue()
+					return@launch // Skip code below
+				} catch (ex: Throwable) {
+					callback.cancel()
+					throw ex
+				}
+			}
+			return true // Not done yet
+		}
+
+		override fun cancel() {
+			responseContent?.let {
+				synchronized(it) {
+					it.close()
+				}
+			}
 		}
 	}
 
