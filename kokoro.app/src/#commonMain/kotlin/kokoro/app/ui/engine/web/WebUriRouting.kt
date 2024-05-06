@@ -52,6 +52,39 @@ class WebUriRouting private constructor(
 			}
 			this.handler = handler
 		}
+
+		override fun equals(other: Any?): Boolean {
+			return this === other ||
+				other is Entry &&
+				uri == other.uri &&
+				isUriPrefix == other.isUriPrefix &&
+				handler == other.handler
+		}
+
+		override fun hashCode(): Int {
+			var h = uri.hashCode()
+			h = 31 * h + isUriPrefix.hashCode()
+			h = 31 * h + handler.hashCode()
+			return h
+		}
+	}
+
+	override fun equals(other: Any?): Boolean {
+		return this === other ||
+			other is WebUriRouting &&
+			entries == other.entries
+	}
+
+	private var hash = 0
+	override fun hashCode(): Int {
+		var h = hash
+		if (h == 0) {
+			val entries = entries
+			if (entries.isNotEmpty()) {
+				h = entries.hashCode()
+			}
+		}
+		return h
 	}
 
 	class Builder {

@@ -3,10 +3,13 @@ package kokoro.app.ui.engine.web
 import assertk.assertAll
 import assertk.assertThat
 import assertk.assertions.endsWith
+import assertk.assertions.hasHashCode
+import assertk.assertions.hashCodeFun
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFailure
 import assertk.assertions.isFalse
 import assertk.assertions.isInstanceOf
+import assertk.assertions.isNotEqualTo
 import assertk.assertions.isNotSameInstanceAs
 import assertk.assertions.isNull
 import assertk.assertions.isSameInstanceAs
@@ -103,24 +106,24 @@ class test_WebUriRouting : FreeSpec({
 		assertAll {
 			assertThat(
 				WebUriRouting { route("foo") }
-					.builder().route("bar").sort()
-					.entries.map { it.uri to it.isUriPrefix }
+					.builder().route("bar")
+					.sort().entries
 			).isEqualTo(
 				WebUriRouting {
 					route("foo")
 					route("bar")
-				}.entries.map { it.uri to it.isUriPrefix }
+				}.entries
 			)
 
 			assertThat(
 				WebUriRouting { route("foo") }
 					.copy { route("bar") }
-					.entries.map { it.uri to it.isUriPrefix }
+					.entries
 			).isEqualTo(
 				WebUriRouting {
 					route("foo")
 					route("bar")
-				}.entries.map { it.uri to it.isUriPrefix }
+				}.entries
 			)
 
 			assertThat(
@@ -128,15 +131,15 @@ class test_WebUriRouting : FreeSpec({
 					route("-*")
 					route("foo")
 					route("bar")
-				}.builder().route("more").build()
-					.entries.map { it.uri to it.isUriPrefix }
+				}.builder().route("more")
+					.build().entries
 			).isEqualTo(
 				WebUriRouting {
 					route("-*")
 					route("foo")
 					route("bar")
 					route("more")
-				}.entries.map { it.uri to it.isUriPrefix }
+				}.entries
 			)
 		}
 	}
@@ -151,7 +154,7 @@ class test_WebUriRouting : FreeSpec({
 					route("x://bar")
 					route("x://foo/*")
 					route("x://baz-*")
-				}.entries.map { it.uri to it.isUriPrefix }
+				}.entries
 			).isEqualTo(
 				WebUriRouting.Builder().apply {
 					route("x://bar")
@@ -160,7 +163,7 @@ class test_WebUriRouting : FreeSpec({
 					route("x://bar/*")
 					route("x://baz-*")
 					route("x://foo/*")
-				}.entries.map { it.uri to it.isUriPrefix }
+				}.entries
 			)
 
 			assertThat(
@@ -171,7 +174,7 @@ class test_WebUriRouting : FreeSpec({
 					route("x://bar")
 					route("x://foo/*")
 					route("x://baz-*")
-				}.entries.map { it.uri to it.isUriPrefix }
+				}.entries
 			).isEqualTo(
 				WebUriRouting.Builder().apply {
 					route("x://foo/")
@@ -181,7 +184,7 @@ class test_WebUriRouting : FreeSpec({
 					route("x://foo/*")
 					route("x://baz-*")
 					sort()
-				}.entries.map { it.uri to it.isUriPrefix }
+				}.entries
 			)
 		}
 	}
@@ -207,6 +210,128 @@ class test_WebUriRouting : FreeSpec({
 				.isNotSameInstanceAs(WebUriRouting())
 			assertThat(WebUriRouting())
 				.isNotSameInstanceAs(WebUriRouting())
+		}
+	}
+
+	"Same entries mean equal instances" {
+		assertAll {
+			fun assertEquals(a: WebUriRouting, b: WebUriRouting) {
+				assertThat(a.entries).isEqualTo(b.entries)
+				assertThat(a).isEqualTo(b)
+				assertThat(a).hasHashCode(b.hashCode())
+			}
+			assertEquals(
+				WebUriRouting(),
+				WebUriRouting(),
+			)
+			assertEquals(
+				WebUriRouting { route("x://foo/") },
+				WebUriRouting { route("x://foo/") },
+			)
+			assertEquals(
+				WebUriRouting { route("x://bar/*") },
+				WebUriRouting { route("x://bar/*") },
+			)
+			assertEquals(
+				WebUriRouting {
+					route("x://foo/")
+					route("x://bar/*")
+				},
+				WebUriRouting {
+					route("x://bar/*")
+					route("x://foo/")
+				},
+			)
+			assertEquals(
+				WebUriRouting {
+					route("x://foo/*")
+					route("x://bar/*")
+				},
+				WebUriRouting {
+					route("x://bar/*")
+					route("x://foo/*")
+				},
+			)
+			assertEquals(
+				WebUriRouting {
+					route("x://foo")
+					route("x://bar")
+				},
+				WebUriRouting {
+					route("x://bar")
+					route("x://foo")
+				},
+			)
+			assertEquals(
+				WebUriRouting {
+					route("x://foo/")
+					route("x://bar/*")
+					route("x://baz")
+				},
+				WebUriRouting {
+					route("x://baz")
+					route("x://foo/")
+					route("x://bar/*")
+				},
+			)
+			assertEquals(
+				WebUriRouting {
+					route("x://foo-*")
+					route("x://bar/")
+					route("x://baz/*")
+				},
+				WebUriRouting {
+					route("x://baz/*")
+					route("x://foo-*")
+					route("x://bar/")
+				},
+			)
+		}
+	}
+
+	"Differing entries mean unequal instances" {
+		assertAll {
+			fun assertNotEquals(a: WebUriRouting, b: WebUriRouting) {
+				assertThat(a.entries).isNotEqualTo(b.entries)
+				assertThat(a).isNotEqualTo(b)
+				assertThat(a).hashCodeFun().isNotEqualTo(b.hashCode())
+			}
+			assertNotEquals(
+				WebUriRouting { route("x://foo/") },
+				WebUriRouting(),
+			)
+			assertNotEquals(
+				WebUriRouting(),
+				WebUriRouting { route("x://foo/") },
+			)
+			assertNotEquals(
+				WebUriRouting { route("x://foo/") },
+				WebUriRouting { route("x://bar/") },
+			)
+			assertNotEquals(
+				WebUriRouting { route("x://foo/"); route("x://bar/") },
+				WebUriRouting { route("x://foo/"); route("x://bar/*") },
+			)
+			assertNotEquals(
+				WebUriRouting { route("x://foo/"); route("x://bar/") },
+				WebUriRouting { route("x://foo/*"); route("x://bar/*") },
+			)
+			assertNotEquals(
+				WebUriRouting { route("x://foo/*"); route("x://bar/") },
+				WebUriRouting { route("x://foo/*"); route("x://bar/*") },
+			)
+			assertNotEquals(
+				WebUriRouting { route("x://foo/"); route("x://bar/*") },
+				WebUriRouting { route("x://foo/"); route("x://bar/") },
+			)
+			assertNotEquals(
+				WebUriRouting { route("x://foo/*"); route("x://bar/*") },
+				WebUriRouting { route("x://foo/"); route("x://bar/") },
+			)
+			assertNotEquals(
+				WebUriRouting { route("x://foo/*"); route("x://bar/*") },
+				WebUriRouting { route("x://foo/"); route("x://bar/*") },
+			)
 		}
 	}
 
