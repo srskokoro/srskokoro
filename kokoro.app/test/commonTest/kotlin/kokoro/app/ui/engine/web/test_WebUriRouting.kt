@@ -101,7 +101,6 @@ class test_WebUriRouting : FreeSpec({
 
 	"Builder via already built entries works as expected" {
 		assertAll {
-
 			assertThat(
 				WebUriRouting { route("foo") }
 					.builder().route("bar").sort()
@@ -124,12 +123,26 @@ class test_WebUriRouting : FreeSpec({
 				}.entries.map { it.uri to it.isUriPrefix }
 			)
 
+			assertThat(
+				WebUriRouting {
+					route("-*")
+					route("foo")
+					route("bar")
+				}.builder().route("more").build()
+					.entries.map { it.uri to it.isUriPrefix }
+			).isEqualTo(
+				WebUriRouting {
+					route("-*")
+					route("foo")
+					route("bar")
+					route("more")
+				}.entries.map { it.uri to it.isUriPrefix }
+			)
 		}
 	}
 
 	"Sorting is as expected" {
 		assertAll {
-
 			assertThat(
 				WebUriRouting {
 					route("x://foo/")
@@ -188,87 +201,195 @@ class test_WebUriRouting : FreeSpec({
 		}
 	}
 
-	"Resolves as expected" {
-		assertAll {
-			val sample = WebRequestHandler.EMPTY
-			val foo = WebRequestHandler()
-			val bar = WebRequestHandler()
-			val baz = WebRequestHandler()
-			val dOne = WebRequestHandler()
-			val dOneStar = WebRequestHandler()
-			val cSlashStar = WebRequestHandler()
-			val loneStar = WebRequestHandler()
-
-			WebUriRouting {
-				route("https://example.com", sample)
-				route("sample", sample)
-				route("foo", foo)
-				route("bar", bar)
-				route("baz", baz)
-				route("d://one/", dOne)
-				route("d://one/*", dOneStar)
-				route("c:///*", cSlashStar)
-				route("lone*", loneStar)
-			}.apply {
-				assertThat(resolve(WebUri("https://example.com"))).isSameInstanceAs(sample)
-				assertThat(resolve(WebUri("sample"))).isSameInstanceAs(sample)
-
-				assertThat(resolve(WebUri("foo"))).apply {
-					isSameInstanceAs(foo)
-					isNotSameInstanceAs(bar)
-				}
-				assertThat(resolve(WebUri("bar"))).isSameInstanceAs(bar)
-				assertThat(resolve(WebUri("baz"))).isSameInstanceAs(baz)
-
-				assertThat(resolve(WebUri("d://one/"))).isSameInstanceAs(dOne)
-				assertThat(resolve(WebUri("d://one/world"))).isSameInstanceAs(dOneStar)
-
-				assertThat(resolve(WebUri("c:///"))).isSameInstanceAs(cSlashStar)
-				assertThat(resolve(WebUri("c:///foo/bar/baz"))).isSameInstanceAs(cSlashStar)
-
-				assertThat(resolve(WebUri("lone"))).isSameInstanceAs(loneStar)
-				assertThat(resolve(WebUri("lone-one"))).isSameInstanceAs(loneStar)
-
-				assertThat(resolve(WebUri("gone"))).isNull()
-				assertThat(resolve(WebUri("x"))).isNull()
-				assertThat(resolve(WebUri(""))).isNull()
-			}
-
-			WebUriRouting {
-				route("foo", foo)
-			}.apply {
-				assertThat(resolve(WebUri("foo"))).isSameInstanceAs(foo)
-				assertThat(resolve(WebUri("missing"))).isNull()
-				assertThat(resolve(WebUri(""))).isNull()
-			}
-
-			WebUriRouting {
-				route("lone*", loneStar)
-			}.apply {
-				assertThat(resolve(WebUri("lone"))).isSameInstanceAs(loneStar)
-				assertThat(resolve(WebUri("lonely-one"))).isSameInstanceAs(loneStar)
-				assertThat(resolve(WebUri("missing"))).isNull()
-				assertThat(resolve(WebUri(""))).isNull()
-			}
-
-			WebUriRouting().apply {
-				assertThat(resolve(WebUri("missing"))).isNull()
-				assertThat(resolve(WebUri(""))).isNull()
-			}
-
-			WebUriRouting.EMPTY.apply {
-				assertThat(resolve(WebUri("missing"))).isNull()
-				assertThat(resolve(WebUri(""))).isNull()
-			}
-		}
-	}
-
 	"Must not be the same instances" {
 		assertAll {
 			assertThat(WebUriRouting.EMPTY)
 				.isNotSameInstanceAs(WebUriRouting())
 			assertThat(WebUriRouting())
 				.isNotSameInstanceAs(WebUriRouting())
+		}
+	}
+
+	"Resolves as expected" {
+		assertAll {
+			val sample = WebRequestHandler.EMPTY
+			val foo = WebRequestHandler()
+			val bar = WebRequestHandler()
+			val baz = WebRequestHandler()
+
+			val dummies = object {
+				private val emptyUri = WebUri("")
+				private val dummyUri = WebUri("dummy")
+				private val zDummyUri = WebUri("z-dummy")
+				private val anotherDummyUri = WebUri("another-dummy")
+
+				fun assertNulls(routing: WebUriRouting): Unit = with(routing) {
+					assertThat(resolve(emptyUri)).isNull()
+					assertThat(resolve(dummyUri)).isNull()
+					assertThat(resolve(zDummyUri)).isNull()
+					assertThat(resolve(anotherDummyUri)).isNull()
+				}
+			}
+
+			WebUriRouting {
+				route("https://example.com/", sample)
+			}.apply {
+				dummies.assertNulls(this)
+				assertThat(resolve(WebUri("https://example.com/"))).isSameInstanceAs(sample)
+			}
+
+			WebUriRouting {
+				route("https://example.com/*", sample)
+			}.apply {
+				dummies.assertNulls(this)
+				assertThat(resolve(WebUri("https://example.com"))).isNull()
+				assertThat(resolve(WebUri("https://example.com/"))).isSameInstanceAs(sample)
+				assertThat(resolve(WebUri("https://example.com/foo/"))).isSameInstanceAs(sample)
+				assertThat(resolve(WebUri("https://example.com/foo/bar"))).isSameInstanceAs(sample)
+			}
+
+			WebUriRouting {
+				route("sample", foo)
+				route("sample*", bar)
+			}.apply {
+				dummies.assertNulls(this)
+				assertThat(resolve(WebUri("sample"))).isSameInstanceAs(foo)
+				assertThat(resolve(WebUri("sample-entry"))).apply {
+					isSameInstanceAs(bar)
+					isNotSameInstanceAs(foo)
+				}
+			}
+
+			WebUriRouting {
+				route("https://example.com/*", foo)
+				route("https://example.com/foo/", bar)
+			}.apply {
+				dummies.assertNulls(this)
+				assertThat(resolve(WebUri("https://example.com/"))).isSameInstanceAs(foo)
+				assertThat(resolve(WebUri("https://example.com/foo/"))).apply {
+					isSameInstanceAs(bar)
+					isNotSameInstanceAs(foo)
+				}
+			}
+
+			WebUriRouting {
+				route("https://example.com/*", sample)
+				route("https://example.com/foo/*", foo)
+			}.apply {
+				dummies.assertNulls(this)
+				assertThat(resolve(WebUri("https://example.com"))).isNull()
+				assertThat(resolve(WebUri("https://example.com/"))).isSameInstanceAs(sample)
+				assertThat(resolve(WebUri("https://example.com/foo/"))).isSameInstanceAs(foo)
+				assertThat(resolve(WebUri("https://example.com/foo/bar"))).apply {
+					isSameInstanceAs(foo)
+					isNotSameInstanceAs(sample)
+				}
+			}
+
+			WebUriRouting {
+				route("https://example.com/*", sample)
+				route("https://example.com/foo/*", foo)
+				route("z-baz", baz)
+			}.apply {
+				dummies.assertNulls(this)
+				assertThat(resolve(WebUri("https://example.com/"))).isSameInstanceAs(sample)
+				assertThat(resolve(WebUri("https://example.com/foo/"))).isSameInstanceAs(foo)
+				assertThat(resolve(WebUri("https://example.com/foo/bar"))).apply {
+					isSameInstanceAs(foo)
+					isNotSameInstanceAs(sample)
+				}
+				assertThat(resolve(WebUri("z-baz"))).isSameInstanceAs(baz)
+			}
+
+			WebUriRouting {
+				route("a://baz/", baz)
+				route("https://example.com/*", sample)
+				route("https://example.com/foo/*", foo)
+			}.apply {
+				dummies.assertNulls(this)
+				assertThat(resolve(WebUri("https://example.com/"))).isSameInstanceAs(sample)
+				assertThat(resolve(WebUri("https://example.com/foo/"))).isSameInstanceAs(foo)
+				assertThat(resolve(WebUri("https://example.com/foo/bar"))).apply {
+					isSameInstanceAs(foo)
+					isNotSameInstanceAs(sample)
+				}
+				assertThat(resolve(WebUri("a://baz/"))).isSameInstanceAs(baz)
+			}
+
+			WebUriRouting {
+				route("a-bar", bar)
+				route("https://example.com/*", sample)
+				route("https://example.com/foo/*", foo)
+				route("z://baz/", baz)
+			}.apply {
+				dummies.assertNulls(this)
+				assertThat(resolve(WebUri("https://example.com/"))).isSameInstanceAs(sample)
+				assertThat(resolve(WebUri("https://example.com/foo/"))).isSameInstanceAs(foo)
+				assertThat(resolve(WebUri("https://example.com/foo/bar"))).apply {
+					isSameInstanceAs(foo)
+					isNotSameInstanceAs(sample)
+				}
+				assertThat(resolve(WebUri("a-bar"))).isSameInstanceAs(bar)
+				assertThat(resolve(WebUri("z://baz/"))).isSameInstanceAs(baz)
+			}
+
+			WebUriRouting {
+				route("https://example.com/*", sample)
+				route("https://example.com/foo/*", foo)
+				route("https://example.com/foo/bar", bar)
+			}.apply {
+				dummies.assertNulls(this)
+				assertThat(resolve(WebUri("https://example.com"))).isNull()
+				assertThat(resolve(WebUri("https://example.com/"))).isSameInstanceAs(sample)
+				assertThat(resolve(WebUri("https://example.com/foo/"))).isSameInstanceAs(foo)
+				assertThat(resolve(WebUri("https://example.com/foo/bar"))).apply {
+					isSameInstanceAs(bar)
+					isNotSameInstanceAs(foo)
+				}
+			}
+
+			WebUriRouting {
+				route("https://example.com/foo/*", foo)
+				route("https://example.com/foo/bar", bar)
+				route("https://example.com/foo/bar/baz", baz)
+			}.apply {
+				dummies.assertNulls(this)
+				assertThat(resolve(WebUri("https://example.com"))).isNull()
+				assertThat(resolve(WebUri("https://example.com/"))).isNull()
+				assertThat(resolve(WebUri("https://example.com/foo/"))).isSameInstanceAs(foo)
+				assertThat(resolve(WebUri("https://example.com/foo/bar"))).isSameInstanceAs(bar)
+				assertThat(resolve(WebUri("https://example.com/foo/bar/baz"))).apply {
+					isSameInstanceAs(baz)
+					isNotSameInstanceAs(bar)
+				}
+			}
+
+			WebUriRouting {
+				route("https://example.com/foo/", foo)
+				route("https://example.com/foo/bar", bar)
+				route("https://example.com/foo/bar/baz", baz)
+			}.apply {
+				dummies.assertNulls(this)
+				assertThat(resolve(WebUri("https://example.com/foo/"))).isSameInstanceAs(foo)
+				assertThat(resolve(WebUri("https://example.com/foo/*"))).isNull()
+				assertThat(resolve(WebUri("https://example.com/foo/bar"))).isSameInstanceAs(bar)
+				assertThat(resolve(WebUri("https://example.com/foo/bar/baz"))).apply {
+					isSameInstanceAs(baz)
+					isNotSameInstanceAs(bar)
+				}
+			}
+
+			WebUriRouting().apply {
+				dummies.assertNulls(this)
+				assertThat(resolve(WebUri("https://example.com"))).isNull()
+				assertThat(resolve(WebUri("https://example.com/"))).isNull()
+			}
+
+			WebUriRouting.EMPTY.apply {
+				dummies.assertNulls(this)
+				assertThat(resolve(WebUri("https://example.com"))).isNull()
+				assertThat(resolve(WebUri("https://example.com/"))).isNull()
+			}
 		}
 	}
 })
