@@ -146,6 +146,7 @@ open class WvWindowActivity : ComponentActivity() {
 
 		override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
 			if (!request.isForMainFrame || !request.hasGesture()) {
+				// TIP: See also `Sec-Fetch-User` request header -- https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-User
 				return false
 			}
 			// See, https://developer.android.com/develop/ui/views/layout/webapps/webview#HandlingNavigation

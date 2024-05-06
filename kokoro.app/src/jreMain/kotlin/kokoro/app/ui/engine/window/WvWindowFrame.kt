@@ -230,6 +230,7 @@ class WvWindowFrame @JvmOverloads constructor(
 			is_redirect: Boolean,
 		): Boolean {
 			if (frame == null || !frame.isMain || !user_gesture) {
+				// TIP: See also `Sec-Fetch-User` request header -- https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-User
 				return false
 			}
 			if (request != null) {
