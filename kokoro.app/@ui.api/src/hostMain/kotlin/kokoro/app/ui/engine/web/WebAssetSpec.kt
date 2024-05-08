@@ -3,7 +3,7 @@ package kokoro.app.ui.engine.web
 import androidx.collection.ScatterMap
 import kotlin.jvm.JvmField
 
-fun interface WebAssetSpec {
+interface WebAssetSpec {
 
 	companion object {
 		@JvmField val EMPTY = WebAssetSpec()
@@ -24,6 +24,10 @@ fun WebAssetSpec(): WebAssetSpec = EmptyWebAssetSpec()
 fun WebAssetSpec(map: Map<in String, String?>): WebAssetSpec = MapWebAssetSpec(map)
 
 fun WebAssetSpec(map: ScatterMap<in String, out String?>): WebAssetSpec = ScatterMapWebAssetSpec(map)
+
+inline fun WebAssetSpec(crossinline block: (key: String) -> String?): WebAssetSpec = object : WebAssetSpec {
+	override fun propOrNull(key: String): String? = block(key)
+}
 
 // --
 
