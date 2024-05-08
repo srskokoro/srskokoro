@@ -157,6 +157,11 @@ dependencySettings {
 
 	//#region UI foundations
 
+	val kotlinx_html = "0.11.0" // https://github.com/Kotlin/kotlinx.html/releases
+	module("org.jetbrains.kotlinx:kotlinx-html", kotlinx_html)
+	module("org.jetbrains.kotlinx:kotlinx-html-js", kotlinx_html)
+	module("org.jetbrains.kotlinx:kotlinx-html-jvm", kotlinx_html)
+
 	val androidx_core = "1.12.0" // https://developer.android.com/jetpack/androidx/releases/core
 	module("androidx.core:core-ktx", androidx_core)
 

@@ -6,4 +6,5 @@ plugins {
 dependencies {
 	commonMainApi(project(":kokoro:internal"))
 	commonMainApi("org.jetbrains.kotlinx:kotlinx-serialization-core")
+	commonMainApi("org.jetbrains.kotlinx:kotlinx-html")
 }
