@@ -327,7 +327,7 @@ class WvWindowFrame @JvmOverloads constructor(
 				out.mimeType = contentType
 			}
 
-			if (contentLength >= 0) {
+			if (contentLength > 0) {
 				if (contentLength <= Int.MAX_VALUE) {
 					contentLengthOut.set(contentLength.toInt())
 				} else {
@@ -339,7 +339,15 @@ class WvWindowFrame @JvmOverloads constructor(
 					)
 				}
 			} else {
+				// NOTE: Even if `contentLength` is zero, set this to `-1`, so
+				// as to ensure `readResponse()` is still called.
 				contentLengthOut.set(-1)
+				if (contentLength == 0L) {
+					out.setHeaderByName(
+						"content-length", "0",
+						/* overwrite = */ true,
+					)
+				}
 			}
 		}
 
