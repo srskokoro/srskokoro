@@ -1,22 +1,34 @@
 package kokoro.app.ui.engine.web
 
 import kokoro.internal.DEBUG
+import kokoro.internal.SPECIAL_USE_DEPRECATION
+import okio.Closeable
 import okio.Source
-import kotlin.jvm.JvmField
+import kotlin.DeprecationLevel.ERROR
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
-class WebResponse {
-	@JvmField val status: Int
-	@JvmField val mimeType: String?
-	@JvmField val charset: String?
-	@JvmField val headers: Map<String, String>
-	@JvmField val contentLength: Long
-	@JvmField val content: Source
+class WebResponse : Closeable {
+	@Deprecated(SPECIAL_USE_DEPRECATION, level = ERROR) @PublishedApi internal var status_: Int
+	@Deprecated(SPECIAL_USE_DEPRECATION, level = ERROR) @PublishedApi internal var mimeType_: String?
+	@Deprecated(SPECIAL_USE_DEPRECATION, level = ERROR) @PublishedApi internal var charset_: String?
+	@Deprecated(SPECIAL_USE_DEPRECATION, level = ERROR) @PublishedApi internal var headers_: MutableMap<String, String>
+	@Deprecated(SPECIAL_USE_DEPRECATION, level = ERROR) @PublishedApi internal var contentLength_: Long
+	@Deprecated(SPECIAL_USE_DEPRECATION, level = ERROR) @PublishedApi internal var content_: Source
+
+	val status inline get() = @Suppress("DEPRECATION_ERROR") status_
+	val mimeType inline get() = @Suppress("DEPRECATION_ERROR") mimeType_
+	val charset inline get() = @Suppress("DEPRECATION_ERROR") charset_
+	val headers inline get() = @Suppress("DEPRECATION_ERROR") headers_
+	val contentLength inline get() = @Suppress("DEPRECATION_ERROR") contentLength_
+	val content inline get() = @Suppress("DEPRECATION_ERROR") content_
 
 	constructor(
 		status: Int,
 		mimeType: String?,
 		charset: String?,
-		headers: Map<String, String>,
+		headers: MutableMap<String, String>,
 		contentLength: Long,
 		content: Source,
 	) {
@@ -27,12 +39,18 @@ class WebResponse {
 			if (status > 599) throw IllegalArgumentException("status code can't be greater than 599.")
 			if (status in 300..399) throw IllegalArgumentException("status code can't be in the [300, 399] range.")
 		}
-		this.status = status
-		this.mimeType = mimeType
-		this.charset = charset
-		this.headers = headers
-		this.contentLength = contentLength
-		this.content = content
+		@Suppress("DEPRECATION_ERROR")
+		status_ = status
+		@Suppress("DEPRECATION_ERROR")
+		mimeType_ = mimeType
+		@Suppress("DEPRECATION_ERROR")
+		charset_ = charset
+		@Suppress("DEPRECATION_ERROR")
+		headers_ = headers
+		@Suppress("DEPRECATION_ERROR")
+		contentLength_ = contentLength
+		@Suppress("DEPRECATION_ERROR")
+		content_ = content
 	}
 
 	constructor(
@@ -45,7 +63,7 @@ class WebResponse {
 		status = status,
 		mimeType = mimeType,
 		charset = charset,
-		headers = emptyMap(),
+		headers = mutableMapOf(),
 		contentLength = contentLength,
 		content,
 	)
@@ -59,8 +77,98 @@ class WebResponse {
 		status = 200,
 		mimeType = mimeType,
 		charset = charset,
-		headers = emptyMap(),
+		headers = mutableMapOf(),
 		contentLength = contentLength,
 		content,
 	)
+
+	// --
+
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun status(status: Int): WebResponse {
+		@Suppress("DEPRECATION_ERROR")
+		status_ = status
+		return this
+	}
+
+	inline fun mimeType(mimeType: String?, charset: String?): WebResponse {
+		@Suppress("DEPRECATION_ERROR")
+		mimeType_ = mimeType
+		@Suppress("DEPRECATION_ERROR")
+		charset_ = charset
+		return this
+	}
+
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun headers(headers: MutableMap<String, String>): WebResponse {
+		@Suppress("DEPRECATION_ERROR")
+		headers_ = headers
+		return this
+	}
+
+	@OptIn(ExperimentalContracts::class)
+	inline fun headers(block: MutableMap<String, String>.() -> Unit): WebResponse {
+		contract {
+			callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+		}
+		@Suppress("DEPRECATION_ERROR")
+		headers_.block()
+		return this
+	}
+
+	/**
+	 * @see WebResponse.unsafeReplaceContent
+	 * @see WebResponse.unsafeReplaceContentLength
+	 */
+	inline fun content(contentLength: Long, content: Source): WebResponse {
+		this.content.close() // Close previous source to avoid leak
+		@Suppress("DEPRECATION_ERROR")
+		contentLength_ = contentLength
+		@Suppress("DEPRECATION_ERROR")
+		content_ = content
+		return this
+	}
+
+	inline fun content(content: Source) = content(-1, content)
+
+	/**
+	 * @see WebResponse.content
+	 * @see WebResponse.unsafeReplaceContentLength
+	 */
+	inline fun unsafeReplaceContent(contentLength: Long, content: Source): WebResponse {
+		@Suppress("DEPRECATION_ERROR")
+		contentLength_ = contentLength
+		@Suppress("DEPRECATION_ERROR")
+		content_ = content
+		return this
+	}
+
+	/**
+	 * @see WebResponse.content
+	 * @see WebResponse.unsafeReplaceContent
+	 * @see WebResponse.unsafeReplaceContentLength
+	 */
+	inline fun unsafeReplaceContent(content: Source): WebResponse {
+		@Suppress("DEPRECATION_ERROR")
+		content_ = content
+		return this
+	}
+
+	/**
+	 * @see WebResponse.content
+	 * @see WebResponse.unsafeReplaceContent
+	 * @see WebResponse.unsafeReplaceContentLength
+	 */
+	inline fun unsafeReplaceContentLength(contentLength: Long): WebResponse {
+		@Suppress("DEPRECATION_ERROR")
+		contentLength_ = contentLength
+		return this
+	}
+
+	// --
+
+	@Suppress("OVERRIDE_BY_INLINE")
+	override inline fun close() {
+		content.close()
+	}
 }
