@@ -21,8 +21,8 @@ private data object NullWebUriResolver : WebUriResolver {
 }
 
 private data class CombinedWebUriResolver(
-	@JvmField val a: WebUriResolver,
-	@JvmField val b: WebUriResolver,
+	private val a: WebUriResolver,
+	private val b: WebUriResolver,
 ) : WebUriResolver {
 	override fun resolve(uri: WebUri): WebResource? =
 		a.resolve(uri) ?: b.resolve(uri)
