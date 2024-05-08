@@ -21,7 +21,6 @@ import kokoro.internal.checkNotNull
 import kokoro.internal.coroutines.CancellationSignal
 import kokoro.jcef.Jcef
 import kokoro.jcef.JcefConfig
-import kokoro.jcef.JcefRequestHandlerAdapter
 import kokoro.jcef.JcefStateObserver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -39,7 +38,11 @@ import org.cef.CefClient
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.callback.CefCallback
+import org.cef.handler.CefRequestHandlerAdapter
 import org.cef.handler.CefResourceHandler
+import org.cef.handler.CefResourceRequestHandler
+import org.cef.handler.CefResourceRequestHandlerAdapter
+import org.cef.misc.BoolRef
 import org.cef.misc.IntRef
 import org.cef.misc.StringRef
 import org.cef.network.CefRequest
@@ -192,22 +195,39 @@ class WvWindowFrame @JvmOverloads constructor(
 		contentPane.add(component)
 	}
 
-	private class InternalRequestHandler(
+	private class InternalResourceRequestHandler(
+		private val isNavigation: Boolean,
 		private val wur: WebUriResolver,
 		private val scope: CoroutineScope,
-	) : JcefRequestHandlerAdapter() {
-
+	) : CefResourceRequestHandlerAdapter() {
 		override fun getResourceHandler(browser: CefBrowser?, frame: CefFrame?, request: CefRequest?): CefResourceHandler? {
 			if (request != null) {
 				val uri = WebUri(request.url)
 				val h = wur.resolve(uri)
 				if (h != null) return InternalResourceHandler(
 					PlatformWebRequest(request, uri),
+					isNavigation = isNavigation,
 					h, scope,
 				)
 			}
 			return null
 		}
+	}
+
+	private class InternalRequestHandler(
+		wur: WebUriResolver,
+		scope: CoroutineScope,
+	) : CefRequestHandlerAdapter() {
+		private val navigationResourceRequestHandler = InternalResourceRequestHandler(isNavigation = true, wur, scope)
+		private val generalResourceRequestHandler = InternalResourceRequestHandler(isNavigation = false, wur, scope)
+
+		override fun getResourceRequestHandler(
+			browser: CefBrowser?, frame: CefFrame?, request: CefRequest?,
+			isNavigation: Boolean, isDownload: Boolean,
+			requestInitiator: String?, disableDefaultHandling: BoolRef?,
+		): CefResourceRequestHandler =
+			if (isNavigation) navigationResourceRequestHandler
+			else generalResourceRequestHandler
 
 		// --
 
@@ -254,6 +274,7 @@ class WvWindowFrame @JvmOverloads constructor(
 
 	private class InternalResourceHandler(
 		private val platformRequest: PlatformWebRequest,
+		private val isNavigation: Boolean,
 		private val handler: WebResource,
 		private val scope: CoroutineScope,
 	) : CefResourceHandler {
@@ -304,7 +325,7 @@ class WvWindowFrame @JvmOverloads constructor(
 					// See also,
 					// - https://www.magpcss.org/ceforum/viewtopic.php?f=10&t=894
 					// - https://github.com/cefsharp/CefSharp/issues/689
-					when (contentType) {
+					if (isNavigation) when (contentType) {
 						"application/json",
 						"application/xhtml+xml",
 						"application/xml",
