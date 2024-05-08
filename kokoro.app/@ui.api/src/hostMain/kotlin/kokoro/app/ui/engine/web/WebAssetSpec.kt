@@ -29,6 +29,9 @@ inline fun WebAssetSpec(crossinline block: (key: String) -> String?): WebAssetSp
 	override fun propOrNull(key: String): String? = block(key)
 }
 
+@Suppress("NOTHING_TO_INLINE")
+operator fun WebAssetSpec.plus(other: WebAssetSpec): WebAssetSpec = CombinedWebAssetSpec(this, other)
+
 // --
 
 private class EmptyWebAssetSpec : WebAssetSpec {
@@ -51,4 +54,12 @@ private class ScatterMapWebAssetSpec(
 	override fun propOrNull(key: String): String? = map[key]
 
 	override fun toString() = "${super.toString()}(map=$map)"
+}
+
+private data class CombinedWebAssetSpec(
+	private val a: WebAssetSpec,
+	private val b: WebAssetSpec,
+) : WebAssetSpec {
+	override fun propOrNull(key: String): String? =
+		a.propOrNull(key) ?: b.propOrNull(key)
 }
