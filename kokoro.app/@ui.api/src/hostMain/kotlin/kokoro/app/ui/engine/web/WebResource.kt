@@ -1,6 +1,5 @@
 package kokoro.app.ui.engine.web
 
-import kokoro.internal.io.VoidSource
 import kotlin.jvm.JvmField
 
 fun interface WebResource {
@@ -16,6 +15,5 @@ fun interface WebResource {
 fun WebResource(): WebResource = EmptyWebResource()
 
 private class EmptyWebResource : WebResource {
-	override suspend fun apply(request: WebRequest) =
-		WebResponse("text/plain", null, 0, VoidSource)
+	override suspend fun apply(request: WebRequest) = WebResponse(mimeType = "text/plain")
 }
