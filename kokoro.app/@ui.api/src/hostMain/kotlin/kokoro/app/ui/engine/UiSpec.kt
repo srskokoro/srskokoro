@@ -4,7 +4,7 @@ import androidx.collection.ScatterMap
 import kotlin.jvm.JvmField
 
 data class UiSpec(
-	@JvmField val uiClass: String,
+	@JvmField val uiClass: String?,
 	@JvmField val props: ScatterMap<String, String>,
 ) {
 	fun prop(key: String): String = props[key] ?: throw E_NoSuchProp(key)
