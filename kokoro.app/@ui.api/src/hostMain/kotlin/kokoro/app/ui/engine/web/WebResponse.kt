@@ -2,6 +2,7 @@ package kokoro.app.ui.engine.web
 
 import kokoro.internal.DEBUG
 import kokoro.internal.SPECIAL_USE_DEPRECATION
+import kokoro.internal.io.VoidSource
 import okio.Closeable
 import okio.Source
 import kotlin.DeprecationLevel.ERROR
@@ -80,6 +81,29 @@ class WebResponse : Closeable {
 		headers = mutableMapOf(),
 		contentLength = contentLength,
 		content,
+	)
+
+	constructor(
+		mimeType: String?,
+		charset: String?,
+	) : this(
+		mimeType = mimeType,
+		charset = charset,
+		contentLength = 0,
+		VoidSource,
+	)
+
+	constructor(
+		mimeType: String?,
+	) : this(
+		mimeType = mimeType,
+		charset = null,
+		contentLength = 0,
+		VoidSource,
+	)
+
+	constructor() : this(
+		mimeType = null,
 	)
 
 	// --
