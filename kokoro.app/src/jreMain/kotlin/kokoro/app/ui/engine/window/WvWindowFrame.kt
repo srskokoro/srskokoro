@@ -261,18 +261,17 @@ class WvWindowFrame @JvmOverloads constructor(
 		private var responseContent: BufferedSource? = null
 		private var response: WebResponse? = null
 
-		private fun initWebResponse(response: WebResponse) {
-			check(this.response == null) { "Must only be called once" }
-			this.response = response
-			this.responseContent = response.content.buffer()
+		suspend fun initWebResponse() {
+			val r = handler.apply(platformRequest) // NOTE: Suspending call
+			response = r
+			responseContent = r.content.buffer()
 		}
 
 		override fun processRequest(request: CefRequest?, callback: CefCallback): Boolean {
 			@OptIn(ExperimentalCoroutinesApi::class)
 			scope.launch(Dispatchers.IO, start = CoroutineStart.ATOMIC) {
 				try {
-					val r = handler.apply(platformRequest)
-					initWebResponse(r)
+					initWebResponse()
 					VarHandle.releaseFence()
 					// ^ NOTE: We don't trust that the call below (or its
 					// internals) won't be reordered before the code above.
