@@ -310,7 +310,7 @@ class WvWindowFrame @JvmOverloads constructor(
 						"text/css",
 						"text/html",
 						"text/javascript",
-						-> Bom.forMediaCharset(r.charset)?.let { bom ->
+						-> Bom.forMediaCharset(charset)?.let { bom ->
 							this.responseContentBom = bom
 							if (contentLength >= 0) {
 								contentLength += bom.size
