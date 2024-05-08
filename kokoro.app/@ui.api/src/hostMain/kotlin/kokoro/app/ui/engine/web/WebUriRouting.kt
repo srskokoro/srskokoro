@@ -1,7 +1,6 @@
 package kokoro.app.ui.engine.web
 
 import kokoro.app.ui.engine.web.WebResource.Companion.EMPTY
-import kokoro.app.ui.engine.web.WebResource.Companion.invoke
 import kokoro.app.ui.engine.web.WebUriRouting.Builder
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
