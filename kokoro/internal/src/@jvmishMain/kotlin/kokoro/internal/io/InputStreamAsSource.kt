@@ -6,7 +6,8 @@ import okio.buffer
 import okio.source
 import java.io.InputStream
 
-fun InputStream.asSource() = InputStreamAsSource(this)
+@Suppress("NOTHING_TO_INLINE")
+inline fun InputStream.asSource() = InputStreamAsSource(this)
 
 class InputStreamAsSource(
 	@PublishedApi @JvmField

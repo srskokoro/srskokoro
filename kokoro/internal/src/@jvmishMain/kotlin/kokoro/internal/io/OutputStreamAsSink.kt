@@ -6,7 +6,8 @@ import okio.buffer
 import okio.sink
 import java.io.OutputStream
 
-fun OutputStream.asSink() = OutputStreamAsSink(this)
+@Suppress("NOTHING_TO_INLINE")
+inline fun OutputStream.asSink() = OutputStreamAsSink(this)
 
 class OutputStreamAsSink(
 	@PublishedApi @JvmField
