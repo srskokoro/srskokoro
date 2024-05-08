@@ -195,25 +195,6 @@ class WvWindowFrame @JvmOverloads constructor(
 		contentPane.add(component)
 	}
 
-	private class InternalResourceRequestHandler(
-		private val isNavigation: Boolean,
-		private val wur: WebUriResolver,
-		private val scope: CoroutineScope,
-	) : CefResourceRequestHandlerAdapter() {
-		override fun getResourceHandler(browser: CefBrowser?, frame: CefFrame?, request: CefRequest?): CefResourceHandler? {
-			if (request != null) {
-				val uri = WebUri(request.url)
-				val h = wur.resolve(uri)
-				if (h != null) return InternalResourceHandler(
-					PlatformWebRequest(request, uri),
-					isNavigation = isNavigation,
-					h, scope,
-				)
-			}
-			return null
-		}
-	}
-
 	private class InternalRequestHandler(
 		wur: WebUriResolver,
 		scope: CoroutineScope,
@@ -269,6 +250,25 @@ class WvWindowFrame @JvmOverloads constructor(
 				launchUrlExternally(target_url)
 			}
 			return true // Override default behavior
+		}
+	}
+
+	private class InternalResourceRequestHandler(
+		private val isNavigation: Boolean,
+		private val wur: WebUriResolver,
+		private val scope: CoroutineScope,
+	) : CefResourceRequestHandlerAdapter() {
+		override fun getResourceHandler(browser: CefBrowser?, frame: CefFrame?, request: CefRequest?): CefResourceHandler? {
+			if (request != null) {
+				val uri = WebUri(request.url)
+				val h = wur.resolve(uri)
+				if (h != null) return InternalResourceHandler(
+					PlatformWebRequest(request, uri),
+					isNavigation = isNavigation,
+					h, scope,
+				)
+			}
+			return null
 		}
 	}
 
