@@ -8,5 +8,11 @@ data class UiHtml(
 	@JvmField val spec: UiSpec,
 	@JvmField val templ: UiTempl,
 ) : WebResource {
+
+	constructor() : this(BlankUiTempl)
+	constructor(templ: UiTempl) : this(UiSpec(), templ)
+
+	// --
+
 	override suspend fun apply(request: WebRequest) = templ.buildHtmlResponse(spec)
 }
