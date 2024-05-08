@@ -129,8 +129,6 @@ class WebResponse : Closeable {
 		return this
 	}
 
-	inline fun content(content: Source) = content(-1, content)
-
 	/**
 	 * @see WebResponse.content
 	 * @see WebResponse.unsafeReplaceContentLength
