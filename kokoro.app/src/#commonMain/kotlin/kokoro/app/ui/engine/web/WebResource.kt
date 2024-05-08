@@ -15,9 +15,9 @@ fun interface WebResource {
 		/** @see EMPTY */
 		operator fun invoke(): WebResource = EmptyWebResource()
 	}
+}
 
-	private class EmptyWebResource : WebResource {
-		override suspend fun apply(request: WebRequest) =
-			WebResponse("text/plain", null, 0, VoidSource)
-	}
+private class EmptyWebResource : WebResource {
+	override suspend fun apply(request: WebRequest) =
+		WebResponse("text/plain", null, 0, VoidSource)
 }

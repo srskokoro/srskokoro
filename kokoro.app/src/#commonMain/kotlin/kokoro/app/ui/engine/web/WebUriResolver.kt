@@ -7,9 +7,20 @@ fun interface WebUriResolver {
 	fun resolve(uri: WebUri): WebResource?
 
 	companion object {
-		@JvmField val NULL = WebUriResolver { null }
+		@JvmField val NULL: WebUriResolver = NullWebUriResolver
 	}
 
-	operator fun plus(other: WebUriResolver): WebUriResolver =
-		WebUriResolver { resolve(it) ?: other.resolve(it) }
+	operator fun plus(other: WebUriResolver): WebUriResolver = CombinedWebUriResolver(this, other)
+}
+
+private data object NullWebUriResolver : WebUriResolver {
+	override fun resolve(uri: WebUri): WebResource? = null
+}
+
+private data class CombinedWebUriResolver(
+	@JvmField val a: WebUriResolver,
+	@JvmField val b: WebUriResolver,
+) : WebUriResolver {
+	override fun resolve(uri: WebUri): WebResource? =
+		a.resolve(uri) ?: b.resolve(uri)
 }
