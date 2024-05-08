@@ -1,7 +1,7 @@
 package kokoro.app.ui.engine.web
 
-import kokoro.app.ui.engine.web.WebRequestHandler.Companion.EMPTY
-import kokoro.app.ui.engine.web.WebRequestHandler.Companion.invoke
+import kokoro.app.ui.engine.web.WebResource.Companion.EMPTY
+import kokoro.app.ui.engine.web.WebResource.Companion.invoke
 import kokoro.app.ui.engine.web.WebUriRouting.Builder
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -36,11 +36,11 @@ class WebUriRouting private constructor(
 	class Entry(
 		uri: String,
 		isUriPrefix: Boolean,
-		handler: WebRequestHandler,
+		handler: WebResource,
 	) {
 		val uri: String
 		val isUriPrefix: Boolean
-		val handler: WebRequestHandler
+		val handler: WebResource
 
 		init {
 			if (uri.endsWith('*')) {
@@ -93,14 +93,14 @@ class WebUriRouting private constructor(
 		@Suppress("NOTHING_TO_INLINE")
 		inline fun route(
 			uri: String, isUriPrefix: Boolean,
-			handler: WebRequestHandler = WebRequestHandler.EMPTY
+			handler: WebResource = WebResource.EMPTY
 		) = apply {
 			entries.add(Entry(uri = uri, isUriPrefix = isUriPrefix, handler))
 		}
 
 		@Suppress("NOTHING_TO_INLINE")
 		inline fun route(
-			uri: String, handler: WebRequestHandler = WebRequestHandler.EMPTY
+			uri: String, handler: WebResource = WebResource.EMPTY
 		) = route(uri = uri, isUriPrefix = false, handler)
 
 		fun sort() = apply { entries.sortWith(BuildEntriesComparator) }
@@ -150,7 +150,7 @@ class WebUriRouting private constructor(
 		}
 	}
 
-	override fun resolve(uri: WebUri): WebRequestHandler? {
+	override fun resolve(uri: WebUri): WebResource? {
 		@Suppress("NAME_SHADOWING") val uri = uri.toString()
 		val comparison: (Entry) -> Int = { it.uri.compareTo(uri) }
 

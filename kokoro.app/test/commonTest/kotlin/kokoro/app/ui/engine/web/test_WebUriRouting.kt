@@ -337,10 +337,10 @@ class test_WebUriRouting : FreeSpec({
 
 	"Resolves as expected" {
 		assertAll {
-			val sample = WebRequestHandler.EMPTY
-			val foo = WebRequestHandler()
-			val bar = WebRequestHandler()
-			val baz = WebRequestHandler()
+			val sample = WebResource.EMPTY
+			val foo = WebResource()
+			val bar = WebResource()
+			val baz = WebResource()
 
 			val dummies = object {
 				private val emptyUri = WebUri("")

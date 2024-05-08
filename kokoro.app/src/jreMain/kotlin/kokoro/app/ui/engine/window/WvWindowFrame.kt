@@ -6,7 +6,7 @@ import kokoro.app.cacheDir
 import kokoro.app.logsDir
 import kokoro.app.ui.engine.web.Bom
 import kokoro.app.ui.engine.web.PlatformWebRequest
-import kokoro.app.ui.engine.web.WebRequestHandler
+import kokoro.app.ui.engine.web.WebResource
 import kokoro.app.ui.engine.web.WebResponse
 import kokoro.app.ui.engine.web.WebUri
 import kokoro.app.ui.engine.web.WebUriResolver
@@ -254,7 +254,7 @@ class WvWindowFrame @JvmOverloads constructor(
 
 	private class InternalResourceHandler(
 		private val platformRequest: PlatformWebRequest,
-		private val handler: WebRequestHandler,
+		private val handler: WebResource,
 		private val scope: CoroutineScope,
 	) : CefResourceHandler {
 		private var responseContentBom: ByteString? = null
@@ -271,7 +271,7 @@ class WvWindowFrame @JvmOverloads constructor(
 			@OptIn(ExperimentalCoroutinesApi::class)
 			scope.launch(Dispatchers.IO, start = CoroutineStart.ATOMIC) {
 				try {
-					val r = handler.handle(platformRequest)
+					val r = handler.apply(platformRequest)
 					initWebResponse(r)
 					VarHandle.releaseFence()
 					// ^ NOTE: We don't trust that the call below (or its

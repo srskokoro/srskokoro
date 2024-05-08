@@ -5,13 +5,13 @@ import assertk.assertThat
 import assertk.assertions.isNotSameInstanceAs
 import io.kotest.core.spec.style.FreeSpec
 
-class test_WebRequestHandler : FreeSpec({
+class test_WebResource : FreeSpec({
 	"Must not be the same instances" {
 		assertAll {
-			assertThat(WebRequestHandler.EMPTY)
-				.isNotSameInstanceAs(WebRequestHandler())
-			assertThat(WebRequestHandler())
-				.isNotSameInstanceAs(WebRequestHandler())
+			assertThat(WebResource.EMPTY)
+				.isNotSameInstanceAs(WebResource())
+			assertThat(WebResource())
+				.isNotSameInstanceAs(WebResource())
 		}
 	}
 })

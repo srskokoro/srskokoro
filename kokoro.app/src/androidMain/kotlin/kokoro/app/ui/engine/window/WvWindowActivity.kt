@@ -138,7 +138,7 @@ open class WvWindowActivity : ComponentActivity() {
 			val h = wur.resolve(WebUri(request.url))
 			if (h != null) {
 				return runBlocking(coroutineContext) {
-					h.handle(PlatformWebRequest(request)).toWebkit()
+					h.apply(PlatformWebRequest(request)).toWebkit()
 				}
 			}
 			return null

@@ -4,7 +4,7 @@ import kotlin.jvm.JvmField
 
 fun interface WebUriResolver {
 
-	fun resolve(uri: WebUri): WebRequestHandler?
+	fun resolve(uri: WebUri): WebResource?
 
 	companion object {
 		@JvmField val NULL = WebUriResolver { null }
