@@ -9,9 +9,12 @@ fun interface WebUriResolver {
 	companion object {
 		@JvmField val NULL: WebUriResolver = NullWebUriResolver
 	}
-
-	operator fun plus(other: WebUriResolver): WebUriResolver = CombinedWebUriResolver(this, other)
 }
+
+@Suppress("NOTHING_TO_INLINE")
+operator fun WebUriResolver.plus(other: WebUriResolver): WebUriResolver = CombinedWebUriResolver(this, other)
+
+// --
 
 private data object NullWebUriResolver : WebUriResolver {
 	override fun resolve(uri: WebUri): WebResource? = null
