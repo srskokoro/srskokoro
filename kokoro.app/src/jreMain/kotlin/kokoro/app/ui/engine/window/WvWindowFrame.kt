@@ -306,6 +306,8 @@ class WvWindowFrame @JvmOverloads constructor(
 					// - https://github.com/cefsharp/CefSharp/issues/689
 					when (contentType) {
 						"application/json",
+						"application/xhtml+xml",
+						"application/xml",
 						"text/css",
 						"text/html",
 						"text/javascript",
