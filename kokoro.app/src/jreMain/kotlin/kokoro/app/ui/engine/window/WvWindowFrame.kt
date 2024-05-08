@@ -278,7 +278,8 @@ class WvWindowFrame @JvmOverloads constructor(
 		private val handler: WebResource,
 		private val scope: CoroutineScope,
 	) : CefResourceHandler {
-		private var responseContentBom: ByteString? = null
+		private var responseContentExhausted: Boolean = false // Guarded by `responseContent`
+		private var responseContentBom: ByteString? = null // Unguarded
 		private var responseContent: BufferedSource? = null
 		private var response: WebResponse? = null
 
@@ -384,10 +385,11 @@ class WvWindowFrame @JvmOverloads constructor(
 				if (transferred > 0) {
 					bytesRead.set(transferred)
 					return true // Not done yet
-				} else if (source.isOpen) {
+				} else if (!responseContentExhausted) {
 					bytesRead.set(0)
 					// Skip below
 				} else {
+					source.close()
 					return false // Done
 				}
 			}
@@ -400,7 +402,10 @@ class WvWindowFrame @JvmOverloads constructor(
 				try {
 					runInterruptible {
 						synchronized(source) {
-							if (!source.isOpen) throw CancellationSignal()
+							if (!source.isOpen) {
+								responseContentExhausted = true
+								throw CancellationSignal()
+							}
 
 							if (bom != null) {
 								val bom_n = bom.size
@@ -417,7 +422,7 @@ class WvWindowFrame @JvmOverloads constructor(
 
 							if (!source.request(bytesToRead.toLong())) {
 								// Already exhausted
-								source.close()
+								responseContentExhausted = true
 							}
 						}
 					}
