@@ -15,8 +15,8 @@ fun KotlinSourceSet.addExtraneousSource(extensionName: String, source: SourceDir
 	val xs = xs()
 	val sources = xs.getOrAdd(XS_extraneousSources) { LinkedHashMap<String, SourceDirectorySet>() }
 
-	sources[extensionName] = source
-	xs.add<SourceDirectorySet>(extensionName, source)
+	sources.putIfAbsent(extensionName, source)
+	xs.add<SourceDirectorySet>(extensionName, source) // May fail and throw
 }
 
 @Suppress("NOTHING_TO_INLINE")
