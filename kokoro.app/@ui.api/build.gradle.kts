@@ -1,6 +1,7 @@
 plugins {
 	id("kokoro.build.kt.mpp.app")
 	id("kokoro.build.kt.js")
+	id("build.kt.x.expect_actual")
 }
 
 dependencies {
