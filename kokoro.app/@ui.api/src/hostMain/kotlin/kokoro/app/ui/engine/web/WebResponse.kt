@@ -115,6 +115,7 @@ class WebResponse : Closeable {
 		return this
 	}
 
+	@Suppress("NOTHING_TO_INLINE")
 	inline fun mimeType(mimeType: String?, charset: String?): WebResponse {
 		@Suppress("DEPRECATION_ERROR")
 		mimeType_ = mimeType
@@ -144,6 +145,7 @@ class WebResponse : Closeable {
 	 * @see WebResponse.unsafeReplaceContent
 	 * @see WebResponse.unsafeReplaceContentLength
 	 */
+	@Suppress("NOTHING_TO_INLINE")
 	inline fun content(contentLength: Long, content: Source): WebResponse {
 		this.content.close() // Close previous source to avoid leak
 		@Suppress("DEPRECATION_ERROR")
@@ -157,6 +159,7 @@ class WebResponse : Closeable {
 	 * @see WebResponse.content
 	 * @see WebResponse.unsafeReplaceContentLength
 	 */
+	@Suppress("NOTHING_TO_INLINE")
 	inline fun unsafeReplaceContent(contentLength: Long, content: Source): WebResponse {
 		@Suppress("DEPRECATION_ERROR")
 		contentLength_ = contentLength
@@ -170,6 +173,7 @@ class WebResponse : Closeable {
 	 * @see WebResponse.unsafeReplaceContent
 	 * @see WebResponse.unsafeReplaceContentLength
 	 */
+	@Suppress("NOTHING_TO_INLINE")
 	inline fun unsafeReplaceContent(content: Source): WebResponse {
 		@Suppress("DEPRECATION_ERROR")
 		content_ = content
@@ -181,6 +185,7 @@ class WebResponse : Closeable {
 	 * @see WebResponse.unsafeReplaceContent
 	 * @see WebResponse.unsafeReplaceContentLength
 	 */
+	@Suppress("NOTHING_TO_INLINE")
 	inline fun unsafeReplaceContentLength(contentLength: Long): WebResponse {
 		@Suppress("DEPRECATION_ERROR")
 		contentLength_ = contentLength
@@ -189,7 +194,7 @@ class WebResponse : Closeable {
 
 	// --
 
-	@Suppress("OVERRIDE_BY_INLINE")
+	@Suppress("NOTHING_TO_INLINE", "OVERRIDE_BY_INLINE")
 	override inline fun close() {
 		content.close()
 	}
