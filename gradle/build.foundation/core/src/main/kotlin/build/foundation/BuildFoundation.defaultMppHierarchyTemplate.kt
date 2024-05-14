@@ -30,24 +30,14 @@ private val defaultMppHierarchyTemplate_ = KotlinHierarchyTemplate.default.exten
 			withAndroidTarget()
 			withJvm()
 		}
-		group(MPP.nonJvmish) {
-			withCompilations {
-				when (it.target.platformType) {
-					KotlinPlatformType.common,
-					KotlinPlatformType.jvm,
-					KotlinPlatformType.androidJvm,
-					-> false
-					else -> true
-				}
-			}
-			group("native") {
-				group(MPP.unix) {
-					group("apple")
-					group("linux")
-					group("androidNative")
-				}
+		group("native") {
+			group(MPP.unix) {
+				group("apple")
+				group("linux")
+				group("androidNative")
 			}
 		}
+
 		group(MPP.nonAndroid) {
 			withCompilations {
 				when (it.target.platformType) {
@@ -59,6 +49,19 @@ private val defaultMppHierarchyTemplate_ = KotlinHierarchyTemplate.default.exten
 			}
 			group("native")
 		}
+		group(MPP.nonJvmish) {
+			withCompilations {
+				when (it.target.platformType) {
+					KotlinPlatformType.common,
+					KotlinPlatformType.jvm,
+					KotlinPlatformType.androidJvm,
+					-> false
+					else -> true
+				}
+			}
+			group("native")
+		}
+
 		group(MPP.desktop) {
 			withJvm()
 			group("linux")
