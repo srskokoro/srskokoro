@@ -47,6 +47,17 @@ private val defaultMppHierarchyTemplate_ = KotlinHierarchyTemplate.default.exten
 				}
 			}
 		}
+		group(MPP.nonAndroid) {
+			withCompilations {
+				when (it.target.platformType) {
+					KotlinPlatformType.common,
+					KotlinPlatformType.androidJvm,
+					-> false
+					else -> true
+				}
+			}
+			group("native")
+		}
 		group(MPP.desktop) {
 			withJvm()
 			group("linux")
@@ -66,6 +77,7 @@ fun BuildFoundation.ensureMppHierarchyTemplateDefaultNodes(
 ) {
 	ensureMppHierarchyTemplateDefaultNode(MPP.jvmish, sourceSets, configurations)
 	ensureMppHierarchyTemplateDefaultNode(MPP.nonJvmish, sourceSets, configurations)
+	ensureMppHierarchyTemplateDefaultNode(MPP.nonAndroid, sourceSets, configurations)
 
 	ensureMppHierarchyTemplateDefaultNode("apple", sourceSets, configurations)
 	ensureMppHierarchyTemplateDefaultNode(MPP.unix, sourceSets, configurations)

@@ -55,6 +55,7 @@ object BuildFoundation {
 		const val jre = "jre"
 		const val jvmish = "jvmish"
 		const val nonJvmish = "nonJvmish"
+		const val nonAndroid = "nonAndroid"
 		const val unix = "unix"
 		const val desktop = "desktop"
 		const val mobile = "mobile"
