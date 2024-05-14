@@ -16,11 +16,6 @@ android {
 
 		versionName = projectThis.versionName
 		versionCode = projectThis.versionCode
-
-		manifestPlaceholders.let { map ->
-			map["APP_TITLE"] = extra["kokoro.app.title"] as String
-			map["APP_TITLE_SHORT"] = extra["kokoro.app.title.short"] as String
-		}
 	}
 
 	buildTypes {

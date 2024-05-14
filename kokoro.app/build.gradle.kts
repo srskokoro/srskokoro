@@ -21,6 +21,11 @@ private object Build {
 
 android {
 	namespace = Build.NAMESPACE
+
+	defaultConfig.manifestPlaceholders.let { map ->
+		map["APP_TITLE"] = extra["kokoro.app.title"] as String
+		map["APP_TITLE_SHORT"] = extra["kokoro.app.title.short"] as String
+	}
 }
 
 buildConfig {
