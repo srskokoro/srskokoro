@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.extend
  * @see setMppHierarchyTemplate
  * @see extendMppHierarchyTemplate
  */
+@Suppress("UnusedReceiverParameter")
 val BuildFoundation.defaultMppHierarchyTemplate
 	get() = defaultMppHierarchyTemplate_
 
