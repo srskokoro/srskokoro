@@ -20,9 +20,12 @@ class _plugin : ProjectPlugin({
 
 	setUp(this)
 
+	val kotlin = kotlinMpp
+	setUpAssetsDirs(kotlin)
+
 	onAndroid {
 		setUp(this)
-		setUpForAndroid(kotlinMpp)
+		setUpForAndroid(kotlin)
 	}
 
 	@OptIn(InternalApi::class)
