@@ -31,8 +31,8 @@ private sealed class TestTaskSetupInDoFirst<T : AbstractTestTask>(task: T) : Act
 		// - https://github.com/kotest/kotest/issues/3746#issuecomment-1807231614
 		// - https://github.com/kotest/kotest/pull/2925
 		env["kotest_framework_classpath_scanning_autoscan_disable"] = "true"
-		env["kotest_framework_classpath_scanning_config_disable"] = "true"
-		env["kotest_framework_discovery_jar_scan_disable"] = "true"
+		//env["kotest_framework_classpath_scanning_config_disable"] = "true"
+		//env["kotest_framework_discovery_jar_scan_disable"] = "true"
 
 		// See also, https://stackoverflow.com/a/52629195
 		env["kotest_framework_parallelism"] =
