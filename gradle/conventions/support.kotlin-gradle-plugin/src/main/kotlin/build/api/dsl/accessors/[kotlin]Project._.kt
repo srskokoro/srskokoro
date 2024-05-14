@@ -6,7 +6,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 val Project.android: AndroidExtension
@@ -22,7 +22,7 @@ val Project.androidLib: AndroidLibExtension
 	get() = x("android")
 
 
-val Project.kotlin: KotlinProjectExtension
+val Project.kotlin: KotlinTopLevelExtension
 	get() = x("kotlin")
 
 val Project.kotlinAndroid: KotlinAndroidProjectExtension

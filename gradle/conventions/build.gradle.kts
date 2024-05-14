@@ -1,7 +1,7 @@
 import build.api.dsl.*
 import build.foundation.BuildFoundation
 import build.foundation.InternalApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 
 plugins {
 	`kotlin-dsl-base` apply false
@@ -31,7 +31,7 @@ allprojects(fun Project.() {
 	prioritizedAfterEvaluate(fun Project.() {
 		@OptIn(InternalApi::class)
 		if (!BuildFoundation.isMarked(this)) return
-		(extensions.findByName("kotlin") as KotlinProjectExtension?)
+		(extensions.findByName("kotlin") as KotlinTopLevelExtension?)
 			?.jvmToolchain(jvmToolchainSetup)
 	})
 })
