@@ -40,6 +40,11 @@ internal fun Project.setUp(android: AndroidExtension) {
 		}
 	}
 
+	@Suppress("UnstableApiUsage")
+	android.testOptions.unitTests.run {
+		isIncludeAndroidResources = true
+	}
+
 	compileOptions.run {
 		isCoreLibraryDesugaringEnabled = true
 	}

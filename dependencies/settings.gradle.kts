@@ -207,5 +207,11 @@ dependencySettings {
 	val assertk = "0.28.0" // https://github.com/willowtreeapps/assertk/releases
 	module("com.willowtreeapps.assertk:assertk", assertk)
 
+	val junit4 = "4.13.2" // https://github.com/junit-team/junit4/releases
+	module("junit:junit", junit4)
+
+	val robolectric = "4.12.1" // https://github.com/robolectric/robolectric/releases
+	module("org.robolectric:robolectric", robolectric)
+
 	//#endregion
 }
