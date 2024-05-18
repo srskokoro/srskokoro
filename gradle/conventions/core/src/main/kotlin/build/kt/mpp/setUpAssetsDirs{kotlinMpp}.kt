@@ -44,7 +44,7 @@ internal fun setUpAssetsDirs(kotlin: KotlinMultiplatformExtension) {
 		assets.srcDir("src/$name/$assets__extension")
 
 		resources.source(objects.sourceDirectorySet("--IDE-bridge--assets") {
-			it.source(assets)
+			it.srcDir(Callable { assets.srcDirs })
 			it.exclude("*")
 		})
 	})

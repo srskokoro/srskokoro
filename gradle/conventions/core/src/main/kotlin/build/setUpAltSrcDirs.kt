@@ -7,7 +7,11 @@ import build.api.extraneousSources
 import build.support.from
 import build.support.io.getFsSortingPrefixLength
 import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.internal.file.DefaultSourceDirectorySet
+import org.gradle.api.internal.tasks.TaskDependencyResolveContext
 import java.io.File
 
 internal fun Project.setUpAltSrcDirs() {
@@ -72,6 +76,23 @@ private fun SourceDirectorySet.setUpAltSrcDirs(
 	isTestSrcSet: Boolean,
 	srcPathSlashed: String,
 ) {
+	val srcDirs = LinkedHashSet<File>()
+
+	// NOTE: The following mechanism prevents directories of any nested
+	// `SourceDirectorySet` from being included in our processing.
+	(this as DefaultSourceDirectorySet).visitDependencies(object : TaskDependencyResolveContext {
+		override fun getTask(): Task? = null
+		override fun visitFailure(failure: Throwable) = Unit
+		override fun add(dependency: Any) {
+			if (
+				dependency is FileCollection &&
+				dependency !is SourceDirectorySet
+			) for (srcDir in dependency) {
+				srcDirs.add(srcDir)
+			}
+		}
+	})
+
 	for (srcDir in srcDirs) {
 		val p = srcDir.path
 		if (!p.startsWith(srcPathSlashed, true)) continue
