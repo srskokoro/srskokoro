@@ -79,7 +79,7 @@ private inline fun <T : KotlinCompilation<*>> NamedDomainObjectContainer<T>.proc
 private fun KotlinCompilation<*>.processAssetsAsResources(processResourcesTaskName: String) {
 	val allKotlinSourceSets = allKotlinSourceSets
 	this.project.tasks.named<ProcessResources>(processResourcesTaskName) {
-		from(this.project.files(Callable { allKotlinSourceSets.mapNotNull { it.assets } }))
+		from(this.project.files(Callable { allKotlinSourceSets.mapNotNull { it.assetsOrNull } }))
 	}
 }
 
@@ -98,7 +98,7 @@ private fun KotlinJvmAndroidCompilation.setUpAssetsConvention(android: AndroidEx
 	val task = this.project.tasks.register(taskName, ProcessResources::class.java) {
 		description = "Processes assets (convention)"
 		val project = this.project
-		from(project.files(Callable { allKotlinSourceSets.mapNotNull { it.assets } }))
+		from(project.files(Callable { allKotlinSourceSets.mapNotNull { it.assetsOrNull } }))
 		into(project.layout.buildDirectory.dir("processedAssetsConvention/$outputDirName"))
 	}
 

@@ -12,9 +12,15 @@ import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOr
 @InternalApi
 const val assets__extension = "assets"
 
-val KotlinSourceSet.assets: SourceDirectorySet?
+val KotlinSourceSet.assets: SourceDirectorySet
+	@OptIn(InternalApi::class)
+	get() = x(assets__extension)
+
+val KotlinSourceSet.assetsOrNull: SourceDirectorySet?
 	@OptIn(InternalApi::class)
 	get() = xs().getSafelyOrNull(assets__extension)
+
+// --
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun KotlinSourceSet.getAndroidAssets(android: AndroidExtension): AndroidSourceDirectorySet? = getAndroidSourceSet(android)?.assets
