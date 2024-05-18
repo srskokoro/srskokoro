@@ -7,6 +7,7 @@ plugins {
 	id("build.ktx.atomicfu")
 	id("build.gmazzo.buildconfig")
 	id("kokoro.internal.nook")
+	id("kokoro.build.kt.js.packed.usage")
 	id("kokoro.build.jcef")
 }
 
@@ -44,6 +45,16 @@ buildConfig.ss.named("jreMain") {
 	buildConfigField("String", "APP_DATA_DIR_NAME", "\"SRSKokoro${if (isReleasing) "" else "-Dev"}\"")
 }
 
+tasks.register<ProcessResources>("jsPackedAsWvXRes") {
+	val p = project
+	from(p.configurations.jsPacked) { into("wv/x/res") }
+	into(p.layout.buildDirectory.dir(name))
+}.let {
+	kotlinSourceSets.commonMain {
+		assets.srcDir(it)
+	}
+}
+
 tasks.jreTest { dependsOn("ui.api:$name") }
 
 dependencies {
@@ -62,6 +73,7 @@ dependencies {
 	commonMainImplementation("com.squareup.okio:okio")
 
 	commonMainImplementation(project(":kokoro.app:ui.api"))
+	jsPacked(project(":kokoro.app:ui.main"))
 
 	commonMainImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core")
 	commonMainImplementation("org.jetbrains.kotlinx:kotlinx-serialization-cbor")
