@@ -5,6 +5,10 @@ import org.gradle.api.UnknownTaskException
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.api.tasks.TaskProvider
 
+@Suppress("NOTHING_TO_INLINE")
+inline fun TaskContainer.namedOrNull(name: String) = namedOrNull(name, Task::class.java)
+
+@JvmName("namedOrNull reified") @JvmSynthetic
 inline fun <reified T : Task> TaskContainer.namedOrNull(name: String) = namedOrNull(name, T::class.java)
 
 @Suppress("NOTHING_TO_INLINE")

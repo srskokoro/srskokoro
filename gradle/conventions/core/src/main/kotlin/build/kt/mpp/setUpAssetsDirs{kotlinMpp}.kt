@@ -2,13 +2,15 @@ package build.kt.mpp
 
 import build.api.addExtraneousSourceTo
 import build.api.dsl.*
-import build.api.dsl.accessors.android
+import build.api.dsl.accessors.androidOrNull
 import build.api.dsl.accessors.kotlinSourceSets
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.kotlin.dsl.*
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
+import org.jetbrains.kotlin.gradle.kpm.external.project
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
@@ -32,21 +34,13 @@ import java.util.concurrent.Callable
  * - [Why Is ClassLoader.getResourceAsStream So Slow in Android? - nimbledroid : r/androiddev | Reddit](https://www.reddit.com/r/androiddev/comments/4dmflo/why_is_classloadergetresourceasstream_so_slow_in/)
  */
 internal fun setUpAssetsDirs(kotlin: KotlinMultiplatformExtension) {
+	val kotlinSourceSets = kotlin.kotlinSourceSets
+
 	@OptIn(build.InternalApi::class)
-	kotlin.kotlinSourceSets.configureEach(fun KotlinSourceSet.() {
-		@OptIn(ExperimentalKotlinGradlePluginApi::class)
-		if (androidSourceSetInfoOrNull != null) return // Skip (for Android)
-
-		val objects = this.project.objects
-
+	kotlinSourceSets.configureEach(fun KotlinSourceSet.() {
 		val name = name
-		val assets = objects.addExtraneousSourceTo(this, assets__extension, "$name assets (convention)")
-		assets.srcDir("src/$name/$assets__extension")
-
-		resources.source(objects.sourceDirectorySet("--IDE-bridge--assets") {
-			it.srcDir(Callable { assets.srcDirs })
-			it.exclude("*")
-		})
+		this.project.objects.addExtraneousSourceTo(this, assets__extension, "$name assets (convention)")
+			.srcDir("src/$name/$assets__extension")
 	})
 
 	val kotlinTargets = kotlin.targets
@@ -64,10 +58,39 @@ internal fun setUpAssetsDirs(kotlin: KotlinMultiplatformExtension) {
 		compilations.processAssetsAsResources { processResourcesTaskName }
 	}
 
-	kotlinTargets.withType<KotlinAndroidTarget>().configureEach {
-		val android = this.project.android
-		compilations.configureEach { setUpAssetsConvention(android) }
-	}
+	(@OptIn(ExternalVariantApi::class) kotlin.project).afterEvaluate(fun(p) {
+		val android = p.androidOrNull
+		val objects = p.objects
+
+		kotlinSourceSets.configureEach(fun KotlinSourceSet.() {
+			// Must wrap in a `Callable`, as AGP's implementation at the moment
+			// eagerly evaluates `Iterable`s; also note that, `FileCollection`
+			// is an `Iterable`.
+			val assetsSrcDirs = assets.sourceDirectories.let { Callable { it } }
+
+			@OptIn(ExperimentalKotlinGradlePluginApi::class)
+			androidSourceSetInfoOrNull?.let { androidSourceSetInfo ->
+				androidSourceSetInfo
+					.getAndroidAssets(android!!)!!
+					.srcDirs(assetsSrcDirs)
+				return // Done. Skip code below.
+			}
+
+			resources.source(objects.sourceDirectorySet("--IDE-bridge--assets") {
+				// NOTE: Task dependency information still needs to be
+				// maintained, or Gradle may complain about task outputs being
+				// reused, even though we're really not consuming the contents
+				// of the assets directories.
+				it.srcDir(assetsSrcDirs)
+				it.exclude("*")
+			})
+		})
+
+		kotlinTargets.withType<KotlinAndroidTarget>().configureEach {
+			@Suppress("NAME_SHADOWING") val android = android!!
+			compilations.configureEach { setUpAssetsConvention(android) }
+		}
+	})
 }
 
 private inline fun <T : KotlinCompilation<*>> NamedDomainObjectContainer<T>.processAssetsAsResources(
@@ -87,20 +110,38 @@ private fun KotlinJvmAndroidCompilation.setUpAssetsConvention(android: AndroidEx
 	val androidAssets = defaultSourceSet.getAndroidAssets(android)
 		?: return // Skip (not for Android, or metadata/info not linked)
 
+	val allKotlinSourceSets = allKotlinSourceSets
+	val tasks = this.project.tasks
+
 	// NOTE: We should ensure that the task's name is unique per compilation.
 	// And thus, we can't use the compilation's default source set name (to be
 	// the task's name), since (at the moment), it's (probably) possible for the
 	// default source set to be reused across several compilations.
 	val outputDirName = "${target.targetName}${compilationName.replaceFirstChar { it.uppercaseChar() }}"
-	val taskName = "${outputDirName}ProcessAssetsConvention"
 
-	val allKotlinSourceSets = allKotlinSourceSets
-	val task = this.project.tasks.register(taskName, ProcessResources::class.java) {
-		description = "Processes assets (convention)"
+	val prepareAssetsTaskName = "${outputDirName}PrepareCommonAssets"
+	val prepareAssetsTask = tasks.register(prepareAssetsTaskName, ProcessResources::class.java) {
+		description = "Processes assets from common (non-android) source sets"
 		val project = this.project
-		from(project.files(Callable { allKotlinSourceSets.mapNotNull { it.assetsOrNull } }))
-		into(project.layout.buildDirectory.dir("processedAssetsConvention/$outputDirName"))
+		from(project.files(Callable {
+			allKotlinSourceSets.mapNotNull {
+				it.takeIf {
+					@OptIn(ExperimentalKotlinGradlePluginApi::class)
+					it.androidSourceSetInfoOrNull == null
+				}?.assetsOrNull
+			}
+		}))
+		into(project.layout.buildDirectory.dir("preparedCommonAssets/$outputDirName"))
 	}
 
-	androidAssets.srcDirs(task) // Link output as Android-style "assets"
+	val variant = androidVariant
+	buildMap {
+		variant.mergeAssetsProvider.let { put(it.name, it) }
+		tasks.namedOrNull(
+			"merge${variant.name.replaceFirstChar { it.uppercaseChar() }}Assets"
+		)?.let { put(it.name, it) }
+	}.forEach(fun(_, taskProvider) = taskProvider.configure {
+		dependsOn(prepareAssetsTask)
+	})
+	androidAssets.srcDirs(prepareAssetsTask) // Link output as Android-style "assets"
 }
