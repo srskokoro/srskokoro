@@ -44,9 +44,7 @@ buildConfig.ss.named("jreMain") {
 	buildConfigField("String", "APP_DATA_DIR_NAME", "\"SRSKokoro${if (isReleasing) "" else "-Dev"}\"")
 }
 
-tasks {
-	jreTest { dependsOn("ui.api:$name") }
-}
+tasks.jreTest { dependsOn("ui.api:$name") }
 
 dependencies {
 	commonMainApi(project(":kokoro:internal"))
