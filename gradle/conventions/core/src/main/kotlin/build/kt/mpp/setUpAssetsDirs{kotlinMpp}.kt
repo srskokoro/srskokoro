@@ -88,7 +88,7 @@ internal fun setUpAssetsDirs(kotlin: KotlinMultiplatformExtension) {
 
 		kotlinTargets.withType<KotlinAndroidTarget>().configureEach {
 			@Suppress("NAME_SHADOWING") val android = android!!
-			compilations.configureEach { setUpAssetsConvention(android) }
+			compilations.configureEach { setUpAssetsAndResources(android) }
 		}
 	})
 }
@@ -106,7 +106,7 @@ private fun KotlinCompilation<*>.processAssetsAsResources(processResourcesTaskNa
 	}
 }
 
-private fun KotlinJvmAndroidCompilation.setUpAssetsConvention(android: AndroidExtension) {
+private fun KotlinJvmAndroidCompilation.setUpAssetsAndResources(android: AndroidExtension) {
 	val androidAssets = defaultSourceSet.getAndroidAssets(android)
 		?: return // Skip (not for Android, or metadata/info not linked)
 
@@ -144,4 +144,13 @@ private fun KotlinJvmAndroidCompilation.setUpAssetsConvention(android: AndroidEx
 		dependsOn(prepareAssetsTask)
 	})
 	androidAssets.srcDirs(prepareAssetsTask) // Link output as Android-style "assets"
+
+	// -=-
+
+	// KLUDGE: At the moment, resources from common (non-android) kotlin source
+	//  sets aren't automatically hooked to the android source set. Thus, we
+	//  manually hook them here.
+	variant.processJavaResourcesProvider.configure {
+		from(this.project.files(Callable { allKotlinSourceSets.map { it.resources } }))
+	}
 }
