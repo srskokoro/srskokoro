@@ -102,7 +102,7 @@ private inline fun <T : KotlinCompilation<*>> NamedDomainObjectContainer<T>.proc
 private fun KotlinCompilation<*>.processAssetsAsResources(processResourcesTaskName: String) {
 	val allKotlinSourceSets = allKotlinSourceSets
 	this.project.tasks.named<ProcessResources>(processResourcesTaskName) {
-		from(this.project.files(Callable { allKotlinSourceSets.mapNotNull { it.assetsOrNull } }))
+		from(Callable { allKotlinSourceSets.mapNotNull { it.assetsOrNull } })
 	}
 }
 
@@ -122,16 +122,15 @@ private fun KotlinJvmAndroidCompilation.setUpAssetsAndResources(android: Android
 	val prepareAssetsTaskName = "${outputDirName}PrepareCommonAssets"
 	val prepareAssetsTask = tasks.register(prepareAssetsTaskName, ProcessResources::class.java) {
 		description = "Processes assets from common (non-android) source sets"
-		val project = this.project
-		from(project.files(Callable {
+		from(Callable {
 			allKotlinSourceSets.mapNotNull {
 				it.takeIf {
 					@OptIn(ExperimentalKotlinGradlePluginApi::class)
 					it.androidSourceSetInfoOrNull == null
 				}?.assetsOrNull
 			}
-		}))
-		into(project.layout.buildDirectory.dir("preparedCommonAssets/$outputDirName"))
+		})
+		into(this.project.layout.buildDirectory.dir("preparedCommonAssets/$outputDirName"))
 	}
 
 	val variant = androidVariant
@@ -151,6 +150,6 @@ private fun KotlinJvmAndroidCompilation.setUpAssetsAndResources(android: Android
 	//  sets aren't automatically hooked to the android source set. Thus, we
 	//  manually hook them here.
 	variant.processJavaResourcesProvider.configure {
-		from(this.project.files(Callable { allKotlinSourceSets.map { it.resources } }))
+		from(Callable { allKotlinSourceSets.map { it.resources } })
 	}
 }
