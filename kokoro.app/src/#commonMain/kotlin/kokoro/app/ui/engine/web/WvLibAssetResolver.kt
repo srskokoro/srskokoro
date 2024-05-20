@@ -53,7 +53,7 @@ data class WvLibAssetResolver(
 				// NOTE: Keeps the initial '/' at `q == 0`
 				val ext = (if (q > 0) path.substring(q + 1) else path)
 					.substringAfterLast('.', "")
-				if (ext == HEADERS_EXT) return@run
+				if (ext == HEAD_EXT) return@run
 				MimeTypes.queryExt(ext)
 			}
 
@@ -79,7 +79,7 @@ data class WvLibAssetResolver(
 
 	companion object {
 
-		private const val HEADERS_EXT = "head"
+		private const val HEAD_EXT = "head"
 
 		private fun StatusResponse(status: Int): WebResponse {
 			val bytes = status.toString().encodeToByteArray()
