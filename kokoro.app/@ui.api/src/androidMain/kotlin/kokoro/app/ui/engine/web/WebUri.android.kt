@@ -39,10 +39,13 @@ actual fun WebUri.path(raw: Boolean): String? =
 	if (raw) value.encodedPath
 	else value.path
 
+actual fun WebUri.lastPathSegment(): String? =
+	value.lastPathSegment
+
+
 actual fun WebUri.query(raw: Boolean): String? =
 	if (raw) value.encodedQuery
 	else value.query
-
 
 actual fun WebUri.fragment(raw: Boolean): String? =
 	if (raw) value.encodedFragment

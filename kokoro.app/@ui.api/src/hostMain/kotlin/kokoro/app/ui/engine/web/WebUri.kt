@@ -33,6 +33,7 @@ expect fun WebUri.host(): String?
 expect fun WebUri.port(raw: Boolean = false): Int
 
 expect fun WebUri.path(raw: Boolean = false): String?
-expect fun WebUri.query(raw: Boolean = false): String?
+expect fun WebUri.lastPathSegment(): String?
 
+expect fun WebUri.query(raw: Boolean = false): String?
 expect fun WebUri.fragment(raw: Boolean = false): String?

@@ -9,6 +9,7 @@ actual fun WebUri.host(): String? = TODO("Not yet implemented")
 actual fun WebUri.port(raw: Boolean): Int = TODO("Not yet implemented")
 
 actual fun WebUri.path(raw: Boolean): String? = TODO("Not yet implemented")
-actual fun WebUri.query(raw: Boolean): String? = TODO("Not yet implemented")
+actual fun WebUri.lastPathSegment(): String? = TODO("Not yet implemented")
 
+actual fun WebUri.query(raw: Boolean): String? = TODO("Not yet implemented")
 actual fun WebUri.fragment(raw: Boolean): String? = TODO("Not yet implemented")
