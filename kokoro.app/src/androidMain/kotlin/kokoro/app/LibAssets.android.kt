@@ -11,6 +11,12 @@ actual object LibAssets {
 	@JvmField val manager: AssetManager = CoreApplication.get().assets
 }
 
+actual fun LibAssets.openStreamOrNull(path: String): InputStream? = try {
+	manager.open(path)
+} catch (ex: IOException) {
+	null
+}
+
 @Throws(FileNotFoundException::class)
 actual fun LibAssets.openStream(path: String): InputStream = try {
 	manager.open(path)

@@ -9,5 +9,7 @@ import okio.Source
  */
 expect object LibAssets
 
+expect fun LibAssets.openOrNull(path: String): Source?
+
 @Throws(FileNotFoundException::class)
 expect fun LibAssets.open(path: String): Source

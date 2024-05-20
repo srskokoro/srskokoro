@@ -7,6 +7,9 @@ actual object LibAssets {
 	@JvmField val loader = LibAssets::class.java.classLoader!!
 }
 
+actual fun LibAssets.openStreamOrNull(path: String): InputStream? =
+	loader.getResourceAsStream(path)
+
 @Throws(FileNotFoundException::class)
 actual fun LibAssets.openStream(path: String): InputStream =
 	loader.getResourceAsStream(path) ?: throw E_MissingAsset(path)
