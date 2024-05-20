@@ -5,6 +5,7 @@ import kokoro.app.open
 import kokoro.app.openOrNull
 import kokoro.internal.assert
 import kokoro.internal.io.source
+import kokoro.internal.require
 import okio.FileNotFoundException
 import okio.Source
 import okio.buffer
@@ -34,6 +35,15 @@ data class WvLibAssetResolver(
 	init {
 		assert({ assetsDir.endsWith('/').not() }, or = {
 			"Argument `${::assetsDir.name}` must not end with slash."
+		})
+		require(assetsDir.startsWith("wv/"), or = {
+			"""
+			Only assets under "wv/" should be served.
+
+			Access to assets outside of "wv/" is insecure as it may allow access to
+			application files not meant to be exposed publicly, such as class files and
+			compiled code.
+			""".trimIndent()
 		})
 	}
 
