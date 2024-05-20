@@ -92,9 +92,4 @@ object MimeTypes {
 	 * @see BINARY
 	 */
 	fun queryExt(ext: String): String? = mapExtToMime[ext]
-
-	/**
-	 * @see queryExt
-	 */
-	fun queryExt(strWithExt: String, offset: Int): String? = mapExtToMime[strWithExt.substring(0, offset)]
 }
