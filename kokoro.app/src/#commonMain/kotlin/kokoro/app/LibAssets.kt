@@ -1,5 +1,6 @@
 package kokoro.app
 
+import okio.FileNotFoundException
 import okio.Source
 
 /**
@@ -8,4 +9,5 @@ import okio.Source
  */
 expect object LibAssets
 
+@Throws(FileNotFoundException::class)
 expect fun LibAssets.open(path: String): Source
