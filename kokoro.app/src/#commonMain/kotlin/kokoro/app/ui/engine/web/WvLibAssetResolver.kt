@@ -12,7 +12,7 @@ import okio.use
 import kotlin.jvm.JvmField
 
 /**
- * An implementation of [WebUriResolver] and [WebResource] that resolves to
+ * An implementation of [WebUriResolver] and [WebResource] that resolves against
  * bundled library assets – see [LibAssets].
  *
  * @param assetsDir an asset path to a directory containing the target assets.
