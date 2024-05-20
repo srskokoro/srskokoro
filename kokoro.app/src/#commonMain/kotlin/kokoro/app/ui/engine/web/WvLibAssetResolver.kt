@@ -39,18 +39,26 @@ data class WvLibAssetResolver(
 	override suspend fun apply(request: WebRequest): WebResponse {
 		run<Unit> {
 			val uri = request.url
-
 			val path = uri.path() ?: return@run
-			if (!path.startsWith('/')) return@run
 
-			val ext = path
-				.substring(path.lastIndexOf('/'))
-				.substringAfterLast('.', "")
+			val a = StringBuilder(assetsDir)
+			if (!path.startsWith('/')) a.append('/')
+			a.append(path)
 
-			if (ext == "head") return@run
+			val mimeType = if (path.endsWith('/')) {
+				a.append("index.html")
+				"text/html"
+			} else {
+				val q = path.lastIndexOf('/')
+				// NOTE: Keeps the initial '/' at `q == 0`
+				val ext = (if (q > 0) path.substring(q + 1) else path)
+					.substringAfterLast('.', "")
+				if (ext == HEADERS_EXT) return@run
+				MimeTypes.queryExt(ext)
+			}
 
 			val content = try {
-				LibAssets.open(assetsDir + path)
+				LibAssets.open(a.toString())
 			} catch (ex: FileNotFoundException) {
 				return@run
 			}
@@ -58,7 +66,7 @@ data class WvLibAssetResolver(
 			return WebResponse(
 				status = 200,
 
-				mimeType = MimeTypes.queryExt(ext),
+				mimeType = mimeType,
 				charset = null, // Assume text assets have proper BOM
 
 				headers = mutableMapOf(), // TODO Provide via special `*.head` assets
@@ -70,6 +78,8 @@ data class WvLibAssetResolver(
 	}
 
 	companion object {
+
+		private const val HEADERS_EXT = "head"
 
 		private fun StatusResponse(status: Int): WebResponse {
 			val bytes = status.toString().encodeToByteArray()
