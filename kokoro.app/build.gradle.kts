@@ -47,7 +47,7 @@ buildConfig.ss.named("jreMain") {
 
 tasks.register<ProcessResources>("jsPackedAsWvXRes") {
 	val p = project
-	from(p.configurations.jsPacked) { into("wv/x/res") }
+	from(p.configurations.jsPacked) { into("wv/{res.x}") }
 	into(p.layout.buildDirectory.dir(name))
 }.let {
 	kotlinSourceSets.commonMain {
