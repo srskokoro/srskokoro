@@ -17,12 +17,12 @@ class test_LibAssets : FreeSpec({
 	"Test asset can be read" {
 		assertResult {
 			LibAssets.open("kokoro/app/sample.txt")
-				.buffer().readUtf8()
+				.buffer().use { it.readUtf8() }
 		}.isSuccess().isEqualTo("foobar")
 	}
 	"Missing asset cannot be read" {
 		assertResult {
-			LibAssets.open("kokoro/app/missing.txt")
+			LibAssets.open("kokoro/app/missing.txt").close()
 		}.isFailure<FileNotFoundException>()
 	}
 	"Asset directories cannot be streamed" {

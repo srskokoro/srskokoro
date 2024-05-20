@@ -9,6 +9,7 @@ import build.test.isFailure
 import io.kotest.core.spec.style.FreeSpec
 import okio.FileNotFoundException
 import okio.buffer
+import okio.use
 
 /** @see test_LibAssets */
 actual fun FreeSpec.test_LibAssets_platformTest() {
@@ -17,7 +18,7 @@ actual fun FreeSpec.test_LibAssets_platformTest() {
 	"Test asset under 'android' source set can be read" {
 		assertResult {
 			LibAssets.open(assetInAndroidSrc)
-				.buffer().readUtf8()
+				.buffer().use { it.readUtf8() }
 		}.isSuccess().isEqualTo("baz")
 	}
 	"Test asset cannot be retrieved as resource" {
@@ -39,7 +40,7 @@ actual fun FreeSpec.test_LibAssets_platformTest() {
 		}.isSuccess().isEqualTo("Hi!")
 
 		assertResult {
-			LibAssets.open(someResPath)
+			LibAssets.open(someResPath).close()
 		}.isFailure<FileNotFoundException>()
 	}
 	"Common resource cannot be retrieved as asset" {
@@ -53,7 +54,7 @@ actual fun FreeSpec.test_LibAssets_platformTest() {
 		}.isSuccess().isEqualTo("Hello!")
 
 		assertResult {
-			LibAssets.open(someResPath)
+			LibAssets.open(someResPath).close()
 		}.isFailure<FileNotFoundException>()
 	}
 }
