@@ -30,7 +30,7 @@ class test_LibAssets : FreeSpec({
 			for (path in listOf("kokoro/app", "kokoro/app/")) assertWith {
 				LibAssets.openOrNull(path)
 			}.matchesPredicate { source ->
-				source == null || source.buffer().use { it.readUtf8().trim() } == ""
+				source == null || source.buffer().use { it.readUtf8() }.trim() == ""
 			}
 		}
 	}
