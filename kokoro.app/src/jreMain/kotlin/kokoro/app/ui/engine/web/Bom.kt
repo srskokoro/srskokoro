@@ -40,13 +40,12 @@ object Bom {
 			"utf-16le",
 			-> UTF_16LE
 
+			"utf-32", // TODO Not really sure if this should be here, but `Charset.forName("utf-32")` do map here.
 			"utf-32be",
 			-> UTF_32BE
 
 			"utf-32le",
 			-> UTF_32LE
-
-			"utf-32", // See, https://www.unicode.org/reports/tr19/tr19-9.html
 
 			"ansi_x3.4-1968",
 			"ascii",
