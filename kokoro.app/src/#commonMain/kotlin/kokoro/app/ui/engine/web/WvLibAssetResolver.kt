@@ -88,6 +88,14 @@ data class WvLibAssetResolver(
 
 	companion object {
 
+		@JvmField val HTTPX_RES_X = httpx("res.x")
+		@JvmField val HTTPX_RES_U = httpx("res.u")
+
+		@Suppress("NOTHING_TO_INLINE")
+		inline fun httpx(host: String) = WvLibAssetResolver("$HTTPX://$host", "wv/{$host}")
+
+		// --
+
 		private const val HEAD_EXT = "head"
 		private const val DOT_HEAD_EXT = ".$HEAD_EXT"
 
