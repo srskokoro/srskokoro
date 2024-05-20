@@ -17,7 +17,7 @@ import kotlin.jvm.JvmField
  * bundled library assets – see [LibAssets].
  *
  * @param assetsDir an asset path to a directory containing the target assets.
- *   Must not end with slash.
+ *   Must not start or end with slash.
  */
 data class WvLibAssetResolver(
 	@JvmField val webOrigin: WebOrigin,
@@ -33,8 +33,10 @@ data class WvLibAssetResolver(
 	)
 
 	init {
-		assert({ assetsDir.endsWith('/').not() }, or = {
-			"Argument `${::assetsDir.name}` must not end with slash."
+		assert({
+			!assetsDir.startsWith('/') && !assetsDir.endsWith('/')
+		}, or = {
+			"Argument `${::assetsDir.name}` must not start or end with slash."
 		})
 		require(assetsDir.startsWith("wv/"), or = {
 			"""
