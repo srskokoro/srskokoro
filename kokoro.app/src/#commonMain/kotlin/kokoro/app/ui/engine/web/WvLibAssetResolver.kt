@@ -15,9 +15,17 @@ import kotlin.jvm.JvmField
  *   Must not end with slash.
  */
 data class WvLibAssetResolver(
-	@JvmField val matchHost: String,
+	@JvmField val webOrigin: WebOrigin,
 	@JvmField val assetsDir: String,
 ) : WebUriResolver, WebResource {
+
+	constructor(
+		webOrigin: String,
+		assetsDir: String,
+	) : this(
+		webOrigin = WebOrigin.fromUri(webOrigin),
+		assetsDir = assetsDir,
+	)
 
 	init {
 		assert({ assetsDir.endsWith('/').not() }, or = {
@@ -26,7 +34,7 @@ data class WvLibAssetResolver(
 	}
 
 	override fun resolve(uri: WebUri): WebResource? =
-		if (uri.host() == matchHost) this else null
+		if (webOrigin.matches(uri)) this else null
 
 	override suspend fun apply(request: WebRequest): WebResponse {
 		run<Unit> {
