@@ -2,9 +2,13 @@ package kokoro.app.ui.engine.web
 
 import kokoro.app.LibAssets
 import kokoro.app.open
+import kokoro.app.openOrNull
 import kokoro.internal.assert
 import kokoro.internal.io.source
 import okio.FileNotFoundException
+import okio.Source
+import okio.buffer
+import okio.use
 import kotlin.jvm.JvmField
 
 /**
@@ -63,13 +67,18 @@ data class WvLibAssetResolver(
 				return@run
 			}
 
+			val headers = mutableMapOf<String, String>()
+			LibAssets.openOrNull(a.append(DOT_HEAD_EXT).toString())?.let {
+				loadResponseHeaders(headers, it)
+			}
+
 			return WebResponse(
 				status = 200,
 
 				mimeType = mimeType,
 				charset = null, // Assume text assets have proper BOM
 
-				headers = mutableMapOf(), // TODO Provide via special `*.head` assets
+				headers = headers,
 
 				contentLength = -1, content,
 			)
@@ -80,6 +89,31 @@ data class WvLibAssetResolver(
 	companion object {
 
 		private const val HEAD_EXT = "head"
+		private const val DOT_HEAD_EXT = ".$HEAD_EXT"
+
+		private fun loadResponseHeaders(out: MutableMap<String, String>, source: Source): Unit = source.buffer().use { buffered ->
+			// Implementation reference:
+			// - https://github.com/square/okhttp/blob/parent-4.12.0/okhttp/src/main/kotlin/okhttp3/internal/http1/HeadersReader.kt
+			while (true) {
+				val line = buffered.readUtf8Line() ?: break
+				val i = line.indexOf(':')
+
+				val k: String
+				val v: String
+
+				// Implementation reference:
+				// - https://github.com/square/okhttp/blob/parent-4.12.0/okhttp/src/main/kotlin/okhttp3/Headers.kt#L231
+				if (i > 0) {
+					k = line.substring(0, i)
+					v = line.substring(i + 1)
+				} else {
+					k = ""
+					v = if (i != 0) line else line.substring(1)
+				}
+
+				out[k] = v.trim()
+			}
+		}
 
 		private fun StatusResponse(status: Int): WebResponse {
 			val bytes = status.toString().encodeToByteArray()
