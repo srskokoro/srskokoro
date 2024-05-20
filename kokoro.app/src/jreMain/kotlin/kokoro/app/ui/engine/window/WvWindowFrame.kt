@@ -335,9 +335,16 @@ class WvWindowFrame @JvmOverloads constructor(
 						"text/javascript",
 						"text/plain",
 						-> Bom.forMediaCharset(charset)?.let { bom ->
-							this.responseContentBom = bom
-							if (contentLength >= 0) {
-								contentLength += bom.size
+							// NOTE: By default, JCEF uses "ISO-8859-1" (which
+							// is a superset of "US-ASCII"). Also, "US-ASCII" is
+							// the default charset for the "text" MIME type --
+							// see, https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types#structure_of_a_mime_type
+							// - See also, https://github.com/cefsharp/CefSharp/issues/689#issuecomment-67086264
+							val bom_n = bom.size
+							if (bom_n > 0) {
+								this.responseContentBom = bom
+								if (contentLength >= 0)
+									contentLength += bom_n
 							}
 							return@run // Skip code below
 						}
