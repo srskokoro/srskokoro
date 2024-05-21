@@ -4,6 +4,7 @@ import androidx.collection.MutableScatterMap
 import kokoro.app.ui.engine.UiBus
 import kokoro.app.ui.engine.UiState
 import kokoro.internal.annotation.MainThread
+import kokoro.internal.assert
 import kokoro.internal.assertThreadMain
 import kokoro.internal.collections.computeIfAbsent
 import kotlinx.coroutines.CoroutineScope
@@ -51,7 +52,9 @@ abstract class WvContext(
 	fun <T> state(bus: UiBus<T>): UiState<T> {
 		assertThreadMain()
 
-		val entry = stateEntries.computeIfAbsent(bus.id) {
+		val entry = stateEntries.computeIfAbsent(bus.id, onExisting = { id, entry ->
+			assert({ entry.bus == bus }, or = { "Inconsistent bus usage.\n- ID: $id" })
+		}) { _ ->
 			val v = loadOldState(bus) // May throw
 			UiState(v, bus)
 		}
