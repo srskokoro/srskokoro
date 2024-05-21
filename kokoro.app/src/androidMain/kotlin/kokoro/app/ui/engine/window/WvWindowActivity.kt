@@ -177,6 +177,7 @@ open class WvWindowActivity : ComponentActivity() {
 	override fun onSaveInstanceState(outState: Bundle) {
 		super.onSaveInstanceState(outState)
 		window?.run {
+			onSaveState()
 			(context as? WvContextImpl)
 		}?.run {
 			val o = encodeStateEntries()
