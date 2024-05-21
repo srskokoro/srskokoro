@@ -5,6 +5,7 @@ import build.api.dsl.*
 import build.api.dsl.accessors.androidOrNull
 import build.api.dsl.accessors.kotlinSourceSets
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.kotlin.dsl.*
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -151,5 +152,12 @@ private fun KotlinJvmAndroidCompilation.setUpAssetsAndResources(android: Android
 	//  manually hook them here.
 	variant.processJavaResourcesProvider.configure {
 		from(Callable { allKotlinSourceSets.map { it.resources } })
+
+		// NOTE: This is `DuplicatesStrategy.INCLUDE` (at the time of writing),
+		// which is undesirable as the behavior will be unpredictable.
+		// - Given that resources may come from more than one source (and only
+		// one may be selected depending on AGP's quirks), it's better to play
+		// safe and fail early.
+		duplicatesStrategy = DuplicatesStrategy.FAIL
 	}
 }
