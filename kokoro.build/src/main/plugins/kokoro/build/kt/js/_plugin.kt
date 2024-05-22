@@ -3,6 +3,7 @@ package kokoro.build.kt.js
 import build.api.ProjectPlugin
 import build.api.dsl.*
 import build.api.dsl.accessors.kotlinMpp
+import build.api.dsl.accessors.kotlinSourceSets
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 
@@ -21,5 +22,9 @@ class _plugin : ProjectPlugin({
 				kotlin.jvm("_KLUDGE_")
 			}
 		}
+	}
+
+	kotlinSourceSets.configureEach {
+		languageSettings.optIn("kotlin.js.ExperimentalJsExport")
 	}
 })
