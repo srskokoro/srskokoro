@@ -1,5 +1,6 @@
 package kokoro.app.ui.swing
 
+import java.awt.event.ActionEvent
 import java.beans.PropertyChangeListener
 import javax.swing.Action
 
@@ -11,7 +12,7 @@ import javax.swing.Action
  * @see javax.swing.AbstractAction
  * @see com.formdev.flatlaf.ui.FlatUIAction
  */
-abstract class UiAction(val name: String?) : Action {
+abstract class UiAction(@JvmField val name: String?) : Action {
 
 	companion object {
 		const val CLOSE = "close"
@@ -25,7 +26,21 @@ abstract class UiAction(val name: String?) : Action {
 
 	override fun setEnabled(newValue: Boolean) {}
 
+	override fun isEnabled(): Boolean = true
+
 	override fun addPropertyChangeListener(listener: PropertyChangeListener?) {}
 
 	override fun removePropertyChangeListener(listener: PropertyChangeListener?) {}
+}
+
+/**
+ * @see NopAction
+ */
+inline fun UiAction(
+	name: String?,
+	crossinline action: (ActionEvent) -> Unit,
+) = object : UiAction(name) {
+	override fun actionPerformed(e: ActionEvent?) {
+		if (e != null) action(e)
+	}
 }
