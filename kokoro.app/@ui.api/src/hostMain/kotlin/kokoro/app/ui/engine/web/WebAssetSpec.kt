@@ -25,13 +25,13 @@ fun WebAssetSpec(map: Map<in String, String?>): WebAssetSpec = MapWebAssetSpec(m
 
 fun WebAssetSpec(map: ScatterMap<in String, out String?>): WebAssetSpec = ScatterMapWebAssetSpec(map)
 
-inline fun WebAssetSpec(crossinline block: (key: String) -> String?): WebAssetSpec = object : WebAssetSpec {
-	override fun propOrNull(key: String): String? = block(key)
-}
+operator fun WebAssetSpec.plus(other: WebAssetSpec): WebAssetSpec = CombinedWebAssetSpec(this, other)
 
 inline operator fun WebAssetSpec.plus(crossinline other: (key: String) -> String?) = plus(WebAssetSpec(other))
 
-operator fun WebAssetSpec.plus(other: WebAssetSpec): WebAssetSpec = CombinedWebAssetSpec(this, other)
+inline fun WebAssetSpec(crossinline block: (key: String) -> String?): WebAssetSpec = object : WebAssetSpec {
+	override fun propOrNull(key: String): String? = block(key)
+}
 
 // --
 
