@@ -22,5 +22,7 @@ data class WebAsset(
 @Suppress("NOTHING_TO_INLINE")
 inline operator fun WebAssetTemplate.plus(spec: WebAssetSpec) = WebAsset(this, spec)
 
+inline operator fun WebAssetTemplate.plus(crossinline spec: (key: String) -> String?) = plus(WebAssetSpec(spec))
+
 @Suppress("NOTHING_TO_INLINE")
 inline operator fun WebAssetSpec.plus(template: WebAssetTemplate) = WebAsset(template, this)

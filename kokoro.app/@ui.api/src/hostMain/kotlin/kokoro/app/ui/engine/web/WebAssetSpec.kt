@@ -29,6 +29,8 @@ inline fun WebAssetSpec(crossinline block: (key: String) -> String?): WebAssetSp
 	override fun propOrNull(key: String): String? = block(key)
 }
 
+inline operator fun WebAssetSpec.plus(crossinline other: (key: String) -> String?) = plus(WebAssetSpec(other))
+
 operator fun WebAssetSpec.plus(other: WebAssetSpec): WebAssetSpec = CombinedWebAssetSpec(this, other)
 
 // --
