@@ -29,7 +29,6 @@ inline fun WebAssetSpec(crossinline block: (key: String) -> String?): WebAssetSp
 	override fun propOrNull(key: String): String? = block(key)
 }
 
-@Suppress("NOTHING_TO_INLINE")
 operator fun WebAssetSpec.plus(other: WebAssetSpec): WebAssetSpec = CombinedWebAssetSpec(this, other)
 
 // --

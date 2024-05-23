@@ -11,7 +11,6 @@ fun interface WebUriResolver {
 	}
 }
 
-@Suppress("NOTHING_TO_INLINE")
 operator fun WebUriResolver.plus(other: WebUriResolver): WebUriResolver = CombinedWebUriResolver(this, other)
 
 // --
