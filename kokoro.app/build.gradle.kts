@@ -3,6 +3,7 @@ import build.api.dsl.*
 plugins {
 	id("kokoro.build.kt.mpp.app")
 	id("build.version")
+	id("build.kt.x.contracts")
 	id("build.kt.x.expect_actual")
 	id("build.ktx.atomicfu")
 	id("build.gmazzo.buildconfig")
