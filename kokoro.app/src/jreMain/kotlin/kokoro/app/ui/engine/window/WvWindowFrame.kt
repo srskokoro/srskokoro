@@ -69,6 +69,8 @@ class WvWindowFrame @JvmOverloads constructor(
 ) : ScopedWindowFrame(context, DEFAULT_TITLE, gc), WvWindowHandle.Peer {
 
 	companion object {
+		private const val CPK_name = "WvWindowFrame.name"
+
 		init {
 			Jcef_globalInit()
 		}
@@ -532,6 +534,17 @@ class WvWindowFrame @JvmOverloads constructor(
 			it.onDestroy() // May throw
 			window = null
 		}
+	}
+
+	override fun getName(): String {
+		val rootPane = rootPane
+		var name = rootPane.getClientProperty(CPK_name) as String?
+		if (name == null) {
+			val h = handle
+			name = "WvWindow[${h.id_}:${h.windowFactoryId}]"
+			rootPane.putClientProperty(CPK_name, name)
+		}
+		return name
 	}
 }
 
