@@ -27,6 +27,7 @@ import kokoro.internal.coroutines.CancellationSignal
 import kokoro.jcef.Jcef
 import kokoro.jcef.JcefConfig
 import kokoro.jcef.JcefStateObserver
+import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -71,7 +72,6 @@ import java.beans.PropertyChangeListener
 import java.io.File
 import java.lang.invoke.VarHandle
 import java.net.URI
-import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.JComponent
 import javax.swing.KeyStroke
 import kotlin.coroutines.CoroutineContext
@@ -205,7 +205,7 @@ class WvWindowFrame @JvmOverloads constructor(
 		val client = Jcef.app.createClient()
 		client.addRequestHandler(InternalRequestHandler(wur, scope))
 		client.addKeyboardHandler(InternalKeyboardHandler(this))
-		client.addFocusHandler(object : CefFocusHandlerAdapter() {
+		client.addFocusHandler(object : CefFocusHandlerAdapter(), Runnable {
 			override fun onGotFocus(browser: CefBrowser?) {
 				// Necessary for the JCEF browser to play nicely with other AWT
 				// components; otherwise, focus and traversal on AWT components
@@ -213,18 +213,18 @@ class WvWindowFrame @JvmOverloads constructor(
 				// component while the JCEF browser has focus.
 				if (
 					KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner != null
-					&& clearGlobalFocus.compareAndSet(false, true)
-				) EventQueue.invokeLater(clearGlobalFocus)
+					&& clearingGlobalFocus.compareAndSet(false, true)
+				) EventQueue.invokeLater(this)
+			}
+
+			override fun run() {
+				KeyboardFocusManager.getCurrentKeyboardFocusManager().clearGlobalFocusOwner()
+				clearingGlobalFocus.value = false // Allow redispatch
 			}
 
 			// NOTE: The boolean value represents "dispatched" when `true`, and
 			// "undispatched" when `false`.
-			private val clearGlobalFocus = object : AtomicBoolean(), Runnable {
-				override fun run() {
-					KeyboardFocusManager.getCurrentKeyboardFocusManager().clearGlobalFocusOwner()
-					set(false) // Allow redispatch
-				}
-			}
+			private val clearingGlobalFocus = atomic(false)
 		})
 
 		val browser = client.createBrowser(initUrl.also { initUrl = null }, false, false)
