@@ -218,6 +218,7 @@ class WvWindowFrame @JvmOverloads constructor(
 			}
 
 			override fun run() {
+				jcef_?.component?.requestFocusInWindow() // Turn into a permanent focus owner
 				KeyboardFocusManager.getCurrentKeyboardFocusManager().clearGlobalFocusOwner()
 				clearingGlobalFocus.value = false // Allow redispatch
 			}
