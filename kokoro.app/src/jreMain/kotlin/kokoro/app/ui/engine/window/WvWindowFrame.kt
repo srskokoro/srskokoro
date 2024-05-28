@@ -27,7 +27,6 @@ import kokoro.internal.coroutines.CancellationSignal
 import kokoro.jcef.Jcef
 import kokoro.jcef.JcefConfig
 import kokoro.jcef.JcefStateObserver
-import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -72,6 +71,7 @@ import java.beans.PropertyChangeListener
 import java.io.File
 import java.lang.invoke.VarHandle
 import java.net.URI
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.JComponent
 import javax.swing.KeyStroke
 import kotlin.coroutines.CoroutineContext
@@ -205,27 +205,34 @@ class WvWindowFrame @JvmOverloads constructor(
 		val client = Jcef.app.createClient()
 		client.addRequestHandler(InternalRequestHandler(wur, scope))
 		client.addKeyboardHandler(InternalKeyboardHandler(this))
+		// TODO Extract into a private class. Name it `JcefFocusHandler`.
 		client.addFocusHandler(object : CefFocusHandlerAdapter(), Runnable {
-			override fun onGotFocus(browser: CefBrowser?) {
+			override fun onGotFocus(browser: CefBrowser) {
+				val focusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner
+				if (focusOwner != null) {
+					val c = browser.uiComponent
+					/** Ensure a permanent focus owner once we clear the focus.
+					 * @see KeyboardFocusManager.getPermanentFocusOwner */
+					if (focusOwner !== c) EventQueue.invokeLater { c.requestFocusInWindow() }
+					// The following would clear any focus owner.
+					if (clearingGlobalFocus.compareAndSet(false, true)) EventQueue.invokeLater(this)
+				}
+			}
+
+			override fun run() {
 				// Necessary for the JCEF browser to play nicely with other AWT
 				// components; otherwise, focus and traversal of AWT components
 				// won't work properly. That is, there must be no focused AWT
 				// component while a JCEF browser has focus.
-				if (
-					KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner != null
-					&& clearingGlobalFocus.compareAndSet(false, true)
-				) EventQueue.invokeLater(this)
-			}
-
-			override fun run() {
-				jcef_?.component?.requestFocusInWindow() // Turn into a permanent focus owner
 				KeyboardFocusManager.getCurrentKeyboardFocusManager().clearGlobalFocusOwner()
-				clearingGlobalFocus.value = false // Allow redispatch
+				EventQueue.invokeLater(clearingGlobalFocus)
 			}
 
 			// NOTE: The boolean value represents "dispatched" when `true`, and
 			// "undispatched" when `false`.
-			private val clearingGlobalFocus = atomic(false)
+			private val clearingGlobalFocus = object : AtomicBoolean(), Runnable {
+				override fun run() = set(false) // Allow redispatch
+			}
 		})
 
 		val browser = client.createBrowser(initUrl.also { initUrl = null }, false, false)
