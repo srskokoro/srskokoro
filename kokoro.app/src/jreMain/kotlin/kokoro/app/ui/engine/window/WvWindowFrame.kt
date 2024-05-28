@@ -208,9 +208,9 @@ class WvWindowFrame @JvmOverloads constructor(
 		client.addFocusHandler(object : CefFocusHandlerAdapter(), Runnable {
 			override fun onGotFocus(browser: CefBrowser?) {
 				// Necessary for the JCEF browser to play nicely with other AWT
-				// components; otherwise, focus and traversal on AWT components
+				// components; otherwise, focus and traversal of AWT components
 				// won't work properly. That is, there must be no focused AWT
-				// component while the JCEF browser has focus.
+				// component while a JCEF browser has focus.
 				if (
 					KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner != null
 					&& clearingGlobalFocus.compareAndSet(false, true)
