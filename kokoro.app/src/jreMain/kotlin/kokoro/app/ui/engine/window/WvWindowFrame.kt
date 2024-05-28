@@ -71,6 +71,7 @@ import java.beans.PropertyChangeListener
 import java.io.File
 import java.lang.invoke.VarHandle
 import java.net.URI
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.JComponent
 import javax.swing.KeyStroke
 import kotlin.coroutines.CoroutineContext
@@ -210,9 +211,18 @@ class WvWindowFrame @JvmOverloads constructor(
 				// components; otherwise, focus and traversal on AWT components
 				// won't work properly. That is, there must be no focused AWT
 				// component while the JCEF browser has focus.
-				EventQueue.invokeLater {
-					KeyboardFocusManager.getCurrentKeyboardFocusManager()
-						.clearGlobalFocusOwner()
+				if (
+					KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner != null
+					&& clearGlobalFocus.compareAndSet(false, true)
+				) EventQueue.invokeLater(clearGlobalFocus)
+			}
+
+			// NOTE: The boolean value represents "dispatched" when `true`, and
+			// "undispatched" when `false`.
+			private val clearGlobalFocus = object : AtomicBoolean(), Runnable {
+				override fun run() {
+					KeyboardFocusManager.getCurrentKeyboardFocusManager().clearGlobalFocusOwner()
+					set(false) // Allow redispatch
 				}
 			}
 		})
