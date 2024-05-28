@@ -41,6 +41,7 @@ import org.cef.CefClient
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.callback.CefCallback
+import org.cef.handler.CefFocusHandlerAdapter
 import org.cef.handler.CefKeyboardHandler.CefKeyEvent
 import org.cef.handler.CefKeyboardHandlerAdapter
 import org.cef.handler.CefRequestHandlerAdapter
@@ -57,6 +58,7 @@ import java.awt.Desktop
 import java.awt.Dimension
 import java.awt.EventQueue
 import java.awt.GraphicsConfiguration
+import java.awt.KeyboardFocusManager
 import java.awt.Window
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -199,13 +201,20 @@ class WvWindowFrame @JvmOverloads constructor(
 		val client = Jcef.app.createClient()
 		client.addRequestHandler(InternalRequestHandler(wur, scope))
 		client.addKeyboardHandler(InternalKeyboardHandler(this))
+		client.addFocusHandler(object : CefFocusHandlerAdapter() {
+			override fun onGotFocus(browser: CefBrowser?) {
+				// Necessary for the JCEF browser to play nicely with other AWT
+				// components; otherwise, focus and traversal on AWT components
+				// won't work properly. That is, there must be no focused AWT
+				// component while the JCEF browser has focus.
+				EventQueue.invokeLater {
+					KeyboardFocusManager.getCurrentKeyboardFocusManager()
+						.clearGlobalFocusOwner()
+				}
+			}
+		})
 
 		val browser = client.createBrowser(initUrl.also { initUrl = null }, false, false)
-		// Necessary or the browser component won't respond to the keyboard.
-		// Setting up the following once seems to be enough to allow keyboard
-		// interaction. See also, https://github.com/chromiumembedded/java-cef/blob/0b8e42e/java/tests/simple/MainFrame.java
-		browser.setFocus(true)
-
 		val component = browser.uiComponent
 		jcef_ = JcefSetup(client, browser, component)
 		contentPane.add(component)
