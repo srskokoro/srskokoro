@@ -146,9 +146,9 @@ class WvWindowFrame @JvmOverloads constructor(
 	}
 
 	class JcefSetup(
-		val client: CefClient,
-		val browser: CefBrowser,
-		val component: Component,
+		@JvmField val client: CefClient,
+		@JvmField val browser: CefBrowser,
+		@JvmField val component: Component,
 	)
 
 	@PublishedApi @JvmField
