@@ -13,6 +13,8 @@ import kokoro.app.ui.engine.web.WebUriResolver
 import kokoro.app.ui.swing.BaseWindowFrame
 import kokoro.app.ui.swing.ScopedWindowFrame
 import kokoro.app.ui.swing.doOnThreadSwing
+import kokoro.app.ui.swing.jcef.toKeyEvent
+import kokoro.app.ui.swing.put
 import kokoro.app.ui.swing.setLocationBesides
 import kokoro.app.ui.swing.usableBounds
 import kokoro.internal.DEBUG
@@ -69,10 +71,11 @@ import java.beans.PropertyChangeListener
 import java.io.File
 import java.lang.invoke.VarHandle
 import java.net.URI
+import javax.swing.JComponent
+import javax.swing.KeyStroke
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.math.min
-import org.cef.handler.CefKeyboardHandler.CefKeyEvent.EventType as CefKeyEventType
 
 @OptIn(nook::class)
 class WvWindowFrame @JvmOverloads constructor(
@@ -233,6 +236,8 @@ class WvWindowFrame @JvmOverloads constructor(
 
 			private fun deriveTitle(ownerTitle: Any?) = "DevTools | $ownerTitle"
 
+			const val DEV_TOOLS_ACTION = "DevTools"
+
 			@MainThread
 			fun show(owner: WvWindowFrame) {
 				assertThreadMain()
@@ -273,18 +278,22 @@ class WvWindowFrame @JvmOverloads constructor(
 				val owner = owner
 				val jcef = owner.jcef_ ?: return@run
 				if (jcef.browser !== browser) return@run
-				if (
-					e.windows_key_code == KeyEvent.VK_F12 &&
-					e.modifiers == 0 &&
-					e.type == CefKeyEventType.KEYEVENT_RAWKEYDOWN
-				) {
-					EventQueue.invokeLater {
-						// NOTE: By the time we get here, `owner.jcef` may now
-						// be null (after being torn down).
-						DevToolsFrame.show(owner)
+				// Allow Swing/AWT to see and intercept CEF key events.
+				// - See also, https://www.magpcss.org/ceforum/viewtopic.php?f=17&t=17305
+				val ke = e.toKeyEvent(owner)
+				EventQueue.invokeLater {
+					// NOTE: By the time we get here, `owner.jcef` may now be
+					// null, which is as it should be after being torn down.
+					owner.jcef?.component?.parent?.let { c ->
+						val kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager()
+						// NOTE: The following treats `c` as if it is currently
+						// focused (even if it isn't). This guarantees that even
+						// `JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT` will
+						// still be usable.
+						kfm.redispatchEvent(c, ke)
 					}
-					return true
 				}
+				return true
 			}
 			return false
 		}
@@ -575,10 +584,17 @@ class WvWindowFrame @JvmOverloads constructor(
 	// --
 
 	init {
-		contentPane.addComponentListener(object : ComponentAdapter() {
+		val root = rootPane
+		root.contentPane.addComponentListener(object : ComponentAdapter() {
 			override fun componentResized(e: ComponentEvent?): Unit =
 				doOnThreadSwing(::dispatchWvWindowResize)
 		})
+
+		val rootActionMap = root.actionMap
+		val rootInputMap = root.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+
+		rootInputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0), DevToolsFrame.DEV_TOOLS_ACTION)
+		rootActionMap.put(DevToolsFrame.DEV_TOOLS_ACTION) { DevToolsFrame.show(this) }
 	}
 
 	@MainThread
