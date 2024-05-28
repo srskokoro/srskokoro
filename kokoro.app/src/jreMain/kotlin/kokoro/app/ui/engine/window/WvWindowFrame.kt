@@ -204,7 +204,7 @@ class WvWindowFrame @JvmOverloads constructor(
 		// one `CefClient`.
 		val client = Jcef.app.createClient()
 		client.addRequestHandler(InternalRequestHandler(wur, scope))
-		client.addKeyboardHandler(InternalKeyboardHandler(this))
+		client.addKeyboardHandler(JcefKeyboardHandler(this))
 		// TODO Extract into a private class. Name it `JcefFocusHandler`.
 		client.addFocusHandler(object : CefFocusHandlerAdapter(), Runnable {
 			override fun onGotFocus(browser: CefBrowser) {
@@ -290,7 +290,7 @@ class WvWindowFrame @JvmOverloads constructor(
 		}
 	}
 
-	private class InternalKeyboardHandler(private val owner: WvWindowFrame) : CefKeyboardHandlerAdapter() {
+	private class JcefKeyboardHandler(private val owner: WvWindowFrame) : CefKeyboardHandlerAdapter() {
 		override fun onKeyEvent(browser: CefBrowser?, e: CefKeyEvent?): Boolean {
 			if (e != null) run<Unit> {
 				val owner = owner
