@@ -10,8 +10,11 @@ import kokoro.app.ui.engine.web.WebResource
 import kokoro.app.ui.engine.web.WebResponse
 import kokoro.app.ui.engine.web.WebUri
 import kokoro.app.ui.engine.web.WebUriResolver
+import kokoro.app.ui.swing.BaseWindowFrame
 import kokoro.app.ui.swing.ScopedWindowFrame
 import kokoro.app.ui.swing.doOnThreadSwing
+import kokoro.app.ui.swing.setLocationBesides
+import kokoro.app.ui.swing.usableBounds
 import kokoro.internal.DEBUG
 import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
@@ -38,6 +41,8 @@ import org.cef.CefClient
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.callback.CefCallback
+import org.cef.handler.CefKeyboardHandler.CefKeyEvent
+import org.cef.handler.CefKeyboardHandlerAdapter
 import org.cef.handler.CefRequestHandlerAdapter
 import org.cef.handler.CefResourceHandler
 import org.cef.handler.CefResourceRequestHandler
@@ -50,16 +55,22 @@ import org.cef.network.CefResponse
 import java.awt.Component
 import java.awt.Desktop
 import java.awt.Dimension
+import java.awt.EventQueue
 import java.awt.GraphicsConfiguration
 import java.awt.Window
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
+import java.awt.event.KeyEvent
 import java.awt.event.WindowEvent
+import java.beans.PropertyChangeEvent
+import java.beans.PropertyChangeListener
 import java.io.File
 import java.lang.invoke.VarHandle
 import java.net.URI
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.math.min
+import org.cef.handler.CefKeyboardHandler.CefKeyEvent.EventType as CefKeyEventType
 
 @OptIn(nook::class)
 class WvWindowFrame @JvmOverloads constructor(
@@ -157,6 +168,8 @@ class WvWindowFrame @JvmOverloads constructor(
 	val jcef: JcefSetup?
 		inline get() = jcef_
 
+	private var devToolsFrame: DevToolsFrame? = null
+
 	private var initUrl: String? = null
 
 	@MainThread
@@ -185,6 +198,7 @@ class WvWindowFrame @JvmOverloads constructor(
 		// one `CefClient`.
 		val client = Jcef.app.createClient()
 		client.addRequestHandler(InternalRequestHandler(wur, scope))
+		client.addKeyboardHandler(InternalKeyboardHandler(this))
 
 		val browser = client.createBrowser(initUrl.also { initUrl = null }, false, false)
 		// Necessary or the browser component won't respond to the keyboard.
@@ -195,6 +209,76 @@ class WvWindowFrame @JvmOverloads constructor(
 		val component = browser.uiComponent
 		jcef_ = JcefSetup(client, browser, component)
 		contentPane.add(component)
+	}
+
+	private class DevToolsFrame private constructor(
+		private val owner: WvWindowFrame,
+		private val devTools: CefBrowser,
+	) : BaseWindowFrame(deriveTitle(owner.title), owner.graphicsConfiguration), PropertyChangeListener {
+
+		override fun propertyChange(e: PropertyChangeEvent) {
+			title = deriveTitle(e.newValue)
+		}
+
+		companion object {
+
+			private fun deriveTitle(ownerTitle: Any?) = "DevTools | $ownerTitle"
+
+			@MainThread
+			fun show(owner: WvWindowFrame) {
+				assertThreadMain()
+				var fr = owner.devToolsFrame
+				if (fr == null) {
+					val jcef = owner.jcef ?: return
+
+					val devTools = jcef.browser.devTools
+					fr = DevToolsFrame(owner, devTools)
+					fr.contentPane.add(devTools.uiComponent)
+
+					owner.addPropertyChangeListener("title", fr)
+					owner.devToolsFrame = fr
+
+					val gb = fr.graphicsConfiguration.usableBounds
+					fr.setSize(min(gb.width, owner.width), min(gb.height, owner.height))
+					fr.setLocationBesides(owner)
+				}
+				// Reactivates frame if already visible before.
+				fr.isVisible = true
+			}
+		}
+
+		override fun dispose(): Unit = doOnThreadSwing {
+			val o = owner
+			assert({ o.devToolsFrame === this })
+			o.devToolsFrame = null
+			o.removePropertyChangeListener(this)
+
+			super.dispose()
+			devTools.close(true)
+		}
+	}
+
+	private class InternalKeyboardHandler(private val owner: WvWindowFrame) : CefKeyboardHandlerAdapter() {
+		override fun onKeyEvent(browser: CefBrowser?, e: CefKeyEvent?): Boolean {
+			if (e != null) run<Unit> {
+				val owner = owner
+				val jcef = owner.jcef_ ?: return@run
+				if (jcef.browser !== browser) return@run
+				if (
+					e.windows_key_code == KeyEvent.VK_F12 &&
+					e.modifiers == 0 &&
+					e.type == CefKeyEventType.KEYEVENT_RAWKEYDOWN
+				) {
+					EventQueue.invokeLater {
+						// NOTE: By the time we get here, `owner.jcef` may now
+						// be null (after being torn down).
+						DevToolsFrame.show(owner)
+					}
+					return true
+				}
+			}
+			return false
+		}
 	}
 
 	private class InternalRequestHandler(
@@ -466,6 +550,7 @@ class WvWindowFrame @JvmOverloads constructor(
 		// Synchronize on the same lock used by `CefApp.getInstance()`
 		synchronized(CefApp::class.java) {
 			if (CefApp.getState() < CefAppState.SHUTTING_DOWN) {
+				devToolsFrame?.dispose()
 				jcef.browser.close(true)
 				jcef.client.dispose()
 			}
