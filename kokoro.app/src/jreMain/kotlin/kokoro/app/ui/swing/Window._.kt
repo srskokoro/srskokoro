@@ -1,16 +1,18 @@
 package kokoro.app.ui.swing
 
 import java.awt.Component
+import java.awt.Rectangle
 import java.awt.Window
 
-fun Window.setLocationBesides(c: Component?) {
+@Suppress("NOTHING_TO_INLINE")
+inline fun Window.setLocationBesides(c: Component?) = setLocationBesides(c, null)
+
+fun Window.setLocationBesides(c: Component?, usableBounds: Rectangle?) {
 	run op@{
 		if (c == null) return@op
 		if (!c.isShowing) return@op
-		val ccw = c.getContainingWindow() ?: return@op
-
-		val gc = ccw.graphicsConfiguration
-		val gb = gc.usableBounds
+		val gb = usableBounds ?: (c.getContainingWindow() ?: return@op)
+			.graphicsConfiguration.usableBounds
 
 		val gx = gb.x
 		val gx_end = gx + gb.width

@@ -244,7 +244,8 @@ class WvWindowFrame @JvmOverloads constructor(
 	private class DevToolsFrame private constructor(
 		private val owner: WvWindowFrame,
 		private val devTools: CefBrowser,
-	) : BaseWindowFrame(deriveTitle(owner.title), owner.graphicsConfiguration), PropertyChangeListener {
+		gc: GraphicsConfiguration,
+	) : BaseWindowFrame(deriveTitle(owner.title), gc), PropertyChangeListener {
 
 		override fun propertyChange(e: PropertyChangeEvent) {
 			title = deriveTitle(e.newValue)
@@ -264,15 +265,16 @@ class WvWindowFrame @JvmOverloads constructor(
 					val jcef = owner.jcef ?: return
 
 					val devTools = jcef.browser.devTools
-					fr = DevToolsFrame(owner, devTools)
+					val gc = owner.graphicsConfiguration
+					fr = DevToolsFrame(owner, devTools, gc)
 					fr.contentPane.add(devTools.uiComponent)
 
 					owner.addPropertyChangeListener("title", fr)
 					owner.devToolsFrame = fr
 
-					val gb = fr.graphicsConfiguration.usableBounds
+					val gb = gc.usableBounds
 					fr.setSize(min(gb.width, owner.width), min(gb.height, owner.height))
-					fr.setLocationBesides(owner)
+					fr.setLocationBesides(owner, gb)
 				}
 				// Reactivates frame if already visible before.
 				fr.isVisible = true
