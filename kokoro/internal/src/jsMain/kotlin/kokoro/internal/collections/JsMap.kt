@@ -1,5 +1,6 @@
 package kokoro.internal.collections
 
+@JsName("Map")
 open external class JsMap<K, V> {
 
 	val size: Int
