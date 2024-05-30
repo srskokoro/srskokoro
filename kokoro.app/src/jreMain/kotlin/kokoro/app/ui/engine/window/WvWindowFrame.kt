@@ -4,63 +4,37 @@ import kokoro.app.AppData
 import kokoro.app.Jvm
 import kokoro.app.cacheDir
 import kokoro.app.logsDir
-import kokoro.app.ui.engine.web.Bom
-import kokoro.app.ui.engine.web.PlatformWebRequest
-import kokoro.app.ui.engine.web.WebResource
-import kokoro.app.ui.engine.web.WebResponse
-import kokoro.app.ui.engine.web.WebUri
 import kokoro.app.ui.engine.web.WebUriResolver
+import kokoro.app.ui.engine.window.jcef.CefFocusHandlerImpl
+import kokoro.app.ui.engine.window.jcef.CefKeyboardHandlerImpl
+import kokoro.app.ui.engine.window.jcef.CefRequestHandlerImpl
 import kokoro.app.ui.swing.BaseWindowFrame
 import kokoro.app.ui.swing.ScopedWindowFrame
 import kokoro.app.ui.swing.doOnThreadSwing
-import kokoro.app.ui.swing.jcef.toKeyEvent
 import kokoro.app.ui.swing.put
 import kokoro.app.ui.swing.setLocationBesides
 import kokoro.app.ui.swing.usableBounds
-import kokoro.internal.DEBUG
 import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assert
 import kokoro.internal.assertThreadMain
 import kokoro.internal.checkNotNull
-import kokoro.internal.coroutines.CancellationSignal
 import kokoro.jcef.Jcef
 import kokoro.jcef.JcefConfig
 import kokoro.jcef.JcefStateObserver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runInterruptible
 import kotlinx.coroutines.swing.Swing
-import okio.BufferedSource
-import okio.ByteString
-import okio.buffer
 import org.cef.CefApp
 import org.cef.CefApp.CefAppState
 import org.cef.CefClient
 import org.cef.browser.CefBrowser
-import org.cef.browser.CefFrame
-import org.cef.callback.CefCallback
-import org.cef.handler.CefFocusHandlerAdapter
-import org.cef.handler.CefKeyboardHandler.CefKeyEvent
-import org.cef.handler.CefKeyboardHandlerAdapter
-import org.cef.handler.CefRequestHandlerAdapter
-import org.cef.handler.CefResourceHandler
-import org.cef.handler.CefResourceRequestHandler
-import org.cef.handler.CefResourceRequestHandlerAdapter
-import org.cef.misc.BoolRef
-import org.cef.misc.IntRef
-import org.cef.misc.StringRef
-import org.cef.network.CefRequest
-import org.cef.network.CefResponse
 import java.awt.Component
-import java.awt.Desktop
 import java.awt.Dimension
 import java.awt.EventQueue
 import java.awt.GraphicsConfiguration
-import java.awt.KeyboardFocusManager
 import java.awt.Window
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
@@ -69,9 +43,6 @@ import java.awt.event.WindowEvent
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
 import java.io.File
-import java.lang.invoke.VarHandle
-import java.net.URI
-import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.JComponent
 import javax.swing.KeyStroke
 import kotlin.coroutines.CoroutineContext
@@ -205,35 +176,7 @@ class WvWindowFrame @JvmOverloads constructor(
 		val client = Jcef.app.createClient()
 		client.addRequestHandler(CefRequestHandlerImpl(wur, scope))
 		client.addKeyboardHandler(CefKeyboardHandlerImpl(this))
-		// TODO Extract into a private class. Name it `CefFocusHandlerImpl`.
-		client.addFocusHandler(object : CefFocusHandlerAdapter(), Runnable {
-			override fun onGotFocus(browser: CefBrowser) {
-				val focusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner
-				if (focusOwner != null) {
-					val c = browser.uiComponent
-					/** Ensure a permanent focus owner once we clear the focus.
-					 * @see KeyboardFocusManager.getPermanentFocusOwner */
-					if (focusOwner !== c) EventQueue.invokeLater { c.requestFocusInWindow() }
-					// The following would clear any focus owner.
-					if (clearingGlobalFocus.compareAndSet(false, true)) EventQueue.invokeLater(this)
-				}
-			}
-
-			override fun run() {
-				// Necessary for the JCEF browser to play nicely with other AWT
-				// components; otherwise, focus and traversal of AWT components
-				// won't work properly. That is, there must be no focused AWT
-				// component while a JCEF browser has focus.
-				KeyboardFocusManager.getCurrentKeyboardFocusManager().clearGlobalFocusOwner()
-				EventQueue.invokeLater(clearingGlobalFocus)
-			}
-
-			// NOTE: The boolean value represents "dispatched" when `true`, and
-			// "undispatched" when `false`.
-			private val clearingGlobalFocus = object : AtomicBoolean(), Runnable {
-				override fun run() = set(false) // Allow redispatch
-			}
-		})
+		client.addFocusHandler(CefFocusHandlerImpl())
 
 		val browser = client.createBrowser(initUrl.also { initUrl = null }, false, false)
 		val component = browser.uiComponent
@@ -289,288 +232,6 @@ class WvWindowFrame @JvmOverloads constructor(
 
 			super.dispose()
 			devTools.close(true)
-		}
-	}
-
-	private class CefKeyboardHandlerImpl(private val owner: WvWindowFrame) : CefKeyboardHandlerAdapter() {
-		override fun onKeyEvent(browser: CefBrowser?, e: CefKeyEvent?): Boolean {
-			if (e != null) run<Unit> {
-				val owner = owner
-				val jcef = owner.jcef_ ?: return@run
-				if (jcef.browser !== browser) return@run
-				// Allow Swing/AWT to see and intercept CEF key events.
-				// - See also, https://www.magpcss.org/ceforum/viewtopic.php?f=17&t=17305
-				val ke = e.toKeyEvent(owner)
-				EventQueue.invokeLater {
-					// NOTE: By the time we get here, `owner.jcef` may now be
-					// null, which is as it should be after being torn down.
-					owner.jcef?.component?.parent?.let { c ->
-						val kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager()
-						// NOTE: The following treats `c` as if it is the focus
-						// owner (even if it isn't).
-						kfm.redispatchEvent(c, ke)
-					}
-				}
-				return true
-			}
-			return false
-		}
-	}
-
-	private class CefRequestHandlerImpl(
-		wur: WebUriResolver,
-		scope: CoroutineScope,
-	) : CefRequestHandlerAdapter() {
-		private val navigationResourceRequestHandler = CefResourceRequestHandlerImpl(isNavigation = true, wur, scope)
-		private val generalResourceRequestHandler = CefResourceRequestHandlerImpl(isNavigation = false, wur, scope)
-
-		override fun getResourceRequestHandler(
-			browser: CefBrowser?, frame: CefFrame?, request: CefRequest?,
-			isNavigation: Boolean, isDownload: Boolean,
-			requestInitiator: String?, disableDefaultHandling: BoolRef?,
-		): CefResourceRequestHandler =
-			if (isNavigation) navigationResourceRequestHandler
-			else generalResourceRequestHandler
-
-		// --
-
-		private fun launchUrlExternally(url: String) {
-			if (Desktop.isDesktopSupported()) try {
-				val desktop = Desktop.getDesktop()
-				if (desktop.isSupported(Desktop.Action.BROWSE))
-					desktop.browse(URI(url))
-			} catch (ex: Throwable) {
-				if (DEBUG) throw ex
-				ex.printStackTrace()
-			}
-		}
-
-		override fun onBeforeBrowse(
-			browser: CefBrowser?,
-			frame: CefFrame?,
-			request: CefRequest?,
-			user_gesture: Boolean,
-			is_redirect: Boolean,
-		): Boolean {
-			if (frame == null || !frame.isMain || !user_gesture) {
-				// TIP: See also `Sec-Fetch-User` request header -- https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-User
-				return false
-			}
-			if (request != null) {
-				launchUrlExternally(request.url)
-			}
-			return true // Override default behavior
-		}
-
-		override fun onOpenURLFromTab(
-			browser: CefBrowser?,
-			frame: CefFrame?,
-			target_url: String?,
-			user_gesture: Boolean,
-		): Boolean {
-			if (target_url != null) {
-				launchUrlExternally(target_url)
-			}
-			return true // Override default behavior
-		}
-	}
-
-	private class CefResourceRequestHandlerImpl(
-		private val isNavigation: Boolean,
-		private val wur: WebUriResolver,
-		private val scope: CoroutineScope,
-	) : CefResourceRequestHandlerAdapter() {
-		override fun getResourceHandler(browser: CefBrowser?, frame: CefFrame?, request: CefRequest?): CefResourceHandler? {
-			if (request != null) {
-				val uri = WebUri(request.url)
-				val h = wur.resolve(uri)
-				if (h != null) return CefResourceHandlerImpl(
-					PlatformWebRequest(request, uri),
-					isNavigation = isNavigation,
-					h, scope,
-				)
-			}
-			return null
-		}
-	}
-
-	private class CefResourceHandlerImpl(
-		private val platformRequest: PlatformWebRequest,
-		private val isNavigation: Boolean,
-		private val handler: WebResource,
-		private val scope: CoroutineScope,
-	) : CefResourceHandler {
-		private var responseContentExhausted: Boolean = false // Guarded by `responseContent`
-		private var responseContentBom: ByteString? = null // Unguarded
-		private var responseContent: BufferedSource? = null
-		private var response: WebResponse? = null
-
-		suspend fun initWebResponse() {
-			val r = handler.apply(platformRequest) // NOTE: Suspending call
-			response = r
-			responseContent = r.content.buffer()
-		}
-
-		override fun processRequest(request: CefRequest?, callback: CefCallback): Boolean {
-			@OptIn(ExperimentalCoroutinesApi::class)
-			scope.launch(Dispatchers.IO, start = CoroutineStart.ATOMIC) {
-				try {
-					initWebResponse()
-					VarHandle.releaseFence()
-					// ^ NOTE: We don't trust that the call below (or its
-					// internals) won't be reordered before the code above.
-					callback.Continue()
-					return@launch // Skip code below
-				} catch (ex: Throwable) {
-					callback.cancel()
-					throw ex
-				}
-			}
-			return true // Handled
-		}
-
-		override fun getResponseHeaders(out: CefResponse, contentLengthOut: IntRef, redirectUrl: StringRef?) {
-			val r = this.response!!
-
-			out.status = r.status
-			out.setHeaderMap(r.headers)
-
-			var contentLength = r.contentLength
-			var contentType = r.mimeType
-			if (contentType != null) {
-				val charset = r.charset
-				if (charset != null) run<Unit> {
-					// NOTE: For the MIME types listed below, CEF currently
-					// doesn't support an explicit `charset` parameter for
-					// custom responses. The following mitigates this issue by
-					// automatically supplying a BOM.
-					//
-					// See also,
-					// - https://www.magpcss.org/ceforum/viewtopic.php?f=10&t=894
-					// - https://github.com/cefsharp/CefSharp/issues/689
-					if (isNavigation) when (contentType) {
-						"application/json",
-						"application/xhtml+xml",
-						"application/xml",
-						"text/css",
-						"text/html",
-						"text/javascript",
-						"text/plain",
-						-> Bom.forMediaCharset(charset)?.let { bom ->
-							// NOTE: By default, JCEF uses "ISO-8859-1" (which
-							// is a superset of "US-ASCII"). Also, "US-ASCII" is
-							// the default charset for the "text" MIME type --
-							// see, https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types#structure_of_a_mime_type
-							// - See also, https://github.com/cefsharp/CefSharp/issues/689#issuecomment-67086264
-							val bom_n = bom.size
-							if (bom_n > 0) {
-								this.responseContentBom = bom
-								if (contentLength >= 0)
-									contentLength += bom_n
-							}
-							return@run // Skip code below
-						}
-					}
-					contentType = "$contentType; charset=$charset"
-				}
-				// NOTE: Even if we set a "Content-Type" header, the following
-				// `CefResponse.setMimeType()` configuration will overwrite it.
-				// Furthermore, CEF relies on `CefResponse.setMimeType()`, so
-				// setting only the "Content-Type" header will still have no
-				// effect even if we omit the `CefResponse.setMimeType()` call.
-				out.mimeType = contentType
-			}
-
-			if (contentLength > 0) {
-				if (contentLength <= Int.MAX_VALUE) {
-					contentLengthOut.set(contentLength.toInt())
-				} else {
-					contentLengthOut.set(-1)
-					out.setHeaderByName(
-						"content-length",
-						contentLength.toString(),
-						/* overwrite = */ true,
-					)
-				}
-			} else {
-				// NOTE: Even if `contentLength` is zero, set this to `-1`, so
-				// as to ensure `readResponse()` is still called.
-				contentLengthOut.set(-1)
-				if (contentLength == 0L) {
-					out.setHeaderByName(
-						"content-length", "0",
-						/* overwrite = */ true,
-					)
-				}
-			}
-		}
-
-		override fun readResponse(dataOut: ByteArray, bytesToRead: Int, bytesRead: IntRef, callback: CefCallback): Boolean {
-			val source = responseContent!!
-
-			synchronized(source) {
-				assert({ source.buffer.isOpen }) // NOTE: `source.buffer` never really closes.
-				val transferred = source.buffer.read(dataOut, 0, bytesToRead)
-				if (transferred > 0) {
-					bytesRead.set(transferred)
-					return true // Not done yet
-				} else if (!responseContentExhausted) {
-					bytesRead.set(0)
-					// Skip below
-				} else {
-					source.close()
-					return false // Done
-				}
-			}
-
-			val bom = responseContentBom
-			if (bom != null) responseContentBom = null
-
-			@OptIn(ExperimentalCoroutinesApi::class)
-			scope.launch(Dispatchers.IO, start = CoroutineStart.ATOMIC) {
-				try {
-					runInterruptible {
-						synchronized(source) {
-							if (!source.isOpen) {
-								responseContentExhausted = true
-								throw CancellationSignal()
-							}
-
-							if (bom != null) {
-								val bom_n = bom.size
-								val b = source.buffer
-								b.write(bom, 0, bom_n) // Prepend BOM
-								if (
-									source.request(bom_n * 2L) &&
-									b.rangeEquals(bom_n.toLong(), bom, 0, bom_n)
-								) {
-									// BOM was already present
-									b.skip(bom_n.toLong())
-								}
-							}
-
-							if (!source.request(bytesToRead.toLong())) {
-								// Already exhausted
-								responseContentExhausted = true
-							}
-						}
-					}
-					callback.Continue()
-					return@launch // Skip code below
-				} catch (ex: Throwable) {
-					callback.cancel()
-					throw ex
-				}
-			}
-			return true // Not done yet
-		}
-
-		override fun cancel() {
-			responseContent?.let {
-				synchronized(it) {
-					it.close()
-				}
-			}
 		}
 	}
 
