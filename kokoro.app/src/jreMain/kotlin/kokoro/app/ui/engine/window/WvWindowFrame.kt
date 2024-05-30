@@ -203,9 +203,9 @@ class WvWindowFrame @JvmOverloads constructor(
 		// there is no other way to force that without also creating at least
 		// one `CefClient`.
 		val client = Jcef.app.createClient()
-		client.addRequestHandler(InternalRequestHandler(wur, scope))
-		client.addKeyboardHandler(JcefKeyboardHandler(this))
-		// TODO Extract into a private class. Name it `JcefFocusHandler`.
+		client.addRequestHandler(CefRequestHandlerImpl(wur, scope))
+		client.addKeyboardHandler(CefKeyboardHandlerImpl(this))
+		// TODO Extract into a private class. Name it `CefFocusHandlerImpl`.
 		client.addFocusHandler(object : CefFocusHandlerAdapter(), Runnable {
 			override fun onGotFocus(browser: CefBrowser) {
 				val focusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner
@@ -292,7 +292,7 @@ class WvWindowFrame @JvmOverloads constructor(
 		}
 	}
 
-	private class JcefKeyboardHandler(private val owner: WvWindowFrame) : CefKeyboardHandlerAdapter() {
+	private class CefKeyboardHandlerImpl(private val owner: WvWindowFrame) : CefKeyboardHandlerAdapter() {
 		override fun onKeyEvent(browser: CefBrowser?, e: CefKeyEvent?): Boolean {
 			if (e != null) run<Unit> {
 				val owner = owner
@@ -317,12 +317,12 @@ class WvWindowFrame @JvmOverloads constructor(
 		}
 	}
 
-	private class InternalRequestHandler(
+	private class CefRequestHandlerImpl(
 		wur: WebUriResolver,
 		scope: CoroutineScope,
 	) : CefRequestHandlerAdapter() {
-		private val navigationResourceRequestHandler = InternalResourceRequestHandler(isNavigation = true, wur, scope)
-		private val generalResourceRequestHandler = InternalResourceRequestHandler(isNavigation = false, wur, scope)
+		private val navigationResourceRequestHandler = CefResourceRequestHandlerImpl(isNavigation = true, wur, scope)
+		private val generalResourceRequestHandler = CefResourceRequestHandlerImpl(isNavigation = false, wur, scope)
 
 		override fun getResourceRequestHandler(
 			browser: CefBrowser?, frame: CefFrame?, request: CefRequest?,
@@ -375,7 +375,7 @@ class WvWindowFrame @JvmOverloads constructor(
 		}
 	}
 
-	private class InternalResourceRequestHandler(
+	private class CefResourceRequestHandlerImpl(
 		private val isNavigation: Boolean,
 		private val wur: WebUriResolver,
 		private val scope: CoroutineScope,
@@ -384,7 +384,7 @@ class WvWindowFrame @JvmOverloads constructor(
 			if (request != null) {
 				val uri = WebUri(request.url)
 				val h = wur.resolve(uri)
-				if (h != null) return InternalResourceHandler(
+				if (h != null) return CefResourceHandlerImpl(
 					PlatformWebRequest(request, uri),
 					isNavigation = isNavigation,
 					h, scope,
@@ -394,7 +394,7 @@ class WvWindowFrame @JvmOverloads constructor(
 		}
 	}
 
-	private class InternalResourceHandler(
+	private class CefResourceHandlerImpl(
 		private val platformRequest: PlatformWebRequest,
 		private val isNavigation: Boolean,
 		private val handler: WebResource,
