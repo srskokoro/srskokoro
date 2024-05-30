@@ -304,10 +304,8 @@ class WvWindowFrame @JvmOverloads constructor(
 					// null, which is as it should be after being torn down.
 					owner.jcef?.component?.parent?.let { c ->
 						val kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager()
-						// NOTE: The following treats `c` as if it is currently
-						// focused (even if it isn't). This guarantees that even
-						// `JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT` will
-						// still be usable.
+						// NOTE: The following treats `c` as if it is the focus
+						// owner (even if it isn't).
 						kfm.redispatchEvent(c, ke)
 					}
 				}
