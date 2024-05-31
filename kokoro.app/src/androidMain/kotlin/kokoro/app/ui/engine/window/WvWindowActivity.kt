@@ -37,7 +37,7 @@ open class WvWindowActivity : ComponentActivity() {
 
 		// --
 
-		private const val SS_OLD_STATE_ENTRIES = "oldStateEntries"
+		private const val SS_oldStateEntries = "oldStateEntries"
 
 		private fun <T> WvWindowBusBinding<*, T>.route(
 			window: WvWindow, encoded: SerializationEncoded,
@@ -70,7 +70,7 @@ open class WvWindowActivity : ComponentActivity() {
 			handle = h
 			h.attachPeer(this)
 
-			val o = savedInstanceState?.getBundle(SS_OLD_STATE_ENTRIES) ?: Bundle.EMPTY
+			val o = savedInstanceState?.getBundle(SS_oldStateEntries) ?: Bundle.EMPTY
 			val wc = WvContextImpl(h, this, oldStateEntries = o)
 			val w = f.init(wc, savedInstanceState == null) // May throw
 			window = w
@@ -181,7 +181,7 @@ open class WvWindowActivity : ComponentActivity() {
 			(context as? WvContextImpl)
 		}?.run {
 			val o = encodeStateEntries()
-			outState.putBundle(SS_OLD_STATE_ENTRIES, o)
+			outState.putBundle(SS_oldStateEntries, o)
 		}
 	}
 
