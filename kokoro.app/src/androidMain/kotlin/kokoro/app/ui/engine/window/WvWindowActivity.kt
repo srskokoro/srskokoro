@@ -12,6 +12,7 @@ import kokoro.app.ui.engine.web.PlatformWebRequest
 import kokoro.app.ui.engine.web.WebUri
 import kokoro.app.ui.engine.web.WebUriResolver
 import kokoro.app.ui.engine.web.toWebkit
+import kokoro.internal.DEBUG
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assert
 import kokoro.internal.assertThreadMain
@@ -38,6 +39,7 @@ open class WvWindowActivity : ComponentActivity() {
 		// --
 
 		private const val SS_oldStateEntries = "oldStateEntries"
+		private const val SS_webView = "webView"
 
 		private fun <T> WvWindowBusBinding<*, T>.route(
 			window: WvWindow, encoded: SerializationEncoded,
@@ -70,14 +72,30 @@ open class WvWindowActivity : ComponentActivity() {
 			handle = h
 			h.attachPeer(this)
 
-			val o = savedInstanceState?.getBundle(SS_oldStateEntries) ?: Bundle.EMPTY
-			val wc = WvContextImpl(h, this, oldStateEntries = o)
-			val w = f.init(wc, savedInstanceState == null) // May throw
+			val isInitialState: Boolean
+			val webViewState: Bundle?
+			val oldStateEntries: Bundle
+
+			if (savedInstanceState != null) {
+				isInitialState = false
+				webViewState = savedInstanceState.getBundle(SS_webView) // Null if `WebView.saveState()` fails
+				oldStateEntries = savedInstanceState.getBundle(SS_oldStateEntries) ?: kotlin.run {
+					if (DEBUG) throw NullPointerException(::SS_oldStateEntries.name)
+					Bundle.EMPTY
+				}
+			} else {
+				isInitialState = true
+				webViewState = null
+				oldStateEntries = Bundle.EMPTY
+			}
+
+			val wc = WvContextImpl(h, this, oldStateEntries)
+			val w = f.init(wc, isInitialState) // May throw
 			window = w
 
 			wc.scope.launch(Dispatchers.Main, start = CoroutineStart.UNDISPATCHED) {
 				val wur = w.initWebUriResolver() // NOTE: Suspending call
-				setUpWebView(wur, w.context.scope)
+				setUpWebView(wur, w.context.scope, webViewState)
 			}
 			return // Success. Skip code below.
 		}
@@ -106,22 +124,29 @@ open class WvWindowActivity : ComponentActivity() {
 	}
 
 	@MainThread
-	private fun setUpWebView(wur: WebUriResolver, scope: CoroutineScope) {
+	private fun setUpWebView(wur: WebUriResolver, scope: CoroutineScope, webViewState: Bundle?) {
 		assertThreadMain()
 		assert({ wv == null })
 
 		val wv = WebView(this)
+		if (webViewState != null) {
+			// Implementation reference:
+			// - https://github.com/KevinnZou/compose-webview/blob/0.33.6/web/src/main/java/com/kevinnzou/web/WebView.kt#L207
+			// - https://github.com/google/accompanist/pull/1557
+			wv.restoreState(webViewState)
+		}
+
 		wv.webViewClient = InternalWebViewClient(this, wur, scope)
 
 		val ws = wv.settings
 		@SuppressLint("SetJavaScriptEnabled")
 		ws.javaScriptEnabled = true
 
-		wv.loadUrl(initUrl.also { initUrl = null } ?: "")
-
-		// TODO! Properly handle persistent web view state.
-		//  - See, https://github.com/google/accompanist/issues/1178
-		//  - See also, https://www.reddit.com/r/androiddev/comments/fqwohj/
+		val initUrl = this.initUrl
+		if (initUrl != null) {
+			this.initUrl = null
+			wv.loadUrl(initUrl)
+		}
 
 		this.wv = wv
 		setContentView(wv)
@@ -182,6 +207,11 @@ open class WvWindowActivity : ComponentActivity() {
 		}?.run {
 			val o = encodeStateEntries()
 			outState.putBundle(SS_oldStateEntries, o)
+		}
+		wv?.run {
+			val o = Bundle()
+			if (saveState(o) != null)
+				outState.putBundle(SS_webView, o)
 		}
 	}
 
