@@ -17,6 +17,9 @@ open external class JsMap<K, V> {
 
 	operator fun set(key: K, value: V)
 
+	@JsName("set")
+	fun put(key: K, value: V)
+
 	@JsName("delete")
 	fun remove(key: K): Boolean
 
