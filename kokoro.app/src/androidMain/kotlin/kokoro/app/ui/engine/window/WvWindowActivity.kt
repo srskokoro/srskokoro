@@ -72,7 +72,7 @@ open class WvWindowActivity : ComponentActivity() {
 
 			val o = savedInstanceState?.getBundle(EXTRAS_KEY_to_OLD_STATE_ENTRIES) ?: Bundle.EMPTY
 			val wc = WvContextImpl(h, this, oldStateEntries = o)
-			val w = f.init(wc) // May throw
+			val w = f.init(wc, savedInstanceState == null) // May throw
 			window = w
 
 			wc.scope.launch(Dispatchers.Main, start = CoroutineStart.UNDISPATCHED) {

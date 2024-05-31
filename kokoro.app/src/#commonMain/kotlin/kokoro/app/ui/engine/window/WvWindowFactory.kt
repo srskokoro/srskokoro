@@ -8,14 +8,14 @@ import kokoro.internal.check
 fun interface WvWindowFactory<out W : WvWindow> {
 
 	@MainThread
-	fun init(context: WvContext): W
+	fun init(context: WvContext, isInitialState: Boolean): W
 
 	companion object {
 
 		/**
 		 * @see WvWindowFactoryId.NOTHING
 		 */
-		val NOTHING: WvWindowFactory<Nothing> = WvWindowFactory {
+		val NOTHING: WvWindowFactory<Nothing> = WvWindowFactory { _, _ ->
 			throw UnsupportedOperationException(
 				"The ${::NOTHING.name} factory cannot be used to create windows."
 			)

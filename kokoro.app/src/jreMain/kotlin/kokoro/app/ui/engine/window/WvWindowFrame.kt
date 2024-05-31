@@ -95,7 +95,7 @@ class WvWindowFrame @JvmOverloads constructor(
 		})
 
 		val wc = WvContextImpl(h, this)
-		val w = f.init(wc) // May throw
+		val w = f.init(wc, true) // May throw
 		window = w // Set now so that we don't get called again by `onLaunch()`
 
 		wc.scope.launch(Dispatchers.Swing, start = CoroutineStart.UNDISPATCHED) {
