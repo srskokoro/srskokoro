@@ -138,6 +138,7 @@ class WvWindowFrame @JvmOverloads constructor(
 		@JvmField val component: Component,
 	)
 
+	@Volatile
 	@PublishedApi @JvmField
 	@nook internal var jcef_: JcefSetup? = null
 
