@@ -3,4 +3,8 @@ package kokoro.app.ui
 import kokoro.app.ui.engine.window.WvContext
 import kokoro.app.ui.engine.window.WvWindow
 
-class DummyWindow(context: WvContext) : WvWindow(context)
+class DummyWindow(context: WvContext) : WvWindow(context) {
+	init {
+		context.load("chrome://about/")
+	}
+}
