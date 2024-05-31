@@ -5,17 +5,32 @@ import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
 import kokoro.internal.check
 
-fun interface WvWindowFactory<out W : WvWindow> {
+/**
+ * @see WvWindowFactory.from
+ */
+interface WvWindowFactory<out W : WvWindow> {
 
 	@MainThread
 	fun init(context: WvContext, isInitialState: Boolean): W
 
 	companion object {
 
+		inline fun <W : WvWindow> from(
+			crossinline factory: (context: WvContext, isInitialState: Boolean) -> W,
+		): WvWindowFactory<W> = object : WvWindowFactory<W> {
+			override fun init(context: WvContext, isInitialState: Boolean): W = factory(context, isInitialState)
+		}
+
+		inline fun <W : WvWindow> from(
+			crossinline factory: (context: WvContext) -> W,
+		): WvWindowFactory<W> = object : WvWindowFactory<W> {
+			override fun init(context: WvContext, isInitialState: Boolean): W = factory(context)
+		}
+
 		/**
 		 * @see WvWindowFactoryId.NOTHING
 		 */
-		val NOTHING: WvWindowFactory<Nothing> = WvWindowFactory { _, _ ->
+		val NOTHING: WvWindowFactory<Nothing> = from { _, _ ->
 			throw UnsupportedOperationException(
 				"The ${::NOTHING.name} factory cannot be used to create windows."
 			)

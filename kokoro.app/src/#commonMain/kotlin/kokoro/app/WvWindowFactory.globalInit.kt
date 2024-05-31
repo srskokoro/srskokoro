@@ -8,5 +8,5 @@ import kokoro.internal.annotation.MainThread
 @Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
 @MainThread
 fun WvWindowFactory.Companion.globalInit() {
-	register(::DummyWindow)
+	register(from(::DummyWindow))
 }
