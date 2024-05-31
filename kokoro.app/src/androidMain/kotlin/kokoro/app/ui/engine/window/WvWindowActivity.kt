@@ -136,7 +136,7 @@ open class WvWindowActivity : ComponentActivity() {
 			wv.restoreState(webViewState)
 		}
 
-		wv.webViewClient = InternalWebViewClient(this, wur, scope)
+		wv.webViewClient = WebViewClientImpl(this, wur, scope)
 
 		val ws = wv.settings
 		@SuppressLint("SetJavaScriptEnabled")
@@ -152,7 +152,7 @@ open class WvWindowActivity : ComponentActivity() {
 		setContentView(wv)
 	}
 
-	private class InternalWebViewClient(
+	private class WebViewClientImpl(
 		private val activity: WvWindowActivity,
 		private val wur: WebUriResolver,
 		scope: CoroutineScope,
