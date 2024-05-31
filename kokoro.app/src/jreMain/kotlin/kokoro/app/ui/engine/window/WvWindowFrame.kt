@@ -33,7 +33,6 @@ import org.cef.CefClient
 import org.cef.browser.CefBrowser
 import java.awt.Component
 import java.awt.Dimension
-import java.awt.EventQueue
 import java.awt.GraphicsConfiguration
 import java.awt.Window
 import java.awt.event.ComponentAdapter
@@ -174,7 +173,7 @@ class WvWindowFrame @JvmOverloads constructor(
 		// there is no other way to force that without also creating at least
 		// one `CefClient`.
 		val client = Jcef.app.createClient()
-		client.addRequestHandler(CefRequestHandlerImpl(wur, scope))
+		client.addRequestHandler(CefRequestHandlerImpl(this, wur, scope))
 		client.addKeyboardHandler(CefKeyboardHandlerImpl(this))
 		client.addFocusHandler(CefFocusHandlerImpl())
 
@@ -182,6 +181,12 @@ class WvWindowFrame @JvmOverloads constructor(
 		val component = browser.uiComponent
 		jcef_ = JcefSetup(client, browser, component)
 		contentPane.add(component)
+	}
+
+	@Suppress("NOTHING_TO_INLINE")
+	@nook inline fun isMainBrowser(browser: CefBrowser?): Boolean {
+		val jcef = jcef_
+		return jcef != null && jcef.browser === browser
 	}
 
 	private class DevToolsFrame private constructor(

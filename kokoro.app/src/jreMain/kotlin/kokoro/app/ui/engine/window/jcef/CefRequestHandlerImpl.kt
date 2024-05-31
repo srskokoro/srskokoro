@@ -1,6 +1,7 @@
 package kokoro.app.ui.engine.window.jcef
 
 import kokoro.app.ui.engine.web.WebUriResolver
+import kokoro.app.ui.engine.window.WvWindowFrame
 import kokoro.app.ui.engine.window.nook
 import kokoro.internal.DEBUG
 import kotlinx.coroutines.CoroutineScope
@@ -14,6 +15,7 @@ import java.awt.Desktop
 import java.net.URI
 
 @nook internal class CefRequestHandlerImpl(
+	private val owner: WvWindowFrame,
 	wur: WebUriResolver,
 	scope: CoroutineScope,
 ) : CefRequestHandlerAdapter() {
@@ -24,9 +26,10 @@ import java.net.URI
 		browser: CefBrowser?, frame: CefFrame?, request: CefRequest?,
 		isNavigation: Boolean, isDownload: Boolean,
 		requestInitiator: String?, disableDefaultHandling: BoolRef?,
-	): CefResourceRequestHandler =
+	): CefResourceRequestHandler? = if (owner.isMainBrowser(browser)) {
 		if (isNavigation) navigationResourceRequestHandler
 		else generalResourceRequestHandler
+	} else null
 
 	// --
 
@@ -48,7 +51,7 @@ import java.net.URI
 		user_gesture: Boolean,
 		is_redirect: Boolean,
 	): Boolean {
-		if (frame == null || !frame.isMain || !user_gesture) {
+		if (!owner.isMainBrowser(browser) || frame == null || !frame.isMain || !user_gesture) {
 			// TIP: See also `Sec-Fetch-User` request header -- https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-User
 			return false
 		}
