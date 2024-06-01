@@ -40,7 +40,7 @@ dependencyResolutionManagement {
 	repositories {
 		mavenCentral()
 		google()
-		maven("https://jitpack.io")
+		maven("https://jitpack.io/")
 
 		// Download arbitrary files from GitHub releases.
 		// - See, https://stackoverflow.com/a/34327202
