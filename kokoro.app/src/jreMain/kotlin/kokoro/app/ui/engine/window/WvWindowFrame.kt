@@ -250,13 +250,12 @@ class WvWindowFrame @JvmOverloads constructor(
 		contentPane.remove(jcef.component)
 		jcef_ = null
 
-		// Synchronize on the same lock used by `CefApp.getInstance()`
-		synchronized(CefApp::class.java) {
-			if (CefApp.getState() < CefAppState.SHUTTING_DOWN) {
-				devToolsFrame?.dispose()
-				jcef.browser.close(true)
-				jcef.client.dispose()
-			}
+		// We don't care if the following check happens in a race. Locking might
+		// entail a deadlock, thus we avoid that.
+		if (CefApp.getState() < CefAppState.SHUTTING_DOWN) {
+			devToolsFrame?.dispose()
+			jcef.browser.close(true)
+			jcef.client.dispose()
 		}
 	}
 
