@@ -345,6 +345,7 @@ class WvWindowFrame @JvmOverloads constructor(
 
 private fun Jcef_globalInit() {
 	Jcef.init(JcefConfig(
+		persistData = false,
 		cacheDir = File(AppData.Jvm.cacheDir, "jcef"),
 		logFile = File(AppData.Jvm.logsDir, "jcef.debug.log").also {
 			if (!it.isFile || it.length() > /* 5 MiB */ 5 * 1024 * 1024) {

@@ -42,6 +42,7 @@ class JcefConfig {
 		customSchemes: List<JcefCustomScheme> = emptyList(),
 		stateObservers: List<JcefStateObserver> = emptyList(),
 
+		persistData: Boolean = false,
 		cacheDir: File,
 
 		// NOTE: This is deliberately not nullable since, even if logging is
@@ -61,8 +62,9 @@ class JcefConfig {
 
 		this.cefSettings = CefSettings().also { out ->
 			cacheDir.absolutePath.let {
-				out.cache_path = it
 				out.root_cache_path = it
+				if (persistData)
+					out.cache_path = it
 			}
 
 			out.log_file = logFile.absolutePath

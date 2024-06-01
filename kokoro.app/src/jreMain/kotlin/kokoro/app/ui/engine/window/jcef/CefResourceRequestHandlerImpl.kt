@@ -7,6 +7,7 @@ import kokoro.app.ui.engine.window.nook
 import kotlinx.coroutines.CoroutineScope
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
+import org.cef.handler.CefCookieAccessFilter
 import org.cef.handler.CefResourceHandler
 import org.cef.handler.CefResourceRequestHandlerAdapter
 import org.cef.network.CefRequest
@@ -16,6 +17,7 @@ import org.cef.network.CefRequest
 	private val wur: WebUriResolver,
 	private val scope: CoroutineScope,
 ) : CefResourceRequestHandlerAdapter() {
+
 	override fun getResourceHandler(browser: CefBrowser?, frame: CefFrame?, request: CefRequest?): CefResourceHandler? {
 		if (request != null) {
 			val uri = WebUri(request.url)
@@ -27,5 +29,9 @@ import org.cef.network.CefRequest
 			)
 		}
 		return null
+	}
+
+	override fun getCookieAccessFilter(browser: CefBrowser?, frame: CefFrame?, request: CefRequest?): CefCookieAccessFilter {
+		return CefCookiesDisabled
 	}
 }

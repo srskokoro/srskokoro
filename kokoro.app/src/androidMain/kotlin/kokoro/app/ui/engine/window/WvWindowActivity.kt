@@ -3,6 +3,7 @@ package kokoro.app.ui.engine.window
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.webkit.CookieManager
 import android.webkit.WebView
 import androidx.activity.ComponentActivity
 import kokoro.app.ui.engine.web.WebUriResolver
@@ -39,6 +40,12 @@ open class WvWindowActivity : ComponentActivity() {
 			window: WvWindow, encoded: SerializationEncoded,
 		) {
 			route(window) { bus -> encoded.decode(bus.serialization) }
+		}
+
+		init {
+			val cm = CookieManager.getInstance()
+			// See also, https://stackoverflow.com/q/5404274
+			cm.setAcceptCookie(false)
 		}
 	}
 
@@ -135,6 +142,11 @@ open class WvWindowActivity : ComponentActivity() {
 		val ws = wv.settings
 		@SuppressLint("SetJavaScriptEnabled")
 		ws.javaScriptEnabled = true
+
+		// See, https://stackoverflow.com/q/9819325
+		// - See also, https://stackoverflow.com/q/5404274
+		assert({ !ws.domStorageEnabled }) { "Web storage should've been disabled by default (according to the docs)." }
+		assert({ !CookieManager.getInstance().acceptCookie() }) { "Cookie persistence should've been disabled already by the static initializer." }
 
 		val initUrl = this.initUrl
 		if (initUrl != null) {
