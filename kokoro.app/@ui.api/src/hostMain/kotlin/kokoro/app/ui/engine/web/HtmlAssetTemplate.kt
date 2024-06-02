@@ -81,7 +81,7 @@ open class HtmlAssetTemplate : WebAssetTemplate {
 	suspend inline fun HEAD.apply(spec: WebAssetSpec) = apply(spec, this)
 
 	open suspend fun apply(spec: WebAssetSpec, head: HEAD) {
-		head.title(spec.propOrNull("title") ?: "&#xFEFF;")
+		head.title(spec.query("title") ?: "&#xFEFF;")
 	}
 
 	@Suppress("NOTHING_TO_INLINE")

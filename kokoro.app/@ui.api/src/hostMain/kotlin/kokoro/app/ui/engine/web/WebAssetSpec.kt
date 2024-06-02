@@ -9,10 +9,12 @@ interface WebAssetSpec {
 		@JvmField val EMPTY = WebAssetSpec()
 	}
 
-	fun propOrNull(key: String): String?
+	/** @see prop */
+	fun query(key: String): String?
 }
 
-fun WebAssetSpec.prop(key: String): String = propOrNull(key) ?: throw E_NoSuchProp(key)
+/** @see query */
+fun WebAssetSpec.prop(key: String): String = query(key) ?: throw E_NoSuchProp(key)
 
 private fun E_NoSuchProp(key: String) = NoSuchElementException("key=$key")
 
@@ -30,20 +32,20 @@ operator fun WebAssetSpec.plus(other: WebAssetSpec): WebAssetSpec = CombinedWebA
 inline operator fun WebAssetSpec.plus(crossinline other: (key: String) -> String?) = plus(WebAssetSpec(other))
 
 inline fun WebAssetSpec(crossinline block: (key: String) -> String?): WebAssetSpec = object : WebAssetSpec {
-	override fun propOrNull(key: String): String? = block(key)
+	override fun query(key: String): String? = block(key)
 }
 
 // --
 
 private class EmptyWebAssetSpec : WebAssetSpec {
-	override fun propOrNull(key: String): String? = null
+	override fun query(key: String): String? = null
 }
 
 private class MapWebAssetSpec(
 	private val map: Map<in String, String?>,
 ) : WebAssetSpec {
 
-	override fun propOrNull(key: String): String? = map[key]
+	override fun query(key: String): String? = map[key]
 
 	override fun toString() = "${super.toString()}(map=$map)"
 }
@@ -52,7 +54,7 @@ private class ScatterMapWebAssetSpec(
 	private val map: ScatterMap<in String, out String?>,
 ) : WebAssetSpec {
 
-	override fun propOrNull(key: String): String? = map[key]
+	override fun query(key: String): String? = map[key]
 
 	override fun toString() = "${super.toString()}(map=$map)"
 }
@@ -61,6 +63,6 @@ private data class CombinedWebAssetSpec(
 	private val a: WebAssetSpec,
 	private val b: WebAssetSpec,
 ) : WebAssetSpec {
-	override fun propOrNull(key: String): String? =
-		a.propOrNull(key) ?: b.propOrNull(key)
+	override fun query(key: String): String? =
+		a.query(key) ?: b.query(key)
 }
