@@ -4,7 +4,7 @@ import android.webkit.WebResourceRequest
 
 class PlatformWebRequest(
 	private val impl: WebResourceRequest,
-) : WebRequest {
+) : BaseWebRequest() {
 
 	override val url: WebUri get() = WebUri(impl.url)
 

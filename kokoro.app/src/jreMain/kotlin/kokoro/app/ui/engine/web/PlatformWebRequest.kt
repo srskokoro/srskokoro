@@ -7,7 +7,7 @@ class PlatformWebRequest(
 	// valid within the scope of the calling method in which it was provided.
 	impl: CefRequest,
 	override val url: WebUri,
-) : WebRequest {
+) : BaseWebRequest() {
 	constructor(impl: CefRequest) : this(impl, WebUri(impl.url))
 
 	override val method: String = impl.method
