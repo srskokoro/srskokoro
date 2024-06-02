@@ -13,9 +13,13 @@ class PlatformWebRequest(
 	override val method: String = impl.method
 
 	override fun headers() = headers_
-	override fun header(name: String) = headers_[name]
+	override fun header(name: String) = headers_[name.lowercase()]
 
-	private var headers_ = buildMap<String, String> {
-		impl.getHeaderMap(this)
+	private var headers_ = buildMap {
+		buildMap<String, String> {
+			impl.getHeaderMap(this)
+		}.mapKeysTo(this) {
+			it.key.lowercase()
+		}
 	}
 }
