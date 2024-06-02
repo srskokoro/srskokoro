@@ -11,6 +11,7 @@ import kotlinx.html.TagConsumer
 import kotlinx.html.emptyMap
 import kotlinx.html.stream.appendHTML
 import kotlinx.html.title
+import kotlinx.html.unsafe
 import kotlinx.html.visitTag
 import okio.Buffer
 
@@ -81,7 +82,11 @@ open class HtmlAssetTemplate : WebAssetTemplate {
 	suspend inline fun HEAD.apply(spec: WebAssetSpec) = apply(spec, this)
 
 	open suspend fun apply(spec: WebAssetSpec, head: HEAD) {
-		head.title(spec.query("title") ?: "&#xFEFF;")
+		head.title {
+			val title = spec.query("title")
+			if (title != null) text(title)
+			else unsafe { +"&#xFEFF;" }
+		}
 	}
 
 	@Suppress("NOTHING_TO_INLINE")
