@@ -23,6 +23,10 @@ private fun E_NoSuchProp(key: String) = NoSuchElementException("key=$key")
 /** @see WebAssetSpec.EMPTY */
 fun WebAssetSpec(): WebAssetSpec = EmptyWebAssetSpec()
 
+fun WebAssetSpec(key: String, value: String?): WebAssetSpec = PairWebAssetSpec(key, value)
+
+fun WebAssetSpec(pair: Pair<String, String?>): WebAssetSpec = PairWebAssetSpec(pair.first, pair.second)
+
 fun WebAssetSpec(map: Map<in String, String?>): WebAssetSpec = MapWebAssetSpec(map)
 
 fun WebAssetSpec(map: ScatterMap<in String, out String?>): WebAssetSpec = ScatterMapWebAssetSpec(map)
@@ -39,6 +43,14 @@ inline fun WebAssetSpec(crossinline block: (key: String) -> String?): WebAssetSp
 
 private class EmptyWebAssetSpec : WebAssetSpec {
 	override fun query(key: String): String? = null
+}
+
+private data class PairWebAssetSpec(
+	private val k: String,
+	private val v: String?,
+) : WebAssetSpec {
+	override fun query(key: String): String? =
+		if (key == k) v else null
 }
 
 private class MapWebAssetSpec(
