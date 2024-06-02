@@ -117,6 +117,7 @@ data class WvLibAssetResolver(
 			while (true) {
 				val line = buffered.readUtf8Line() ?: break
 
+				// TODO! Process `*.head` files at build time to automatically strip away blank lines and comment lines.
 				if (line.isBlank()) continue // Special: allow blank lines (and ignore them).
 				if (line.startsWith('#')) continue // Special: allow comment lines (and ignore them).
 
@@ -128,6 +129,7 @@ data class WvLibAssetResolver(
 				// Implementation reference:
 				// - https://github.com/square/okhttp/blob/parent-4.12.0/okhttp/src/main/kotlin/okhttp3/Headers.kt#L231
 				if (i > 0) {
+					// TODO! Process `*.head` files at build time to automatically make each header name lowercase.
 					k = line.substring(0, i).lowercase()
 					v = line.substring(i + 1)
 				} else {
