@@ -1,6 +1,7 @@
 package kokoro.app.ui.engine.web
 
 import org.cef.network.CefRequest
+import kotlin.collections.MutableMap.MutableEntry
 
 class PlatformWebRequest(
 	// NOTE: Must not retain a reference to `CefRequest`, since it's often only
@@ -15,11 +16,11 @@ class PlatformWebRequest(
 	override fun headers() = headers_
 	override fun header(name: String) = headers_[name.lowercase()]
 
-	private var headers_ = buildMap {
-		buildMap<String, String> {
-			impl.getHeaderMap(this)
-		}.mapKeysTo(this) {
-			it.key.lowercase()
-		}
+	@Suppress("RemoveExplicitTypeArguments")
+	private var headers_ = buildMap<String, String> {
+		impl.getHeaderMap(object : AbstractMutableMap<String, String>() {
+			override fun put(key: String, value: String) = this@buildMap.put(key.lowercase(), value)
+			override val entries: MutableSet<MutableEntry<String, String>> get() = this@buildMap.entries
+		})
 	}
 }
