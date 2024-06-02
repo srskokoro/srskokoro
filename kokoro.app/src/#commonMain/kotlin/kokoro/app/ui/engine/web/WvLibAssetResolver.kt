@@ -116,6 +116,10 @@ data class WvLibAssetResolver(
 			// - https://github.com/square/okhttp/blob/parent-4.12.0/okhttp/src/main/kotlin/okhttp3/internal/http1/HeadersReader.kt
 			while (true) {
 				val line = buffered.readUtf8Line() ?: break
+
+				if (line.isBlank()) continue // Special: allow blank lines (and ignore them).
+				if (line.startsWith('#')) continue // Special: allow comment lines (and ignore them).
+
 				val i = line.indexOf(':')
 
 				val k: String
