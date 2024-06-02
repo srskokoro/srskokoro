@@ -124,7 +124,7 @@ data class WvLibAssetResolver(
 				// Implementation reference:
 				// - https://github.com/square/okhttp/blob/parent-4.12.0/okhttp/src/main/kotlin/okhttp3/Headers.kt#L231
 				if (i > 0) {
-					k = line.substring(0, i)
+					k = line.substring(0, i).lowercase()
 					v = line.substring(i + 1)
 				} else {
 					k = ""
