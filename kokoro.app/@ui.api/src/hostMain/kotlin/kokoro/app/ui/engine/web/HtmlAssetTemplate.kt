@@ -83,7 +83,7 @@ open class HtmlAssetTemplate : WebAssetTemplate {
 
 	open suspend fun apply(spec: WebAssetSpec, head: HEAD) {
 		head.title {
-			val title = spec.query("title")
+			val title = spec.query(HtmlTitleSpec.PROP_TITLE)
 			if (title != null) text(title)
 			else unsafe { +"&#xFEFF;" }
 		}
