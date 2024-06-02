@@ -106,6 +106,8 @@ data class WvLibAssetResolver(
 
 		@JvmField val HTTPX_RES_U = httpx(HOST_RES_U)
 
+		@JvmField val PRESET = HTTPX_UI_X + HTTPX_RES_X + HTTPX_RES_U
+
 		@Suppress("NOTHING_TO_INLINE")
 		inline fun httpx(host: String) = WvLibAssetResolver("$HTTPX://$host", "wv/{$host}")
 
