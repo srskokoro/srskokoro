@@ -100,8 +100,11 @@ data class WvLibAssetResolver(
 
 	companion object {
 
-		@JvmField val HTTPX_RES_X = httpx("res.x")
-		@JvmField val HTTPX_RES_U = httpx("res.u")
+		@JvmField val HTTPX_UI_X = httpx(HOST_UI_X)
+
+		@JvmField val HTTPX_RES_X = httpx(HOST_RES_X)
+
+		@JvmField val HTTPX_RES_U = httpx(HOST_RES_U)
 
 		@Suppress("NOTHING_TO_INLINE")
 		inline fun httpx(host: String) = WvLibAssetResolver("$HTTPX://$host", "wv/{$host}")
