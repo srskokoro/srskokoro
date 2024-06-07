@@ -10,6 +10,7 @@ import kotlin.DeprecationLevel.ERROR
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import kotlin.jvm.JvmSynthetic
 
 class WebResponse : Closeable {
 	@Deprecated(SPECIAL_USE_DEPRECATION, level = ERROR) @PublishedApi internal var status_: Int
@@ -34,13 +35,8 @@ class WebResponse : Closeable {
 		contentLength: Long,
 		content: Source,
 	) {
-		if (DEBUG) {
-			// The following check ensures that `status` is consistent with the
-			// expected behavior on Android. See, `android.webkit.WebResourceResponse.setStatusCodeAndReasonPhrase()`
-			if (status < 100) throw IllegalArgumentException("status code can't be less than 100.")
-			if (status > 599) throw IllegalArgumentException("status code can't be greater than 599.")
-			if (status in 300..399) throw IllegalArgumentException("status code can't be in the [300, 399] range.")
-		}
+		@Suppress("DEPRECATION_ERROR")
+		if (DEBUG) WebResponse_checkStatus(status)
 		@Suppress("DEPRECATION_ERROR")
 		status_ = status
 		@Suppress("DEPRECATION_ERROR")
@@ -111,6 +107,8 @@ class WebResponse : Closeable {
 
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun status(status: Int): WebResponse {
+		@Suppress("DEPRECATION_ERROR")
+		if (DEBUG) WebResponse_checkStatus(status)
 		@Suppress("DEPRECATION_ERROR")
 		status_ = status
 		return this
@@ -214,4 +212,16 @@ fun WebResponse(status: Int): WebResponse {
 
 		bytes.size.toLong(), bytes.source(),
 	)
+}
+
+// --
+
+@Deprecated(SPECIAL_USE_DEPRECATION, level = ERROR)
+@PublishedApi @JvmSynthetic
+internal fun WebResponse_checkStatus(status: Int) {
+	// The following check ensures that `status` is consistent with the expected
+	// behavior on Android. See, `android.webkit.WebResourceResponse.setStatusCodeAndReasonPhrase()`
+	if (status < 100) throw IllegalArgumentException("status code can't be less than 100.")
+	if (status > 599) throw IllegalArgumentException("status code can't be greater than 599.")
+	if (status in 300..399) throw IllegalArgumentException("status code can't be in the [300, 399] range.")
 }
