@@ -221,7 +221,11 @@ fun WebResponse(status: Int): WebResponse {
 internal fun WebResponse_checkStatus(status: Int) {
 	// The following check ensures that `status` is consistent with the expected
 	// behavior on Android. See, `android.webkit.WebResourceResponse.setStatusCodeAndReasonPhrase()`
-	if (status < 100) throw IllegalArgumentException("status code can't be less than 100.")
-	if (status > 599) throw IllegalArgumentException("status code can't be greater than 599.")
-	if (status in 300..399) throw IllegalArgumentException("status code can't be in the [300, 399] range.")
+	if (status < 300) {
+		if (status < 100) throw IllegalArgumentException("status code can't be less than 100.")
+	} else if (status > 399) {
+		if (status > 599) throw IllegalArgumentException("status code can't be greater than 599.")
+	} else {
+		throw IllegalArgumentException("status code can't be in the [300, 399] range.")
+	}
 }
