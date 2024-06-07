@@ -9,7 +9,7 @@ fun WebResponse.toWebkit(): WebResourceResponse {
 	headers = buildMap(headers.size + 1) {
 		putAll(headers)
 		if (contentLength >= 0)
-			put("content-length", contentLength.toString())
+			put("Content-Length", contentLength.toString())
 	}
 	val status = status
 	return WebResourceResponse(
