@@ -8,6 +8,6 @@ import kotlinx.html.js.div
 @JsExport
 fun DummyUi() {
 	document.body!!.append.div {
-		+"Hello World! @ $HTTPX"
+		+"Hello World! \u25CD $HTTPX"
 	}
 }
