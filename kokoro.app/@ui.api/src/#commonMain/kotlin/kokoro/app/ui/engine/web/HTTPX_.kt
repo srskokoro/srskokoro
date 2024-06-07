@@ -11,4 +11,6 @@ val HTTPX_RES_U = "$HTTPX://$HOST_RES_U"
 
 // --
 
+val HTTPX_UI_X_PLATFORM_JS = "$HTTPX_UI_X/platform.js"
+
 val HTTPX_RES_X_UI_JS = "$HTTPX_RES_X/ui.js"

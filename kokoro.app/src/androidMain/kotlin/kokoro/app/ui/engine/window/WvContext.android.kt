@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import kokoro.app.ui.engine.UiBus
 import kokoro.app.ui.engine.UiState
+import kokoro.app.ui.engine.web.PlatformJsResource
+import kokoro.app.ui.engine.web.WebResource
 import kokoro.internal.ASSERTIONS_ENABLED
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
@@ -87,4 +89,8 @@ import kotlinx.serialization.modules.SerializersModule
 			}
 		}
 	}
+
+	// --
+
+	override fun initPlatformJs(): WebResource = PlatformJsResource()
 }

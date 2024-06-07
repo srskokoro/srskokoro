@@ -3,6 +3,7 @@ package kokoro.app.ui.engine.window
 import androidx.collection.MutableScatterMap
 import kokoro.app.ui.engine.UiBus
 import kokoro.app.ui.engine.UiState
+import kokoro.app.ui.engine.web.WebResource
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assert
 import kokoro.internal.assertThreadMain
@@ -65,4 +66,8 @@ abstract class WvContext(
 
 	@MainThread
 	protected abstract fun <T> loadOldState(bus: UiBus<T>): T?
+
+	// --
+
+	abstract fun initPlatformJs(): WebResource
 }

@@ -2,6 +2,7 @@ package kokoro.app.ui.engine.window
 
 import androidx.annotation.CallSuper
 import kokoro.app.ui.engine.Ui
+import kokoro.app.ui.engine.web.HTTPX_UI_X_PLATFORM_JS
 import kokoro.app.ui.engine.web.WebUriResolver
 import kokoro.app.ui.engine.web.WebUriRouting
 import kokoro.app.ui.engine.web.WvLibAssetsResolver
@@ -27,5 +28,6 @@ abstract class UiWindow(
 	@CallSuper
 	protected open suspend fun initWebUriRouting(routes: WebUriRouting.Builder) {
 		routes.route(url, ui)
+		routes.route(HTTPX_UI_X_PLATFORM_JS, context.initPlatformJs())
 	}
 }
