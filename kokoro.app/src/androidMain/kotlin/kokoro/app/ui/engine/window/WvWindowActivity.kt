@@ -33,8 +33,8 @@ open class WvWindowActivity : ComponentActivity() {
 
 		// --
 
-		private const val SS_oldStateEntries = "oldStateEntries"
 		private const val SS_webView = "webView"
+		private const val SS_oldStateEntries = "oldStateEntries"
 
 		private fun <T> WvWindowBusBinding<*, T>.route(
 			window: WvWindow, encoded: SerializationEncoded,
