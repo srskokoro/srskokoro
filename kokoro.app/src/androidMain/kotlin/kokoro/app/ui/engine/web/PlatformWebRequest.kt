@@ -10,9 +10,14 @@ class PlatformWebRequest(
 
 	override val method: String get() = impl.method
 
-	// TODO! Confirm that the header names are already lowercase and that no further handling is needed
-	override fun headers(): Map<String, String> = impl.requestHeaders
+	override fun headers() = headers_
+	override fun header(name: String) = headers_[name.lowercase()]
 
-	// TODO! Confirm whether or not header name case is ignored on header entry query
-	override fun header(name: String): String? = impl.requestHeaders[name]
+	private var headers_ = buildMap<String, String> {
+		val requestHeaders = impl.requestHeaders
+		// NOTE: At the time of writing, `requestHeaders` is just an ordinary
+		// `HashMap` and its keys are case-sensitive. Thus, this special setup
+		// is necessary.
+		for ((name, value) in requestHeaders) put(name.lowercase(), value)
+	}
 }
