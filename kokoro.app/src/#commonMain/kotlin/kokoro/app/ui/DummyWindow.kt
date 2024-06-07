@@ -6,7 +6,7 @@ import kokoro.app.ui.engine.window.UiWindow
 import kokoro.app.ui.engine.window.WvContext
 
 object DummyUi : Ui() {
-	override val url = "$HTTPX_UI_X/dummy"
+	override val url = "$HTTPX_UI_X/dummy/"
 	override val title get() = "Dummy UI"
 }
 
