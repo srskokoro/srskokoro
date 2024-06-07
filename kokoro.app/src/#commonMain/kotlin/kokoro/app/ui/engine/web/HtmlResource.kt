@@ -2,7 +2,7 @@ package kokoro.app.ui.engine.web
 
 import androidx.annotation.EmptySuper
 import kokoro.internal.DEBUG
-import kokoro.internal.io.asAppendableUtf8
+import kokoro.internal.io.asAppendable
 import kokoro.internal.io.asClearing
 import kotlinx.html.BODY
 import kotlinx.html.HEAD
@@ -19,7 +19,7 @@ open class HtmlResource : WebResource {
 
 	override suspend fun apply(request: WebRequest): WebResponse {
 		val buffer = Buffer()
-		feed(buffer.asAppendableUtf8())
+		feed(buffer.asAppendable())
 		return WebResponse(
 			mimeType = "text/html",
 			charset = "utf-8",
