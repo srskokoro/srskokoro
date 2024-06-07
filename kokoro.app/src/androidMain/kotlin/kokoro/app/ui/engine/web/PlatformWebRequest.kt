@@ -10,8 +10,8 @@ class PlatformWebRequest(
 
 	override val method: String get() = impl.method
 
-	override fun headers() = headers_
-	override fun header(name: String) = headers_[name.lowercase()]
+	override fun headers(): Map<String, String> = headers_
+	override fun header(name: String): String? = headers_[name.lowercase()]
 
 	private var headers_ = buildMap<String, String> {
 		val requestHeaders = impl.requestHeaders

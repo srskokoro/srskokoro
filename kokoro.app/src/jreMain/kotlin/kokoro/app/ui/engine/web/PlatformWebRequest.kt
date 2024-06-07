@@ -13,8 +13,8 @@ class PlatformWebRequest(
 
 	override val method: String = impl.method
 
-	override fun headers() = headers_
-	override fun header(name: String) = headers_[name.lowercase()]
+	override fun headers(): Map<String, String> = headers_
+	override fun header(name: String): String? = headers_[name.lowercase()]
 
 	@Suppress("RemoveExplicitTypeArguments")
 	private var headers_ = buildMap<String, String> {
