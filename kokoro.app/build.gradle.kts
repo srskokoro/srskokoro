@@ -71,8 +71,6 @@ dependencies {
 	androidMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-android")
 	jreMainImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing")
 
-	commonMainImplementation("com.squareup.okio:okio")
-
 	commonMainImplementation(project(":kokoro.app:ui.api"))
 	jsPacked(project(":kokoro.app:ui.main"))
 
