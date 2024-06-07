@@ -4,7 +4,6 @@ import kokoro.app.LibAssets
 import kokoro.app.open
 import kokoro.app.openOrNull
 import kokoro.internal.assert
-import kokoro.internal.io.source
 import kokoro.internal.require
 import okio.FileNotFoundException
 import okio.Source
@@ -95,7 +94,7 @@ data class WvLibAssetsResolver(
 				contentLength = -1, content,
 			)
 		}
-		return StatusResponse(404)
+		return WebResponse(404)
 	}
 
 	companion object {
@@ -144,21 +143,6 @@ data class WvLibAssetsResolver(
 
 				out[k] = v.trim()
 			}
-		}
-
-		private fun StatusResponse(status: Int): WebResponse {
-			val bytes = status.toString().encodeToByteArray()
-
-			return WebResponse(
-				status = status,
-
-				mimeType = "text/plain",
-				// NOTE: Defaults to "US-ASCII" for the "text" MIME type
-				// (according to MDN). See, https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types#structure_of_a_mime_type
-				charset = null,
-
-				bytes.size.toLong(), bytes.source(),
-			)
 		}
 	}
 }

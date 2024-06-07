@@ -3,6 +3,7 @@ package kokoro.app.ui.engine.web
 import kokoro.internal.DEBUG
 import kokoro.internal.SPECIAL_USE_DEPRECATION
 import kokoro.internal.io.VoidSource
+import kokoro.internal.io.source
 import okio.Closeable
 import okio.Source
 import kotlin.DeprecationLevel.ERROR
@@ -198,4 +199,19 @@ class WebResponse : Closeable {
 	override inline fun close() {
 		content.close()
 	}
+}
+
+fun WebResponse(status: Int): WebResponse {
+	val bytes = status.toString().encodeToByteArray()
+
+	return WebResponse(
+		status = status,
+
+		mimeType = "text/plain",
+		// NOTE: Defaults to "US-ASCII" for the "text" MIME type (according to
+		// MDN). See, https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types#structure_of_a_mime_type
+		charset = null,
+
+		bytes.size.toLong(), bytes.source(),
+	)
 }
