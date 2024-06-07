@@ -1,7 +1,6 @@
 package kokoro.app.ui.engine.window
 
 import kokoro.app.ui.engine.Ui
-import kokoro.app.ui.engine.web.HtmlTitleSpec
 import kokoro.app.ui.engine.web.WebUriRouting
 import kokoro.app.ui.engine.web.WvLibAssetResolver
 import kokoro.app.ui.engine.web.plus
@@ -9,17 +8,18 @@ import kotlin.jvm.JvmField
 
 abstract class UiWindow(
 	@JvmField val ui: Ui,
+	@JvmField val url: String,
 	context: WvContext,
 ) : WvWindow(context) {
 
+	constructor(ui: Ui, context: WvContext) : this(ui, ui.url, context)
+
 	init {
-		ui.spec.query(HtmlTitleSpec.PROP_TITLE)?.let {
-			context.title = it
-		}
-		context.load(ui.url)
+		context.title = ui.title
+		context.load(url)
 	}
 
 	override suspend fun initWebUriResolver() = WebUriRouting {
-		route(ui.url, ui.html)
+		route(url, ui)
 	} + WvLibAssetResolver.PRESET
 }
