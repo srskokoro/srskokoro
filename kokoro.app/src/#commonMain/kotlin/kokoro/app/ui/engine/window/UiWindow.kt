@@ -1,6 +1,8 @@
 package kokoro.app.ui.engine.window
 
+import androidx.annotation.CallSuper
 import kokoro.app.ui.engine.Ui
+import kokoro.app.ui.engine.web.WebUriResolver
 import kokoro.app.ui.engine.web.WebUriRouting
 import kokoro.app.ui.engine.web.WvLibAssetResolver
 import kokoro.app.ui.engine.web.plus
@@ -19,7 +21,11 @@ abstract class UiWindow(
 		context.load(url)
 	}
 
-	override suspend fun initWebUriResolver() = WebUriRouting {
-		route(url, ui)
-	} + WvLibAssetResolver.PRESET
+	override suspend fun initWebUriResolver(): WebUriResolver =
+		WebUriRouting { initWebUriRouting(this) } + WvLibAssetResolver.PRESET
+
+	@CallSuper
+	protected open suspend fun initWebUriRouting(routes: WebUriRouting.Builder) {
+		routes.route(url, ui)
+	}
 }
