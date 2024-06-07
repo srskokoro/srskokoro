@@ -22,4 +22,8 @@ abstract class BasePlatformJsResource : WebResource {
 		out.writeUtf8(HTTPX)
 		out.writeUtf8("'\n")
 	}
+
+	companion object {
+		const val UI_STATES_LOADER = "uiSs"
+	}
 }
