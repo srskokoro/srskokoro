@@ -19,7 +19,7 @@ import kotlin.jvm.JvmField
  * @param assetsDir an asset path to a directory containing the target assets.
  *   Must not start or end with slash.
  */
-data class WvLibAssetResolver(
+data class WvLibAssetsResolver(
 	@JvmField val webOrigin: WebOrigin,
 	@JvmField val assetsDir: String,
 ) : WebUriResolver, WebResource {
@@ -109,7 +109,7 @@ data class WvLibAssetResolver(
 		@JvmField val PRESET = HTTPX_UI_X + HTTPX_RES_X + HTTPX_RES_U
 
 		@Suppress("NOTHING_TO_INLINE")
-		inline fun httpx(host: String) = WvLibAssetResolver("$HTTPX://$host", "wv/{$host}")
+		inline fun httpx(host: String) = WvLibAssetsResolver("$HTTPX://$host", "wv/{$host}")
 
 		// --
 

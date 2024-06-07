@@ -4,7 +4,7 @@ import androidx.annotation.CallSuper
 import kokoro.app.ui.engine.Ui
 import kokoro.app.ui.engine.web.WebUriResolver
 import kokoro.app.ui.engine.web.WebUriRouting
-import kokoro.app.ui.engine.web.WvLibAssetResolver
+import kokoro.app.ui.engine.web.WvLibAssetsResolver
 import kokoro.app.ui.engine.web.plus
 import kotlin.jvm.JvmField
 
@@ -22,7 +22,7 @@ abstract class UiWindow(
 	}
 
 	override suspend fun initWebUriResolver(): WebUriResolver =
-		WebUriRouting { initWebUriRouting(this) } + WvLibAssetResolver.PRESET
+		WebUriRouting { initWebUriRouting(this) } + WvLibAssetsResolver.PRESET
 
 	@CallSuper
 	protected open suspend fun initWebUriRouting(routes: WebUriRouting.Builder) {
