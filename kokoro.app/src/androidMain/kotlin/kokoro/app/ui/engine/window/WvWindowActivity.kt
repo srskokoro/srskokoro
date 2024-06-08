@@ -169,7 +169,9 @@ open class WvWindowActivity : ComponentActivity() {
 	}
 
 	override fun onResume() {
-		wv?.onResume() // See, https://github.com/commonsguy/cw-omnibus/blob/v9.0/NFC/WebBeam/app/src/main/java/com/commonsware/android/webbeam/WebViewFragment.java
+		// Implementation reference: `android.webkit.WebViewFragment` (deprecated)
+		// - See also, https://github.com/commonsguy/cw-omnibus/blob/v9.0/NFC/WebBeam/app/src/main/java/com/commonsware/android/webbeam/WebViewFragment.java
+		wv?.onResume()
 		super.onResume()
 		window?.onResume()
 	}
@@ -177,7 +179,9 @@ open class WvWindowActivity : ComponentActivity() {
 	override fun onPause() {
 		window?.onPause()
 		super.onPause()
-		wv?.onPause() // See, https://github.com/commonsguy/cw-omnibus/blob/v9.0/NFC/WebBeam/app/src/main/java/com/commonsware/android/webbeam/WebViewFragment.java
+		// Implementation reference: `android.webkit.WebViewFragment` (deprecated)
+		// - See also, https://github.com/commonsguy/cw-omnibus/blob/v9.0/NFC/WebBeam/app/src/main/java/com/commonsware/android/webbeam/WebViewFragment.java
+		wv?.onPause()
 	}
 
 	override fun onSaveInstanceState(outState: Bundle) {
