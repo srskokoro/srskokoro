@@ -195,14 +195,11 @@ open class WvWindowActivity : ComponentActivity() {
 	}
 
 	override fun onDestroy() {
-		if (isFinishing) {
-			handle?.run {
-				detachPeer() // So that `finishAndRemoveTask()` isn't called by `close()` below
-				close()
-			}
-			window?.onDestroy() // May throw
+		if (isFinishing) handle?.run {
+			detachPeer() // So that `finishAndRemoveTask()` isn't called by `close()` below
+			close()
 		}
-
+		window?.onDestroy() // May throw
 		super.onDestroy()
 
 		// Try to free up `WebView` allocations. Perhaps see also, https://stackoverflow.com/q/3130654
