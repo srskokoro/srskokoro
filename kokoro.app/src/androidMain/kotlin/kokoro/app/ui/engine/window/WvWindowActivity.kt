@@ -210,7 +210,7 @@ open class WvWindowActivity : ComponentActivity() {
 
 		// Implementation reference: `android.webkit.WebViewFragment` (deprecated)
 		// - See also, https://github.com/commonsguy/cw-omnibus/blob/v9.0/NFC/WebBeam/app/src/main/java/com/commonsware/android/webbeam/WebViewFragment.java
-		// - Perhaps see also, https://stackoverflow.com/q/3130654
+		// - Perhaps see also, https://stackoverflow.com/q/17418503
 		wv?.run {
 			wv = null
 			val parent = parent
