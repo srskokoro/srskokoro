@@ -3,6 +3,7 @@ package kokoro.app.ui.engine.window
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.view.ViewGroup
 import android.webkit.CookieManager
 import android.webkit.WebView
 import androidx.activity.ComponentActivity
@@ -201,6 +202,14 @@ open class WvWindowActivity : ComponentActivity() {
 			}
 			window?.onDestroy() // May throw
 		}
+
 		super.onDestroy()
+
+		// Try to free up `WebView` allocations. Perhaps see also, https://stackoverflow.com/q/3130654
+		wv?.run {
+			wv = null
+			(parent as? ViewGroup)?.removeView(this)
+			destroy()
+		}
 	}
 }
