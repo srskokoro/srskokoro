@@ -169,13 +169,15 @@ open class WvWindowActivity : ComponentActivity() {
 	}
 
 	override fun onResume() {
+		wv?.onResume() // See, https://github.com/commonsguy/cw-omnibus/blob/v9.0/NFC/WebBeam/app/src/main/java/com/commonsware/android/webbeam/WebViewFragment.java
 		super.onResume()
 		window?.onResume()
 	}
 
 	override fun onPause() {
-		super.onPause()
 		window?.onPause()
+		super.onPause()
+		wv?.onPause() // See, https://github.com/commonsguy/cw-omnibus/blob/v9.0/NFC/WebBeam/app/src/main/java/com/commonsware/android/webbeam/WebViewFragment.java
 	}
 
 	override fun onSaveInstanceState(outState: Bundle) {
@@ -199,14 +201,20 @@ open class WvWindowActivity : ComponentActivity() {
 			detachPeer() // So that `finishAndRemoveTask()` isn't called by `close()` below
 			close()
 		}
-		window?.onDestroy() // May throw
-		super.onDestroy()
 
-		// Try to free up `WebView` allocations. Perhaps see also, https://stackoverflow.com/q/3130654
+		window?.onDestroy() // May throw
+
+		// Implementation reference: `android.webkit.WebViewFragment` (deprecated)
+		// - See also, https://github.com/commonsguy/cw-omnibus/blob/v9.0/NFC/WebBeam/app/src/main/java/com/commonsware/android/webbeam/WebViewFragment.java
+		// - Perhaps see also, https://stackoverflow.com/q/3130654
 		wv?.run {
 			wv = null
-			(parent as? ViewGroup)?.removeView(this)
+			val parent = parent
+			if (parent is ViewGroup)
+				parent.removeView(this)
 			destroy()
 		}
+
+		super.onDestroy()
 	}
 }
