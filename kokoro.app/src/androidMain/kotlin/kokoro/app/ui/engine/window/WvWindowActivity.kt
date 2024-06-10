@@ -44,6 +44,9 @@ open class WvWindowActivity : ComponentActivity() {
 		}
 
 		init {
+			// TODO Let the user be able to toggle this on/off through some kind of app preferences
+			if (DEBUG) WebView.setWebContentsDebuggingEnabled(true)
+
 			val cm = CookieManager.getInstance()
 			// See also, https://stackoverflow.com/q/5404274
 			cm.setAcceptCookie(false)
