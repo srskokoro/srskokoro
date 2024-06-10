@@ -1,7 +1,7 @@
 package kokoro.app.ui.engine
 
 import kokoro.app.ui.engine.web.HTTPX_RES_X_UI_JS
-import kokoro.app.ui.engine.web.HTTPX_UI_X_PLATFORM_JS
+import kokoro.app.ui.engine.web.HTTPX_WV_X_PLATFORM_JS
 import kokoro.app.ui.engine.web.HtmlResource
 import kotlinx.html.BODY
 import kotlinx.html.HEAD
@@ -16,7 +16,7 @@ abstract class Ui : HtmlResource() {
 
 	override fun feed(head: HEAD) {
 		super.feed(head)
-		head.script(src = HTTPX_UI_X_PLATFORM_JS) {}
+		head.script(src = HTTPX_WV_X_PLATFORM_JS) {}
 		head.script(src = HTTPX_RES_X_UI_JS) {}
 	}
 

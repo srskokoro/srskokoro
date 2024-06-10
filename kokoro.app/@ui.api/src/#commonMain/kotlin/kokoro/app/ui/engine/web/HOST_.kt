@@ -21,6 +21,9 @@ const val HOST_U = "u"
 
 // --
 
+/** @see HTTPX_WV_X */
+const val HOST_WV_X = "wv.$HOST_X"
+
 /** @see HTTPX_UI_X */
 const val HOST_UI_X = "ui.$HOST_X"
 
