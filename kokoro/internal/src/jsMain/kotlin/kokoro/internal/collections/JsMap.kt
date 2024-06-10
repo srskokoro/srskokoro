@@ -32,11 +32,11 @@ open external class JsMap<K, V> : JsIterable<JsMapEntry<K, V>> {
 	fun clear()
 }
 
-val <K> JsMap<K, *>.keys get() = keys()
+val <K> JsMap<K, *>.keys inline get() = keys()
 
-val <V> JsMap<*, V>.values get() = values()
+val <V> JsMap<*, V>.values inline get() = values()
 
-val <K, V> JsMap<K, V>.entries get() = entries()
+val <K, V> JsMap<K, V>.entries inline get() = entries()
 
 external interface JsMapEntry<@Suppress("unused") out K, @Suppress("unused") out V>
 
