@@ -7,6 +7,13 @@ import android.view.ViewGroup
 import android.webkit.CookieManager
 import android.webkit.WebView
 import androidx.activity.ComponentActivity
+import androidx.core.os.BundleCompat
+import androidx.webkit.WebViewCompat
+import androidx.webkit.WebViewFeature
+import kokoro.app.ui.engine.UiStatesParcelable
+import kokoro.app.ui.engine.UiStatesSaver
+import kokoro.app.ui.engine.web.HOST_X
+import kokoro.app.ui.engine.web.HTTPX
 import kokoro.app.ui.engine.web.WebUriResolver
 import kokoro.app.ui.engine.window.webkit.WebViewClientImpl
 import kokoro.internal.DEBUG
@@ -36,6 +43,7 @@ open class WvWindowActivity : ComponentActivity() {
 
 		private const val SS_webView = "webView"
 		private const val SS_oldStateEntries = "oldStateEntries"
+		private const val SS_oldUiStates = "oldUiStates"
 
 		private fun <T> WvWindowBusBinding<*, T>.route(
 			window: WvWindow, encoded: SerializationEncoded,
@@ -80,6 +88,7 @@ open class WvWindowActivity : ComponentActivity() {
 			val isInitialState: Boolean
 			val webViewState: Bundle?
 			val oldStateEntries: Bundle
+			val oldUiStates: UiStatesParcelable
 
 			if (savedInstanceState != null) {
 				isInitialState = false
@@ -88,10 +97,15 @@ open class WvWindowActivity : ComponentActivity() {
 					if (DEBUG) throw NullPointerException(::SS_oldStateEntries.name)
 					Bundle.EMPTY
 				}
+				oldUiStates = BundleCompat.getParcelable(savedInstanceState, SS_oldUiStates, UiStatesParcelable::class.java) ?: kotlin.run {
+					if (DEBUG) throw NullPointerException(::SS_oldUiStates.name)
+					UiStatesParcelable()
+				}
 			} else {
 				isInitialState = true
 				webViewState = null
 				oldStateEntries = Bundle.EMPTY
+				oldUiStates = UiStatesParcelable()
 			}
 
 			val wc = WvContextImpl(h, this, oldStateEntries)
@@ -100,7 +114,7 @@ open class WvWindowActivity : ComponentActivity() {
 
 			wc.scope.launch(Dispatchers.Main, start = CoroutineStart.UNDISPATCHED) {
 				val wur = w.initWebUriResolver() // NOTE: Suspending call
-				setUpWebView(wur, w.context.scope, webViewState)
+				setUpWebView(wur, w.context.scope, webViewState, oldUiStates)
 			}
 			return // Success. Skip code below.
 		}
@@ -118,6 +132,8 @@ open class WvWindowActivity : ComponentActivity() {
 	private var wv: WebView? = null
 	private var initUrl: String? = null
 
+	private var uiSs: UiStatesSaver? = null
+
 	@MainThread
 	fun loadUrl(url: String) {
 		assertThreadMain()
@@ -129,7 +145,7 @@ open class WvWindowActivity : ComponentActivity() {
 	}
 
 	@MainThread
-	private fun setUpWebView(wur: WebUriResolver, scope: CoroutineScope, webViewState: Bundle?) {
+	private fun setUpWebView(wur: WebUriResolver, scope: CoroutineScope, webViewState: Bundle?, oldUiStates: UiStatesParcelable) {
 		assertThreadMain()
 		assert({ wv == null })
 
@@ -151,6 +167,16 @@ open class WvWindowActivity : ComponentActivity() {
 		// - See also, https://stackoverflow.com/q/5404274
 		assert({ !ws.domStorageEnabled }) { "Web storage should've been disabled by default (according to the docs)." }
 		assert({ !CookieManager.getInstance().acceptCookie() }) { "Cookie persistence should've been disabled already by the static initializer." }
+
+		if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER)) {
+			val uiSs = UiStatesSaver(oldUiStates.map)
+			this.uiSs = uiSs
+			wv.addJavascriptInterface(uiSs, UiStatesSaver.JSI__name)
+			WebViewCompat.addWebMessageListener(wv, UiStatesSaver.WML__name, setOf("$HTTPX://*.$HOST_X"), uiSs)
+		} else {
+			// TODO! Instruct the user to upgrade their web view
+			throw UnsupportedOperationException(WebViewFeature.WEB_MESSAGE_LISTENER)
+		}
 
 		val initUrl = this.initUrl
 		if (initUrl != null) {
@@ -197,6 +223,7 @@ open class WvWindowActivity : ComponentActivity() {
 			outState.putBundle(SS_oldStateEntries, o)
 		}
 		wv?.run {
+			uiSs?.let { outState.putParcelable(SS_oldUiStates, it.encode()) }
 			val o = Bundle()
 			if (saveState(o) != null)
 				outState.putBundle(SS_webView, o)
@@ -216,6 +243,7 @@ open class WvWindowActivity : ComponentActivity() {
 		// - Perhaps see also, https://stackoverflow.com/q/17418503
 		wv?.run {
 			wv = null
+			uiSs = null
 			val parent = parent
 			if (parent is ViewGroup)
 				parent.removeView(this)

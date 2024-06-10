@@ -1,5 +1,7 @@
 package kokoro.app.ui.engine.web
 
+import kokoro.app.ui.engine.UiStatesSaver
+import kokoro.internal.assert
 import okio.Buffer
 import java.util.UUID
 
@@ -7,12 +9,17 @@ class PlatformJsResource : BasePlatformJsResource() {
 
 	override fun feed(out: Buffer, request: WebRequest) {
 		super.feed(out, request)
-		// TODO Saved states handling
+		with(UiStatesSaver.JS_DEF) {
+			out.writeUtf8(START)
+			out.writeUtf8(SECRET)
+			out.writeUtf8(END)
+		}
 	}
 
 	companion object {
 
-		val SECRET = buildString(26) {
+		const val SECRET_n = 26
+		val SECRET = buildString(SECRET_n) {
 			val uuid = UUID.randomUUID()
 
 			var s = java.lang.Long.toUnsignedString(uuid.mostSignificantBits, 32)
@@ -24,6 +31,8 @@ class PlatformJsResource : BasePlatformJsResource() {
 			n = 13 - s.length
 			while (--n >= 0) append('0')
 			append(s)
+
+			assert({ length == SECRET_n })
 		}
 	}
 }
