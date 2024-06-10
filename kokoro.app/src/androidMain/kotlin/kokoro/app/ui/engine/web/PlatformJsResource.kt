@@ -11,28 +11,26 @@ class PlatformJsResource : BasePlatformJsResource() {
 		super.feed(out, request)
 		with(UiStatesSaver.JS_DEF) {
 			out.writeUtf8(START)
-			out.writeUtf8(SECRET)
+			out.writeUtf8(PLATFORM_JS_SECRET)
 			out.writeUtf8(END)
 		}
 	}
+}
 
-	companion object {
+const val PLATFORM_JS_SECRET_n = 26
 
-		const val SECRET_n = 26
-		val SECRET = buildString(SECRET_n) {
-			val uuid = UUID.randomUUID()
+val PLATFORM_JS_SECRET = buildString(PLATFORM_JS_SECRET_n) {
+	val uuid = UUID.randomUUID()
 
-			var s = java.lang.Long.toUnsignedString(uuid.mostSignificantBits, 32)
-			var n = 13 - s.length
-			while (--n >= 0) append('0')
-			append(s)
+	var s = java.lang.Long.toUnsignedString(uuid.mostSignificantBits, 32)
+	var n = 13 - s.length
+	while (--n >= 0) append('0')
+	append(s)
 
-			s = java.lang.Long.toUnsignedString(uuid.leastSignificantBits, 32)
-			n = 13 - s.length
-			while (--n >= 0) append('0')
-			append(s)
+	s = java.lang.Long.toUnsignedString(uuid.leastSignificantBits, 32)
+	n = 13 - s.length
+	while (--n >= 0) append('0')
+	append(s)
 
-			assert({ length == SECRET_n })
-		}
-	}
+	assert({ length == PLATFORM_JS_SECRET_n })
 }

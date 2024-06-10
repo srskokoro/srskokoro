@@ -13,12 +13,12 @@ import androidx.webkit.WebMessageCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
 import kokoro.app.ui.engine.web.BasePlatformJsResource.Companion.UI_STATES_LOADER
+import kokoro.app.ui.engine.web.PLATFORM_JS_SECRET
+import kokoro.app.ui.engine.web.PLATFORM_JS_SECRET_n
 import kokoro.internal.DEBUG
 import kokoro.internal.collections.putIfAbsent
 import kokoro.internal.notifyAll
 import kokoro.internal.wait
-import kokoro.app.ui.engine.web.PlatformJsResource.Companion.SECRET as PLATFORM_JS_SECRET
-import kokoro.app.ui.engine.web.PlatformJsResource.Companion.SECRET_n as PLATFORM_JS_SECRET_n
 
 @RequiresFeature(
 	name = WebViewFeature.WEB_MESSAGE_LISTENER,
