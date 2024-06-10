@@ -2,6 +2,6 @@ package kokoro.internal
 
 import android.os.Looper
 
-val mainLooper: Looper = Looper.getMainLooper()
+@JvmField val mainLooper: Looper = Looper.getMainLooper()
 
-val mainThread: Thread = mainLooper.thread
+@JvmField val mainThread: Thread = mainLooper.thread

@@ -19,7 +19,7 @@ class PlatformJsResource : BasePlatformJsResource() {
 
 const val PLATFORM_JS_SECRET_n = 26
 
-val PLATFORM_JS_SECRET = buildString(PLATFORM_JS_SECRET_n) {
+@JvmField val PLATFORM_JS_SECRET = buildString(PLATFORM_JS_SECRET_n) {
 	val uuid = UUID.randomUUID()
 
 	var s = java.lang.Long.toUnsignedString(uuid.mostSignificantBits, 32)
