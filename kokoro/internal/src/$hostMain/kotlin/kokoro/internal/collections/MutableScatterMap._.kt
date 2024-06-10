@@ -13,3 +13,11 @@ inline fun <K, V : Any> MutableScatterMap<K, V>.computeIfAbsent(
 	}
 	computeBlock.invoke(key)
 }
+
+fun <K, V> MutableScatterMap<K, V>.putIfAbsent(key: K, value: V): V? {
+	compute(key) { _, prev ->
+		if (prev == null) value
+		else return@putIfAbsent prev
+	}
+	return null
+}
