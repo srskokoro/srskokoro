@@ -143,6 +143,7 @@ private fun KotlinJvmAndroidCompilation.setUpAssetsAndResources(android: Android
 	}.forEach(fun(_, taskProvider) = taskProvider.configure {
 		dependsOn(prepareAssetsTask)
 	})
+	variant.preBuildProvider.configure { mustRunAfter(prepareAssetsTask) }
 	androidAssets.srcDirs(prepareAssetsTask) // Link output as Android-style "assets"
 
 	// -=-
