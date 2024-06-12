@@ -236,9 +236,12 @@ open class WvWindowActivity : ComponentActivity() {
 
 	override fun onDestroy() {
 		handle?.let { h ->
-			// TODO! Ensure activity task can still be closed if activity is being destroyed but not finishing
-			h.detachPeer() // Also so that `finishAndRemoveTask()` isn't called by `close()` below
-			if (isFinishing) h.close()
+			if (isFinishing) {
+				h.detachPeer() // So that `finishAndRemoveTask()` isn't called by `close()` below
+				h.close()
+			} else {
+				h.attachPeer(taskId)
+			}
 		}
 
 		window?.onDestroy() // May throw

@@ -56,6 +56,12 @@ actual class WvWindowHandle @nook internal actual constructor(
 
 	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
+	@nook internal inline fun attachPeer(taskId: Int) {
+		peer_ = taskId
+	}
+
+	@Suppress("NOTHING_TO_INLINE")
+	@MainThread
 	@nook internal inline fun detachPeer() {
 		peer_ = null
 	}
@@ -140,6 +146,7 @@ actual class WvWindowHandle @nook internal actual constructor(
 			null -> return // Skip code below
 			is Activity -> c.finishAndRemoveTask()
 			is ActivityManager.AppTask -> c.finishAndRemoveTask()
+			is Int -> CoreApplication.get().finishAndRemoveTask(c)
 			else -> throw AssertionError("Unexpected: $c")
 		}
 		detachPeer()

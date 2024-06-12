@@ -1,9 +1,13 @@
 package kokoro.app
 
+import android.app.ActivityManager
 import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
+import androidx.core.content.getSystemService
 import kokoro.internal.SPECIAL_USE_DEPRECATION
+import kokoro.internal.assertUnreachable
+import kokoro.internal.os.taskIdCompat
 import java.util.Locale
 
 open class CoreApplication : Application() {
@@ -45,6 +49,20 @@ open class CoreApplication : Application() {
 		val locale = newConfig.locales.get(0)
 		if (Locale.getDefault() != locale) {
 			Locale.setDefault(locale)
+		}
+	}
+
+	fun finishAndRemoveTask(taskId: Int) {
+		val am = getSystemService<ActivityManager>()
+		if (am == null) {
+			assertUnreachable(or = { "`ActivityManager` seems unsupported" })
+			return
+		}
+		for (task in am.appTasks) {
+			if (task.taskInfo.taskIdCompat == taskId) {
+				task.finishAndRemoveTask()
+				return // Done. Process only the first found task.
+			}
 		}
 	}
 }
