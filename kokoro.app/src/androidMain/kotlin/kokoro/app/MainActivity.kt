@@ -21,6 +21,8 @@ class MainActivity : WvWindowActivity() {
 		val id = "MAIN"
 		if (savedInstanceState != null) {
 			val h = WvWindowHandle.get(id)
+			// NOTE: Even if we're returning from a saved state, the following
+			// may still be `null` if the process was killed beforehand.
 			if (h != null) return h
 		}
 		val fid = WvWindowFactory.id<DummyWindow>() // TODO!

@@ -1,6 +1,8 @@
 package kokoro.app.ui.engine.window
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.ActivityManager
 import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
@@ -20,8 +22,10 @@ import kokoro.internal.DEBUG
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assert
 import kokoro.internal.assertThreadMain
+import kokoro.internal.assertUnreachable
 import kokoro.internal.checkNotNull
 import kokoro.internal.os.SerializationEncoded
+import kokoro.internal.os.taskIdCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -53,6 +57,7 @@ open class WvWindowActivity : ComponentActivity() {
 	}
 
 	private var handle: WvWindowHandle? = null
+	private var task: Any? = null
 	private var window: WvWindow? = null
 
 	@MainThread
@@ -73,8 +78,24 @@ open class WvWindowActivity : ComponentActivity() {
 				"No factory registered for window factory ID: $fid"
 			})
 
-			assert({ h.peer_ !is WvWindowActivity })
+			val taskId = taskId
+			val t = h.peer_.let { c ->
+				when (c) {
+					null -> return@let taskId
+					is Activity -> {} // Fail
+					is ActivityManager.AppTask -> {
+						if (c.taskInfo.taskIdCompat == taskId) return@let c
+					}
+					is Int -> {
+						if (c == taskId) return@let c
+					}
+					else -> throw AssertionError("Unexpected: $c")
+				}
+				assertUnreachable { "Handle already has a peer: $h" }
+				return@run
+			}
 			h.attachPeer(this)
+			task = t
 			handle = h
 
 			val isInitialState: Boolean
@@ -240,7 +261,7 @@ open class WvWindowActivity : ComponentActivity() {
 				h.detachPeer() // So that `finishAndRemoveTask()` isn't called by `close()` below
 				h.close()
 			} else {
-				h.attachPeer(taskId)
+				h.attachPeer(task)
 			}
 		}
 

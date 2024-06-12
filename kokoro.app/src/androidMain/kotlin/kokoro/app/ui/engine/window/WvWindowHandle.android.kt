@@ -56,8 +56,8 @@ actual class WvWindowHandle @nook internal actual constructor(
 
 	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
-	@nook internal inline fun attachPeer(taskId: Int) {
-		peer_ = taskId
+	@nook internal inline fun attachPeer(task: Any?) {
+		peer_ = task
 	}
 
 	@Suppress("NOTHING_TO_INLINE")
