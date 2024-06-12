@@ -83,8 +83,14 @@ private class WvWindowHandle_globalRestore(tasks: List<AppTask>) {
 		visited = true
 
 		val parentId = parentId
-		val p = if (parentId == null) null // Parent was purposely not set.
-		else entries[parentId]?.resolve() ?: return null // Resolution failed.
+		val p = if (parentId != null) {
+			val parentEntry = entries[parentId]
+			if (parentEntry == null) {
+				WvWindowHandle.get(parentId)
+			} else {
+				parentEntry.resolve()
+			} ?: return null // Resolution failed.
+		} else null // Parent was purposely not set.
 
 		return WvWindowHandle.create(
 			id = id,
