@@ -50,15 +50,6 @@ open class WvWindowActivity : ComponentActivity() {
 		) {
 			route(window) { bus -> encoded.decode(bus.serialization) }
 		}
-
-		init {
-			// TODO Let the user be able to toggle this on/off through some kind of app preferences
-			if (DEBUG) WebView.setWebContentsDebuggingEnabled(true)
-
-			val cm = CookieManager.getInstance()
-			// See also, https://stackoverflow.com/q/5404274
-			cm.setAcceptCookie(false)
-		}
 	}
 
 	private var handle: WvWindowHandle? = null
@@ -144,10 +135,23 @@ open class WvWindowActivity : ComponentActivity() {
 		if (!isDestroyed) initUrl = url
 	}
 
+	private object WebView_globalInit {
+		init {
+			// TODO Let the user be able to toggle this on/off through some kind of app preferences
+			if (DEBUG) WebView.setWebContentsDebuggingEnabled(true)
+
+			val cm = CookieManager.getInstance()
+			// See also, https://stackoverflow.com/q/5404274
+			cm.setAcceptCookie(false)
+		}
+	}
+
 	@MainThread
 	private fun setUpWebView(wur: WebUriResolver, scope: CoroutineScope, webViewState: Bundle?, oldUiStates: UiStatesParcelable) {
 		assertThreadMain()
 		assert({ wv == null })
+
+		WebView_globalInit // Force static initialization
 
 		val wv = WebView(this)
 		if (webViewState != null) {
@@ -166,7 +170,6 @@ open class WvWindowActivity : ComponentActivity() {
 		// See, https://stackoverflow.com/q/9819325
 		// - See also, https://stackoverflow.com/q/5404274
 		assert({ !ws.domStorageEnabled }) { "Web storage should've been disabled by default (according to the docs)." }
-		assert({ !CookieManager.getInstance().acceptCookie() }) { "Cookie persistence should've been disabled already by the static initializer." }
 
 		if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER)) {
 			val uiSs = UiStatesSaver(oldUiStates.map)
