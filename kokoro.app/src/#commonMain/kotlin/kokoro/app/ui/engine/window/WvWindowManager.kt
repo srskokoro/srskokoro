@@ -189,7 +189,15 @@ abstract class WvWindowManager @nook constructor(
 	class IdConflictException @nook constructor(val oldHandle: WvWindowHandle) : IllegalStateException(
 		"Handle ID already in use: ${oldHandle.id}"
 	)
+
+	override fun toString(): String =
+		"${super.toString()}(id=$id" +
+			", windowFactoryId=$windowFactoryId" +
+			", parent=${parent?.id})"
 }
+
+/** @see WvWindowHandle */
+private const val WvWindowHandle__name = "WvWindowHandle"
 
 @Suppress("NOTHING_TO_INLINE")
 @AnyThread
