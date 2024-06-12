@@ -18,6 +18,7 @@
 		android:theme="@style/Theme.App"
 		android:name=".MainApplication">
 		<activity
+			android:autoRemoveFromRecents="true"
 			android:exported="true"
 			android:launchMode="singleInstance"
 			android:label="${APP_TITLE_SHORT}"

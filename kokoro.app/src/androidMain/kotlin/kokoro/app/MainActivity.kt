@@ -1,22 +1,19 @@
 package kokoro.app
 
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import kokoro.app.ui.DummyWindow
-import kokoro.app.ui.engine.window.WvWindowActivity
 import kokoro.app.ui.engine.window.WvWindowFactory
 import kokoro.app.ui.engine.window.WvWindowHandle
 import kokoro.app.ui.engine.window.get
 import kokoro.internal.annotation.MainThread
 
-class MainActivity : WvWindowActivity() {
+class MainActivity : ComponentActivity() {
 
 	companion object {
-
-		@JvmField val COMPONENT_CLASS_NAME: String = MainActivity::class.java.name
-
 		@MainThread
-		fun loadSpecializedHandle(): WvWindowHandle {
+		private fun loadSpecializedHandle(): WvWindowHandle {
 			val id = "MAIN"
 			WvWindowHandle.get(id)?.let { return it }
 
@@ -30,5 +27,7 @@ class MainActivity : WvWindowActivity() {
 		// - See also https://developer.android.com/reference/kotlin/androidx/core/splashscreen/SplashScreen
 		installSplashScreen()
 		super.onCreate(savedInstanceState)
+		loadSpecializedHandle().launch()
+		finishAndRemoveTask()
 	}
 }

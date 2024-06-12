@@ -32,10 +32,7 @@ private class WvWindowHandle_globalRestore(tasks: List<AppTask>) {
 	private val entries = MutableScatterMap<String, Entry>().also { entries ->
 		tasks.forEach { task ->
 			val intent = task.taskInfo.baseIntent
-			if (intent.action != WvWindowHandle.ACTION_LAUNCH) {
-				WvWindowActivity.loadSpecializedHandle(intent.component)
-				return@forEach
-			}
+			if (intent.action != WvWindowHandle.ACTION_LAUNCH) return@forEach
 
 			val id = WvWindowHandle.getId(intent)
 			run<Unit> {
