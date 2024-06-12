@@ -49,11 +49,15 @@ import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.math.min
 
 @OptIn(nook::class)
-class WvWindowFrame @JvmOverloads constructor(
+class WvWindowFrame @JvmOverloads @nook constructor(
 	@JvmField val handle: WvWindowHandle,
 	context: CoroutineContext = EmptyCoroutineContext,
 	gc: GraphicsConfiguration? = DEFAULT_GRAPHICS_CONFIGURATION,
 ) : ScopedWindowFrame(context, DEFAULT_TITLE, gc), WvWindowHandle.Peer {
+
+	init {
+		assert({ handle.peer_ == null })
+	}
 
 	companion object {
 		private const val CPK_name = "WvWindowFrame.name"

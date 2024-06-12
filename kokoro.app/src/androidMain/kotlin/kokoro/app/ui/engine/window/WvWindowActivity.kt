@@ -73,8 +73,9 @@ open class WvWindowActivity : ComponentActivity() {
 				"No factory registered for window factory ID: $fid"
 			})
 
-			handle = h
+			assert({ h.peer_ !is WvWindowActivity })
 			h.attachPeer(this)
+			handle = h
 
 			val isInitialState: Boolean
 			val webViewState: Bundle?
