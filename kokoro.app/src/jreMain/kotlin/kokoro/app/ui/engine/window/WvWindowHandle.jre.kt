@@ -97,7 +97,7 @@ actual class WvWindowHandle @nook internal actual constructor(
 		if (id_ == null) throw E_Closed()
 		if (DEBUG) windowFactoryId.let { fid ->
 			if (fid.isNothing || WvWindowFactory.get(fid) == null) error(
-				"Window factory ID cannot be used to launch windows: $fid"
+				"Window factory ID cannot be used to launch window: $fid"
 			)
 		}
 		ensurePeer().onLaunch()
