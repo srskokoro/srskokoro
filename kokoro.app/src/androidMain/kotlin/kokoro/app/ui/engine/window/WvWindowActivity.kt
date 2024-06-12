@@ -56,7 +56,7 @@ open class WvWindowActivity : ComponentActivity() {
 	private var window: WvWindow? = null
 
 	@MainThread
-	open fun initHandle(): WvWindowHandle? {
+	open fun initHandle(savedInstanceState: Bundle?): WvWindowHandle? {
 		// Returns `null` if `intent` isn't a window display request or the
 		// handle was closed before we can start.
 		return WvWindowHandle.get(intent)
@@ -66,7 +66,7 @@ open class WvWindowActivity : ComponentActivity() {
 		super.onCreate(savedInstanceState)
 
 		run<Unit> {
-			val h = initHandle() ?: return@run
+			val h = initHandle(savedInstanceState) ?: return@run
 
 			val fid = h.windowFactoryId
 			val f = checkNotNull(WvWindowFactory.get(fid), or = {

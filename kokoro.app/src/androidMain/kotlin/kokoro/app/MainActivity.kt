@@ -17,10 +17,12 @@ class MainActivity : WvWindowActivity() {
 		super.onCreate(savedInstanceState)
 	}
 
-	override fun initHandle(): WvWindowHandle {
+	override fun initHandle(savedInstanceState: Bundle?): WvWindowHandle {
 		val id = "MAIN"
-		WvWindowHandle.get(id)?.let { return it }
-
+		if (savedInstanceState != null) {
+			val h = WvWindowHandle.get(id)
+			if (h != null) return h
+		}
 		val fid = WvWindowFactory.id<DummyWindow>() // TODO!
 		return WvWindowHandle.globalRoot.create(id, fid)
 	}
