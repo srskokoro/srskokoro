@@ -6,6 +6,7 @@ import kokoro.app.ui.DummyWindow
 import kokoro.app.ui.engine.window.WvWindowActivity
 import kokoro.app.ui.engine.window.WvWindowFactory
 import kokoro.app.ui.engine.window.WvWindowHandle
+import kokoro.app.ui.engine.window.get
 
 class MainActivity : WvWindowActivity() {
 
@@ -17,7 +18,10 @@ class MainActivity : WvWindowActivity() {
 	}
 
 	override fun initHandle(): WvWindowHandle {
+		val id = "MAIN"
+		WvWindowHandle.get(id)?.let { return it }
+
 		val fid = WvWindowFactory.id<DummyWindow>() // TODO!
-		return WvWindowHandle.globalRoot.create("MAIN", fid)
+		return WvWindowHandle.globalRoot.create(id, fid)
 	}
 }
