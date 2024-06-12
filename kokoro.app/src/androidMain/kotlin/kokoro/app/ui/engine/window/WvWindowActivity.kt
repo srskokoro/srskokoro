@@ -3,6 +3,7 @@ package kokoro.app.ui.engine.window
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
+import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
@@ -12,6 +13,8 @@ import androidx.activity.ComponentActivity
 import androidx.core.os.BundleCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
+import kokoro.app.CoreApplication
+import kokoro.app.MainActivity
 import kokoro.app.ui.engine.UiStatesParcelable
 import kokoro.app.ui.engine.UiStatesSaver
 import kokoro.app.ui.engine.web.HOST_X
@@ -36,18 +39,24 @@ open class WvWindowActivity : ComponentActivity() {
 
 	companion object {
 
-		private val COMPONENT_CLASS_NAME: String = WvWindowActivity::class.java.name
-
-		fun shouldHandle(intent: Intent): Boolean {
-			val c = intent.component
-			return c != null && COMPONENT_CLASS_NAME == c.className
-		}
-
-		// --
+		private const val SS_handleId = "handleId"
 
 		private const val SS_webView = "webView"
 		private const val SS_oldStateEntries = "oldStateEntries"
 		private const val SS_oldUiStates = "oldUiStates"
+
+		private val APP_PACKAGE_NAME = CoreApplication.get().packageName
+
+		@MainThread
+		fun loadSpecializedHandle(component: ComponentName?): WvWindowHandle? {
+			if (component != null && component.packageName == APP_PACKAGE_NAME) kotlin.run {
+				return when (component.className) {
+					MainActivity.COMPONENT_CLASS_NAME -> MainActivity.loadSpecializedHandle()
+					else -> return@run
+				}
+			}
+			return null
+		}
 
 		private fun <T> WvWindowBusBinding<*, T>.route(
 			window: WvWindow, encoded: SerializationEncoded,
@@ -60,18 +69,21 @@ open class WvWindowActivity : ComponentActivity() {
 	private var task: Any? = null
 	private var window: WvWindow? = null
 
-	@MainThread
-	open fun initHandle(savedInstanceState: Bundle?): WvWindowHandle? {
-		// Returns `null` if `intent` isn't a window display request or the
-		// handle was closed before we can start.
-		return WvWindowHandle.get(intent)
-	}
-
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
 		run<Unit> {
-			val h = initHandle(savedInstanceState) ?: return@run
+			val h = (if (savedInstanceState != null) {
+				savedInstanceState.getString(SS_handleId)
+					?.let { WvWindowHandle.get(it) }
+			} else {
+				val intent = intent
+				if (intent.action == WvWindowHandle.ACTION_LAUNCH) {
+					WvWindowHandle.get(intent)
+				} else {
+					loadSpecializedHandle(intent.component)
+				}
+			}) ?: return@run
 
 			val fid = h.windowFactoryId
 			val f = checkNotNull(WvWindowFactory.get(fid), or = {
@@ -240,6 +252,9 @@ open class WvWindowActivity : ComponentActivity() {
 
 	override fun onSaveInstanceState(outState: Bundle) {
 		super.onSaveInstanceState(outState)
+		handle?.let { h ->
+			outState.putString(SS_handleId, h.id)
+		}
 		window?.run {
 			onSaveState()
 			(context as? WvContextImpl)

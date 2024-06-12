@@ -79,11 +79,10 @@ actual class WvWindowHandle @nook internal actual constructor(
 			)
 		}
 
-		return Intent(app, WvWindowActivity::class.java).apply {
+		return Intent(ACTION_LAUNCH, uri, app, WvWindowActivity::class.java).apply {
 			// Necessary or `Application.startActivity()` will fail
 			addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
-			data = uri
 			parent_?.let { p -> putExtra(EXTRAS_KEY_to_PARENT_ID, (p as WvWindowHandle).id) }
 			putExtra(EXTRAS_KEY_to_WINDOW_FACTORY_ID, windowFactoryId.id)
 		}
@@ -162,6 +161,9 @@ actual class WvWindowHandle @nook internal actual constructor(
 	// --
 
 	actual companion object {
+		/** @see kokoro.app.ui.engine.window.WvWindowHandle.newLaunchIntent */
+		@nook const val ACTION_LAUNCH = "kokoro.app.ui.engine.window.action.LAUNCH"
+
 		@nook const val EXTRAS_KEY_to_PARENT_ID = "parent"
 		@nook const val EXTRAS_KEY_to_WINDOW_FACTORY_ID = "factory"
 
