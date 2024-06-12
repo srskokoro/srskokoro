@@ -15,13 +15,13 @@ import kokoro.internal.assertUnreachable
 internal fun WvWindowHandle_globalInit() {
 	assertThreadMain()
 
-	val activityManager = CoreApplication.get().getSystemService<ActivityManager>()
-	if (activityManager == null) {
+	val am = CoreApplication.get().getSystemService<ActivityManager>()
+	if (am == null) {
 		assertUnreachable(or = { "`ActivityManager` seems unsupported" })
 		return
 	}
 
-	WvWindowHandle_globalRestore(activityManager.appTasks)
+	WvWindowHandle_globalRestore(am.appTasks)
 		.resolve()
 }
 
