@@ -36,8 +36,6 @@ class WvWindowActivity : ComponentActivity() {
 
 	companion object {
 
-		private const val SS_handleId = "handleId"
-
 		private const val SS_webView = "webView"
 		private const val SS_oldStateEntries = "oldStateEntries"
 		private const val SS_oldUiStates = "oldUiStates"
@@ -57,14 +55,9 @@ class WvWindowActivity : ComponentActivity() {
 		super.onCreate(savedInstanceState)
 
 		run<Unit> {
-			val h = (if (savedInstanceState != null) {
-				savedInstanceState.getString(SS_handleId)
-					?.let { WvWindowHandle.get(it) }
-			} else {
-				val intent = intent
-				if (intent.action != WvWindowHandle.ACTION_LAUNCH) return@run
-				WvWindowHandle.get(intent)
-			}) ?: return@run
+			val intent = intent
+			if (intent.action != WvWindowHandle.ACTION_LAUNCH) return@run
+			val h = WvWindowHandle.get(intent) ?: return@run
 
 			val fid = h.windowFactoryId
 			val f = checkNotNull(WvWindowFactory.get(fid), or = {
@@ -233,9 +226,6 @@ class WvWindowActivity : ComponentActivity() {
 
 	override fun onSaveInstanceState(outState: Bundle) {
 		super.onSaveInstanceState(outState)
-		handle?.let { h ->
-			outState.putString(SS_handleId, h.id)
-		}
 		window?.run {
 			onSaveState()
 			(context as? WvContextImpl)
