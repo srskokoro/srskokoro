@@ -27,6 +27,8 @@ open class CoreApplication : Application() {
 
 		@Suppress("NOTHING_TO_INLINE")
 		inline fun get() = @Suppress("DEPRECATION_ERROR") Singleton.instance
+
+		val activityManager inline get() = @Suppress("DEPRECATION_ERROR") _activityManager.value
 	}
 
 	@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
@@ -34,6 +36,11 @@ open class CoreApplication : Application() {
 		@JvmField val instance = getOrNull() ?: throw IllegalStateException(
 			"Core application was not initialized."
 		)
+	}
+
+	@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
+	@PublishedApi internal object _activityManager {
+		@JvmField val value = get().getSystemService<ActivityManager>()
 	}
 
 	override fun onConfigurationChanged(newConfig: Configuration) {
@@ -53,7 +60,7 @@ open class CoreApplication : Application() {
 	}
 
 	fun finishAndRemoveTask(taskId: Int) {
-		val am = getSystemService<ActivityManager>()
+		val am = activityManager
 		if (am == null) {
 			assertUnreachable(or = { "`ActivityManager` seems unsupported" })
 			return

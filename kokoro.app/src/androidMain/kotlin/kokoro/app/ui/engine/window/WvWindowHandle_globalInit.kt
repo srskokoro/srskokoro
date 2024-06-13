@@ -1,9 +1,7 @@
 package kokoro.app.ui.engine.window
 
-import android.app.ActivityManager
 import android.app.ActivityManager.AppTask
 import androidx.collection.MutableScatterMap
-import androidx.core.content.getSystemService
 import kokoro.app.CoreApplication
 import kokoro.internal.SPECIAL_USE_DEPRECATION
 import kokoro.internal.annotation.MainThread
@@ -15,7 +13,7 @@ import kokoro.internal.assertUnreachable
 internal fun WvWindowHandle_globalInit() {
 	assertThreadMain()
 
-	val am = CoreApplication.get().getSystemService<ActivityManager>()
+	val am = CoreApplication.activityManager
 	if (am == null) {
 		assertUnreachable(or = { "`ActivityManager` seems unsupported" })
 		return
