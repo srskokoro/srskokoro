@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.res.Configuration
 import androidx.core.content.getSystemService
 import kokoro.internal.SPECIAL_USE_DEPRECATION
-import kokoro.internal.assertUnreachable
 import kokoro.internal.os.taskIdCompat
 import java.util.Locale
 
@@ -41,6 +40,7 @@ open class CoreApplication : Application() {
 	@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
 	@PublishedApi internal object _activityManager {
 		@JvmField val value = get().getSystemService<ActivityManager>()
+			?: error("`ActivityManager` seems unsupported")
 	}
 
 	override fun onConfigurationChanged(newConfig: Configuration) {
@@ -61,10 +61,6 @@ open class CoreApplication : Application() {
 
 	fun finishAndRemoveTask(taskId: Int) {
 		val am = activityManager
-		if (am == null) {
-			assertUnreachable(or = { "`ActivityManager` seems unsupported" })
-			return
-		}
 		for (task in am.appTasks) {
 			if (task.taskInfo.taskIdCompat == taskId) {
 				task.finishAndRemoveTask()

@@ -6,7 +6,6 @@ import kokoro.app.CoreApplication
 import kokoro.internal.SPECIAL_USE_DEPRECATION
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
-import kokoro.internal.assertUnreachable
 
 @Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
 @MainThread
@@ -14,10 +13,6 @@ internal fun WvWindowHandle_globalInit() {
 	assertThreadMain()
 
 	val am = CoreApplication.activityManager
-	if (am == null) {
-		assertUnreachable(or = { "`ActivityManager` seems unsupported" })
-		return
-	}
 
 	WvWindowHandle.globalRoot // Force init
 	WvWindowHandle_globalRestore(am.appTasks)
