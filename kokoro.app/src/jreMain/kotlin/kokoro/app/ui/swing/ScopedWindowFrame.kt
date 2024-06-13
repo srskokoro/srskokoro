@@ -1,5 +1,6 @@
 package kokoro.app.ui.swing
 
+import kokoro.internal.assert
 import kokoro.internal.coroutines.RawCoroutineScope
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
@@ -95,12 +96,16 @@ open class ScopedWindowFrame @JvmOverloads constructor(
 
 	@Suppress("NOTHING_TO_INLINE")
 	inline fun checkNotDisposedPermanently() {
-		if (isDisposedPermanently) {
-			throw E_AlreadyDisposedPermanently()
-		}
+		if (isDisposedPermanently) throw E_AlreadyDisposedPermanently()
+	}
+
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun assertNotDisposedPermanently() {
+		assert({ !isDisposedPermanently }) { E_AlreadyDisposedPermanently }
 	}
 
 	companion object {
-		fun E_AlreadyDisposedPermanently() = IllegalStateException("Already disposed (permanently)")
+		const val E_AlreadyDisposedPermanently = "Already disposed (permanently)"
+		fun E_AlreadyDisposedPermanently() = IllegalStateException(E_AlreadyDisposedPermanently)
 	}
 }

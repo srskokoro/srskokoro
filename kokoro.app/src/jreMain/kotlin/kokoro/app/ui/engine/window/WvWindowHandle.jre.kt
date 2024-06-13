@@ -2,14 +2,12 @@ package kokoro.app.ui.engine.window
 
 import kokoro.app.ui.engine.UiBus
 import kokoro.app.ui.engine.WvSerialization
-import kokoro.internal.DEBUG
+import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DisposableHandle
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.job
-import kotlinx.coroutines.selects.SelectClause0
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerializationStrategy
@@ -19,45 +17,28 @@ import kotlin.coroutines.CoroutineContext
 
 @OptIn(nook::class)
 actual class WvWindowHandle @nook internal actual constructor(
-	id: String?,
-	windowFactoryId: WvWindowFactoryId,
+	id: WvWindowId?,
 	parent: WvWindowManager?,
-) : WvWindowManager(windowFactoryId, parent) {
+) : WvWindowManager(id, parent) {
 
-	/**
-	 * - WARNING: Must only be modified from the main thread.
-	 * - CONTRACT: `null` on [close].
-	 */
-	@JvmField @nook var id_ = id
-
-	@Suppress("OVERRIDE_BY_INLINE")
-	actual override val id: String?
-		inline get() = id_
-
-	// --
-
-	@nook internal interface Peer {
+	@nook interface Peer {
 		val scope: CoroutineScope
-		@MainThread fun onLaunch()
-		@MainThread fun onPost(busId: String, payload: ByteArray)
+		@MainThread @nook fun onLaunch()
+		@MainThread @nook fun onPost(busId: String, payload: ByteArray)
 		fun dispose()
 	}
 
 	private class WindowlessPeer(
 		override val scope: CoroutineScope,
 	) : Peer {
-		override fun onLaunch() = Unit
-		override fun onPost(busId: String, payload: ByteArray) = Unit
+		@nook override fun onLaunch() = Unit
+		@nook override fun onPost(busId: String, payload: ByteArray) = Unit
 		override fun dispose() {
 			scope.coroutineContext[Job]?.cancel(null)
 		}
 	}
 
-	/**
-	 * - WARNING: Must only be modified from the main thread.
-	 * - CONTRACT: `null` on [close].
-	 */
-	@JvmField @nook internal var peer_: Peer? = null
+	@JvmField @nook var peer_: Peer? = null
 
 	init {
 		if (parent is WvWindowHandle) {
@@ -69,9 +50,9 @@ actual class WvWindowHandle @nook internal actual constructor(
 	@MainThread
 	fun init(coroutineContext: CoroutineContext) {
 		assertThreadMain()
-		if (id_ == null) throw E_Closed()
+		val id = id ?: throw E_Closed()
 		if (peer_ != null) throw E_AlreadyInit()
-		peer_ = if (!windowFactoryId.isNothing) {
+		peer_ = if (!id.factoryId.isNothing) {
 			WvWindowFrame(this, coroutineContext)
 		} else {
 			WindowlessPeer(CoroutineScope(coroutineContext))
@@ -80,40 +61,57 @@ actual class WvWindowHandle @nook internal actual constructor(
 
 	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
-	private inline fun ensurePeer() =
-		peer_ ?: throw E_NotYetInit()
+	private inline fun ensurePeer() = peer_ ?: throw E_NotYetInit()
 
 	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
-	@nook internal inline fun detachPeer() {
+	@nook inline fun detachPeer() {
 		peer_ = null
 	}
 
 	// --
 
+	actual override val closeJob: Job
+		get() = ensurePeer().scope.coroutineContext.job
+
 	@MainThread
-	actual override fun launch() {
-		assertThreadMain()
-		if (id_ == null) throw E_Closed()
-		if (DEBUG) windowFactoryId.let { fid ->
-			if (fid.isNothing || WvWindowFactory.get(fid) == null) error(
-				"Window factory ID cannot be used to launch window: $fid"
-			)
+	actual override fun onClose() {
+		peer_?.let { peer ->
+			peer.dispose()
+			detachPeer()
 		}
+	}
+
+	actual companion object {
+
+		@AnyThread
+		actual fun closed(): WvWindowHandle = WvWindowHandle(null, null)
+
+		// --
+
+		private fun E_AlreadyInit() = IllegalStateException("`${WvWindowHandle::init.name}()` already called")
+		private fun E_NotYetInit() = IllegalStateException("Must first call `${WvWindowHandle::init.name}()`")
+	}
+
+	@MainThread
+	actual override fun launchOrReject(): Boolean {
+		assertThreadMain()
+		(id ?: return false).checkOnLaunch()
 		ensurePeer().onLaunch()
+		return true
 	}
 
 	@MainThread
 	actual override fun <T> postOrDiscard(bus: UiBus<T>, value: T): Boolean {
 		assertThreadMain()
-		if (id_ == null) return false
+		if (id == null) return false
 		val peer = ensurePeer()
 		val enc = PostSerialization.encode(value, bus.serialization) // May throw
 		peer.onPost(bus.id, enc)
 		return true
 	}
 
-	@nook internal object PostSerialization {
+	@nook object PostSerialization {
 
 		inline val module: SerializersModule
 			get() = WvSerialization.module
@@ -140,42 +138,5 @@ actual class WvWindowHandle @nook internal actual constructor(
 			@OptIn(ExperimentalSerializationApi::class)
 			return cbor.decodeFromByteArray(deserializer, bytes)
 		}
-	}
-
-	// --
-
-	@Suppress("OVERRIDE_BY_INLINE")
-	actual override val isClosed: Boolean
-		inline get() = id_ == null
-
-	@MainThread
-	actual override fun onClose() {
-		val id = id_ // Backup
-		id_ = null // Marks as closed now (so that we don't get called recursively)
-		peer_?.let { peer ->
-			try {
-				peer.dispose()
-			} catch (ex: Throwable) {
-				id_ = id // Revert
-				throw ex
-			}
-			detachPeer()
-		}
-	}
-
-	private fun ensurePeerJob() = ensurePeer().scope.coroutineContext.job
-
-	actual override fun invokeOnClose(handler: (WvWindowHandle) -> Unit): DisposableHandle =
-		ensurePeerJob().invokeOnCompletion { handler(this) }
-
-	actual override suspend fun awaitClose(): Unit = ensurePeerJob().join()
-
-	actual override val onAwaitClose: SelectClause0 get() = ensurePeerJob().onJoin
-
-	// --
-
-	actual companion object {
-		private fun E_AlreadyInit() = IllegalStateException("`${WvWindowHandle::init.name}()` already called")
-		private fun E_NotYetInit() = IllegalStateException("Must first call `${WvWindowHandle::init.name}()`")
 	}
 }

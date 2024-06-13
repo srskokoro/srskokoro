@@ -77,11 +77,14 @@ class WvWindowFrame @JvmOverloads @nook constructor(
 	private var isSetUp = false
 
 	@MainThread
-	override fun onLaunch() {
-		checkNotDisposedPermanently()
+	@nook override fun onLaunch() {
+		assertNotDisposedPermanently()
 		if (window != null) {
-			// Reactivates frame if already visible before.
-			if (isSetUp) isVisible = true
+			if (isSetUp) {
+				// Reactivates frame if already visible before.
+				// - Throws if already disposed permanently.
+				isVisible = true
+			}
 			return // Already set up or setting up. Skip code below.
 		}
 		setUpAndShow() // Asserts thread main
@@ -92,7 +95,7 @@ class WvWindowFrame @JvmOverloads @nook constructor(
 		assertThreadMain()
 		val h = handle
 
-		val fid = h.windowFactoryId
+		val fid = h.getIdOrThrow().factoryId
 		val f = checkNotNull(WvWindowFactory.get(fid), or = {
 			"No factory registered for window factory ID: $fid"
 		})
@@ -264,7 +267,8 @@ class WvWindowFrame @JvmOverloads @nook constructor(
 	}
 
 	@MainThread
-	override fun onPost(busId: String, payload: ByteArray) {
+	@nook override fun onPost(busId: String, payload: ByteArray) {
+		assertNotDisposedPermanently()
 		assertThreadMain()
 		window?.let { w -> (w.getDoOnPost_(busId) ?: return@let).route(w, payload) }
 	}
@@ -328,10 +332,7 @@ class WvWindowFrame @JvmOverloads @nook constructor(
 			close() // Asserts thread main
 		}
 		tearDownJcef()
-		window?.let {
-			it.onDestroy() // May throw
-			window = null
-		}
+		window?.onDestroy(true) // May throw
 	}
 
 	override fun getName(): String {
@@ -339,7 +340,7 @@ class WvWindowFrame @JvmOverloads @nook constructor(
 		var name = rootPane.getClientProperty(CPK_name) as String?
 		if (name == null) {
 			val h = handle
-			name = "WvWindow[${h.id_}:${h.windowFactoryId}]"
+			name = "WvWindow[${h.id}]"
 			rootPane.putClientProperty(CPK_name, name)
 		}
 		return name

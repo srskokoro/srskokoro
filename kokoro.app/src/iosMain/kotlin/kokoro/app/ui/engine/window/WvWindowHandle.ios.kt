@@ -1,33 +1,17 @@
 package kokoro.app.ui.engine.window
 
 import kokoro.app.ui.engine.UiBus
+import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
-import kotlinx.coroutines.DisposableHandle
-import kotlinx.coroutines.selects.SelectClause0
+import kotlinx.coroutines.Job
 
 @OptIn(nook::class)
 actual class WvWindowHandle @nook internal actual constructor(
-	id: String?,
-	windowFactoryId: WvWindowFactoryId,
+	id: WvWindowId?,
 	parent: WvWindowManager?,
-) : WvWindowManager(windowFactoryId, parent) {
+) : WvWindowManager(id, parent) {
 
-	actual override val id: String?
-		get() = TODO("Not yet implemented")
-
-	@MainThread
-	actual override fun launch() {
-		TODO("Not yet implemented")
-	}
-
-	@MainThread
-	actual override fun <T> postOrDiscard(bus: UiBus<T>, value: T): Boolean {
-		TODO("Not yet implemented")
-	}
-
-	// --
-
-	actual override val isClosed: Boolean
+	actual override val closeJob: Job
 		get() = TODO("Not yet implemented")
 
 	@MainThread
@@ -35,18 +19,19 @@ actual class WvWindowHandle @nook internal actual constructor(
 		TODO("Not yet implemented")
 	}
 
-	actual override fun invokeOnClose(handler: (WvWindowHandle) -> Unit): DisposableHandle {
+	actual companion object {
+
+		@AnyThread
+		actual fun closed(): WvWindowHandle = TODO("Not yet implemented")
+	}
+
+	@MainThread
+	actual override fun launchOrReject(): Boolean {
 		TODO("Not yet implemented")
 	}
 
-	actual override suspend fun awaitClose() {
+	@MainThread
+	actual override fun <T> postOrDiscard(bus: UiBus<T>, value: T): Boolean {
 		TODO("Not yet implemented")
 	}
-
-	actual override val onAwaitClose: SelectClause0
-		get() = TODO("Not yet implemented")
-
-	// --
-
-	actual companion object
 }

@@ -1,38 +1,29 @@
 package kokoro.app.ui.engine.window
 
 import kokoro.app.ui.engine.UiBus
+import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
-import kotlinx.coroutines.DisposableHandle
-import kotlinx.coroutines.selects.SelectClause0
+import kotlinx.coroutines.Job
 
 expect class WvWindowHandle @nook internal constructor(
-	id: String?,
-	windowFactoryId: WvWindowFactoryId,
+	id: WvWindowId?,
 	parent: WvWindowManager?,
 ) : WvWindowManager {
 
-	override val id: String?
-
-	@MainThread
-	override fun launch()
-
-	@MainThread
-	override fun <T> postOrDiscard(bus: UiBus<T>, value: T): Boolean
-
-	// --
-
-	override val isClosed: Boolean
+	override val closeJob: Job
 
 	@MainThread
 	override fun onClose()
 
-	override fun invokeOnClose(handler: (WvWindowHandle) -> Unit): DisposableHandle
+	companion object {
 
-	override suspend fun awaitClose()
+		@AnyThread
+		fun closed(): WvWindowHandle
+	}
 
-	override val onAwaitClose: SelectClause0
+	@MainThread
+	override fun launchOrReject(): Boolean
 
-	// --
-
-	companion object
+	@MainThread
+	override fun <T> postOrDiscard(bus: UiBus<T>, value: T): Boolean
 }

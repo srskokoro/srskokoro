@@ -4,24 +4,31 @@ import androidx.annotation.GuardedBy
 import androidx.collection.MutableScatterMap
 import androidx.collection.MutableScatterSet
 import kokoro.app.ui.engine.UiBus
-import kokoro.internal.DEBUG
 import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assert
 import kokoro.internal.assertThreadMain
-import kokoro.internal.require
 import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
-import kotlinx.coroutines.DisposableHandle
+import kotlinx.coroutines.CompletionHandler
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.selects.SelectClause0
 import kotlin.jvm.JvmField
 
 @OptIn(nook::class)
-abstract class WvWindowManager @nook constructor(
-	val windowFactoryId: WvWindowFactoryId,
+abstract class WvWindowManager @nook protected constructor(
+	id: WvWindowId?,
 	parent: WvWindowManager?,
 ) {
-	abstract val id: String?
+	/**
+	 * - WARNING: Must only be modified from the main thread.
+	 * - CONTRACT: `null` on [close].
+	 */
+	@JvmField @nook var id_: WvWindowId? = id
+	val id: WvWindowId? inline get() = id_
+
+	@Suppress("NOTHING_TO_INLINE")
+	inline fun getIdOrThrow() = id ?: throw E_Closed()
 
 	/**
 	 * - WARNING: Must only be modified from the main thread.
@@ -31,20 +38,24 @@ abstract class WvWindowManager @nook constructor(
 	val parent: WvWindowManager? inline get() = parent_
 
 	/** WARNING: Must only be accessed (and modified) from the main thread. */
-	private val children = MutableScatterSet<WvWindowManager>()
+	private val children = MutableScatterSet<WvWindowManager>(0)
 
 	@Suppress("NOTHING_TO_INLINE")
 	@MainThread
-	@Throws(IdConflictException::class)
-	inline fun create(
-		id: String,
-		windowFactoryId: WvWindowFactoryId,
-	) = create(id, windowFactoryId, this)
+	@Throws(LoadConflictException::class)
+	inline fun load(id: WvWindowId) = load(id, this)
 
 	// --
 
 	@MainThread
-	abstract fun launch()
+	fun launch() {
+		if (!launchOrReject()) {
+			throw E_Closed()
+		}
+	}
+
+	@MainThread
+	abstract fun launchOrReject(): Boolean
 
 	@MainThread
 	fun <T> post(bus: UiBus<T>, value: T) {
@@ -58,49 +69,20 @@ abstract class WvWindowManager @nook constructor(
 
 	// --
 
-	val isOpen inline get() = !isClosed
+	protected abstract val closeJob: Job
 
-	abstract val isClosed: Boolean
+	val isOpen inline get() = id_ != null
 
-	/**
-	 * CONTRACT: This method is expected to cause [id] to become `null` and
-	 * [isClosed] to be `true`.
-	 */
-	@MainThread
-	protected abstract fun onClose()
+	val isClosed inline get() = id_ == null
 
-	/**
-	 * @see awaitClose
-	 * @see onAwaitClose
-	 */
-	abstract fun invokeOnClose(handler: (WvWindowHandle) -> Unit): DisposableHandle
-
-	/**
-	 * Suspends until [close]`()` is called.
-	 *
-	 * @see invokeOnClose
-	 * @see onAwaitClose
-	 */
-	abstract suspend fun awaitClose()
-
-	/**
-	 * @see awaitClose
-	 * @see invokeOnClose
-	 */
-	abstract val onAwaitClose: SelectClause0
-
-	/**
-	 * @see awaitClose
-	 * @see invokeOnClose
-	 */
 	@MainThread
 	fun close() {
 		assertThreadMain()
 
-		val id = this.id ?: return // Already closed before
+		val id = id_ ?: return // Already closed before
 
 		children.removeIf { child ->
-			assert({ child.parent_.let { it == null || it == this } })
+			assert({ child.parent_.let { it == null || it === this } })
 			child.parent_ = null // Prevent child from removing itself
 			try {
 				child.close()
@@ -111,10 +93,13 @@ abstract class WvWindowManager @nook constructor(
 			true // Remove child
 		}
 
-		onClose() // May throw
-		assert({ this.id == null && isClosed }, or = {
-			"Unexpected: `${::onClose.name}()` contract not fulfilled."
-		})
+		id_ = null // Mark as closed now (so that we don't get called again)
+		try {
+			onClose()
+		} catch (ex: Throwable) {
+			id_ = id // Revert
+			throw ex
+		}
 
 		// NOTE: The code hereafter must not throw.
 		// --
@@ -126,102 +111,107 @@ abstract class WvWindowManager @nook constructor(
 
 		synchronized(openHandles_lock) {
 			val prev = openHandles.remove(id)
-			assert({ prev == this })
+			assert({ prev === this })
 		}
 	}
 
+	/** CONTRACT: Must cause [closeJob] to complete. */
+	@MainThread
+	protected abstract fun onClose()
+
+	/**
+	 * @see awaitClose
+	 * @see onAwaitClose
+	 */
+	fun invokeOnClose(handler: CompletionHandler) =
+		closeJob.invokeOnCompletion(handler)
+
+	/**
+	 * Suspends until [close]`()` is called.
+	 *
+	 * @see invokeOnClose
+	 * @see onAwaitClose
+	 */
+	suspend fun awaitClose() = closeJob.join()
+
+	/**
+	 * @see awaitClose
+	 * @see invokeOnClose
+	 */
+	val onAwaitClose: SelectClause0 get() = closeJob.onJoin
+
+	// --
+
 	companion object {
-		@nook const val E_CLOSED = "Already closed (or invalid)"
-		@nook fun E_Closed() = IllegalStateException(E_CLOSED)
+		@nook const val E_Closed = "Already closed (or invalid)"
+		@nook fun E_Closed() = IllegalStateException(E_Closed)
 
 		private val openHandles_lock = SynchronizedObject()
-		@GuardedBy("openHandles_lock") private val openHandles = MutableScatterMap<String, WvWindowHandle>()
+		@GuardedBy("openHandles_lock") private val openHandles = MutableScatterMap<WvWindowId, WvWindowHandle>()
 
 		@AnyThread
-		fun get(id: String): WvWindowHandle? = synchronized(openHandles_lock) { openHandles[id] }
+		fun get(id: WvWindowId): WvWindowHandle? = synchronized(openHandles_lock) { openHandles[id] }
 
 		@AnyThread
-		fun get(id: String, windowFactoryId: WvWindowFactoryId): WvWindowHandle? {
+		fun get(id: WvWindowId, parent: WvWindowManager?): WvWindowHandle? {
 			val h = get(id)
-			if (h != null && h.windowFactoryId == windowFactoryId) {
+			if (h != null && h.parent === parent) {
 				return h
 			}
 			return null
 		}
 
-		@Suppress("NOTHING_TO_INLINE")
-		@AnyThread
-		inline fun createClosed() = createClosed(WvWindowFactoryId.NOTHING)
-
-		@AnyThread
-		fun createClosed(windowFactoryId: WvWindowFactoryId) = WvWindowHandle(
-			id = null,
-			windowFactoryId,
-			parent = null,
-		)
-
 		@MainThread
-		@Throws(IdConflictException::class)
-		fun create(
-			id: String,
-			windowFactoryId: WvWindowFactoryId,
-			parent: WvWindowManager?,
-		): WvWindowHandle {
+		@Throws(LoadConflictException::class)
+		fun load(id: WvWindowId, parent: WvWindowManager?): WvWindowHandle {
 			assertThreadMain()
 
-			if (DEBUG) require(WvWindowFactory.get(windowFactoryId) != null, or = {
-				"Window factory ID not registered: $windowFactoryId"
-			})
-
-			return if (parent == null || parent.isOpen) {
+			if (parent == null || parent.isOpen) kotlin.run {
 				synchronized(openHandles_lock) {
-					openHandles.compute(id) { _, v ->
-						if (v != null) throw IdConflictException(v)
-						WvWindowHandle(id, windowFactoryId, parent)
+					openHandles.compute(id) { _, old ->
+						if (old != null) return@run old
+						WvWindowHandle(id, parent)
 					}
-				}.also { h ->
-					parent?.children?.add(h) // Requires the main thread
+				}.let { new ->
+					parent?.children?.add(new) // Requires the main thread
+					return new
 				}
-			} else createClosed(windowFactoryId)
+			}.let { old ->
+				if (old.parent === parent) {
+					return old
+				}
+				throw LoadConflictException(old, parent)
+			} else return closed()
 		}
+
+		@Suppress("NOTHING_TO_INLINE")
+		@AnyThread
+		inline fun closed(): WvWindowHandle = WvWindowHandle.closed()
 	}
 
-	class IdConflictException @nook constructor(val oldHandle: WvWindowHandle) : IllegalStateException(
-		"Handle ID already in use: ${oldHandle.id}"
-	)
+	class LoadConflictException @nook constructor(
+		@JvmField val target: WvWindowHandle,
+		@JvmField val targetParent: WvWindowManager?,
+	) : IllegalStateException() {
+		override val message: String
+			get() = "Target: $target; Target parent: ${targetParent?.id}"
+	}
 
-	override fun toString(): String =
-		"${super.toString()}(id=$id" +
-			", windowFactoryId=$windowFactoryId" +
-			", parent=${parent?.id})"
+	override fun toString(): String = "${
+		if (this is WvWindowHandle) "WvWindowHandle"
+		else super.toString()
+	}(id=$id, parent=${parent?.id})"
 }
 
-/** @see WvWindowHandle */
-private const val WvWindowHandle__name = "WvWindowHandle"
+@Suppress("NOTHING_TO_INLINE")
+@AnyThread
+inline fun WvWindowHandle.Companion.get(id: WvWindowId) = WvWindowManager.get(id)
 
 @Suppress("NOTHING_TO_INLINE")
 @AnyThread
-inline fun WvWindowHandle.Companion.get(id: String) = WvWindowManager.get(id)
-
-@Suppress("NOTHING_TO_INLINE")
-@AnyThread
-inline fun WvWindowHandle.Companion.get(id: String, windowFactoryId: WvWindowFactoryId) =
-	WvWindowManager.get(id, windowFactoryId)
-
-@Suppress("NOTHING_TO_INLINE")
-@AnyThread
-inline fun WvWindowHandle.Companion.createClosed() = WvWindowManager.createClosed()
-
-@Suppress("NOTHING_TO_INLINE")
-@AnyThread
-inline fun WvWindowHandle.Companion.createClosed(windowFactoryId: WvWindowFactoryId) =
-	WvWindowManager.createClosed(windowFactoryId)
+inline fun WvWindowHandle.Companion.get(id: WvWindowId, parent: WvWindowManager?) = WvWindowManager.get(id, parent)
 
 @Suppress("NOTHING_TO_INLINE")
 @MainThread
-@Throws(WvWindowManager.IdConflictException::class)
-inline fun WvWindowHandle.Companion.create(
-	id: String,
-	windowFactoryId: WvWindowFactoryId,
-	parent: WvWindowManager?,
-) = WvWindowManager.create(id, windowFactoryId, parent)
+@Throws(WvWindowManager.LoadConflictException::class)
+inline fun WvWindowHandle.Companion.load(id: WvWindowId, parent: WvWindowManager?) = WvWindowManager.load(id, parent)

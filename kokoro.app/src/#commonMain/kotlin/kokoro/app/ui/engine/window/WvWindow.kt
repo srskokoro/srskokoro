@@ -86,11 +86,11 @@ abstract class WvWindow @MainThread constructor(@JvmField val context: WvContext
 
 	/**
 	 * NOTE: By the time this is called, [handle] is expected to be already
-	 * [closed][WvWindowHandle.isClosed] and invalid.
+	 * [closed][WvWindowHandle.isClosed] and invalid if [isFinishing] is `true`.
 	 */
 	@EmptySuper
 	@MainThread
-	open fun onDestroy() = Unit
+	open fun onDestroy(isFinishing: Boolean) = Unit
 
 	// --
 

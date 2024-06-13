@@ -1,8 +1,6 @@
 package kokoro.app.ui.engine.window
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.ActivityManager
 import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
@@ -25,7 +23,6 @@ import kokoro.internal.assertThreadMain
 import kokoro.internal.assertUnreachable
 import kokoro.internal.checkNotNull
 import kokoro.internal.os.SerializationEncoded
-import kokoro.internal.os.taskIdCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -47,9 +44,8 @@ class WvWindowActivity : ComponentActivity() {
 		}
 	}
 
-	private var handle: WvWindowHandle? = null
-	private var task: Any? = null
-	private var window: WvWindow? = null
+	@JvmField @nook var handle: WvWindowHandle? = null
+	@JvmField @nook var window: WvWindow? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -59,29 +55,17 @@ class WvWindowActivity : ComponentActivity() {
 			if (intent.action != WvWindowHandle.ACTION_LAUNCH) return@run
 			val h = WvWindowHandle.get(intent) ?: return@run
 
-			val fid = h.windowFactoryId
+			val fid = h.getIdOrThrow().factoryId
 			val f = checkNotNull(WvWindowFactory.get(fid), or = {
 				"No factory registered for window factory ID: $fid"
 			})
 
-			val taskId = taskId
-			val t = h.peer_.let { c ->
-				when (c) {
-					null -> return@let taskId
-					is Activity -> {} // Fail
-					is ActivityManager.AppTask -> {
-						if (c.taskInfo.taskIdCompat == taskId) return@let c
-					}
-					is Int -> {
-						if (c == taskId) return@let c
-					}
-					else -> throw AssertionError("Unexpected: $c")
-				}
+			if (h.activity_ != null) {
 				assertUnreachable { "Handle already has a peer: $h" }
 				return@run
 			}
-			h.attachPeer(this)
-			task = t
+			h.taskId_ = taskId // May throw?
+			h.activity_ = this
 			handle = h
 
 			val isInitialState: Boolean
@@ -247,11 +231,9 @@ class WvWindowActivity : ComponentActivity() {
 				h.detachPeer() // So that `finishAndRemoveTask()` isn't called by `close()` below
 				h.close()
 			} else {
-				h.attachPeer(task)
+				h.activity_ = null
 			}
 		}
-
-		window?.onDestroy() // May throw
 
 		// Implementation reference: `android.webkit.WebViewFragment` (deprecated)
 		// - See also, https://github.com/commonsguy/cw-omnibus/blob/v9.0/NFC/WebBeam/app/src/main/java/com/commonsware/android/webbeam/WebViewFragment.java
@@ -264,6 +246,8 @@ class WvWindowActivity : ComponentActivity() {
 				parent.removeView(this)
 			destroy()
 		}
+
+		window?.onDestroy(isFinishing) // May throw
 
 		super.onDestroy()
 	}

@@ -20,7 +20,7 @@ value class WvWindowFactoryId private constructor(
 
 		inline fun <reified W : WvWindow> of(tag: String? = null) = wrap(
 			W::class.qualifiedName.toString().let { type ->
-				if (tag == null) type else "$type#$tag"
+				if (tag == null) type else "$type!$tag"
 			},
 		)
 

@@ -22,27 +22,21 @@ internal fun WvWindowHandle_globalInit() {
 @OptIn(nook::class)
 @MainThread
 private class WvWindowHandle_globalRestore(tasks: List<AppTask>) {
-	private val entries = MutableScatterMap<String, Entry>().also { entries ->
+	private val entries = MutableScatterMap<WvWindowId, Entry>().also { entries ->
 		tasks.forEach { task ->
 			val intent = task.taskInfo.baseIntent
 			if (intent.action != WvWindowHandle.ACTION_LAUNCH) return@forEach
 
-			val id = WvWindowHandle.getId(intent)
+			val uri = intent.data
 			run<Unit> {
-				if (id == null) return@run // Invalid request.
+				if (uri == null) return@run // Invalid request.
 
-				val fid = WvWindowHandle.getWindowFactoryIdStr(intent)
-					?: return@run // Not a window display request.
+				val id = WvWindowId(uri)
 
-				// NOTE: Parent ID is `null` when there should be no parent.
-				val parentId = WvWindowHandle.getParentId(intent)
+				// NOTE: Parent is `null` when there should be no parent.
+				val parentId = WvWindowHandle.getParent(intent)?.let { WvWindowId(it) }
 
-				entries[id] = Entry(
-					id,
-					fid = fid,
-					parentId = parentId,
-					task,
-				)
+				entries[id] = Entry(id, parentId = parentId, task)
 				return@forEach // Done. Skip code below.
 			}
 
@@ -52,15 +46,15 @@ private class WvWindowHandle_globalRestore(tasks: List<AppTask>) {
 	}
 
 	private class Entry(
-		@JvmField val id: String,
-		@JvmField val fid: String,
-		@JvmField val parentId: String?,
+		@JvmField val id: WvWindowId,
+		@JvmField val parentId: WvWindowId?,
 		@JvmField val task: AppTask,
 	) {
 		@JvmField var visited = false
 		@JvmField var handle: WvWindowHandle? = null
 	}
 
+	@MainThread
 	fun resolve() {
 		entries.forEachValue { it.resolve() }
 	}
@@ -86,13 +80,9 @@ private class WvWindowHandle_globalRestore(tasks: List<AppTask>) {
 			} ?: return null // Resolution failed.
 		} else null // Parent was purposely not set.
 
-		return WvWindowHandle.create(
-			id = id,
-			WvWindowFactoryId.wrap(fid),
-			parent = p,
-		).also { h ->
+		return WvWindowHandle.load(id, p).also { h ->
 			handle = h
-			h.attachPeer(task)
+			h.task_ = task
 		}
 	}
 }

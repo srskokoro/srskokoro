@@ -6,7 +6,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import kokoro.app.ui.DummyWindow
 import kokoro.app.ui.engine.window.WvWindowFactory
 import kokoro.app.ui.engine.window.WvWindowHandle
-import kokoro.app.ui.engine.window.get
+import kokoro.app.ui.engine.window.WvWindowId
 import kokoro.internal.annotation.MainThread
 
 class MainActivity : ComponentActivity() {
@@ -14,11 +14,9 @@ class MainActivity : ComponentActivity() {
 	companion object {
 		@MainThread
 		private fun loadSpecializedHandle(): WvWindowHandle {
-			val id = "MAIN"
-			WvWindowHandle.get(id)?.let { return it }
-
 			val fid = WvWindowFactory.id<DummyWindow>() // TODO!
-			return WvWindowHandle.globalRoot.create(id, fid)
+			val id = WvWindowId("MAIN", fid)
+			return WvWindowHandle.globalRoot.load(id)
 		}
 	}
 
