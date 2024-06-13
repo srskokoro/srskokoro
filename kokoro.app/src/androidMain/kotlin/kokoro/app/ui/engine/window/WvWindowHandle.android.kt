@@ -145,7 +145,7 @@ actual class WvWindowHandle @nook internal actual constructor(
 			null -> return // Skip code below
 			is Activity -> c.finishAndRemoveTask()
 			is ActivityManager.AppTask -> c.finishAndRemoveTask()
-			is Int -> CoreApplication.get().finishAndRemoveTask(c)
+			is Int -> CoreApplication.finishAndRemoveTask(c)
 			else -> throw AssertionError("Unexpected: $c")
 		}
 		detachPeer()

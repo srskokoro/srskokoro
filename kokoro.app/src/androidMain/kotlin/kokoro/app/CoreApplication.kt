@@ -1,11 +1,17 @@
 package kokoro.app
 
 import android.app.ActivityManager
+import android.app.ActivityManager.AppTask
 import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
+import androidx.collection.IntObjectMap
+import androidx.collection.MutableIntObjectMap
 import androidx.core.content.getSystemService
 import kokoro.internal.SPECIAL_USE_DEPRECATION
+import kokoro.internal.annotation.MainThread
+import kokoro.internal.assertThreadMain
+import kokoro.internal.mainHandler
 import kokoro.internal.os.taskIdCompat
 import java.util.Locale
 
@@ -27,7 +33,30 @@ open class CoreApplication : Application() {
 		@Suppress("NOTHING_TO_INLINE")
 		inline fun get() = @Suppress("DEPRECATION_ERROR") Singleton.instance
 
+		// --
+
 		val activityManager inline get() = @Suppress("DEPRECATION_ERROR") _activityManager.value
+
+		private var appTasks_: MutableIntObjectMap<AppTask>? = null
+
+		@get:MainThread
+		val appTasks: IntObjectMap<AppTask>
+			get() {
+				assertThreadMain()
+				return appTasks_ ?: MutableIntObjectMap<AppTask>().apply {
+					for (task in activityManager.appTasks) {
+						set(task.taskInfo.taskIdCompat, task)
+					}
+					appTasks_ = this
+					mainHandler.postAtFrontOfQueue {
+						appTasks_ = null
+					}
+				}
+			}
+
+		@Suppress("NOTHING_TO_INLINE")
+		inline fun finishAndRemoveTask(taskId: Int) =
+			appTasks[taskId]?.finishAndRemoveTask()
 	}
 
 	@Deprecated(SPECIAL_USE_DEPRECATION, level = DeprecationLevel.ERROR)
@@ -56,16 +85,6 @@ open class CoreApplication : Application() {
 		val locale = newConfig.locales.get(0)
 		if (Locale.getDefault() != locale) {
 			Locale.setDefault(locale)
-		}
-	}
-
-	fun finishAndRemoveTask(taskId: Int) {
-		val am = activityManager
-		for (task in am.appTasks) {
-			if (task.taskInfo.taskIdCompat == taskId) {
-				task.finishAndRemoveTask()
-				return // Done. Process only the first found task.
-			}
 		}
 	}
 }
