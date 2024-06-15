@@ -142,10 +142,10 @@ internal class UiStatesSaver(
 	companion object {
 		private const val E_FORBIDDEN = "Forbidden"
 
-		const val WML__name = "uiSs_"
+		const val WML__name = "${UI_STATES_LOADER}_"
 		private const val WML_DEL_CHAR: Char = '!'
 
-		const val JSI__name = "uiSs$"
+		const val JSI__name = "${UI_STATES_LOADER}$"
 		private const val JSI_takeOld__name = "t"
 		private const val JSI_saveNew__name = "s"
 	}
