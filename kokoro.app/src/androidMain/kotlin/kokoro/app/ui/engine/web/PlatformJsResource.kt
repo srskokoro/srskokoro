@@ -7,8 +7,8 @@ import java.util.UUID
 
 class PlatformJsResource : BasePlatformJsResource() {
 
-	override fun feed(out: Buffer, request: WebRequest) {
-		super.feed(out, request)
+	override fun feed(out: Buffer) {
+		super.feed(out)
 		with(UiStatesSaver.JS_DEF) {
 			out.writeUtf8(START)
 			out.writeUtf8(PLATFORM_JS_SECRET)

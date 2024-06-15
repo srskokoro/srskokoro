@@ -11,7 +11,7 @@ abstract class BasePlatformJsResource : WebResource {
 			if (it != "script") return WebResponse(403)
 		}
 		val buffer = Buffer()
-		feed(buffer, request)
+		feed(buffer)
 		return WebResponse(
 			mimeType = "text/javascript",
 			charset = "utf-8",
@@ -20,7 +20,7 @@ abstract class BasePlatformJsResource : WebResource {
 	}
 
 	@CallSuper
-	open fun feed(out: Buffer, request: WebRequest) {
+	open fun feed(out: Buffer) {
 		out.writeUtf8("HTTPX='")
 		out.writeUtf8(HTTPX)
 		out.writeUtf8("'\n")
