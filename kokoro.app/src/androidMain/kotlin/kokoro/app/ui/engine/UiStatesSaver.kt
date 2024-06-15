@@ -12,7 +12,6 @@ import androidx.webkit.JavaScriptReplyProxy
 import androidx.webkit.WebMessageCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
-import kokoro.app.ui.engine.web.BasePlatformJsResource.Companion.UI_STATES_LOADER
 import kokoro.app.ui.engine.web.PLATFORM_JS_SECRET
 import kokoro.app.ui.engine.web.PLATFORM_JS_SECRET_n
 import kokoro.internal.DEBUG

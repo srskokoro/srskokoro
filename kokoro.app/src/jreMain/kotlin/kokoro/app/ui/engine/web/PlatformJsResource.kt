@@ -1,5 +1,6 @@
 package kokoro.app.ui.engine.web
 
+import kokoro.app.ui.engine.UI_STATES_LOADER
 import okio.Buffer
 
 object PlatformJsResource : BasePlatformJsResource() {
