@@ -121,8 +121,21 @@ internal class UiStatesSaver(
 		synchronized(entries) {
 			encoding = true
 			try {
-				entries.forEachValue {
-					it.proxy.postMessage("")
+				try {
+					saveables = 0
+					entries.forEachValue {
+						it.saveable = null
+						it.proxy.postMessage("")
+					}
+				} catch (ex: Throwable) {
+					try {
+						saveables = entries.count { _, entry ->
+							entry.saveable != null
+						}
+					} catch (exx: Throwable) {
+						ex.addSuppressed(exx)
+					}
+					throw ex
 				}
 				while (saveables < entries.size) {
 					entries.wait()
