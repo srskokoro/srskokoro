@@ -143,7 +143,8 @@ internal class UiStatesSaver(
 				val out = UiStatesParcelable()
 				val map = out.map
 				entries.forEach { key, entry ->
-					map[key] = entry.saveable ?: return@forEach
+					val saveable = entry.saveable ?: return@forEach
+					if (saveable.isNotEmpty()) map[key] = saveable
 				}
 				return out
 			} finally {
@@ -180,6 +181,7 @@ internal class UiStatesSaver(
 
 		private const val key = "k"
 		private const val event = "e"
+		private const val ex = "x"
 
 		private const val unregistered = "u"
 		private const val del_reg = "D"
@@ -198,7 +200,11 @@ internal class UiStatesSaver(
 			// - “Spaces in URLs? | Stack Overflow” :: https://stackoverflow.com/a/5442701
 			// - “Window: `name` property | Web APIs | MDN” :: https://developer.mozilla.org/en-US/docs/Web/API/Window/name
 			"\nlet $key=location.href.split('#',1)+' '+name" +
-			"\n$wml.onmessage=$event=>{$jsi_saveNew($secret,$key,$enc())}" +
+			"\n$wml.onmessage=$event=>{" +
+			/**/"try{$event=$enc()}" +
+			/**/"catch($ex){$event='';setTimeout($event=>{throw $ex})}" +
+			/**/"$jsi_saveNew($secret,$key,$event)" +
+			"}" +
 
 			// References regarding 'pagehide' and 'pageshow':
 			// - https://www.igvita.com/2015/11/20/dont-lose-user-and-app-state-use-page-visibility/
