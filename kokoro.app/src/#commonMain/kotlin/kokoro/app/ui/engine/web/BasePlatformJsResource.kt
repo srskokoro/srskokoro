@@ -2,6 +2,7 @@ package kokoro.app.ui.engine.web
 
 import androidx.annotation.CallSuper
 import kokoro.internal.io.asClearing
+import kokoro.internal.io.writeUtf8
 import okio.Buffer
 
 abstract class BasePlatformJsResource : WebResource {
@@ -23,6 +24,6 @@ abstract class BasePlatformJsResource : WebResource {
 	open fun feed(out: Buffer) {
 		out.writeUtf8("HTTPX='")
 		out.writeUtf8(HTTPX)
-		out.writeUtf8("'\n")
+		out.writeUtf8('\'')
 	}
 }

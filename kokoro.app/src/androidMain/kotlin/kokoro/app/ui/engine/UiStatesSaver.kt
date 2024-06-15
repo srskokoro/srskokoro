@@ -212,11 +212,11 @@ internal class UiStatesSaver(
 
 		// --
 
-		const val START = "$loader_global=(" +
+		const val START = "\n$loader_global=(" +
 			/**/"$secret=>$enc=>{" +
 			/**//**/loader_def_body +
 			/**/"\n}" +
 			")('"
-		const val END = "')\n"
+		const val END = "')"
 	}
 }
