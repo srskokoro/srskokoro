@@ -231,26 +231,32 @@ class WvWindowFrame @JvmOverloads @nook constructor(
 					fr = DevToolsFrame(owner, devTools, gc)
 					fr.contentPane.add(devTools.uiComponent)
 
-					owner.addPropertyChangeListener(PROP_title, fr)
 					owner.devToolsFrame = fr
+					owner.addPropertyChangeListener(PROP_title, fr)
 
 					val gb = gc.usableBounds
 					fr.setSize(min(gb.width, owner.width), min(gb.height, owner.height))
 					fr.setLocationBesides(owner, gb)
 				}
-				// Reactivates frame if already visible before.
+				// Reactivates the window frame if already visible before.
+				// - The window will be made displayable if not already so, and
+				// `super.dispose()` must be called to undo it.
+				// - Only once the window has been made displayable would the
+				// devtools component also be made displayable.
+				// - We must undo all of the above in reverse order on window
+				// disposal.
 				fr.isVisible = true
 			}
 		}
 
 		override fun dispose(): Unit = doOnThreadSwing {
+			devTools.close(true)
+			super.dispose()
+
 			val o = owner
+			o.removePropertyChangeListener(PROP_title, this)
 			assert({ o.devToolsFrame === this })
 			o.devToolsFrame = null
-			o.removePropertyChangeListener(PROP_title, this)
-
-			super.dispose()
-			devTools.close(true)
 		}
 	}
 
