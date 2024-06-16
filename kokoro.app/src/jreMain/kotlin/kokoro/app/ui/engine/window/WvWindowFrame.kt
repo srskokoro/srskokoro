@@ -27,6 +27,9 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.swing.Swing
+import okio.buffer
+import okio.sink
+import okio.source
 import org.cef.CefApp
 import org.cef.CefApp.CefAppState
 import org.cef.CefClient
@@ -42,6 +45,7 @@ import java.awt.event.WindowEvent
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
 import java.io.File
+import java.nio.file.FileSystemException
 import javax.swing.JComponent
 import javax.swing.KeyStroke
 import kotlin.coroutines.CoroutineContext
@@ -351,11 +355,7 @@ private fun Jcef_globalInit() {
 	Jcef.init(JcefConfig(
 		persistData = false,
 		cacheDir = File(AppData.Jvm.cacheDir, "jcef"),
-		logFile = File(AppData.Jvm.logsDir, "jcef.debug.log").also {
-			if (!it.isFile || it.length() > /* 5 MiB */ 5 * 1024 * 1024) {
-				it.deleteRecursively()
-			}
-		},
+		logFile = Jcef_globalInit_logFile(),
 		stateObservers = listOf(JcefStateObserver(fun(state) {
 			if (state < CefAppState.SHUTTING_DOWN) return
 			for (w in Window.getWindows()) if (w is WvWindowFrame) {
@@ -363,4 +363,40 @@ private fun Jcef_globalInit() {
 			}
 		})),
 	))
+}
+
+private fun Jcef_globalInit_logFile(): File {
+	val dir = AppData.Jvm.logsDir
+	val file = File(dir, "jcef.debug.log")
+	val tmp = File(dir, "jcef.debug.log.tmp")
+	if (!file.isFile) {
+		if (!file.deleteRecursively())
+			throw FileSystemException(file.path, null, "Deletion failed.")
+		if (tmp.exists() && !tmp.renameTo(file))
+			throw FileSystemException(tmp.path, file.path, "Rename failed.")
+	} else run {
+		if (tmp.exists() && !tmp.delete())
+			throw FileSystemException(tmp.path, null, "Deletion failed.")
+
+		val length = file.length() - /* 5 MiB */ 5 * 1024 * 1024
+		if (length <= 0) return@run
+
+		// Truncate the file by removing initial bytes
+		file.source().buffer().use { src ->
+			src.skip(length)
+			// Skip the first, possibly broken, line.
+			src.buffer.indexOf('\n'.code.toByte()).let {
+				src.skip(it + 1)
+			}
+			val out = tmp.outputStream()
+			out.sink().buffer().use {
+				it.writeAll(src)
+				it.flush()
+				out.fd.sync()
+			}
+		}
+		if (!file.delete() || !tmp.renameTo(file))
+			throw FileSystemException(tmp.path, file.path, "Rename failed.")
+	}
+	return file
 }
