@@ -1,7 +1,7 @@
 package kokoro.app.ui.engine.window
 
 import kokoro.app.ui.engine.UiBus
-import kokoro.app.ui.engine.WvSerialization
+import kokoro.app.ui.engine.UiSerialization
 import kokoro.internal.annotation.AnyThread
 import kokoro.internal.annotation.MainThread
 import kokoro.internal.assertThreadMain
@@ -114,7 +114,7 @@ actual class WvWindowHandle @nook internal actual constructor(
 	@nook object PostSerialization {
 
 		inline val module: SerializersModule
-			get() = WvSerialization.module
+			get() = UiSerialization.module
 
 		@OptIn(ExperimentalSerializationApi::class)
 		private val cbor = Cbor { serializersModule = module }

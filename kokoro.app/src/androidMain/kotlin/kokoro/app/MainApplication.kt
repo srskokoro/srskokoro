@@ -1,6 +1,6 @@
 package kokoro.app
 
-import kokoro.app.ui.engine.WvSerialization
+import kokoro.app.ui.engine.UiSerialization
 import kokoro.app.ui.engine.window.WvWindowFactory
 import kokoro.app.ui.engine.window.WvWindowHandle_globalInit
 import kokoro.internal.annotation.MainThread
@@ -12,7 +12,7 @@ class MainApplication : CoreApplication() {
 	override fun onCreate() {
 		super.onCreate()
 
-		SerializationEncoded.init(WvSerialization.module)
+		SerializationEncoded.init(UiSerialization.module)
 
 		@Suppress("DEPRECATION_ERROR") WvWindowFactory.globalInit()
 		@Suppress("DEPRECATION_ERROR") WvWindowHandle_globalInit()
