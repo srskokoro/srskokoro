@@ -129,6 +129,8 @@ internal class UiStatesSaver(
 					}
 				} catch (ex: Throwable) {
 					try {
+						// Ensure correctness in case the exception would simply
+						// be caught and ignored (and discarded).
 						saveables = entries.count { _, entry ->
 							entry.saveable != null
 						}
