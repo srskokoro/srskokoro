@@ -35,7 +35,7 @@ class WvWindowActivity : ComponentActivity() {
 	companion object {
 
 		private const val SS_webView = "webView"
-		private const val SS_oldStateEntries = "oldStateEntries"
+		private const val SS_oldWindowStates = "oldWindowStates"
 		private const val SS_oldUiStates = "oldUiStates"
 
 		private fun <T> WvWindowBusBinding<*, T>.route(
@@ -71,14 +71,14 @@ class WvWindowActivity : ComponentActivity() {
 
 			val isInitialState: Boolean
 			val webViewState: Bundle?
-			val oldStateEntries: Bundle
+			val oldWindowStates: Bundle
 			val oldUiStates: UiStatesParcelable
 
 			if (savedInstanceState != null) {
 				isInitialState = false
 				webViewState = savedInstanceState.getBundle(SS_webView) // Null if `WebView.saveState()` fails
-				oldStateEntries = savedInstanceState.getBundle(SS_oldStateEntries) ?: kotlin.run {
-					if (DEBUG) throw NullPointerException(::SS_oldStateEntries.name)
+				oldWindowStates = savedInstanceState.getBundle(SS_oldWindowStates) ?: kotlin.run {
+					if (DEBUG) throw NullPointerException(::SS_oldWindowStates.name)
 					Bundle.EMPTY
 				}
 				oldUiStates = BundleCompat.getParcelable(savedInstanceState, SS_oldUiStates, UiStatesParcelable::class.java) ?: kotlin.run {
@@ -88,11 +88,11 @@ class WvWindowActivity : ComponentActivity() {
 			} else {
 				isInitialState = true
 				webViewState = null
-				oldStateEntries = Bundle.EMPTY
+				oldWindowStates = Bundle.EMPTY
 				oldUiStates = UiStatesParcelable()
 			}
 
-			val wc = WvContextImpl(h, this, oldStateEntries)
+			val wc = WvContextImpl(h, this, oldWindowStates)
 			val w = f.init(wc, isInitialState) // May throw
 			window = w
 
@@ -217,7 +217,7 @@ class WvWindowActivity : ComponentActivity() {
 			(context as? WvContextImpl)
 		}?.run {
 			val o = encodeStateEntries()
-			outState.putBundle(SS_oldStateEntries, o)
+			outState.putBundle(SS_oldWindowStates, o)
 		}
 		wv?.run {
 			uiSs?.let { outState.putParcelable(SS_oldUiStates, it.encode()) }
