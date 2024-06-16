@@ -1,6 +1,5 @@
 package kokoro.app.ui.engine.window.jcef
 
-import kokoro.app.ui.engine.window.nook
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
 import org.cef.handler.CefCookieAccessFilter
@@ -8,7 +7,7 @@ import org.cef.network.CefCookie
 import org.cef.network.CefRequest
 import org.cef.network.CefResponse
 
-@nook internal object CefCookiesDisabled : CefCookieAccessFilter {
+internal object CefCookiesDisabled : CefCookieAccessFilter {
 
 	override fun canSendCookie(
 		browser: CefBrowser?, frame: CefFrame?,

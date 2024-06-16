@@ -1,7 +1,6 @@
 package kokoro.app.ui.engine.window.jcef
 
 import kokoro.app.ui.engine.window.WvWindowFrame
-import kokoro.app.ui.engine.window.nook
 import kokoro.app.ui.swing.jcef.toKeyEvent
 import org.cef.browser.CefBrowser
 import org.cef.handler.CefKeyboardHandler
@@ -9,7 +8,7 @@ import org.cef.handler.CefKeyboardHandlerAdapter
 import java.awt.EventQueue
 import java.awt.KeyboardFocusManager
 
-@nook internal class CefKeyboardHandlerImpl(private val owner: WvWindowFrame) : CefKeyboardHandlerAdapter() {
+internal class CefKeyboardHandlerImpl(private val owner: WvWindowFrame) : CefKeyboardHandlerAdapter() {
 	override fun onKeyEvent(browser: CefBrowser?, e: CefKeyboardHandler.CefKeyEvent?): Boolean {
 		if (e != null) run<Unit> {
 			val owner = owner

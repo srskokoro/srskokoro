@@ -2,7 +2,6 @@ package kokoro.app.ui.engine.window.jcef
 
 import kokoro.app.ui.engine.web.WebUriResolver
 import kokoro.app.ui.engine.window.WvWindowFrame
-import kokoro.app.ui.engine.window.nook
 import kokoro.internal.DEBUG
 import kotlinx.coroutines.CoroutineScope
 import org.cef.browser.CefBrowser
@@ -14,7 +13,7 @@ import org.cef.network.CefRequest
 import java.awt.Desktop
 import java.net.URI
 
-@nook internal class CefRequestHandlerImpl(
+internal class CefRequestHandlerImpl(
 	private val owner: WvWindowFrame,
 	wur: WebUriResolver,
 	scope: CoroutineScope,

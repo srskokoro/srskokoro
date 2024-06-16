@@ -1,13 +1,12 @@
 package kokoro.app.ui.engine.window.jcef
 
-import kokoro.app.ui.engine.window.nook
 import org.cef.browser.CefBrowser
 import org.cef.handler.CefFocusHandlerAdapter
 import java.awt.EventQueue
 import java.awt.KeyboardFocusManager
 import java.util.concurrent.atomic.AtomicBoolean
 
-@nook internal class CefFocusHandlerImpl : CefFocusHandlerAdapter(), Runnable {
+internal class CefFocusHandlerImpl : CefFocusHandlerAdapter(), Runnable {
 
 	override fun onGotFocus(browser: CefBrowser) {
 		val focusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner

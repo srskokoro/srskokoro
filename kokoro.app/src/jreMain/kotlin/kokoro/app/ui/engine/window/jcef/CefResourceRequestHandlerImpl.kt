@@ -3,7 +3,6 @@ package kokoro.app.ui.engine.window.jcef
 import kokoro.app.ui.engine.web.PlatformWebRequest
 import kokoro.app.ui.engine.web.WebUri
 import kokoro.app.ui.engine.web.WebUriResolver
-import kokoro.app.ui.engine.window.nook
 import kotlinx.coroutines.CoroutineScope
 import org.cef.browser.CefBrowser
 import org.cef.browser.CefFrame
@@ -12,7 +11,7 @@ import org.cef.handler.CefResourceHandler
 import org.cef.handler.CefResourceRequestHandlerAdapter
 import org.cef.network.CefRequest
 
-@nook internal class CefResourceRequestHandlerImpl(
+internal class CefResourceRequestHandlerImpl(
 	private val isNavigation: Boolean,
 	private val wur: WebUriResolver,
 	private val scope: CoroutineScope,

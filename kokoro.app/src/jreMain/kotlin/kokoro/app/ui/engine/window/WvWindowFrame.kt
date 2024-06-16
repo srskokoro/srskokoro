@@ -192,7 +192,7 @@ class WvWindowFrame @JvmOverloads @nook constructor(
 	}
 
 	@Suppress("NOTHING_TO_INLINE")
-	@nook inline fun isMainBrowser(browser: CefBrowser?): Boolean {
+	inline fun isMainBrowser(browser: CefBrowser?): Boolean {
 		val jcef = jcef_
 		return jcef != null && jcef.browser === browser
 	}

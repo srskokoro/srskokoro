@@ -4,7 +4,6 @@ import kokoro.app.ui.engine.web.Bom
 import kokoro.app.ui.engine.web.PlatformWebRequest
 import kokoro.app.ui.engine.web.WebResource
 import kokoro.app.ui.engine.web.WebResponse
-import kokoro.app.ui.engine.window.nook
 import kokoro.internal.coroutines.CancellationSignal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -23,7 +22,7 @@ import org.cef.network.CefRequest
 import org.cef.network.CefResponse
 import java.lang.invoke.VarHandle
 
-@nook internal class CefResourceHandlerImpl(
+internal class CefResourceHandlerImpl(
 	private val platformRequest: PlatformWebRequest,
 	private val isNavigation: Boolean,
 	private val handler: WebResource,
