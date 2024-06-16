@@ -213,6 +213,8 @@ class WvWindowFrame @JvmOverloads @nook constructor(
 
 		companion object {
 
+			private const val PROP_title = "title"
+
 			private fun deriveTitle(ownerTitle: Any?) = "DevTools | $ownerTitle"
 
 			const val DEV_TOOLS_ACTION = "DevTools"
@@ -229,7 +231,7 @@ class WvWindowFrame @JvmOverloads @nook constructor(
 					fr = DevToolsFrame(owner, devTools, gc)
 					fr.contentPane.add(devTools.uiComponent)
 
-					owner.addPropertyChangeListener("title", fr)
+					owner.addPropertyChangeListener(PROP_title, fr)
 					owner.devToolsFrame = fr
 
 					val gb = gc.usableBounds
@@ -245,7 +247,7 @@ class WvWindowFrame @JvmOverloads @nook constructor(
 			val o = owner
 			assert({ o.devToolsFrame === this })
 			o.devToolsFrame = null
-			o.removePropertyChangeListener(this)
+			o.removePropertyChangeListener(PROP_title, this)
 
 			super.dispose()
 			devTools.close(true)
