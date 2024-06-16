@@ -72,7 +72,7 @@ internal class UiStatesSaver(
 			val entries = entries
 			synchronized(entries) {
 				if (entries.putIfAbsent(key, entry) != null) {
-					IllegalStateException("Forbidden. Entry already exists for key: $key")
+					IllegalStateException("Forbidden. Entry already exists for key: \"$key\"")
 						.printStackTrace()
 				}
 			}
@@ -103,7 +103,7 @@ internal class UiStatesSaver(
 			}
 			val entry = entries[key]
 			if (entry == null) {
-				if (DEBUG) error("Entry not found for key: $key")
+				if (DEBUG) error("Entry not found for key: \"$key\"")
 				return@synchronized
 			}
 			if (entry.saveable == null) {
