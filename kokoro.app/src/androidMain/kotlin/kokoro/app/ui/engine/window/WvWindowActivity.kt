@@ -15,6 +15,7 @@ import kokoro.app.ui.engine.UiStatesSaver
 import kokoro.app.ui.engine.web.HOST_X
 import kokoro.app.ui.engine.web.HTTPX
 import kokoro.app.ui.engine.web.WebUriResolver
+import kokoro.app.ui.engine.window.webkit.WebChromeClientImpl
 import kokoro.app.ui.engine.window.webkit.WebViewClientImpl
 import kokoro.internal.DEBUG
 import kokoro.internal.annotation.MainThread
@@ -153,6 +154,7 @@ class WvWindowActivity : ComponentActivity() {
 			wv.restoreState(webViewState)
 		}
 
+		wv.webChromeClient = WebChromeClientImpl()
 		wv.webViewClient = WebViewClientImpl(this, wur, scope)
 
 		val ws = wv.settings
