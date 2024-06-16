@@ -30,7 +30,6 @@ import kotlinx.coroutines.swing.Swing
 import okio.buffer
 import okio.sink
 import okio.source
-import org.cef.CefApp
 import org.cef.CefApp.CefAppState
 import org.cef.CefClient
 import org.cef.browser.CefBrowser
@@ -139,6 +138,11 @@ class WvWindowFrame @JvmOverloads @nook constructor(
 			// screen.
 			setLocationRelativeTo(pc)
 
+			// The window will be made displayable (if not yet already so).
+			// - Only once the window has been made displayable would the
+			// browser component also be made displayable.
+			// - We must undo all of the above in reverse order on window
+			// disposal.
 			isVisible = true
 			isSetUp = true // Mark as done!
 		}
@@ -171,7 +175,6 @@ class WvWindowFrame @JvmOverloads @nook constructor(
 		if (!isDisposedPermanently) initUrl = url
 	}
 
-	/** @see tearDownJcef */
 	@MainThread
 	private fun setUpJcef(wur: WebUriResolver, scope: CoroutineScope) {
 		assertThreadMain()
@@ -261,24 +264,6 @@ class WvWindowFrame @JvmOverloads @nook constructor(
 		}
 	}
 
-	/** @see setUpJcef */
-	@MainThread
-	private fun tearDownJcef() {
-		assertThreadMain()
-
-		val jcef = jcef_ ?: return
-		contentPane.remove(jcef.component)
-		jcef_ = null
-
-		// We don't care if the following check happens in a race. Locking might
-		// entail a deadlock, thus we avoid that.
-		if (CefApp.getState() < CefAppState.SHUTTING_DOWN) {
-			devToolsFrame?.dispose()
-			jcef.browser.close(true)
-			jcef.client.dispose()
-		}
-	}
-
 	@MainThread
 	@nook override fun onPost(busId: String, payload: ByteArray) {
 		assertNotDisposedPermanently()
@@ -341,9 +326,18 @@ class WvWindowFrame @JvmOverloads @nook constructor(
 			detachPeer() // So that `dispose()` isn't called by `close()` below
 			close() // Asserts thread main
 		}
-		tearDownJcef()
-		window?.onDestroy(true) // May throw
+
+		devToolsFrame?.dispose()
+		jcef_?.let { jcef ->
+			jcef_ = null
+			jcef.browser.close(true)
+			jcef.client.dispose()
+		}
+		// Make this window undisplayable.
+		// - Reverses `isVisible = true` and `addNotify()`
 		super.onDisposePermanently()
+
+		window?.onDestroy(true) // May throw
 	}
 
 	override fun getName(): String {
