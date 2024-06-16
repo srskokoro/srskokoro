@@ -70,11 +70,10 @@ open class ScopedWindowFrame @JvmOverloads constructor(
 		}
 	}
 
-	protected open fun onDisposePermanently() {
-		disposeLightly()
-	}
+	protected open fun onDisposePermanently(): Unit = disposeLightly()
 
-	open fun disposeLightly() = super.dispose()
+	/** @see removeNotify */
+	fun disposeLightly(): Unit = super.dispose()
 
 	// --
 
