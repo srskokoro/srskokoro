@@ -333,10 +333,7 @@ class WvWindowFrame @JvmOverloads @nook constructor(
 		window?.onPause()
 	}
 
-	override fun onDisposePermanently(): Unit = doOnThreadSwing {
-		dispatchWvWindowDestroy()
-		super.onDisposePermanently()
-	}
+	override fun onDisposePermanently(): Unit = doOnThreadSwing(::dispatchWvWindowDestroy)
 
 	@MainThread
 	private fun dispatchWvWindowDestroy() {
@@ -346,6 +343,7 @@ class WvWindowFrame @JvmOverloads @nook constructor(
 		}
 		tearDownJcef()
 		window?.onDestroy(true) // May throw
+		super.onDisposePermanently()
 	}
 
 	override fun getName(): String {
