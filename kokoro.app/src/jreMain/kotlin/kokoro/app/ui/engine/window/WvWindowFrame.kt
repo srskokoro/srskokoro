@@ -333,8 +333,8 @@ class WvWindowFrame @JvmOverloads @nook constructor(
 		window?.onPause()
 	}
 
-	override fun onDisposePermanently() {
-		doOnThreadSwing(::dispatchWvWindowDestroy)
+	override fun onDisposePermanently(): Unit = doOnThreadSwing {
+		dispatchWvWindowDestroy()
 		super.onDisposePermanently()
 	}
 
