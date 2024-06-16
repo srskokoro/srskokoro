@@ -77,14 +77,14 @@ internal class UiStatesSaver(
 				}
 			}
 		} else {
-			IllegalStateException(E_FORBIDDEN).printStackTrace()
+			IllegalStateException(E_Forbidden).printStackTrace()
 		}
 	}
 
 	@JavascriptInterface
 	@JvmName(JSI_takeOld__name)
 	fun takeOld(secret: String, key: String): String {
-		check(secret == PLATFORM_JS_SECRET) { E_FORBIDDEN }
+		check(secret == PLATFORM_JS_SECRET) { E_Forbidden }
 		val oldUiStates = oldUiStates
 		return synchronized(oldUiStates) {
 			oldUiStates.remove(key) ?: "{}"
@@ -94,7 +94,7 @@ internal class UiStatesSaver(
 	@JavascriptInterface
 	@JvmName(JSI_saveNew__name)
 	fun saveNew(secret: String, key: String, saveable: String) {
-		check(secret == PLATFORM_JS_SECRET) { E_FORBIDDEN }
+		check(secret == PLATFORM_JS_SECRET) { E_Forbidden }
 		val entries = entries
 		synchronized(entries) {
 			if (!encoding) {
@@ -156,7 +156,7 @@ internal class UiStatesSaver(
 	}
 
 	companion object {
-		private const val E_FORBIDDEN = "Forbidden"
+		private const val E_Forbidden = "Forbidden"
 
 		const val WML__name = "${UI_STATES_LOADER}_"
 		private const val WML_DEL_CHAR: Char = '!'
