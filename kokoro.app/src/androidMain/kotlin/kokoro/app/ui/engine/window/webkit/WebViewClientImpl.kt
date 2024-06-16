@@ -10,12 +10,11 @@ import kokoro.app.ui.engine.web.WebUri
 import kokoro.app.ui.engine.web.WebUriResolver
 import kokoro.app.ui.engine.web.toWebkit
 import kokoro.app.ui.engine.window.WvWindowActivity
-import kokoro.app.ui.engine.window.nook
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
-@nook internal class WebViewClientImpl(
+internal class WebViewClientImpl(
 	private val activity: WvWindowActivity,
 	private val wur: WebUriResolver,
 	scope: CoroutineScope,
