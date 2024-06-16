@@ -36,6 +36,7 @@ import org.cef.CefClient
 import org.cef.browser.CefBrowser
 import java.awt.Component
 import java.awt.Dimension
+import java.awt.EventQueue
 import java.awt.GraphicsConfiguration
 import java.awt.Window
 import java.awt.event.ComponentAdapter
@@ -366,8 +367,10 @@ private fun Jcef_globalInit() {
 		logFile = Jcef_globalInit_logFile(),
 		stateObservers = listOf(JcefStateObserver(fun(state) {
 			if (state < CefAppState.SHUTTING_DOWN) return
-			for (w in Window.getWindows()) if (w is WvWindowFrame) {
-				w.dispose()
+			EventQueue.invokeLater {
+				for (w in Window.getWindows()) if (w is WvWindowFrame) {
+					w.dispose()
+				}
 			}
 		})),
 	))
