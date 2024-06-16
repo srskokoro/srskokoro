@@ -86,9 +86,7 @@ internal class UiStatesSaver(
 	fun takeOld(secret: String, key: String): String {
 		check(secret == PLATFORM_JS_SECRET) { E_Forbidden }
 		val oldUiStates = oldUiStates
-		return synchronized(oldUiStates) {
-			oldUiStates.remove(key) ?: "{}"
-		}
+		return synchronized(oldUiStates) { oldUiStates.remove(key) } ?: "{}"
 	}
 
 	@JavascriptInterface
